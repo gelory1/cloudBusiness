@@ -8,16 +8,12 @@
       >
         <Menu width="auto" size="small">
           <div class="tip">
-            <!-- <div class="mess">
-              <span>1</span>
-            </div> -->
             <p class="tooltip" @click.stop="tooltipClick('inside')">
               {{cpxhpz[cktype_current_index].mc}}
               <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
             </p>
             <div class="tooltipslot" v-show="tooptipShow">
               <p v-for="(item,index) in cpxhpz" :key="index" @click="selectClick(index)">{{item.mc}}</p>
-              <!-- <p v-for="(item,index) in cpxhpz" @click="selectClick(index)">{{item.wh_type}}</p> -->
             </div>
           </div>
         </Menu>
@@ -58,16 +54,16 @@
                     <Input type="text" v-model="filterItem.chmc"></Input>
                   </FormItem>
                   <!-- <FormItem label="规格型号" prop="ggxh">
-                    <Input type="text" v-model="filterItem.ggxh" number></Input>
+                    <Input type="text" v-model="filterItem.ggxh"></Input>
                   </FormItem> -->
                   <FormItem label="条码" prop="tm" v-if="tabName === 'name2'">
-                    <Input type="text" v-model="filterItem.tm" number></Input>
+                    <Input type="text" v-model="filterItem.tm"></Input>
                   </FormItem>
                   <FormItem label="箱码" prop="xm" v-if="tabName === 'name2'">
-                    <Input type="text" v-model="filterItem.xm" number></Input>
+                    <Input type="text" v-model="filterItem.xm"></Input>
                   </FormItem>
                    <!-- <FormItem label="设备所有权" prop="sysyq">
-                    <Input type="text" v-model="filterItem.sysyq" number></Input>
+                    <Input type="text" v-model="filterItem.sysyq"></Input>
                   </FormItem> -->
                    <FormItem label="状态" prop="zt" v-if="tabName === 'name2'">
                     <Select v-model="filterItem.zt" clearable>
@@ -223,7 +219,6 @@
 
 <script>
 var $ = require("jquery");
-import api from "@/api/axios";
 import sblbTale from "../../public-components/sblb_table.vue";
 const status = [
   {
@@ -497,7 +492,7 @@ export default {
           }
         ],
       };
-      api.PostXLASSETS(request).then(response => {
+      this.$http.PostXLASSETS(request).then(response => {
         let res = response.data.result.data;
         this.jbxx.tm = res[0].device_address;
         this.jbxx.chbh = res[0].product_code;
@@ -544,7 +539,7 @@ export default {
       };
       this.jbxx_data = [];
       this.ckLoading = true;
-      api.PostXLASSETS(request).then((response)=>{
+      this.$http.PostXLASSETS(request).then((response)=>{
         let res = response.data.result.data;
         this.zkSum = res[0].sum;
         res[0].productlist.forEach(data => {
@@ -585,9 +580,9 @@ export default {
               
       };
       this.crkLoading = true;
-      api.PostXLASSETS(request).then(response=>{
+      this.crk_data = [];
+      this.$http.PostXLASSETS(request).then(response=>{
         let { data } = response.data.result;
-        this.crk_data = [];
         this.crkSum = data[0].sum;
         data[0].devicelist.forEach((d)=>{
           let crk_item = {};
@@ -603,7 +598,7 @@ export default {
         })
         this.crkLoading = false;
       },(error) => {
-        this.ckLoading = false;
+        this.crkLoading = false;
       });
     },
     changeTab(p){
@@ -636,7 +631,7 @@ export default {
         ],
       };
      
-      api.PostXLASSETS(request).then(response => {
+      this.$http.PostXLASSETS(request).then(response => {
         let res = response.data.result;
          this.menudata = [];
           this.zkSum = res.sum;
