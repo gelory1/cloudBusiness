@@ -60,18 +60,18 @@
                   <FormItem label="存货名称" prop="chmc">
                     <Input type="text" v-model="formDevice.chmc"></Input>
                   </FormItem>
-                  <FormItem label="规格型号" prop="ggxh">
+                  <!-- <FormItem label="规格型号" prop="ggxh">
                     <Input type="text" v-model="formDevice.ggxh" number></Input>
-                  </FormItem>
+                  </FormItem> -->
                   <FormItem label="条码" prop="tm">
                     <Input type="text" v-model="formDevice.tm" number></Input>
                   </FormItem>
                   <FormItem label="箱码" prop="xm">
                     <Input type="text" v-model="formDevice.xm" number></Input>
                   </FormItem>
-                   <FormItem label="设备所有权" prop="sysyq">
+                   <!-- <FormItem label="设备所有权" prop="sysyq">
                     <Input type="text" v-model="formDevice.sysyq" number></Input>
-                  </FormItem>
+                  </FormItem> -->
                    <FormItem label="状态" prop="zt">
                     <Input type="text" v-model="formDevice.zt" number></Input>
                   </FormItem>
