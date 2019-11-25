@@ -50,45 +50,47 @@
               <div v-show="glShow" class="gl">
                 <p class="gl_p">过滤条件</p>
                 <span @click="closeglClick" class="gl_p1">X</span>
-                <Form ref="formDevice" :model="formDevice" :label-width="80">
+                <Form ref="filterItem" :model="filterItem" :label-width="80">
                   <FormItem label="存货编码" prop="chbm">
-                    <Input type="text" v-model="formDevice.chbm"></Input>
-                    <!-- <Select v-model="formDevice.chbm" placeholder="Select your city">
+                    <Input type="text" v-model="filterItem.chbm"></Input>
+                    <!-- <Select v-model="filterItem.chbm" placeholder="Select your city">
                       <Option value="item" v-for="(item,index) in khdjg">{{item.val}}</Option>
                     </Select> -->
                   </FormItem>
                   <FormItem label="存货名称" prop="chmc">
-                    <Input type="text" v-model="formDevice.chmc"></Input>
+                    <Input type="text" v-model="filterItem.chmc"></Input>
                   </FormItem>
                   <!-- <FormItem label="规格型号" prop="ggxh">
-                    <Input type="text" v-model="formDevice.ggxh" number></Input>
+                    <Input type="text" v-model="filterItem.ggxh" number></Input>
                   </FormItem> -->
                   <FormItem label="条码" prop="tm">
-                    <Input type="text" v-model="formDevice.tm" number></Input>
+                    <Input type="text" v-model="filterItem.tm" number></Input>
                   </FormItem>
                   <FormItem label="箱码" prop="xm">
-                    <Input type="text" v-model="formDevice.xm" number></Input>
+                    <Input type="text" v-model="filterItem.xm" number></Input>
                   </FormItem>
                    <!-- <FormItem label="设备所有权" prop="sysyq">
-                    <Input type="text" v-model="formDevice.sysyq" number></Input>
+                    <Input type="text" v-model="filterItem.sysyq" number></Input>
                   </FormItem> -->
                    <FormItem label="状态" prop="zt">
-                    <Input type="text" v-model="formDevice.zt" number></Input>
+                    <Select v-model="filterItem.zt" clearable>
+                      <Option value="item" v-for="(item,index) in status" :key="index">{{item.val}}</Option>
+                    </Select>
                   </FormItem>
                   <FormItem label="操作时间段">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" placeholder="Select date" v-model="formDevice.kssj"></DatePicker>
+                        <DatePicker type="date" placeholder="Select date" v-model="filterItem.kssj"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" placeholder="Select date" v-model="formDevice.jssj"></DatePicker>
+                        <DatePicker type="date" placeholder="Select date" v-model="filterItem.jssj"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
                   <FormItem>
-                    <Button @click="handleReset('formDevice')" style="margin-left: 8px">重置</Button>
-                    <Button type="primary" @click="handleSubmitgl('formDevice')">确定</Button>
+                    <Button @click="handleReset('filterItem')" style="margin-left: 8px">重置</Button>
+                    <Button type="primary" @click="handleSubmitgl('filterItem')">确定</Button>
                   </FormItem>
                 </Form>
               </div>
@@ -229,6 +231,44 @@
 var $ = require("jquery");
 import api from "@/api/axios";
 import sblbTale from "../../public-components/sblb_table.vue";
+const status = [
+  {
+    val:'出库中（针对仓库）',
+    index:0
+  },
+  {
+    val:'待收货',
+    index:1
+  },
+  {
+    val:'入库；已收货',
+    index:10
+  },
+  {
+    val:'领用',
+    index:20
+  },
+  {
+    val:'拆除',
+    index:30
+  },
+  {
+    val:'安装',
+    index:40
+  },
+  {
+    val:'丢失',
+    index:50
+  },
+  {
+    val:'上线',
+    index:60
+  },
+  {
+    val:'退货',
+    index:70
+  },
+]
 export default {
   name: "deviceQuery",
   components: {
@@ -236,6 +276,7 @@ export default {
   },
   data() {
     return {
+      status,
       mapStatus: {
         0: '出库中（针对仓库）',
         1:'待收货',
@@ -413,7 +454,7 @@ export default {
           mc: "固定资产库"
         }
       ],
-      formDevice:{
+      filterItem:{
         chmc:"",
         ggxh:"",
         tm:"",
@@ -593,7 +634,10 @@ export default {
         data: [
           {
             account_id: 520,
-            wh_type: index === 0?undefined:index === 1?0:index === 2?1:3
+            wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
+            // wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
+            // wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
+            // wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
           }
         ],
       };
