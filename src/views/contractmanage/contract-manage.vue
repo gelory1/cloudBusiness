@@ -33,7 +33,9 @@
                     </Select>
                   </FormItem>
                   <FormItem label="合同内容" prop="htnr">
-                    <Input type="text" v-model="filterItem.contractContent" />
+                    <Select v-model="filterItem.contractContent" clearable>
+                      <Option :value="item.index" v-for="(item,index) in contents" :key="index">{{item.val}}</Option>
+                    </Select>
                   </FormItem>
                   <FormItem label="省份/城市" prop="city">
                     <Select v-model="filterItem.province" clearable>
@@ -163,6 +165,50 @@ const contractNatureMap = {
   8: '续费',
   9: '其他',
 }
+const contractContentMap = {
+  1: '配用电',
+  2: '环保设施智能监测系统',
+  3: '中央空调',
+  4: '油烟监测',
+  5: '工地扬尘',
+  6: '园区抄表',
+  7: '综合能源',
+  100: '其他',
+}
+const contents = [
+  {
+    val: "配用电",
+    index:1
+  },
+  {
+    val: "环保设施智能监测系统",
+    index:2
+  },
+  {
+    val: "中央空调",
+    index:3
+  },
+  {
+    val: "油烟监测",
+    index:4
+  },
+  {
+    val: "工地扬尘",
+    index:5
+  },
+  {
+    val: "园区抄表",
+    index:6
+  },
+  {
+    val: "综合能源",
+    index:7
+  },
+  {
+    val: "其他",
+    index:100
+  },
+]
 const natures = [
   {
     val: "新签",
@@ -380,7 +426,9 @@ export default {
       salesTypes,
       provinces:[],
       citys:[],
-      companys:[]
+      companys:[],
+      contractContentMap,
+      contents
     };
   },
   methods: {
@@ -493,7 +541,7 @@ export default {
           item.contractStatus = this.contractStatus.find(s => s.index === con.contractStatus).status;
           item.archiveTime = con.archiveTime;
           item.dueTime = con.dueTime;
-          item.customerName = con.customerName + '-' + con.contractContent;
+          item.customerName = con.customerName + '-' + this.contractContentMap[con.contractContent];
           item.city = con.customerProvince_cn + ' ' + con.customerCity_cn;
           item.saleType = this.salesTypeMap[con.saleType];
           item.saleManName = con.saleManName;
