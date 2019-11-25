@@ -53,9 +53,6 @@
                 <Form ref="filterItem" :model="filterItem" :label-width="80">
                   <FormItem label="存货编码" prop="chbm">
                     <Input type="text" v-model="filterItem.chbm"></Input>
-                    <!-- <Select v-model="filterItem.chbm" placeholder="Select your city">
-                      <Option value="item" v-for="(item,index) in khdjg">{{item.val}}</Option>
-                    </Select> -->
                   </FormItem>
                   <FormItem label="存货名称" prop="chmc">
                     <Input type="text" v-model="filterItem.chmc"></Input>
@@ -74,7 +71,7 @@
                   </FormItem> -->
                    <FormItem label="状态" prop="zt">
                     <Select v-model="filterItem.zt" clearable>
-                      <Option value="item" v-for="(item,index) in status" :key="index">{{item.val}}</Option>
+                      <Option :value="item.index" v-for="(item,index) in status" :key="index">{{item.val}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="操作时间段">
@@ -452,6 +449,7 @@ export default {
         }
       ],
       filterItem:{
+        chbm:"",
         chmc:"",
         ggxh:"",
         tm:"",
@@ -478,6 +476,7 @@ export default {
       selectedWhid:'',
       pageName1:1,
       pageName2:1,
+      filterStatus: false
     };
   },
   methods: {
@@ -536,6 +535,13 @@ export default {
             account_id: 520,
             wh_id: this.menudata&&this.menudata.length>0&&this.ck_current_index !== ''?this.menudata[this.ck_current_index].wh_id:undefined,
             keyword: this.inputVal === ''?undefined:this.inputVal,
+            product_code: this.filterItem.chbm === ''?undefined:this.filterItem.chbm,  //存货编码
+            product_name: this.filterItem.chmc === ''?undefined:this.filterItem.chmc,  //存货名称
+            device_address: this.filterItem.tm === ''?undefined:this.filterItem.tm,  //条码
+            box_address: this.filterItem.xm === ''?undefined:this.filterItem.xm,  //箱码
+            device_start_time: this.filterItem.kssj === ''?undefined:this.filterItem.kssj,  //开始时间
+            device_end_time: this.filterItem.jssj === ''?undefined:this.filterItem.jssj,  //结束名称
+            device_status: this.filterItem.zt === ''?undefined:this.filterItem.zt,   //状态
             page_num: p,
             page_size: 10
           }
@@ -625,9 +631,6 @@ export default {
           {
             account_id: 520,
             wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
-            // wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
-            // wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
-            // wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
           }
         ],
       };
@@ -663,7 +666,7 @@ export default {
     glkhClick() {
       this.glShow = !this.glShow;
       this.moreShow = false;
-      if (this.glShow) {
+      if (this.glShow||this.filterStatus) {
         $(".cor").css({ color: "#4a9af5" });
         $(".cor1").css({ color: "#000000" });
       } else {
@@ -675,11 +678,42 @@ export default {
       this.glShow = false;
       if (this.moreShow) {
         $(".cor1").css({ color: "#4a9af5" });
-        $(".cor").css({ color: "#000000" });
+        // $(".cor").css({ color: "#000000" });
       } else {
         $(".cor1").css({ color: "#000000" });
       }
     },
+    handleSubmitgl(name){
+      let status = true;
+      for(let key in this.filterItem){
+        if(this.filterItem[key] !== ''&&this.filterItem[key] !== 0){
+          status = false;
+        }
+      }
+      if(status){
+        this.filterStatus = false;
+        $(".cor").css({ color: "#000000" });
+        this.glShow = false;
+        this.getProductList(1);
+        return;
+      }
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          this.filterStatus = true;
+          this.glShow = false;
+          this.getProductList(1);
+          this.$Message.success("Success!");
+        } else {
+          this.$Message.error("Fail!");
+        }
+      });
+    },
+    handleReset(name){
+      this.filterStatus = false;
+      for(let key in this.filterItem){
+        this.filterItem[key] = '';
+      }
+    }
   },
   mounted() {
     // debugger;
