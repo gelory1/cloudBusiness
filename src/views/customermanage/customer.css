@@ -1,0 +1,240 @@
+/* see.vue */
+.layout{
+    padding:10px 20px;
+    background-color: #fff;
+    font-size:14px;
+}
+.header_top{
+    font-size:14px;
+    margin:10px 0 30px 0;
+    cursor: pointer;
+}
+.header_top span{
+    margin-left:5px;
+}
+.header_mid{
+    width:100%;
+    border-bottom:1px solid #c7cbd3;
+    padding-bottom:10px;
+}
+.header_mid p{
+    font-size:14px;
+    margin:5px 0px 30px 0;
+}
+.header_div div{
+    margin-right:50px;
+    float:left;
+}
+.header_div .icon{
+    padding-right:5px;
+    color:#c7cbd3;
+}
+.header_p{
+    font-size:16px;
+    margin:30px  0;
+}
+.det_p{
+    color:#8d8d8d;
+    clear: both;
+    padding:20px 0 10px 0;
+}
+.det_span{
+    margin-right:30px;
+}
+.select section{
+    width:25%;
+    float:left;
+    margin-bottom:35px;
+}
+.select section p:nth-of-type(1),.header_con .select1 section p:nth-of-type(1),.kpxx_sec section p:nth-of-type(1){
+    color:#8d8d8d;
+    margin-bottom:5px;
+}
+.select1 section{
+    width:75%;
+    float:left;
+    margin-bottom:30px;
+}
+.select,.select1,.select2{
+    margin-left:10px;
+}
+.select2 .sele2{
+    color:#8d8d8d;
+}
+.eye{
+    font-size:18px;
+    color:#7375ec;
+    margin-left:10px;
+    cursor: pointer;
+}
+.bg_p{
+    display: inline-block;
+    background: #e7eef8;
+    padding:6px 10px;
+    margin:10px 0 20px 0;
+}
+.header_con .select2{
+    clear: both;
+}
+.kpxx{
+    box-shadow: 0px 0px 3px #888888;    
+}
+.kpxx_con{
+    padding: 20px;
+}
+.kpxx_head{
+    border-bottom:1px dashed #818996;
+    width:98%;
+    margin:0 auto;  
+    padding:20px 10px;
+    padding-bottom: 40px;
+}
+.kpxx_head p{
+    width:40%;
+    float:left;
+}
+.headP{
+    text-align: right;
+    cursor: pointer;
+    color:#4a9af5 ;
+}
+.headP span:nth-of-type(1){
+    margin-right:5px;
+}
+.kpxx_sec section{
+    width:33%;
+    float:left;
+    margin-bottom:20px;
+}
+
+.kpxx_span{
+    margin-right:20px;
+}
+.lxr_right{
+    width:20%;
+    float:left;
+    border-left:1px solid #c7cbd3;
+    border-right:1px solid #e4e7ed;
+}
+.lxr{
+    padding:5px 10px;
+    font-size:11px;
+    border-bottom:0.6px solid black;
+}
+.lxr_icon{
+    font-size:30px;
+    color:#4a9af5 ;
+    float:left;
+}
+.lxr_xq{
+    margin:5px 0px 0 30px;
+}
+.lxr_cor{
+    color:#4a9af5;
+    margin-left:5px
+}
+/* edit.vue */
+.col-d{
+    width:100px;
+}
+.col-s{
+    width:165px;
+}
+.col-m{
+    width:200px;
+}
+.col-n{
+    width:300px;
+}
+.col-l{
+    width:550px;
+}
+.con-right{
+    float:right;
+}
+.con-left{
+    float:left;
+}
+.butt{
+    width:140px;
+    margin-left:30px;
+}
+.div_p{
+    font-size: 16px;
+    width:80px;
+    display: inline-block;
+    margin:40px 20px 20px 0px
+}
+.form_but{
+    margin:60px 0px 50px -60px;
+
+}
+.form_but Button{
+width:100px;
+}
+.kpxx_head .check{
+ width:30px;
+}
+.kpxx_head p{
+ width:30%;
+ margin-top:-2px;
+}
+.changeinput .ivu-input{
+    color:#409eff;
+    border-radius: 4px;
+    border:0.6px solid #b3d8ff;
+    background: #ecf5ff;
+}
+/* 过滤 */
+.f_gl,.f-more{
+    position:relative;
+    cursor: pointer;
+}
+.gl{
+    width:400px;
+    background: #ffffff;
+    position: absolute;
+    right:-70px;
+    box-shadow: 0px 0px 3px #979595;
+    padding:0 20px 20px 10px;
+}
+.gl_p{
+    font-size: 16px;
+    display: inline;
+}
+.gl_p1{
+    float: right;
+    color:#ccc7c7;
+}
+.more{
+    padding:20px;
+    width:130px;
+    position: absolute;
+    left:-80px;
+    border: 1px solid #dddddd;
+    background: #ffffff;
+    border-radius: 5px;
+}
+.more p{
+    line-height: 35px;
+} 
+/* add-informat */
+.newfile{
+    margin-left:-45px;
+    font-size:14px;
+}
+.newfile span{
+    color:blue;
+    cursor: pointer;
+}
+/*  */
+#divcz{
+    position: absolute;
+    top:0px;
+    left:10px;
+    border:1px solid red;
+}
+#divcz p{
+    width:50px;
+    cursor: pointer;
+}

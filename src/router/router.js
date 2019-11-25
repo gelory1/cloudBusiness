@@ -1,0 +1,177 @@
+import Main from '@/views/Main.vue';
+
+// 不作为Main组件的子页面展示的页面单独写，如下
+export const loginRouter = {
+    path: '/login',
+    name: 'login',
+    meta: {
+        title: 'Login - 登录'
+    },
+    component: () => import('@/views/login.vue')
+};
+
+export const page404 = {
+    path: '/*',
+    name: 'error-404',
+    meta: {
+        title: '404-页面不存在'
+    },
+    component: () => import('@/views/error-page/404.vue')
+};
+
+export const page403 = {
+    path: '/403',
+    meta: {
+        title: '403-权限不足'
+    },
+    name: 'error-403',
+    component: () => import('@//views/error-page/403.vue')
+};
+
+export const page500 = {
+    path: '/500',
+    meta: {
+        title: '500-服务端错误'
+    },
+    name: 'error-500',
+    component: () => import('@/views/error-page/500.vue')
+};
+export const locking = {
+    path: '/locking',
+    name: 'locking',
+    component: () => import('@/views/main-components/lockscreen/components/locking-page.vue')
+};
+
+// 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
+// 客户管理
+export const otherRouter = {
+    path: '/',
+    name: 'otherRouter',
+    redirect: '/home',
+    component: Main,
+    children: [
+        { path: 'home', title: {i18n: '客户管理'}, name: 'home_index', component: () => import('@/views/customermanage/customer-manage.vue') },
+        { path: '/customermanage/see', title: '客户档案', name: 'see', component: () => import('@/views/customermanage/see.vue') },
+        { path: '/customermanage/edit', title: '客户档案（编辑）', name: 'edit', component: () => import('@/views/customermanage/edit.vue') },
+        { path: '/customermanage/add-informat', title: '新增开票信息', name: 'add-informat', component: () => import('@/views/customermanage/add-informat.vue') }
+    ]
+};
+// 合同管理
+export const otherRouter1 = {
+    path: '/contractmanage',
+    name: 'otherRouter1',
+    redirect: '/contractmanage',
+    component: Main,
+    children: [
+        { path: 'contractmanage', title: {i18n: '合同管理'}, name: 'contractmanage_index', component: () => import('@/views/contractmanage/contract-manage.vue') },
+        { path: '/contractmanage/detail', title: '合同台账', name: 'detail', component: () => import('@/views/contractmanage/detail.vue') },
+        { path: '/contractmanage/edit', title: '合同台账（编辑）', name: 'edit', component: () => import('@/views/contractmanage/edit.vue') }
+    ]
+};
+// 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
+export const appRouter = [
+    // 工作台
+    {
+        path: '/workbench',
+        icon: 'ios-grid-view',
+        name: 'workbench',
+        title: '工作台',
+        component: Main,
+        children: [
+            { path: 'workbench', title: '工作台', name: 'work-bench', icon: 'arrow-move', component: () => import('@/views/workbench/work-bench.vue') }
+        ]
+    },
+    // 客户管理
+    {
+        path: '/customermanage',
+        icon: 'ios-grid-view',
+        name: 'customermanage',
+        title: '客户管理',
+        component: Main,
+        children: [
+            { path: 'customerManage', title: '客户管理', name: 'customer-manage', icon: 'arrow-move', component: () => import('@/views/customermanage/customer-manage.vue') },
+            // { path: 'customerManage1', title: '查看', name: 'customer-manage1', icon: 'arrow-move', component: () => import('@/views/customermanage/see.vue') },
+            // { path: 'customerManage2', title: '编辑', name: 'customer-manage2', icon: 'arrow-move', component: () => import('@/views/customermanage/edit.vue') }
+        ]
+    },
+    // 合同管理
+    {
+        path: '/contractmanage',
+        icon: 'ios-grid-view',
+        name: 'contractmanage',
+        title: '合同管理',
+        component: Main,
+        children: [
+            { path: 'contractManage', title: '合同管理', name: 'contract-manage', icon: 'arrow-move', component: () => import('@/views/contractmanage/contract-manage.vue') }
+        ]
+    },
+    // 订单管理
+    {
+        path: '/ordermanage',
+        icon: 'ios-grid-view',
+        name: 'ordermanage',
+        title: '订单管理',
+        component: Main,
+        children: [
+            { path: 'orderManage', title: '订单管理', name: 'order-manage', icon: 'arrow-move', component: () => import('@/views/ordermanage/order-manage.vue') }
+        ]
+    },
+    // 资产管理
+    {
+        path: '/assetmanage',
+        icon: 'android-checkbox',
+        name: 'assetmanage',
+        title: '资产管理',
+        component: Main,
+        children: [
+            { path: 'device-query', title: '设备资产查询', name: 'device-query', icon: 'compose', component: () => import('@/views/assetmanagement/device-query/device-query.vue') },
+            { path: 'issue-query', title: '出/入库单查询', name: 'issue-query', icon: 'arrow-swap', component: () => import('@/views/assetmanagement/issue-query/issue-query.vue') },
+            { path: 'model-config', title: '产品型号配置', name: 'model-config', icon: 'arrow-swap', component: () => import('@/views/assetmanagement/model-config/model-config.vue') }
+
+        ]
+    },
+    // 报表
+    {
+        path: '/tables',
+        icon: 'ios-grid-view',
+        name: 'tables',
+        title: '表格',
+        component: Main,
+        children: [
+            { path: 'dragableTable', title: '报表', name: 'dragable-table', icon: 'arrow-move', component: () => import('@/views/tables/dragable-table.vue') }
+        ]
+    },
+    // 设置
+    {
+        path: '/setting',
+        icon: 'ios-grid-view',
+        name: 'setting',
+        title: '设置',
+        component: Main,
+        children: [
+            { path: 'settingFrom', title: '设置', name: 'setting-form', icon: 'arrow-move', component: () => import('@/views/setting/setting-form.vue') }
+        ]
+    },
+    // {
+    //     path: '/error-page',
+    //     icon: 'android-sad',
+    //     title: '错误页面',
+    //     name: 'errorpage',
+    //     component: Main,
+    //     children: [
+    //         { path: 'index', title: '错误页面', name: 'errorpage_index', component: () => import('@/views/error-page/error-page.vue') }
+    //     ]
+    // }
+];
+
+// 所有上面定义的路由都要写在下面的routers里
+export const routers = [
+    loginRouter,
+    otherRouter,
+    otherRouter1,
+    locking,
+    ...appRouter,
+    page500,
+    page403,
+    page404
+];

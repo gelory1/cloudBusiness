@@ -1,0 +1,307 @@
+/* .menu {
+    position: relative;
+    z-index: 0;
+} */
+.menu .ivu-icon-ios-arrow-down:before {
+    display: none;
+  }
+  .ivu-layout-header {
+    padding: 0px 10px 0 0;
+  }
+  .ivu-layout-sider-children {
+    border-right: 1px solid #dddddd;
+  }
+  .mess {
+    width: 15px;
+    height: 15px;
+    background-color: #199ed8;
+    position: absolute;
+    z-index: 999;
+    right: 60px;
+    top: -6px;
+  }
+  .mess span {
+    display: inline-block;
+    font-size: 12px;
+    overflow: hidden;
+    margin-left: 3px;
+    color: #ffffff;
+  }
+  .jbleft {
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+  }
+  .jbright {
+    display: inline-block;
+    width: 200px;
+    text-align: left;
+  }
+  /* 步骤条样式 */
+  .ivu-timeline-item-head-blue {
+    border-color: #e4e7ed;
+    background-color: #e4e7ed;
+    width: 7px;
+    height: 7px;
+  }
+  .ivu-timeline-item-tail {
+    height: 100%;
+    border-left: 1px solid #e9eaec;
+    position: absolute;
+    left: 3px;
+  }
+  .time,
+  .content {
+    font-size: 10px;
+  }
+  .time {
+    color: #000000;
+  }
+  .content {
+    color: #797979;
+  }
+  .changestyle .ivu-tabs-nav {
+    margin: 0 100px;
+  }
+  .tip {
+    position: relative;
+    cursor: pointer;
+  }
+  .tooltip {
+    margin: 15px 0 0 20px;
+    cursor: pointer;
+  }
+  .tooltipslot {
+    width: 130px;
+    /* height: 175px; */
+    border: 1px solid #dddddd;
+    background: #ffffff;
+    padding: 10px 20px;
+    line-height: 38px;
+    border-radius: 5px;
+    position: absolute;
+    top: 30px;
+    left: 60px;
+    z-index: 999999;
+  }
+  .tooltipslot p{
+    cursor: pointer;
+  }
+  /*  */
+  .menu {
+    position: relative;
+    z-index: 0;
+  }
+  .menu .ivu-icon-ios-arrow-down:before {
+    display: none;
+  }
+  .ivu-layout-header {
+    padding: 0px 10px 0 0;
+  }
+  .ivu-layout-sider-children {
+    border-right: 1px solid #dddddd;
+  }
+  .mess {
+    width: 15px;
+    height: 15px;
+    background-color: #199ed8;
+    position: absolute;
+    z-index: 999;
+    right: 60px;
+    top: -6px;
+  }
+  .mess span {
+    display: inline-block;
+    font-size: 12px;
+    overflow: hidden;
+    margin-left: 3px;
+    color: #ffffff;
+  }
+  .tip {
+    position: relative;
+    cursor: pointer;
+  }
+  .jbleft {
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+  }
+  .jbright {
+    display: inline-block;
+    min-width: 100px;
+    text-align: left;
+  }
+  .jbleft,
+  .jbright {
+    color: #8d8d8d;
+  }
+  .djtitle {
+    clear: both;
+    overflow: hidden;
+    border-top: 1px solid #e4e7ed;
+    padding: 10px 0;
+    margin: 30px 0px 0 20px;
+    font-size: 13px;
+  }
+  .device .ivu-icon-clipboard:before{
+    color:#3896f5;
+  }
+  /*  */
+  .cpxh .tip {
+    position: relative;
+    cursor: pointer;
+  }
+  .cpxh .tooltip {
+    margin: 15px 0 0 0px;
+    color: #000000;
+  }
+  .cpxh hr {
+    border: 1px solid #dddddd;
+    margin: 0px auto;
+    margin-top: 60px;
+    clear: both;
+  }
+  .cpxh .xhbm {
+    color: #606266;
+  }
+  .cpxh .tooltipslot {
+    width: 130px;
+    border: 1px solid #dddddd;
+    background: #ffffff;
+    padding: 10px 20px;
+    line-height: 38px;
+    border-radius: 5px;
+    position: absolute;
+    top: 40px;
+    left: 60px;
+    z-index: 999999;
+  }
+  .cpxh .gl_detail {
+    padding: 5px 0px 10px 15px;
+    border: 1px solid #e9eaec;
+    clear: both;
+    box-shadow: 2px 0px 4px #dddddd;
+    margin-right: 20px;
+    margin-bottom: 20px;
+  }
+  .cpxh .gl_detail .xh {
+    color: #4a9af5;
+    font-size: 20px;
+  }
+  .cpxh .glxh,
+  .cpxh .wglxh {
+    background: #f2f2f2;
+    height: 50px;
+    width: 60%;
+    word-spacing: -5px;
+    margin: 10px 0 0 10px;
+    color: #8d8d8d;
+  }
+  .cpxh .wglxh {
+    background: #ffffff;
+    border: 1px solid #e9eaec;
+    color: #4a9af5;
+  }
+  .cpxh .wglxh span:nth-child(1) {
+    border-right: 1px solid #e9eaec;
+    display: inline-block;
+    line-height: 20px;
+    padding: 0 30px;
+    margin-top: 12px;
+  }
+  .cpxh .glxh span {
+    width: 25%;
+    display: inline-block;
+    padding: 15px 5px;
+  }
+  .modal .p1 {
+    font-size: 18px;
+  }
+  .modal .p2 {
+    font-size: 16px;
+    margin: 20px 0 10px 20px;
+  }
+  .modal .p2 span {
+    color: #4a9af5;
+  }
+  .modal .div1 {
+    margin-left: 20px;
+  }
+  .ivu-layout-sider-zero-width-trigger{
+    display: none;
+  }
+  .ivu-icon-clipboard:before{
+    color:#4a9af5;
+  }
+  /* 客户管理 */
+  .customer{
+    /* padding-top:30px; */
+  }
+  .customer .addBut{
+    width:100px;
+    position: absolute;
+    top:10px;
+    right:10px;
+    z-index:999
+
+  }
+  .ivu-table-row-highlight td{
+    background-color: #2d8cf0;
+    color: white;
+  }
+  .待审批{
+    background-color: #FDF6EC;
+    color: #E7A440;
+  }
+  .已审批{
+    background-color: #F0F9EC;
+    color: #78C950;
+  }
+  .已执行{
+    background-color: #F4F4F5;
+    color: #7D7F82;
+  }
+  /* 过滤 */
+.f_gl,.f-more{
+  position:relative;
+  cursor: pointer;
+}
+.gl{
+  width:450px;
+  background: #ffffff;
+  position: absolute;
+  right:-60px;
+  box-shadow: 0px 0px 3px #979595;
+  padding:0 30px 20px 10px;
+  z-index: 999;
+}
+.gl_p{
+  font-size: 16px;
+  display: inline;
+}
+.gl_p1{
+  float: right;
+  color:#ccc7c7;
+}
+.more{
+  padding:20px;
+  width:130px;
+  position: absolute;
+  left:-85px;
+  border: 1px solid #dddddd;
+  background: #ffffff;
+  border-radius: 5px;
+  z-index:999;
+}
+.more p{
+  line-height: 35px;
+}
+.cor{
+  cursor: pointer;
+}
+.wid{
+  width:300px;
+}
+.page{
+  margin-bottom:200px
+}
