@@ -546,6 +546,7 @@ export default {
             order_type: this.selectedType.ids,
             sale_type:this.filterItem.salesType === ''?undefined:this.filterItem.salesType,
             // contract_subject:0,
+            sell_name:this.filterItem.saleName===''?undefined:this.filterItem.saleName,
             company_id:this.filterItem.manageCompany === ''?undefined:this.filterItem.manageCompany,
             keyword:this.inputVal === ''?undefined:this.inputVal,
             page_num: p,

@@ -72,7 +72,7 @@
               </section>
               <section>
                 <p>合同内容：</p>
-                <p>{{data.data.contractContent}}</p>
+                <p>{{contractContentMap[data.data.contractContent]}}</p>
               </section>
               <section>
                 <p>签约时间：</p>
@@ -351,6 +351,16 @@ const subjectName = {
   8:'新联能源',
   100:'其他',
 };
+const contractContentMap = {
+  1: '配用电',
+  2: '环保设施智能监测系统',
+  3: '中央空调',
+  4: '油烟监测',
+  5: '工地扬尘',
+  6: '园区抄表',
+  7: '综合能源',
+  100: '其他',
+}
 export default {
   name: "detail",
   data() {
@@ -448,7 +458,8 @@ export default {
       sqShow:false,
       zkShow:true,
       showObj:{},
-      checkbox:[]
+      checkbox:[],
+      contractContentMap
     }
   },
   methods: {

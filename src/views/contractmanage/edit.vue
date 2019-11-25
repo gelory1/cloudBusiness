@@ -59,7 +59,7 @@
                 </Col>
                 <Col span="8">
                   <FormItem label="合同内容" prop="htnr" class="con-right">
-                    <Input class="col-m" v-model="data.data.contractContent" placeholder disabled></Input>
+                    <Input class="col-m" v-model="contractContentMap[data.data.contractContent]" placeholder disabled></Input>
                   </FormItem>
                 </Col>
               </Row>
@@ -306,6 +306,16 @@ const subjectName = {
   8:'新联能源',
   100:'其他',
 };
+const contractContentMap = {
+  1: '配用电',
+  2: '环保设施智能监测系统',
+  3: '中央空调',
+  4: '油烟监测',
+  5: '工地扬尘',
+  6: '园区抄表',
+  7: '综合能源',
+  100: '其他',
+}
 export default {
   name: "htedit",
   data() {
@@ -367,7 +377,8 @@ export default {
       subjectName,
       showObj:{},
       companys:[],
-      projectmen:[]
+      projectmen:[],
+      contractContentMap
     };
   },
   methods: {
