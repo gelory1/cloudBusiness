@@ -154,7 +154,7 @@
         </Content>
       </Layout>
     </Layout>
-    <Modal v-model="modal1" width="500" title="设备资产台账" @on-ok="ok" @on-cancel="cancel">
+    <Modal v-model="modal1" width="500" title="设备资产台账">
       <div>
         <div style="float:left;margin-left:20px;">
           <h3>能效集中采集终端</h3>
@@ -218,9 +218,6 @@
           </TabPane>
         </Tabs>
       </div>
-    </Modal>
-    <Modal v-model="modal2" width="800" title="设备列表" @on-ok="ok" @on-cancel="cancel">
-      <sblbTale :sblb_data="sblb_data"></sblbTale>
     </Modal>
   </div>
 </template>
@@ -427,7 +424,6 @@ export default {
       moreShow:false,
       menudata: [],
       modal1: false,
-      modal2: false,
       tm: "1234567",
       tooptipShow: false,
       menuitem: "所有仓库",
@@ -571,12 +567,6 @@ export default {
       this.ck_current_index = index;
       this.getProductList(1);
       if(this.tabName !== 'name1') this.tabName = 'name1';
-    },
-    ok() {
-      this.$Message.info("Clicked ok");
-    },
-    cancel() {
-      this.$Message.info("Clicked cancel");
     },
     getMenuList(index){
       if (index == "0") {
