@@ -8,16 +8,12 @@
       >
         <Menu width="auto" size="small">
           <div class="tip">
-            <!-- <div class="mess">
-              <span>1</span>
-            </div> -->
             <p class="tooltip" @click.stop="tooltipClick('inside')">
               {{cpxhpz[cktype_current_index].mc}}
               <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
             </p>
             <div class="tooltipslot" v-show="tooptipShow">
               <p v-for="(item,index) in cpxhpz" :key="index" @click="selectClick(index)">{{item.mc}}</p>
-              <!-- <p v-for="(item,index) in cpxhpz" @click="selectClick(index)">{{item.wh_type}}</p> -->
             </div>
           </div>
         </Menu>
@@ -53,31 +49,28 @@
                 <Form ref="filterItem" :model="filterItem" :label-width="80">
                   <FormItem label="存货编码" prop="chbm">
                     <Input type="text" v-model="filterItem.chbm"></Input>
-                    <!-- <Select v-model="filterItem.chbm" placeholder="Select your city">
-                      <Option value="item" v-for="(item,index) in khdjg">{{item.val}}</Option>
-                    </Select> -->
                   </FormItem>
                   <FormItem label="存货名称" prop="chmc">
                     <Input type="text" v-model="filterItem.chmc"></Input>
                   </FormItem>
                   <!-- <FormItem label="规格型号" prop="ggxh">
-                    <Input type="text" v-model="filterItem.ggxh" number></Input>
+                    <Input type="text" v-model="filterItem.ggxh"></Input>
                   </FormItem> -->
-                  <FormItem label="条码" prop="tm">
-                    <Input type="text" v-model="filterItem.tm" number></Input>
+                  <FormItem label="条码" prop="tm" v-if="tabName === 'name2'">
+                    <Input type="text" v-model="filterItem.tm"></Input>
                   </FormItem>
-                  <FormItem label="箱码" prop="xm">
-                    <Input type="text" v-model="filterItem.xm" number></Input>
+                  <FormItem label="箱码" prop="xm" v-if="tabName === 'name2'">
+                    <Input type="text" v-model="filterItem.xm"></Input>
                   </FormItem>
                    <!-- <FormItem label="设备所有权" prop="sysyq">
-                    <Input type="text" v-model="filterItem.sysyq" number></Input>
+                    <Input type="text" v-model="filterItem.sysyq"></Input>
                   </FormItem> -->
-                   <FormItem label="状态" prop="zt">
+                   <FormItem label="状态" prop="zt" v-if="tabName === 'name2'">
                     <Select v-model="filterItem.zt" clearable>
-                      <Option value="item" v-for="(item,index) in status" :key="index">{{item.val}}</Option>
+                      <Option :value="item.index" v-for="(item,index) in status" :key="index">{{item.val}}</Option>
                     </Select>
                   </FormItem>
-                  <FormItem label="操作时间段">
+                  <FormItem label="操作时间段" v-if="tabName === 'name2'">
                     <Row>
                       <Col span="11">
                         <DatePicker type="date" placeholder="Select date" v-model="filterItem.kssj"></DatePicker>
@@ -156,7 +149,7 @@
         </Content>
       </Layout>
     </Layout>
-    <Modal v-model="modal1" width="500" title="设备资产台账" @on-ok="ok" @on-cancel="cancel">
+    <Modal v-model="modal1" width="500" title="设备资产台账">
       <div>
         <div style="float:left;margin-left:20px;">
           <h3>能效集中采集终端</h3>
@@ -221,15 +214,11 @@
         </Tabs>
       </div>
     </Modal>
-    <Modal v-model="modal2" width="800" title="设备列表" @on-ok="ok" @on-cancel="cancel">
-      <sblbTale :sblb_data="sblb_data"></sblbTale>
-    </Modal>
   </div>
 </template>
 
 <script>
 var $ = require("jquery");
-import api from "@/api/axios";
 import sblbTale from "../../public-components/sblb_table.vue";
 const status = [
   {
@@ -455,6 +444,7 @@ export default {
         }
       ],
       filterItem:{
+        chbm:"",
         chmc:"",
         ggxh:"",
         tm:"",
@@ -468,7 +458,6 @@ export default {
       moreShow:false,
       menudata: [],
       modal1: false,
-      modal2: false,
       tm: "1234567",
       tooptipShow: false,
       menuitem: "所有仓库",
@@ -482,6 +471,7 @@ export default {
       selectedWhid:'',
       pageName1:1,
       pageName2:1,
+      filterStatus: false
     };
   },
   methods: {
@@ -502,7 +492,7 @@ export default {
           }
         ],
       };
-      api.PostXLASSETS(request).then(response => {
+      this.$http.PostXLASSETS(request).then(response => {
         let res = response.data.result.data;
         this.jbxx.tm = res[0].device_address;
         this.jbxx.chbh = res[0].product_code;
@@ -540,6 +530,8 @@ export default {
             account_id: 520,
             wh_id: this.menudata&&this.menudata.length>0&&this.ck_current_index !== ''?this.menudata[this.ck_current_index].wh_id:undefined,
             keyword: this.inputVal === ''?undefined:this.inputVal,
+            product_code: this.filterItem.chbm === ''?undefined:this.filterItem.chbm,  //存货编码
+            product_name: this.filterItem.chmc === ''?undefined:this.filterItem.chmc,  //存货名称
             page_num: p,
             page_size: 10
           }
@@ -547,7 +539,7 @@ export default {
       };
       this.jbxx_data = [];
       this.ckLoading = true;
-      api.PostXLASSETS(request).then((response)=>{
+      this.$http.PostXLASSETS(request).then((response)=>{
         let res = response.data.result.data;
         this.zkSum = res[0].sum;
         res[0].productlist.forEach(data => {
@@ -573,7 +565,13 @@ export default {
           {
             account_id: 520,
             wh_id: this.selectedWhid === ''?undefined:this.selectedWhid,
-            product_code: this.selectedProcode === ''?undefined:this.selectedProcode,
+            product_code: this.selectedProcode === ''?this.filterItem.chbm === ''?undefined:this.filterItem.chbm:this.selectedProcode,
+            product_name: this.filterItem.chmc === ''?undefined:this.filterItem.chmc,  //存货名称
+            device_address: this.filterItem.tm === ''?undefined:this.filterItem.tm,  //条码
+            box_address: this.filterItem.xm === ''?undefined:this.filterItem.xm,  //箱码
+            device_start_time: this.filterItem.kssj === ''?undefined:this.filterItem.kssj,  //开始时间
+            device_end_time: this.filterItem.jssj === ''?undefined:this.filterItem.jssj,  //结束名称
+            device_status: this.filterItem.zt === ''?undefined:this.filterItem.zt,   //状态
             keyword: this.inputVal === ''?undefined:this.inputVal,
             page_num: p,
             page_size: 10
@@ -582,9 +580,9 @@ export default {
               
       };
       this.crkLoading = true;
-      api.PostXLASSETS(request).then(response=>{
+      this.crk_data = [];
+      this.$http.PostXLASSETS(request).then(response=>{
         let { data } = response.data.result;
-        this.crk_data = [];
         this.crkSum = data[0].sum;
         data[0].devicelist.forEach((d)=>{
           let crk_item = {};
@@ -600,7 +598,7 @@ export default {
         })
         this.crkLoading = false;
       },(error) => {
-        this.ckLoading = false;
+        this.crkLoading = false;
       });
     },
     changeTab(p){
@@ -612,12 +610,6 @@ export default {
       this.ck_current_index = index;
       this.getProductList(1);
       if(this.tabName !== 'name1') this.tabName = 'name1';
-    },
-    ok() {
-      this.$Message.info("Clicked ok");
-    },
-    cancel() {
-      this.$Message.info("Clicked cancel");
     },
     getMenuList(index){
       if (index == "0") {
@@ -635,14 +627,11 @@ export default {
           {
             account_id: 520,
             wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
-            // wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
-            // wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
-            // wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
           }
         ],
       };
      
-      api.PostXLASSETS(request).then(response => {
+      this.$http.PostXLASSETS(request).then(response => {
         let res = response.data.result;
          this.menudata = [];
           this.zkSum = res.sum;
@@ -673,7 +662,7 @@ export default {
     glkhClick() {
       this.glShow = !this.glShow;
       this.moreShow = false;
-      if (this.glShow) {
+      if (this.glShow||this.filterStatus) {
         $(".cor").css({ color: "#4a9af5" });
         $(".cor1").css({ color: "#000000" });
       } else {
@@ -685,11 +674,50 @@ export default {
       this.glShow = false;
       if (this.moreShow) {
         $(".cor1").css({ color: "#4a9af5" });
-        $(".cor").css({ color: "#000000" });
+        // $(".cor").css({ color: "#000000" });
       } else {
         $(".cor1").css({ color: "#000000" });
       }
     },
+    handleSubmitgl(name){
+      let status = true;
+      for(let key in this.filterItem){
+        if(this.filterItem[key] !== ''&&this.filterItem[key] !== 0){
+          status = false;
+        }
+      }
+      if(status){
+        this.filterStatus = false;
+        $(".cor").css({ color: "#000000" });
+        this.glShow = false;
+        if(this.tabName === 'name1'){
+          this.getProductList(1);
+        }else{
+          this.getCrkList(1);
+        }
+        return;
+      }
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          this.filterStatus = true;
+          this.glShow = false;
+          if(this.tabName === 'name1'){
+            this.getProductList(1);
+          }else{
+            this.getCrkList(1);
+          }
+          this.$Message.success("查询成功！");
+        } else {
+          this.$Message.error("查询失败，请重试!");
+        }
+      });
+    },
+    handleReset(name){
+      this.filterStatus = false;
+      for(let key in this.filterItem){
+        this.filterItem[key] = '';
+      }
+    }
   },
   mounted() {
     // debugger;

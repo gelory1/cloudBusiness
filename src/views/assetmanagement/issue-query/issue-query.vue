@@ -860,12 +860,6 @@ export default {
         })
       })
     },
-    ok() {
-      this.$Message.info("Clicked ok");
-    },
-    cancel() {
-      this.$Message.info("Clicked cancel");
-    },
     search(val){
       this.getMenuList(0);
       if(this.$refs['menu'].currentActiveName !== -1) this.$refs['menu'].currentActiveName = -1;
