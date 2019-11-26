@@ -70,7 +70,8 @@
                 <p>敬请期待....</p>
               </div>
             </span>
-          </div>       
+          </div>  
+          <Button type="ghost" icon="ios-plus-empty" class="addBut" style="position:absolute;right:10px;top:10px" @click="addOrder">申请备货</Button>     
         </Header>
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
@@ -698,6 +699,9 @@ export default {
         this.filterItem[key] = '';
       }
     },
+    addOrder(){
+      this.$router.push('/ordermanage/create');
+    }
   },
   mounted(){
     this.getOrderList(1);

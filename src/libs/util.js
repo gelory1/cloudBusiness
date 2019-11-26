@@ -81,53 +81,46 @@ util.setCurrentPath = function (vm, name) {
     let title = '';
     let isOtherRouter = false;
     let otherRouter = '';
+    let routerMap = {
+        'otherRouter': '0',
+        'otherRouter1': '1',
+        'otherRouterOrder': '2'
+    };
     vm.$store.state.app.routers.forEach(item => {
         if (item.children.length === 1) {
             if (item.children[0].name === name) {
                 title = util.handleTitle(vm, item);
-                if (item.name === 'otherRouter'||item.name === 'otherRouter1') {
+                if (routerMap[item.name]) {
                     isOtherRouter = true;
-                    otherRouter = item.name === 'otherRouter'?'0':'1';
+                    otherRouter = routerMap[item.name];
                 }
             }
         } else {
             item.children.forEach(child => {
                 if (child.name === name) {
                     title = util.handleTitle(vm, child);
-                    if (item.name === 'otherRouter'||item.name === 'otherRouter1') {
+                    if (routerMap[item.name]) {
                         isOtherRouter = true;
-                        otherRouter = item.name === 'otherRouter'?'0':'1';
+                        otherRouter = routerMap[item.name];
                     }
                 }
             });
         }
     });
-    
-    let currentPathArr = [];
-    if (name === 'home_index') {
-        currentPathArr = [
-            {
-                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'home_index')),
-                path: '',
-                name: 'home_index'
-            }
-        ];
-    } else if ((name.indexOf('_index') >= 0 || isOtherRouter) && name !== 'home_index') {
-        
-        currentPathArr = otherRouter === '0'?[
+    let currentPathMap = {
+        '0': [
             {
                 title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'home_index')),
                 path: '/home',
                 name: 'home_index'
             },
-
-
             {
                 title: title,
                 path: '',
                 name: name
             }
-        ]:[
+        ],
+        '1': [
             {
                 title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'contractmanage_index')),
                 path: '/contractmanage',
@@ -138,7 +131,31 @@ util.setCurrentPath = function (vm, name) {
                 path: '',
                 name: name
             }
+        ],
+        '2': [
+            {
+                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'ordermanage_index')),
+                path: '/ordermanage',
+                name: 'ordermanage_index'
+            },
+            {
+                title: title,
+                path: '',
+                name: name
+            }
+        ]
+    };
+    let currentPathArr = [];
+    if (name === 'home_index') {
+        currentPathArr = [
+            {
+                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'home_index')),
+                path: '',
+                name: 'home_index'
+            }
         ];
+    } else if ((name.indexOf('_index') >= 0 || isOtherRouter) && name !== 'home_index') {
+        currentPathArr = currentPathMap[otherRouter];
     } else {
         let currentPathObj = vm.$store.state.app.routers.filter(item => {
             if (item.children.length <= 1) {
@@ -201,6 +218,7 @@ util.setCurrentPath = function (vm, name) {
             ];
         }
     }
+    console.log(currentPathArr);
     vm.$store.commit('setCurrentPath', currentPathArr);
     return currentPathArr;
 };

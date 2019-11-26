@@ -52,7 +52,7 @@ export const otherRouter = {
     children: [
         { path: 'home', title: {i18n: '客户管理'}, name: 'home_index', component: () => import('@/views/customermanage/customer-manage.vue') },
         { path: '/customermanage/see', title: '客户档案', name: 'see', component: () => import('@/views/customermanage/see.vue') },
-        { path: '/customermanage/edit', title: '客户档案（编辑）', name: 'edit', component: () => import('@/views/customermanage/edit.vue') },
+        { path: '/customermanage/edit', title: '客户档案（编辑）', name: 'edit-custom', component: () => import('@/views/customermanage/edit.vue') },
         { path: '/customermanage/add-informat', title: '新增开票信息', name: 'add-informat', component: () => import('@/views/customermanage/add-informat.vue') }
     ]
 };
@@ -66,6 +66,17 @@ export const otherRouter1 = {
         { path: 'contractmanage', title: {i18n: '合同管理'}, name: 'contractmanage_index', component: () => import('@/views/contractmanage/contract-manage.vue') },
         { path: '/contractmanage/detail', title: '合同台账', name: 'detail', component: () => import('@/views/contractmanage/detail.vue') },
         { path: '/contractmanage/edit', title: '合同台账（编辑）', name: 'edit', component: () => import('@/views/contractmanage/edit.vue') }
+    ]
+};
+// 订单管理
+export const otherRouterOrder = {
+    path: '/ordermanage',
+    name: 'otherRouterOrder',
+    redirect: '/ordermanage',
+    component: Main,
+    children: [
+        { path: 'ordermanage', title: {i18n: '订单管理'}, name: 'ordermanage_index', component: () => import('@/views/ordermanage/order-manage.vue') },
+        { path: '/ordermanage/create', title: '申请备货', name: 'create', component: () => import('@/views/ordermanage/create-order.vue') },
     ]
 };
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
@@ -169,6 +180,7 @@ export const routers = [
     loginRouter,
     otherRouter,
     otherRouter1,
+    otherRouterOrder,
     locking,
     ...appRouter,
     page500,

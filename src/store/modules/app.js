@@ -1,4 +1,4 @@
-import {otherRouter,otherRouter1, appRouter} from '@/router/router';
+import {otherRouter, otherRouter1, otherRouterOrder, appRouter} from '@/router/router';
 import Util from '@/libs/util';
 import Cookies from 'js-cookie';
 import Vue from 'vue';
@@ -28,9 +28,10 @@ const app = {
         routers: [
             otherRouter,
             otherRouter1,
+            otherRouterOrder,
             ...appRouter
         ],
-        tagsList: [...otherRouter.children,...otherRouter1.children],
+        tagsList: [...otherRouter.children, ...otherRouter1.children, ...otherRouterOrder.children],
         messageCount: 0,
         dontCache: ['text-editor', 'artical-publish'], // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
         provinces: []
