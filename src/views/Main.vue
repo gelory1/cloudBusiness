@@ -210,6 +210,10 @@ export default {
       }, 300);
     }
   },
+  beforeMount(){
+    let accountId = Number(localStorage.accountId);
+    this.$store.commit('setAccountId',accountId);
+  },
   mounted() {
     this.init();
     window.addEventListener("resize", this.scrollBarResize);

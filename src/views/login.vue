@@ -72,6 +72,7 @@ export default {
             if (response.data.code == 0) {
               Cookies.set("user", this.form.userName);
               Cookies.set("password", this.form.password);
+              localStorage.setItem('accountId',response.data.accountId);
               this.$store.commit('setAccountId',response.data.accountId);
               this.$router.push({
                 name: "home_index"
