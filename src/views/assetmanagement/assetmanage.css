@@ -245,7 +245,7 @@
     z-index:999
 
   }
-  .ivu-table-row-highlight td{
+  .issue .ivu-table-row-highlight td{
     background-color: #2d8cf0;
     color: white;
   }

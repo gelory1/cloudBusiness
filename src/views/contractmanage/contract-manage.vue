@@ -38,12 +38,18 @@
                     </Select>
                   </FormItem>
                   <FormItem label="省份/城市" prop="city">
-                    <Select v-model="filterItem.province" clearable>
-                      <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
-                    </Select>
-                    <Select v-model="filterItem.city" clearable>
-                      <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
-                    </Select>
+                    <Row>
+                      <Col span="12">
+                        <Select v-model="filterItem.province" clearable>
+                          <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
+                        </Select>
+                      </Col>
+                      <Col span="12">
+                        <Select v-model="filterItem.city" clearable>
+                          <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
+                        </Select>
+                      </Col>
+                    </Row>
                   </FormItem>
                   <FormItem label="运营公司" prop="manageCompany">
                     <Select v-model="filterItem.manageCompany" clearable>

@@ -20,17 +20,19 @@
         <hr
           style="border:0.6px solid #DDDDDD;width:90%;margin:0 auto;margin-top:20px;margin-bottom:5px"
         />
-        <Menu width="auto" class="menu" ref="menu" :open-names="['2']" @on-select="selecttwoClick">
-          <Submenu name="2">
-            <template slot="title">
-              <Icon type="arrow-down-b"></Icon>
-              <span>{{menuitem}}</span>
-            </template>
-            <MenuItem v-for="(item,index) in menudata" :name="index" :key="item.wh_id">
-              {{item.wh_name}}
-            </MenuItem>
-          </Submenu>
-        </Menu>
+        <div :style="{height:scrollHeight,overflow:'auto'}">
+          <Menu width="auto" class="menu" ref="menu" :open-names="['2']" @on-select="selecttwoClick">
+            <Submenu name="2">
+              <template slot="title">
+                <Icon type="arrow-down-b"></Icon>
+                <span>{{menuitem}}</span>
+              </template>
+              <MenuItem v-for="(item,index) in menudata" :name="index" :key="item.wh_id">
+                {{item.wh_name}}
+              </MenuItem>
+            </Submenu>
+          </Menu>
+        </div>
         <div slot="trigger"></div>
       </Sider>
       <Layout>
@@ -875,6 +877,13 @@ export default {
   },
   mounted() {
     this.selectClick(0);
+  },
+  computed: {
+    scrollHeight(){
+      let h = 0;
+      h = (window.screen.height-330)+'px'
+      return h;
+    }
   },
   watch:{
     tabName(nv){

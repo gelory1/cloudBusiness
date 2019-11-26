@@ -20,17 +20,19 @@
         <hr
           style="border:0.6px solid #DDDDDD;width:90%;margin:0 auto;margin-top:20px;margin-bottom:5px;"
         />
-        <Menu width="auto" class="menu" ref="menu" :open-names="['2']" @on-select="selecttwoClick" >
-          <Submenu name="2">
-            <template slot="title">
-              <Icon type="arrow-down-b"></Icon>
-              <span>{{menuitem}}</span>
-            </template>
-            <MenuItem v-for="(item,index) in menudata" :key="item.wh_id" :name="index">
-              {{item.wh_name}}
-            </MenuItem>
-          </Submenu>
-        </Menu>
+        <div :style="{height:scrollHeight,overflow:'auto'}">
+          <Menu width="auto" class="menu" ref="menu" :open-names="['2']" @on-select="selecttwoClick" >
+            <Submenu name="2">
+              <template slot="title">
+                <Icon type="arrow-down-b"></Icon>
+                <span>{{menuitem}}</span>
+              </template>
+              <MenuItem v-for="(item,index) in menudata" :key="item.wh_id" :name="index">
+                {{item.wh_name}}
+              </MenuItem>
+            </Submenu>
+          </Menu>
+        </div>
         <div slot="trigger"></div>
       </Sider>
       <Layout>
@@ -112,6 +114,8 @@
                 :data="jbxx_data"
                 size="small"
                 :loading="ckLoading"
+                highlight-row
+                @on-current-change="changeRow"
               >
               </Table>
               <Page
@@ -131,6 +135,8 @@
                 :data="crk_data" size="small" 
                 @on-row-dblclick="zcrowClick"
                 :loading="crkLoading"
+                highlight-row
+                @on-current-change="changeRow"
                 >
               </Table>
               <Page
@@ -294,11 +300,13 @@ export default {
       jbxx_columns: [
         {
           title: "存货编码",
-          key: "chbm"
+          key: "chbm",
+          width: '150'
         },
         {
           title: "存货名称",
-          key: "chmc"
+          key: "chmc",
+          width:'350'
         },
         {
           title: "规格型号",
@@ -306,11 +314,13 @@ export default {
         },
         {
           title: "计量单位",
-          key: "jldw"
+          key: "jldw",
+          width: '100'
         },
         {
           title: "数量",
-          key: "sl"
+          key: "sl",
+          width: '100'
         },
         {
           title: "存放仓库",
@@ -390,19 +400,22 @@ export default {
         },
         {
           title: "存货名称",
-          key: "product_name"
+          key: "product_name",
+          width: '350'
         },
         {
           title: "规格型号",
-          key: "ggxh"
+          key: "ggxh",
+          width: '350'
         },
         {
           title: "计量单位",
-          key: "jldw"
+          key: "jldw",
+          width: '100'
         },
         {
           title: "箱码",
-          key: "xm"
+          key: "xm",
         },
         {
           title: "状态",
@@ -717,6 +730,9 @@ export default {
       for(let key in this.filterItem){
         this.filterItem[key] = '';
       }
+    },
+    changeRow(row){
+      this.inputVal = row.chbm;
     }
   },
   mounted() {
@@ -729,6 +745,11 @@ export default {
     //     return '2-0';
     //   }
     // }
+    scrollHeight(){
+      let h = 0;
+      h = (window.screen.height-330)+'px'
+      return h;
+    }
   },
   watch: {
     tabName(nv){
