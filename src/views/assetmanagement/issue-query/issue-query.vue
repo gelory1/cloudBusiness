@@ -711,7 +711,7 @@ export default {
         typeid: 23001,
         data: [
           {
-            account_id: 520,
+            account_id: this.$store.state.user.accountId,
             wh_type: index === 0?undefined:index === 1?0:index === 2?1:3,
             allocation_type:0
           }
@@ -745,7 +745,7 @@ export default {
         typeid: 23004,
         data: [
           {
-            account_id: 520,
+            account_id: this.$store.state.user.accountId,
             wh_id: this.menudata&&this.menudata.length>0&&this.ck_current_index !== ''?this.menudata[this.ck_current_index].wh_id:undefined,
             keyword: this.inputVal === ''?undefined:this.inputVal,
             page_num: p,
@@ -833,7 +833,7 @@ export default {
         typeid: 23009,
         data: [
           {
-            account_id: 520,
+            account_id: this.$store.state.user.accountId,
             wh_id: this.selectedWhid,
             product_code: this.selectedprocode,
             page_num: p,

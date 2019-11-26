@@ -509,7 +509,7 @@ export default {
           "typeid": 26001,
           "data": [
           {
-            "account_id": 1009,
+            "account_id": this.$store.state.user.accountId,
             "customerName": this.filterItem.customerName,
             "signStarttime": this.filterItem.signStarttime,
             "signEndtime": this.filterItem.signEndtime,

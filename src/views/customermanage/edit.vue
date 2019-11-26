@@ -718,7 +718,7 @@ export default {
           typeid: this.isNewCreate?25002:25006,
           data: [
           {
-            "account_id": 1009,
+            "account_id": this.$store.state.user.accountId,
             "customerNo": this.isNewCreate?undefined:((this.data||{}).data||{}).customer_no,
             "customerName": this.formValidate.name,
             "customerLevel": this.formValidate.level.index,

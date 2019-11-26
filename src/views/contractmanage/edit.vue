@@ -394,7 +394,7 @@ export default {
         "data": [
             {
               "customerNo":this.data.data.customerNo,
-              "account_id":1351,
+              "account_id":this.$store.state.user.accountId,
               "contractNo": this.data.data.contractNo,
               "signUserCount": this.formValidate.signUserAmount,
               "saleManName": "李四",

@@ -539,7 +539,7 @@ export default {
         typeid: "24001",
         data: [
           {
-            account_id: 520,
+            account_id: this.$store.state.user.accountId,
             order_status: this.selectedTab.index === 0?undefined:(this.selectedTab.index-1),
             // customer_name:'',
             order_starttime:this.filterItem.startTime === ''?undefined:this.filterItem.startTime,
@@ -609,7 +609,7 @@ export default {
         typeid: "23009",
         data: [
           {
-            account_id: 520,
+            account_id: this.$store.state.user.accountId,
             wh_id: this.selectedWhid,
             product_code: this.selectedprocode,
             page_num: p,

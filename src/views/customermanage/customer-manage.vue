@@ -312,7 +312,7 @@ export default {
         typeid: 25001,
         data: [
           {
-            account_id: 1009,
+            account_id: this.$store.state.user.accountId,
             page_num:p,
             page_size:10,
             customer_name:'',

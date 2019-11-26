@@ -3,7 +3,8 @@ import Cookies from 'js-cookie';
 const user = {
     state: {
         customerInfo: {},
-        contractInfo: {}
+        contractInfo: {},
+        accountId: 0
     },
     mutations: {
         logout (state, vm) {
@@ -23,11 +24,14 @@ const user = {
                 localStorage.theme = theme;
             }
         },
-        selectedCustom(state, data){
+        selectedCustom (state, data) {
             state.customerInfo = data;
         },
-        selectedContract(state, data){
+        selectedContract (state, data) {
             state.contractInfo = data;
+        },
+        setAccountId (state, data) {
+            state.accountId = data;
         }
     }
 };
