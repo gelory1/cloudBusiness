@@ -315,12 +315,14 @@ export default {
         {
           title: "计量单位",
           key: "jldw",
-          width: '100'
+          width: '90',
+          align:'center'
         },
         {
           title: "数量",
           key: "sl",
-          width: '100'
+          width: '80',
+          align:'center'
         },
         {
           title: "存放仓库",
@@ -411,7 +413,8 @@ export default {
         {
           title: "计量单位",
           key: "jldw",
-          width: '100'
+          width: '90',
+          align:'center'
         },
         {
           title: "箱码",
@@ -505,6 +508,7 @@ export default {
           }
         ],
       };
+      this.czjldata = [];
       this.$http.PostXLASSETS(request).then(response => {
         let res = response.data.result.data;
         this.jbxx.tm = res[0].device_address;
