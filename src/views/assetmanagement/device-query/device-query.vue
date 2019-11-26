@@ -740,11 +740,6 @@ export default {
     this.selectClick(0);
   },
   computed: {
-    // zkActive:function(){
-    //   if(this.menudata&&this.menudata.length>0){
-    //     return '2-0';
-    //   }
-    // }
     scrollHeight(){
       let h = 0;
       h = (window.screen.height-330)+'px'
