@@ -38,7 +38,7 @@
       <Layout>
         <Header :style="{background: '#fff',minWidth:'400px'}">
           <div style="float:right;">
-            <Input icon="ios-search" placeholder="请输入内容" style="width: 200px;margin-right:20px;" @on-enter="search" v-model="inputVal"/>
+            <Input icon="ios-search" placeholder="请输入内容" style="width: 200px;margin-right:20px;" @on-enter="search" @on-click="search" v-model="inputVal"/>
             <span class="f_gl"> 
               <span @click="glkhClick" class="cor">            
                 <Icon type="ios-list" />

@@ -13,7 +13,7 @@
         </div>
         <Header :style="{background: '#fff',minWidth:'400px'}">
           <div style="float:right;">
-            <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="getCustomList(1)" style="width: 200px;margin-right:20px;" />
+            <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="getCustomList(1)" @on-click="getCustomList(1)" style="width: 200px;margin-right:20px;" />
             <span class="f_gl">
               <span @click="glkhClick" class="cor">
                 <Icon type="ios-list" />
@@ -50,12 +50,12 @@
                         <Select v-model="filterItem.province" clearable>
                           <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
                         </Select>
-                    </Col>
-                    <Col span="12">
-                      <Select v-model="filterItem.city" clearable>
-                        <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
-                      </Select>
-                    </Col>
+                      </Col>
+                      <Col span="12">
+                        <Select v-model="filterItem.city" clearable>
+                          <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
+                        </Select>
+                      </Col>
                     </Row>
                   </FormItem>
                   <FormItem label="运营公司" prop="yygs">

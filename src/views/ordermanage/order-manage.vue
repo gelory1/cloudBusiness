@@ -13,7 +13,7 @@
         </div>
         <Header :style="{background: '#fff',minWidth:'400px',postion:'relative'}">
           <div style="float:right;">
-            <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="getOrderList(1)" style="width: 200px;margin-right:20px;" />
+            <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="getOrderList(1)" @on-click="getOrderList(1)" style="width: 200px;margin-right:20px;" />
             <!-- <Button type="text" @click="glShow=!glShow;">
               <Icon type="ios-list" />
               <span>过滤</span>
