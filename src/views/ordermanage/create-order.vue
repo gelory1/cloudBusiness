@@ -255,13 +255,14 @@ export default {
           width: 150,
           align: 'center',
           render: (h, params) => {
-                return h('el-input-number', {
+                return h('InputNumber', {
                         props: {
-                            size: 'small'
+                            size: 'small',
+                            value: 0
                         },
                         on: {
-                            change: () => {
-                                
+                            change: (a) => {
+                                console.log(a);
                             }
                         },
                     },

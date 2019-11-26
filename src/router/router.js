@@ -53,6 +53,7 @@ export const otherRouter = {
         { path: 'home', title: {i18n: '客户管理'}, name: 'home_index', component: () => import('@/views/customermanage/customer-manage.vue') },
         { path: '/customermanage/see', title: '客户档案', name: 'see', component: () => import('@/views/customermanage/see.vue') },
         { path: '/customermanage/edit', title: '客户档案（编辑）', name: 'edit-custom', component: () => import('@/views/customermanage/edit.vue') },
+        { path: '/customermanage/new', title: '客户档案（新建）', name: 'new-custom', component: () => import('@/views/customermanage/edit.vue') },
         { path: '/customermanage/add-informat', title: '新增开票信息', name: 'add-informat', component: () => import('@/views/customermanage/add-informat.vue') }
     ]
 };

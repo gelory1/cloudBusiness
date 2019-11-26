@@ -141,7 +141,7 @@ const customerTypes= [
   },
   {
     no:3,
-    type: "其他"
+    type: "伙伴客户"
   }
 ]
 const natures = ['A级', 'B级','C级','D级','E级',]
@@ -434,7 +434,7 @@ export default {
     },
     addClick(){
       this.$store.commit('selectedCustom',{});
-      this.$router.push({ path: "/customermanage/edit" });
+      this.$router.push({ path: "/customermanage/new" });
     },
     getProvinces(){
       let request = {

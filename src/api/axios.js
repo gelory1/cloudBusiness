@@ -140,8 +140,11 @@ const workflow = {
     // 城市查询 客户查询
     XLSELECT (params) {
         return axios.post('/public/api/xlselect/query',params);
-    }
-    
+    },
+    //工作台查询
+    XLWORKBENCH (params) {
+        return axios.post('/public/api/xlworkbench/query',params);
+    },
 
 };
 export default workflow;

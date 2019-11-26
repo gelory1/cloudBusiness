@@ -313,7 +313,7 @@ const natures = [
     index:2
   },
   {
-    value:'其他',
+    value:'伙伴客户',
     index:3
   },
 ];

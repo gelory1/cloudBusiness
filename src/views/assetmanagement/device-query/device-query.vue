@@ -135,8 +135,6 @@
                 :data="crk_data" size="small" 
                 @on-row-dblclick="zcrowClick"
                 :loading="crkLoading"
-                highlight-row
-                @on-current-change="changeRow"
                 >
               </Table>
               <Page
@@ -228,6 +226,10 @@ var $ = require("jquery");
 import sblbTale from "../../public-components/sblb_table.vue";
 const status = [
   {
+    val:'销售出库',
+    index:-1
+  },
+  {
     val:'出库中（针对仓库）',
     index:0
   },
@@ -273,6 +275,7 @@ export default {
     return {
       status,
       mapStatus: {
+        '-1':'销售出库',
         0: '出库中（针对仓库）',
         1:'待收货',
         10: '入库；已收货',
@@ -359,6 +362,7 @@ export default {
                     click: () => {
                       this.selectedProcode = this.jbxx_data[params.index].chbm;
                       this.selectedWhid = this.jbxx_data[params.index].wh_id;
+                      this.inputVal = params.row.chbm;
                       this.getCrkList(1);
                       this.tabName = 'name2';
                     }

@@ -198,7 +198,7 @@ export default {
       this.$Message.error("已取消");
     },
     editClick(){
-      this.$router.push({ path: "/customermanage/edit" });
+      this.$router.push({ path: "/customermanage/new" });
     },
     getAllCustom(){
       let requst = {

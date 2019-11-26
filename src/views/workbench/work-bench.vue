@@ -1,17 +1,10 @@
 <template>
   <div class="workbench">
-    <!-- 消息通知 -->
-    <div>
-      <div class="news" v-show="newsShow">
-        <h2>{{title}}</h2><span @click="closeClick">X</span>
-        <p>{{content}}</p>
-      </div>
-    </div>
     <layout class="layout">
       <div>
         <div class="gz_left left bor" style="min-height:800px;">
           <Input icon="ios-search" placeholder="请输入。。。。" class="gz_input"></Input>
-          <Tabs value="name1">
+          <Tabs value="name1" v-model="tabName" >
             <TabPane label="待办工作" name="name1">
               <Table
                 
@@ -259,6 +252,20 @@
 import highchartsRing from './highcharts-ring.vue'
 import highchartsLine from './highcharts-line.vue'
 import datePicker from './date-picker.vue'
+
+const typeMap = {
+  1:' 审批提醒',
+  2:' 签署提醒',
+  3:'支付提醒',
+  4:'（财务）到款确认',
+  5:'下单提醒',
+  6:'发货提醒',
+  7:'收货提醒',
+  8:'上线审批',
+  9:'上线通知',
+  10: '回款核准',
+  11: '开票提醒',
+}
 export default {
   name: "work-bench",
   components:{
@@ -268,6 +275,7 @@ export default {
   },
   data() {
     return {
+      typeMap,
       newgzForm: {
         rwlx: "",
         fzr: "",
@@ -316,41 +324,7 @@ export default {
         }
       ],
       gz_data: [
-        {
-          gznr: "请尽快支付，支付点这里",
-          type: "4333333333333",
-          fzr: "占戈夫",
-          jztime: "324-4-4",
-          // 勾选属性
-          _checked: false,
-          status:1
-        },
-        {
-          gznr: "回款待审核，点这里",
-          type: "32fdgdgdgdg",
-          fzr: "占戈夫",
-          jztime: "324-4-4",
-          _checked: false,
-          status:2
-        },
-        {
-          gznr: "到款确认点这里",
-          type: "32fdgdgdgdg",
-          fzr: "占戈夫",
-          jztime: "324-4-4",
-          _checked: false,
-          status:3
-        },
-        {
-          gznr: "请登陆新联工程助理确认收货",
-          type: "32fdgdgdgdg",
-          fzr: "占戈夫",
-          jztime: "324-4-4",
-          _checked: false,
-          status:4
-        },
-        
-      ],
+        ],
       fq_columns: [
         {
           title: "工作内容",
@@ -532,10 +506,57 @@ export default {
       newsShow:true,
       title:"支付提醒",
       content:"ZHHB-FW20190918002合同已签署完毕，请尽快支付。",
-      dksj:""
+      dksj:"",
+      tabName:'name1'
     };
   },
   methods: {
+    getWorkbench(){
+      let request = {
+          "typeid": 28001,
+          "data": [
+            {
+              "workBenchStatus": this.tabName === 'name1'?1:this.tabName === 'name2'?2:3,
+              "accountId": 520, //this.$store.state.user.accountId
+            }
+          ]
+      }
+      if(this.gz_data.length>0&&this.tabName === 'name1') return;
+      this.$http.XLWORKBENCH(request).then(response => {
+        let { data } = response.data.result;
+        data.forEach(d => {
+          let item = {};
+          item.gznr = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`;
+          item.type = this.typeMap[d.workBenchType];
+          item.fzr = d.accountName;
+          item.jztime = d.dueTime;
+          item._checked = d.false;
+          item.data = d;
+          this.gz_data.push(item);
+          this.$Notice.info({
+              title: this.typeMap[d.workBenchType],
+              desc: `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`,
+              duration: 0
+          });
+        })
+      })
+    },
+    getRebackAppr(data){
+      console.log(data);
+      let request = {
+          "typeid": 26010,
+          "data": [
+              {
+                  "customerName": '致远互联',//data.workBenchContentObj.payUnitName,
+                  "page_size": 10,
+                  "page_num": 1
+              }
+          ]
+      }
+      this.$http.XLCONTRACT(request).then(response => {
+
+      })
+    },
     rowClassName (row, index) {
         if (index === this.indexStyle) {
             return 'demo-table-info-row';
@@ -551,18 +572,18 @@ export default {
         return '';
     },
     dbgzTableClick(params){
-      // status:  1-支付 2-回款核准 3-确认支付
-      if(params.row.status == 1){
+      if(params.row.data.workBenchType === 3){
           if (this.checkIndex == 0) {
             this.$Message.info("请选择要支付的选项");
-          } else if(this.checkIndex >0 && params.row.status == 1){
+          } else if(this.checkIndex >0){
             this.zfmodal = true;
           }
-        }else if(params.row.status == 2){
-          this.hkhzmodal = true
-        }else if(params.row.status == 3){
+        }else if(params.row.data.workBenchType === 10){
+          this.hkhzmodal = true;
+          this.getRebackAppr(params.row.data);
+        }else if(params.row.data.workBenchType === 3){
           this.dkqrmodal = true
-        }else if(params.row.status == 4){
+        }else if(params.row.data.workBenchType === 4){
           alert("敬请期待......")
         }
     },
@@ -626,7 +647,12 @@ export default {
       $(this).css({"border":"1px solid red"}).siblings(".zffs div").css({"border":"1px solid #e4e7ed"})
       this.zffsIndex = ($(this).index())     
     });
-
+    this.getWorkbench();
+  },
+  watch:{
+    tabName(){
+      this.getWorkbench();
+    }
   }
 };
 </script>

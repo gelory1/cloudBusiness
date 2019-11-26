@@ -112,7 +112,7 @@
                 >
                   <span>收起</span>
                   <span>
-                    <Icon type="ios-arrow-down"></Icon>
+                    <Icon type="ios-arrow-up"></Icon>
                   </span>
                 </p>
                 <p
@@ -123,7 +123,7 @@
                 >
                   <span>展开</span>
                   <span>
-                    <Icon type="ios-arrow-up"></Icon>
+                    <Icon type="ios-arrow-down"></Icon>
                   </span>
                 </p>
               </div>
@@ -171,6 +171,7 @@
           </footer>
         </div>
         <div class="lxr_right" style="minHeight:820px">
+          <div style="padding:10px;border-bottom:1px solid black;">联系人</div>
           <div class="lxr"   v-for="(item,index) in ((data||{}).data||{}).contacts_list" :key="index">
             <p class="lxr_icon">
               <Icon type="ios-person" />
@@ -242,8 +243,8 @@ export default {
           zc:"军师",
           dh:"123243546546"
       }],
-      eye1Show: true,
-      eyeShow: false,
+      eye1Show: false,
+      eyeShow: true,
       kpxxShow: false,
       citys: [],
       industryMap:industryMap
@@ -286,7 +287,7 @@ export default {
     empower_city(){
       let province = this.$store.state.app.provinces.find(c => c.id === ((this.data||{}).data||{}).empower_province)||{};
       let city = this.citys.find(c => c.id === ((this.data||{}).data||{}).empower_city)||{};
-      return province.name + ' ' + city.name;
+      return (province.name||'') + ' ' + (city.name||'');
     }
   }
 };
