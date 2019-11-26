@@ -258,13 +258,11 @@
 <script>
 import highchartsRing from './highcharts-ring.vue'
 import highchartsLine from './highcharts-line.vue'
-import datePicker from './date-picker.vue'
 export default {
   name: "work-bench",
   components:{
     highchartsRing,
     highchartsLine,
-    datePicker
   },
   data() {
     return {
@@ -402,7 +400,13 @@ export default {
               return h('div', [
                   h('datePicker', {
                       props: {
-                          data: this.dksj,
+                          "value": params.row.dksj,
+                      },
+                      on:{
+                        'on-change': (value) => {
+                          this.add_data[params.row._index].dksj = value
+                          alert(JSON.stringify(this.add_data))        
+                        }
                       }
                   }),
               ]);
@@ -410,11 +414,43 @@ export default {
         },
         {
           title: "金额（元）",
-          key: "je"
+          key: "je",
+          render: (h, params) => {
+              return h('div', [
+                  h('Input', {
+                      props: {
+                          "placeholder":"请输入......",
+                          "value": params.row.je,
+                          "type":"text"
+                      },
+                      on:{
+                        'on-change': (value) => {
+                          this.add_data[params.index].je = value
+                        }
+                      }
+                  }),
+              ]);
+          }
         },
         {
           title: "付款方",
-          key: "fkf"
+          key: "fkf",
+          render: (h, params) => {
+              return h('div', [
+                  h('Input', {
+                      props: {
+                          "placeholder":"请输入......",
+                          "value": params.row.fkf,
+                          "type":"text"
+                      },
+                      on:{
+                        'on-change': (value) => {
+                          this.add_data[params.index].fkf = value
+                        }
+                      }
+                  }),
+              ]);
+          }
         }
       ],
       add_data: [
@@ -422,7 +458,12 @@ export default {
           dksj:"2019-9-9",
           je: "3242",
           fkf: "23424"
-        }
+        },
+        {
+          dksj:"2019-9-9",
+          je: "3242",
+          fkf: "23424"
+        },
       ],
       zf: {
         skf: "曹操",
@@ -532,7 +573,7 @@ export default {
       newsShow:true,
       title:"支付提醒",
       content:"ZHHB-FW20190918002合同已签署完毕，请尽快支付。",
-      dksj:""
+      obj:{}
     };
   },
   methods: {
@@ -573,13 +614,12 @@ export default {
       this.newgzmodal = true;
     },
     addcolClick(){
-      var obj = {}
-      // {
-      //     dksj:"",
-      //     je: "3242",
-      //     fkf: "23424"
-      //   }
-
+      this.obj = {
+          dksj:"",
+          je: "",
+          fkf: ""
+     }
+     this.add_data.push(this.obj)
     },
     nextzfClick() {
       if (this.checkIndex == 1) {
