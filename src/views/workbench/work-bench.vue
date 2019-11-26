@@ -251,8 +251,6 @@
 <script>
 import highchartsRing from './highcharts-ring.vue'
 import highchartsLine from './highcharts-line.vue'
-<<<<<<< HEAD
-import datePicker from './date-picker.vue'
 
 const typeMap = {
   1:' 审批提醒',
@@ -267,8 +265,6 @@ const typeMap = {
   10: '回款核准',
   11: '开票提醒',
 }
-=======
->>>>>>> 006fa56261ed0b3a097315dc277409faf2cabdca
 export default {
   name: "work-bench",
   components:{
@@ -551,12 +547,8 @@ export default {
       newsShow:true,
       title:"支付提醒",
       content:"ZHHB-FW20190918002合同已签署完毕，请尽快支付。",
-<<<<<<< HEAD
-      dksj:"",
-      tabName:'name1'
-=======
+      tabName:'name1',
       obj:{}
->>>>>>> 006fa56261ed0b3a097315dc277409faf2cabdca
     };
   },
   methods: {
