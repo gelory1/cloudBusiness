@@ -767,8 +767,12 @@ export default {
       api.PostXLASSETS(request).then((response)=>{
         let res = response.data.result.data;
         if(this.tabName === 'name1'){
+          this.inLoading = true;
+          this.rkdj_data = [];
           this.zkSum = res[0].sum;
         }else{
+          this.outLoading = true;
+          this.ckdj_data = [];
           this.crkSum = res[0].sum;
         }
         

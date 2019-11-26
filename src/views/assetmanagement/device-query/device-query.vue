@@ -740,7 +740,6 @@ export default {
     }
   },
   mounted() {
-    // debugger;
     this.selectClick(0);
   },
   computed: {
