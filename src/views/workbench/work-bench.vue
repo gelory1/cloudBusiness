@@ -65,15 +65,15 @@
     <Modal v-model="zfmodal" class="aa">
       <p class="zf_p">支付</p>
       <p class="zf_p1">请选择支付方式：</p>
-      <div class="zffs">
-        <div class="zf_img">
-          <img src="../../images/workbench/zfb.png" alt />
+      <div class="zffs" @click="selectedPayStyle">
+        <div class="zf_img" index="0" :style="{borderColor:borderColor[0]}">
+          <img index="0" src="../../images/workbench/zfb.png" alt />
         </div>
-        <div class="zf_img">
-          <img src="../../images/workbench/wx.png" alt />
+        <div class="zf_img" index="1" :style="{borderColor:borderColor[1]}">
+          <img index="1" src="../../images/workbench/wx.png" alt />
         </div>
-        <div class="zf_img">
-          <img src="../../images/workbench/xx.png" alt />
+        <div class="zf_img" index="2" :style="{borderColor:borderColor[2]}">
+          <img index="2" src="../../images/workbench/xx.png" alt />
         </div>
       </div>
       <Button class="zf_butt" type="primary" @click="nextzfClick" :disabled="disabled">下一步</Button>
@@ -160,7 +160,7 @@
       </Form>
     </Modal>
     <!-- 回款核准 -->
-    <Modal v-model="hkhzmodal" class="aa" width="1000">
+    <Modal v-model="hkhzmodal" class="aa" width="1000" :style="{top:5 +'px'}">
       <p class="zf_p">回款核准</p>
       <div>
         <header class="zf_div zf_head">
@@ -193,7 +193,7 @@
         </section>
         <section>
           <div class="hz1">
-            <Table :row-class-name="rowClassName" :columns="hz1_columns" :data="hz1_data" @on-row-click="hz1Click"></Table>
+            <Table :row-class-name="rowClassName" :columns="hz1_columns" :data="hz1_data" @on-row-click="hz1Click" height="400"></Table>
             <Page
               :total="sum"
               :page-size="10"
@@ -215,34 +215,34 @@
         <div class="hk_div">
           <img src="../../images/workbench/rmb.png" alt />
           <p>
-            <b class="b">1002131</b>
+            <b class="b">{{ensurePayBack.payAmount}}</b>
             <span style="color:#2e8ff4">元</span>
           </p>
         </div>
         <div class="kh_div">
           <p>
             <span>客户名称：</span>
-            <i>南京新联电与i哦怕斤斤计较斤斤计较子</i>
+            <i>{{ensurePayBack.payUnitName}}</i>
           </p>
           <p>
             <span>当前状态：</span>
-            <i>南京新联电子</i>
+            <i>{{typeMap[ensurePayBack.workBenchType]}}</i>
           </p>
           <p>
             <span>合同编号：</span>
-            <i>南京新联电子</i>
+            <i>{{ensurePayBack.contractNo}}</i>
           </p>
           <p>
             <span>对应账期：</span>
-            <i style="font-weight:bold">南京新联电子</i>
+            <i style="font-weight:bold">{{ensurePayBack.paymentPeriod}}</i>
           </p>
           <p>
             <span>交易人员：</span>
-            <i>南联电子</i>
+            <i>{{ensurePayBack.trader}}</i>
           </p>
           <p>
             <span>交易时间：</span>
-            <i>南京新电子</i>
+            <i>{{ensurePayBack.transactionTime}}</i>
           </p>
           <p>
             <span>付款凭证：</span>
@@ -258,7 +258,7 @@
           <span class="red">已在财务系统核准，款未到帐</span>
         </Radio>
       </RadioGroup>
-      <Button class="kh_but" type="primary" @click="dkqrmodal = false">提交</Button>
+      <Button class="kh_but" type="primary" @click="ensurePayBackSub">提交</Button>
     </Modal>
   </div>
 </template>
@@ -266,6 +266,7 @@
 <script>
 import highchartsRing from './highcharts-ring.vue'
 import highchartsLine from './highcharts-line.vue'
+import { error } from 'highcharts'
 
 const typeMap = {
   1:' 审批提醒',
@@ -303,8 +304,8 @@ const yb_columns = [
     key: "fzr"
   },
   {
-    title: "截至日期",
-    key: "jztime"
+    title: "日期",
+    key: "duetime"
   }
 ];
 export default {
@@ -344,7 +345,13 @@ export default {
                       },
                       on: {
                           click: () => {
-                                this.dbgzTableClick(params)
+                              this.dbgzTableClick(params);
+                              if(params.row.data.workBenchType === 3){
+                                this.gz_data[params.index]._checked = true;
+                                // this.gzselClick([params.row]);
+                                this.checkedData = [params.row]; //暂时只能一条一条支付
+                                this.checkIndex = this.checkedData.length;
+                              }
                             }
                         }
                   },params.row.gznr)
@@ -569,7 +576,23 @@ export default {
       obj:{},
       sum:0,
       workBenchData:{},
-      yb_data:[]
+      yb_data:[],
+      button1:'',
+      borderColor:['#e4e7ed','#e4e7ed','#e4e7ed'],
+      checkedData:[],
+      ensurePayBack:{
+        contractNo: "",
+        lastWorkbenchId: "",
+        payAmount: "",
+        transactionTime: "",
+        payUnitName: "",
+        paymentPeriod: "",
+        receiveSide: "",
+        trader: "",
+        workBenchStatus:'',
+        ensure:"",
+        workBenchId:""
+      }
     };
   },
   methods: {
@@ -586,24 +609,47 @@ export default {
       this.gz_data = [];
       this.fq_data = [];
       this.yb_data = [];
-      if(this.tabName === 'name1') this.$Notice.destroy();
+      if(this.tabName === 'name1') this.$notify.closeAll();
       this.$http.XLWORKBENCH(request).then(response => {
         let { data } = response.data.result;
-        data.forEach(d => {
+        data.forEach((d,index) => {
           let item = {};
-          item.gznr = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`;
+          switch (d.workBenchType) {
+            case 10:
+              item.gznr = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`;
+              break;
+            case 4:
+              item.gznr = `到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`;
+              break;
+            case 3:
+              item.gznr = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`;
+              break;
+          }
           item.type = this.typeMap[d.workBenchType];
           item.fzr = d.accountName;
-          item.jztime = d.dueTime;
+          item.jztime = d.dueTimeDescribe;
+          item.duetime = d.dueTime;
           item._checked = d.false;
           item.zt = d.workBenchStatus;
           item.data = d;
           if(this.tabName === 'name1'){
             this.gz_data.push(item);
-            this.$Notice.info({
+            var _this = this;
+            this.$notify({
               title: this.typeMap[d.workBenchType],
-              desc: `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`,
-              duration: 0
+              message: `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`,
+              offset: 10,
+              duration: 0,
+              onClick: function(){
+                this.close();
+                _this.dbgzTableClick({row:item});
+                if(item.data.workBenchType === 3){
+                  _this.gz_data[index]._checked = true;
+                  // this.gzselClick([item]);
+                  _this.checkedData = [item]; //暂时只能一条一条支付
+                  _this.checkIndex = _this.checkedData.length;
+                }
+              }
             });
           }else if(this.tabName === 'name3'){
             this.fq_data.push(item);
@@ -655,11 +701,7 @@ export default {
     },
     dbgzTableClick(params){
       if(params.row.data.workBenchType === 3){
-          if (this.checkIndex == 0) {
-            this.$Message.info("请选择要支付的选项");
-          } else if(this.checkIndex >0){
-            this.zfmodal = true;
-          }
+          this.zfmodal = true;
         }else if(params.row.data.workBenchType === 10){
           this.hkhzmodal = true;
           this.hkhz = {
@@ -669,9 +711,22 @@ export default {
           }
           this.workBenchData = params.row.data;
           this.getRebackAppr(1);
-        }else if(params.row.data.workBenchType === 3){
-          this.dkqrmodal = true
         }else if(params.row.data.workBenchType === 4){
+          this.dkqrmodal = true;
+          this.ensurePayBack = {
+            contractNo: params.row.data.workBenchContentObj.contractNo,
+            lastWorkbenchId: params.row.data.workBenchContentObj.lastWorkbenchId,
+            payAmount: params.row.data.workBenchContentObj.payAmount,
+            transactionTime: params.row.data.workBenchContentObj.transactionTime,
+            payUnitName: params.row.data.workBenchContentObj.payUnitName,
+            paymentPeriod: params.row.data.workBenchContentObj.paymentPeriod,
+            receiveSide: params.row.data.workBenchContentObj.receiveSide,
+            trader: params.row.data.workBenchContentObj.trader,
+            workBenchType: params.row.data.workBenchType,
+            ensure:'',
+            workBenchId: params.row.data.workbenchId
+          }
+        }else if(params.row.data.workBenchType === 5){
           alert("敬请期待......")
         }
     },
@@ -705,23 +760,51 @@ export default {
       this.add_data_save.push({});
     },
     nextzfClick() {
-      if (this.checkIndex == 1) {
+      this.zfmodal = false;
+      this.zf.skf = this.checkedData[0].data.workBenchContentObj.receiveSide;
+      this.zf.htbh = this.checkedData[0].data.workBenchContentObj.contractNo;
+      this.zf.dyzq = this.checkedData[0].data.workBenchContentObj.paymentPeriod;
+      this.zf.yf = 0;
+      this.checkedData.forEach(data => {
+        this.zf.yf += Number(data.data.workBenchContentObj.payAmount);
+      })
+
+      //暂时只支持一条一条进行支付
+      // if (this.checkIndex <= 1 ) {
         this.dtzfShow = true;
         this.zfqrmodal = true;
         this.morezfShow = !this.dtzfShow;
-      } else if (this.checkIndex > 1) {
-        this.morezfShow = true;
-        this.zfqrmodal = true;
-        this.dtzfShow = !this.morezfShow;
-      }
+      // } else if (this.checkIndex > 1) {
+      //   this.morezfShow = true;
+      //   this.zfqrmodal = true;
+      //   this.dtzfShow = !this.morezfShow;
+      // }
     },
     closeClick(){
       this.newsShow = false
     },
     gzselClick(data) {
+      // this.checkedData = data;//暂时只按照一条一条进行支付
       this.checkIndex = data.length;
     },
     sureClick() {
+      let request = {
+        "typeid": 28004,
+        "data": [
+          {
+            "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
+            // "photoUrl": "http://10.0.17.213:8068/url/img.png"
+          }
+        ]
+      }
+      this.$http.UPDATEWORKBENCH(request).then(response => {
+        this.getWorkbench();
+      },error => {
+        if(error.data.code === 0){
+          this.getWorkbench();
+          this.$Message.success('成功！');
+        }
+      })
       this.zfqrmodal = false;
       this.zfmodal = false;
     },
@@ -734,26 +817,66 @@ export default {
       this.indexStyle1 = index
     },
     radioClick(val) {
+      console.log(val)
       if (val == "ydz") {
         $(".green").css({ color: "green" });
         $(".red").css({ color: "black" });
+        this.ensurePayBack.ensure = true;
       } else if (val == "wdz") {
         $(".red").css({ color: "red" });
         $(".green").css({ color: "black" });
+        this.ensurePayBack.ensure = false;
+      }else if(val === ''){
+        $(".green").css({ color: "black" });
+        $(".red").css({ color: "black" });
+        this.ensurePayBack.ensure = '';
       }
     },
     addWork(){
       this.add_data = this.add_data_save;
-      console.log(this.add_data);
+    },
+    selectedPayStyle(e){
+      let index = e.target.getAttribute("index");
+      this.borderColor.forEach((item,i) => {
+        if(i === Number(index)){
+          this.$set(this.borderColor,i,'red');
+          this.zffsIndex = i;
+          this.disabled = false;
+        }else{
+          this.$set(this.borderColor,i,'#e4e7ed');
+        }
+      });
+    },
+    ensurePayBackSub(){
+      if(this.ensurePayBack.ensure === ''){
+        this.$Message.error('请先选择到账状态！');
+        return;
+      }
+      let request = {
+        "typeid": 28005,
+        "data": [
+            {
+              "workBenchId": this.ensurePayBack.workBenchId,
+              "lastWorkbenchId": this.ensurePayBack.ensure === false?this.ensurePayBack.lastWorkbenchId:undefined,
+            }
+        ]
+      }
+      this.$http.UPDATEWORKBENCH(request).then(() => {
+        this.sfdz = '';
+        this.radioClick(this.sfdz);
+        this.getWorkbench();
+        this.dkqrmodal = false;
+      },error => {
+        if(error.data.code === 103||error.data.code === 0){
+          this.sfdz = '';
+          this.radioClick(this.sfdz);
+          this.getWorkbench();
+          this.dkqrmodal = false;
+        }
+      })
     }
   },
   mounted() {
-    var _self=this
-    $(".zffs div").click(function(val) {
-      _self.disabled = false   
-      $(this).css({"border":"1px solid red"}).siblings(".zffs div").css({"border":"1px solid #e4e7ed"})
-      this.zffsIndex = ($(this).index())     
-    });
     this.getWorkbench();
   },
   watch:{
