@@ -137,6 +137,10 @@ const workflow = {
     UPDATECONTRACT (params) {
         return axios.post('/public/api/xlcontract/update',params);
     },
+    // 回款合入
+    SETCONTRACT (params) {
+        return axios.post('/public/api/xlcontract/set',params);
+    },
     // 城市查询 客户查询
     XLSELECT (params) {
         return axios.post('/public/api/xlselect/query',params);

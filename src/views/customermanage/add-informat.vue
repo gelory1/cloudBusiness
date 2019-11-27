@@ -161,8 +161,6 @@ export default {
   },
   methods: {
     handleSubmit(name) {
-
-      
       this.$refs[name].validate(valid => {
         if (valid) {
           let request2 = {
@@ -188,6 +186,8 @@ export default {
               this.$Message.success("添加成功!");
               this.$router.push({ path: "/home" });
             }
+          },error => {
+            this.$Message.error('请按规则填写!');
           })
         } else {
           this.$Message.error("请按规则填写!");

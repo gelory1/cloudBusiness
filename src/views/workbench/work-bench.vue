@@ -7,13 +7,18 @@
           <Tabs value="name1" v-model="tabName" >
             <TabPane label="待办工作" name="name1">
               <Table
-                
                 :columns="gz_columns"
                 :data="gz_data"
                 @on-selection-change="gzselClick"
               ></Table>
             </TabPane>
-            <TabPane label="已办工作" name="name2">标签二的内容</TabPane>
+            <TabPane label="已办工作" name="name2">
+              <Table
+                :columns="yb_columns"
+                :data="yb_data"
+                @on-selection-change="gzselClick"
+              ></Table>
+            </TabPane>
             <TabPane label="我发起的" name="name3">
               <Table :columns="fq_columns" :data="fq_data"></Table>
             </TabPane>
@@ -151,7 +156,7 @@
         <FormItem label="要求完成时间">
           <DatePicker type="date" placeholder v-model="newgzForm.wcsj" class="col-v"></DatePicker>
         </FormItem>
-        <Button class="zf_butt" type="primary" style="margin-left:320px;">完成</Button>
+        <Button class="zf_butt" type="primary" style="margin-left:320px;" @click="addWork">完成</Button>
       </Form>
     </Modal>
     <!-- 回款核准 -->
@@ -164,7 +169,7 @@
             <span>请选择 合同 > 账期实付 与收款金额关联</span>
           </p>
           <p>
-            <span class="marl">收款方：</span>
+            <span class="marl">付款方：</span>
             <span>{{hkhz.skf}}</span>
             <span class="zf_sk">
               <b>{{hkhz.yf}}</b>元
@@ -187,7 +192,17 @@
           </div>
         </section>
         <section>
-          <div class="hz1"><Table :row-class-name="rowClassName" :columns="hz1_columns" :data="hz1_data" @on-row-click="hz1Click"></Table></div>
+          <div class="hz1">
+            <Table :row-class-name="rowClassName" :columns="hz1_columns" :data="hz1_data" @on-row-click="hz1Click"></Table>
+            <Page
+              :total="sum"
+              :page-size="10"
+              @on-change="getRebackAppr"
+              size="small"
+              show-elevator
+              style="text-align:center;margin-top:20px;"
+            ></Page>
+          </div>
           <div class="hz2"><Table :row-class-name="rowClassName1" :columns="hz2_columns" :data="hz2_data" @on-row-click="hz2Click"></Table></div>
         </section>
       </div>
@@ -265,6 +280,33 @@ const typeMap = {
   10: '回款核准',
   11: '开票提醒',
 }
+const statusMap = {
+  1:'待办',
+  2:'已办'
+}
+const yb_columns = [
+  {
+    type: "selection",
+    width: 60,
+    align: "center"
+  },
+  {
+    title: "工作内容",
+    key: "gznr",
+  },
+  {
+    title: "类型",
+    key: "type"
+  },
+  {
+    title: "负责人",
+    key: "fzr"
+  },
+  {
+    title: "截至日期",
+    key: "jztime"
+  }
+];
 export default {
   name: "work-bench",
   components:{
@@ -274,6 +316,7 @@ export default {
   data() {
     return {
       typeMap,
+      statusMap,
       newgzForm: {
         rwlx: "",
         fzr: "",
@@ -321,6 +364,7 @@ export default {
           key: "jztime"
         }
       ],
+      yb_columns,
       gz_data: [
         ],
       fq_columns: [
@@ -349,22 +393,17 @@ export default {
                     size: "small"
                   },
                   style: {
-                    color: "orange",
+                    color: params.row.zt === 2?"#898A8D":"orange",
                     marginLeft: "-10px"
                   }
                 },
-                this.zt
+                this.statusMap[params.row.zt]
               )
             ]);
           }
         }
       ],
       fq_data: [
-        {
-          gznr: "3424",
-          type: "4333333333333",
-          fzr: "占戈夫"
-        }
       ],
       add_columns: [
         {
@@ -378,8 +417,8 @@ export default {
                       },
                       on:{
                         'on-change': (value) => {
-                          this.add_data[params.row._index].dksj = value
-                          alert(JSON.stringify(this.add_data))        
+                          this.add.dksj = value;
+                          this.add_data_save[params.index].dksj = value;
                         }
                       }
                   }),
@@ -390,20 +429,22 @@ export default {
           title: "金额（元）",
           key: "je",
           render: (h, params) => {
-              return h('div', [
-                  h('Input', {
+              return h('Input', {
                       props: {
                           "placeholder":"请输入......",
                           "value": params.row.je,
+                          "size":'small',
                           "type":"text"
                       },
                       on:{
-                        'on-change': (value) => {
-                          this.add_data[params.index].je = value
+                        'input': (val) => {
+                          this.add.je = val;
+                        },
+                        'on-blur': () => {
+                          this.add_data_save[params.index].je = this.add.je;
                         }
                       }
-                  }),
-              ]);
+                  })
           }
         },
         {
@@ -418,8 +459,11 @@ export default {
                           "type":"text"
                       },
                       on:{
-                        'on-change': (value) => {
-                          this.add_data[params.index].fkf = value
+                        'input': (value) => {
+                          this.add.fkf = value;
+                        },
+                        'on-blur': () => {
+                          this.add_data_save[params.index].fkf = this.add.fkf;
                         }
                       }
                   }),
@@ -428,17 +472,11 @@ export default {
         }
       ],
       add_data: [
-        {
-          dksj:"2019-9-9",
-          je: "3242",
-          fkf: "23424"
-        },
-        {
-          dksj:"2019-9-9",
-          je: "3242",
-          fkf: "23424"
-        },
       ],
+      add_data_save:[],
+      add:{
+
+      },
       zf: {
         skf: "曹操",
         htbh: "456789",
@@ -492,40 +530,20 @@ export default {
           title: "合同名称",
           key: "htmc",
         }],
-      hz1_data: [{
-        htbh:"32",
-        htmc:"南京南京",
-        _checked:false
-      },{
-        htbh:"32",
-        htmc:"南京南京",
-        _checked:false
-      },{
-        htbh:"32",
-        htmc:"南京南京",
-        _checked:false
-      }],
+      hz1_data: [],
       hz2_columns: [{
             title: '账期',
-            key: 'zq'
+            key: 'id'
         },
         {
             title: '应付（元）',
-            key: 'yf'
+            key: 'paymentAmount'
         },
         {
             title: '实付（元）',
-            key: 'sf'
+            key: 'paybackAmount'
         }],
-      hz2_data: [{
-        zq:"1",
-        sf:"8999",
-        yf:"80"
-      },{
-        zq:"1",
-        sf:"8999",
-        yf:"80"
-      }],
+      hz2_data: [],
       zfmodal: false,
       newgzmodal: false,
       zfqrmodal: false,
@@ -548,7 +566,10 @@ export default {
       title:"支付提醒",
       content:"ZHHB-FW20190918002合同已签署完毕，请尽快支付。",
       tabName:'name1',
-      obj:{}
+      obj:{},
+      sum:0,
+      workBenchData:{},
+      yb_data:[]
     };
   },
   methods: {
@@ -562,7 +583,10 @@ export default {
             }
           ]
       }
-      if(this.gz_data.length>0&&this.tabName === 'name1') return;
+      this.gz_data = [];
+      this.fq_data = [];
+      this.yb_data = [];
+      if(this.tabName === 'name1') this.$Notice.destroy();
       this.$http.XLWORKBENCH(request).then(response => {
         let { data } = response.data.result;
         data.forEach(d => {
@@ -572,31 +596,48 @@ export default {
           item.fzr = d.accountName;
           item.jztime = d.dueTime;
           item._checked = d.false;
+          item.zt = d.workBenchStatus;
           item.data = d;
-          this.gz_data.push(item);
-          this.$Notice.info({
+          if(this.tabName === 'name1'){
+            this.gz_data.push(item);
+            this.$Notice.info({
               title: this.typeMap[d.workBenchType],
               desc: `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`,
               duration: 0
-          });
+            });
+          }else if(this.tabName === 'name3'){
+            this.fq_data.push(item);
+          }else{
+            this.yb_data.push(item);
+          }
         })
       })
     },
-    getRebackAppr(data){
-      console.log(data);
+    getRebackAppr(p){
       let request = {
-          "typeid": 26010,
-          "data": [
-              {
-                  "customerName": '致远互联',//data.workBenchContentObj.payUnitName,
-                  "page_size": 10,
-                  "page_num": 1
-              }
-          ]
+        "typeid": 26010,
+        "data": [
+          {
+              "customerName": '致远互联',//this.workBenchData.workBenchContentObj.payUnitName,
+              "page_size": 10,
+              "page_num": p
+          }
+        ]
       }
+      this.hz1_data = [];
       this.$http.XLCONTRACT(request).then(response => {
-
+        let { data } = response.data.result;
+        this.sum = data.sum;
+        data.contractList.forEach(d => {
+          this.hz1_data.push({
+            htbh:d.contractNo,
+            htmc:d.customerName,
+            paymentList:d.paymentList,
+            _checked:false
+          })
       })
+      this.hz1Click(this.hz1_data[0],0);
+    })
     },
     rowClassName (row, index) {
         if (index === this.indexStyle) {
@@ -621,7 +662,13 @@ export default {
           }
         }else if(params.row.data.workBenchType === 10){
           this.hkhzmodal = true;
-          this.getRebackAppr(params.row.data);
+          this.hkhz = {
+            skf: params.row.data.workBenchContentObj.payUnitName,
+            yf: params.row.data.workBenchContentObj.payAmount,
+            dksj: params.row.data.workBenchContentObj.payTime
+          }
+          this.workBenchData = params.row.data;
+          this.getRebackAppr(1);
         }else if(params.row.data.workBenchType === 3){
           this.dkqrmodal = true
         }else if(params.row.data.workBenchType === 4){
@@ -629,18 +676,32 @@ export default {
         }
     },
     surehrClick(){
-      this.hkhzmodal = false
+      let request = {
+        "typeid": 26004,
+        "data": [
+          {
+            "account_id": 1009, //this.$store.state.user.accountId,
+            "contractNo": this.hz1_data[this.indexStyle].htbh,
+            "paybackAmount": (this.workBenchData.workBenchContentObj.payAmount).toFixed(2),
+            "paybackTime": this.workBenchData.workBenchContentObj.payTime,
+            "workbenchId": this.workBenchData.workbenchId,
+            "paymentId": this.hz2_data[this.indexStyle1]
+          }
+        ]
+      }
+      console.log(request);
+      this.$http.SETCONTRACT(request).then(response => {
+        this.hkhzmodal = false;
+        this.$Message.success('成功！');
+      })
     },
     newgzClick() {
       this.newgzmodal = true;
     },
     addcolClick(){
-      this.obj = {
-          dksj:"",
-          je: "",
-          fkf: ""
-     }
-     this.add_data.push(this.obj)
+      this.add = {};
+      this.add_data.push(this.add);
+      this.add_data_save.push({});
     },
     nextzfClick() {
       if (this.checkIndex == 1) {
@@ -666,6 +727,7 @@ export default {
     hz1Click(val,index){
       this.indexStyle = index
       this.hz1_data[index]._checked = true
+      this.hz2_data = val.paymentList||[];
     },
     hz2Click(val,index){
       this.indexStyle1 = index
@@ -678,6 +740,10 @@ export default {
         $(".red").css({ color: "red" });
         $(".green").css({ color: "black" });
       }
+    },
+    addWork(){
+      this.add_data = this.add_data_save;
+      console.log(this.add_data);
     }
   },
   mounted() {
