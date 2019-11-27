@@ -640,39 +640,41 @@ export default {
             this.yb_data.push(item);
           }
         });
-        data.reverse().forEach(d => {
-          var _this = this;
-          let message = '';
-          switch (d.workBenchType) {
-            case 10:
-              message = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
-              break;
-            case 4:
-              message = `到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
-              break;
-            case 3:
-              message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
-              break;
-          }
-          this.$notify({
-              title: this.typeMap[d.workBenchType],
-              message: message,
-              offset: 10,
-              duration: 0,
-              onClick: function(){
-                this.close();
-                let item = {
-                  data:d
+        if(this.tabName === 'name1'){
+          data.reverse().forEach(d => {
+            var _this = this;
+            let message = '';
+            switch (d.workBenchType) {
+              case 10:
+                message = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
+                break;
+              case 4:
+                message = `到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
+                break;
+              case 3:
+                message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
+                break;
+            }
+            this.$notify({
+                title: this.typeMap[d.workBenchType],
+                message: message,
+                offset: 10,
+                duration: 0,
+                onClick: function(){
+                  this.close();
+                  let item = {
+                    data:d
+                  }
+                  _this.dbgzTableClick({row:item});
+                  if(item.data.workBenchType === 3){
+                    // this.gzselClick([item]);
+                    _this.checkedData = [item]; //暂时只能一条一条支付
+                    _this.checkIndex = _this.checkedData.length;
+                  }
                 }
-                _this.dbgzTableClick({row:item});
-                if(item.data.workBenchType === 3){
-                  // this.gzselClick([item]);
-                  _this.checkedData = [item]; //暂时只能一条一条支付
-                  _this.checkIndex = _this.checkedData.length;
-                }
-              }
-            });
-        })
+              });
+          })
+        }
       })
     },
     getRebackAppr(p){
