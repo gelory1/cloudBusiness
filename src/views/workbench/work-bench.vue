@@ -676,22 +676,23 @@ export default {
         }
     },
     surehrClick(){
+      console.log(this.workBenchData);
       let request = {
         "typeid": 26004,
         "data": [
           {
             "account_id": 1009, //this.$store.state.user.accountId,
             "contractNo": this.hz1_data[this.indexStyle].htbh,
-            "paybackAmount": (this.workBenchData.workBenchContentObj.payAmount).toFixed(2),
+            "paybackAmount": (parseFloat(this.workBenchData.workBenchContentObj.payAmount)||0).toFixed(2),
             "paybackTime": this.workBenchData.workBenchContentObj.payTime,
             "workbenchId": this.workBenchData.workbenchId,
             "paymentId": this.hz2_data[this.indexStyle1]
           }
         ]
       }
-      console.log(request);
       this.$http.SETCONTRACT(request).then(response => {
         this.hkhzmodal = false;
+        this.getWorkbench();
         this.$Message.success('成功！');
       })
     },
