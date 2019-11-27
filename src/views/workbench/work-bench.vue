@@ -635,9 +635,21 @@ export default {
           if(this.tabName === 'name1'){
             this.gz_data.push(item);
             var _this = this;
+            let message = '';
+            switch (d.workBenchType) {
+              case 10:
+                message = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
+                break;
+              case 4:
+                message = `到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
+                break;
+              case 3:
+                message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
+                break;
+            }
             this.$notify({
               title: this.typeMap[d.workBenchType],
-              message: `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`,
+              message: message,
               offset: 10,
               duration: 0,
               onClick: function(){
