@@ -901,6 +901,9 @@ export default {
     tabName(){
       this.getWorkbench();
     }
+  },
+  beforeDestroy(){
+    this.$notify.closeAll();
   }
 };
 </script>
