@@ -141,7 +141,9 @@
       <p class="zf_p">新建工作待办</p>
       <Form :model="newgzForm" :rules="newgzRules" :label-width="90">
         <FormItem label="任务类型" prop="rwlx">
-          <Input class="col-v" v-model="newgzForm.rwlx" placeholder></Input>
+          <Select v-model="newgzForm.rwlx" placeholder class="col-v">
+            <Option :value="item.index" v-for="(item,index) in rwlxs" :key="index">{{item.val}}</Option>
+          </Select>
         </FormItem>
         <FormItem label="任务内容" prop="rwnr">
           <button class="but_change" @click="addcolClick">添加行</button>
@@ -281,6 +283,52 @@ const typeMap = {
   10: '回款核准',
   11: '开票提醒',
 }
+const rwlxs = [
+  {
+    val: '审批提醒',
+    index: 1
+  },
+  {
+    val: '签署提醒',
+    index: 2
+  },
+  {
+    val: '支付提醒',
+    index: 3
+  },
+  {
+    val: '（财务）到款确认',
+    index: 4
+  },
+  {
+    val: '下单提醒',
+    index: 5
+  },
+  {
+    val: '发货提醒',
+    index: 6
+  },
+  {
+    val: '收货提醒',
+    index: 7
+  },
+  {
+    val: '上线审批',
+    index: 8
+  },
+  {
+    val: '上线通知',
+    index: 9
+  },
+  {
+    val: '回款核准',
+    index: 10
+  },
+  {
+    val: '开票提醒',
+    index: 11
+  },
+]
 const statusMap = {
   1:'待办',
   2:'已办'
@@ -297,15 +345,18 @@ const yb_columns = [
   },
   {
     title: "类型",
-    key: "type"
+    key: "type",
+    width: '100'
   },
   {
     title: "负责人",
-    key: "fzr"
+    key: "fzr",
+    width: '100'
   },
   {
     title: "日期",
-    key: "duetime"
+    key: "duetime",
+    width: '150'
   }
 ];
 export default {
@@ -318,6 +369,7 @@ export default {
     return {
       typeMap,
       statusMap,
+      rwlxs,
       newgzForm: {
         rwlx: "",
         fzr: "",
@@ -360,15 +412,18 @@ export default {
         },
         {
           title: "类型",
-          key: "type"
+          key: "type",
+          width: '100'
         },
         {
           title: "负责人",
-          key: "fzr"
+          key: "fzr",
+          width: '100'
         },
         {
           title: "截至日期",
-          key: "jztime"
+          key: "jztime",
+          width: '100'
         }
       ],
       yb_columns,
@@ -381,15 +436,18 @@ export default {
         },
         {
           title: "类型",
-          key: "type"
+          key: "type",
+          width: '100'
         },
         {
           title: "负责人",
-          key: "fzr"
+          key: "fzr",
+          width: '100'
         },
         {
           title: "状态",
           key: "zt",
+          width: '100',
           render: (h, params) => {
             return h("div", [
               h(
@@ -616,13 +674,13 @@ export default {
           let item = {};
           switch (d.workBenchType) {
             case 10:
-              item.gznr = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`;
+              item.gznr = this.tabName === 'name1'?`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 4:
-              item.gznr = `到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`;
+              item.gznr = this.tabName === 'name1'?`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 3:
-              item.gznr = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`;
+              item.gznr = this.tabName === 'name1'?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
               break;
           }
           item.type = this.typeMap[d.workBenchType];
