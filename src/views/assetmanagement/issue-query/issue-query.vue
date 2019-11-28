@@ -92,7 +92,7 @@
       </Layout>
     </Layout>
     <!-- 入库详情页面 -->
-    <Modal v-model="rkxqmodal" width="1000">
+    <Modal v-model="rkxqmodal" width="1000" :styles="{top: '5px'}">
       <div>
         <div style="float:left;margin:30px  20px;">
           <h3>入库单详情</h3>
@@ -143,22 +143,38 @@
         </div>
       </div>
       <div style="clear:both;overflow: hidden;">
-        <p class="djtitle">入库设备</p>
-         <div style="width:17%;float:left;">
-         <Table :columns="device_columns1" ref="rktable" :data="indevice_data1" disabled-hover highlight-row  @on-current-change="rkbhClick" 
-         size="small" style="margin:10px 0 0 20px;overflow:auto"></Table>
-           <!--  <ul>
-            <li  class="li" v-for="(item,index) in rksbxq" :key="index" @click="rkbhClick(index)" style="cursor:pointer;padding:10px;">{{item.val}}</li>
-          </ul> -->
-        </div>
-        <div style="width:83%;float:right;">
-          <!--  <p style="margin-left:10px;border-bottom:0.7px solid #e4e7ed">共<span>{{count}}</span>家客户（可筛选查看）</p> -->
-          <Table :columns="device_columns" :data="indevice_data" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
-        </div>
+        <Tabs v-model="tabDeviceName1">
+          <TabPane label="入库设备" name="name1">
+            <div style="width:17%;float:left;">
+              <Table :columns="device_columns1" ref="rktable" :data="indevice_data1" disabled-hover highlight-row @on-current-change="rkbhClick" 
+              size="small" style="margin:10px 0 0 20px;overflow:auto"></Table>
+            </div>
+            <div style="width:83%;float:right;">
+              <Table :columns="device_columns" :data="indevice_data" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
+            </div>
+          </TabPane>
+          <TabPane label="设备列表" name="name2">
+            <Table 
+              :columns="sblb_columns"
+              :data="sblb_data" size="small" 
+              height="400"
+              >
+            </Table>
+            <Page
+              :current.sync="devicePageNum"
+              :total="sblbSum"
+              :page-size="10"
+              @on-change="getDevicesList"
+              size="small"
+              show-elevator
+              style="text-align:center;margin-top:20px;"
+            ></Page>
+          </TabPane>
+        </Tabs>
       </div>
     </Modal>
     <!-- 出库详情页面 -->
-    <Modal v-model="ckxqmodal" width="1000">
+    <Modal v-model="ckxqmodal" width="1000" :styles="{top: '5px'}">
       <div>
         <div style="float:left;margin:30px  20px;">
           <h3>出库单详情</h3>
@@ -209,38 +225,36 @@
         </div>
       </div>
       <div style="clear:both;overflow: hidden;">
-        <p class="djtitle">出库设备</p>
-       <div style="width:17%;float:left;">
-         <Table :columns="device_columns1" ref="cktable" :data="outdevice_data1" size="small" disabled-hover highlight-row @on-row-click="ckbhClick"
-          style="margin:10px 0 0 20px;overflow:auto"></Table>
-           <!--  <ul>
-            <li  class="li" v-for="(item,index) in rksbxq" :key="index" @click="rkbhClick(index)" style="cursor:pointer;padding:10px;">{{item.val}}</li>
-          </ul> -->
-        </div>
-        <div style="width:83%;float:right;">
-          <!--  <p style="margin-left:10px;border-bottom:0.7px solid #e4e7ed">共<span>{{count}}</span>家客户（可筛选查看）</p> -->
-          <Table :columns="device_columns" :data="outdevice_data" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
-        </div>
+        <Tabs v-model="tabDeviceName2">
+          <TabPane label="出库设备" name="name1">
+            <div style="width:17%;float:left;">
+            <Table :columns="device_columns1" ref="cktable" :data="outdevice_data1" size="small" disabled-hover highlight-row @on-row-click="ckbhClick"
+              style="margin:10px 0 0 20px;overflow:auto"></Table>
+            </div>
+            <div style="width:83%;float:right;">
+              <!--  <p style="margin-left:10px;border-bottom:0.7px solid #e4e7ed">共<span>{{count}}</span>家客户（可筛选查看）</p> -->
+              <Table :columns="device_columns" :data="outdevice_data" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
+            </div>
+          </TabPane>
+          <TabPane label="设备列表" name="name2">
+            <Table 
+              :columns="sblb_columns"
+              :data="sblb_data" size="small" 
+              height="400"
+              >
+            </Table>
+            <Page
+              :current.sync="devicePageNum"
+              :total="sblbSum"
+              :page-size="10"
+              @on-change="getDevicesList"
+              size="small"
+              show-elevator
+              style="text-align:center;margin-top:20px;"
+            ></Page>
+          </TabPane>
+        </Tabs>
       </div>
-    </Modal>
-    <!-- 查看明细-设备列表 -->
-    <Modal v-model="sblbmodal" width="1000" title="设备列表" class="changetable">
-       <Table 
-        :columns="sblb_columns"
-        :data="sblb_data" size="small" 
-        >
-      </Table>
-      <Page
-        :current.sync="devicePageNum"
-        :total="sblbSum"
-        :page-size="10"
-        @on-change="getDevicesList"
-        size="small"
-        show-elevator
-        
-        class="page"
-        style="text-align:center;margin-top:20px;"
-      ></Page>
     </Modal>
   </div>
 </template>
@@ -346,7 +360,8 @@ export default {
                         sbsl: params.row.sbsl,
                         shr: params.row.data.auditor_name,
                         shsj: params.row.data.auditor_time,
-                        zt:params.row.zt
+                        zt:params.row.zt,
+                        allocation_id:params.row.data.allocation_id
                       }
                       this.selectedWhid = params.row.data.wh_id;
                       this.indevice_data1 = [];
@@ -357,6 +372,9 @@ export default {
                       })
                       this.getDevices(params.row.data.order_no[0]);
                       this.rkxqmodal = true;
+                      this.tabDeviceName1 = 'name1';
+                      this.devicePageNum = 1;
+                      this.getDevicesList(1);
                       this.$nextTick(() => {
                         this.$refs['rktable'].objData[0]._isHighlight = true;
                       })
@@ -461,7 +479,8 @@ export default {
                         sbsl: params.row.sbsl,
                         shr: params.row.data.auditor_name,
                         shsj: params.row.data.auditor_time,
-                        zt:params.row.zt
+                        zt:params.row.zt,
+                        allocation_id:params.row.data.allocation_id
                       }
                       this.outdevice_data1 = [];
                       this.selectedWhid = params.row.data.wh_id;
@@ -472,6 +491,9 @@ export default {
                       });
                       this.getDevices(params.row.data.order_no[0]);
                       this.ckxqmodal = true;
+                      this.tabDeviceName2 = 'name1';
+                      this.devicePageNum = 1;
+                      this.getDevicesList(1);
                       this.$nextTick(() => {
                         this.$refs['cktable'].objData[0]._isHighlight = true;
                       })
@@ -515,46 +537,6 @@ export default {
         {
           title: "数量",
           key: "sl"
-        },
-        {
-          title: "操作",
-          key: "action",
-          align: "center",
-          render: (h, params) => {
-            return h("div", [
-              h("Icon", {
-                class: "demo-spin-icon-load",
-                props: {
-                  type: "clipboard",
-                  size: 12,
-                  // background:"#34a9af5 "
-                }
-              }),
-              h(
-                "span",
-                {
-                  props: {
-                    type: "primary",
-                    size: "small"
-                  },
-                  style: {
-                    marginLeft: "3px",
-                    color: "#3896f5 ",
-                    cursor:"pointer"
-                  },
-                  on: {
-                    click: () => {
-                      // this.show(params.index);
-                      this.sblbmodal = true;
-                      this.selectedprocode = params.row.chbm;
-                      this.getDevicesList(1);
-                    }
-                  }
-                },
-                "设备列表"
-              )
-            ]);
-          }
         }
       ],
       indevice_data1: [
@@ -615,7 +597,6 @@ export default {
       ],
       tooptipShow: false,
       ckxqmodal: false,
-      sblbmodal:false,
       rkxqmodal:false,
       menuitem: "所有仓库",
       sblb_data:[],
@@ -685,7 +666,9 @@ export default {
       inPageNum:1,
       outPageNum:1,
       devicePageNum:1,
-      tableHeight:""
+      tableHeight:"",
+      tabDeviceName2:'name1',
+      tabDeviceName1:'name1'
     };
   },
   methods: {
@@ -847,23 +830,20 @@ export default {
     },
     getDevicesList(p){
       let request = {
-        typeid: 23009,
+        typeid: 23011,
         data: [
           {
-            account_id: this.$store.state.user.accountId,
-            wh_id: this.selectedWhid,
-            product_code: this.selectedprocode,
+            allocation_id: this.djxx.allocation_id,
             page_num: p,
             page_size: 10
           }
         ],
-              
       };
       api.PostXLASSETS(request).then((response)=>{
-        let { data } = response.data.result;
+        let { data,sum } = response.data.result;
         this.sblb_data = [];
-        this.sblbSum = data[0].sum;
-        data[0].devicelist.forEach((d)=>{
+        this.sblbSum = sum;
+        data.forEach((d)=>{
           let crk_item = {};
           crk_item.tm = d.device_address;
           crk_item.chbm = d.product_code;
@@ -912,9 +892,6 @@ export default {
       }else{
         this.outPageNum = 1;
       }
-    },
-    sblbmodal(nv){
-      if(!nv) this.devicePageNum = 1;
     }
   }
 };

@@ -595,11 +595,13 @@ export default {
               allAmount += Number(b.paybackAmount);
               if(allAmount >= backAmount&&payIndex === ''){
                 payIndex = i;
-                computeAmountStart = allAmount - backAmount;
+                computeAmountStart = (allAmount - backAmount - item.paymentAmount)>0?
+                  item.paymentAmount:(allAmount - backAmount);
               }
               if(allAmount -backAmount -item.paymentAmount >=0&&payEndIndex === ''){
                 payEndIndex = i;
-                computeAmountEnd = allAmount - backAmount - item.paymentAmount;
+                computeAmountEnd = (allAmount - backAmount - item.paymentAmount)>0?
+                  item.paymentAmount:(allAmount - backAmount);
               }
             })
             if(payEndIndex === '') payEndIndex = this.data.data.paybackList.length-1;

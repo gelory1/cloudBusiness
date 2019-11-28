@@ -149,6 +149,14 @@ const workflow = {
     XLWORKBENCH (params) {
         return axios.post('/public/api/xlworkbench/query',params);
     },
+    //工作台更新
+    UPDATEWORKBENCH (params) {
+        return axios.post('/public/api/xlworkbench/update',params);
+    },
+    //工作台新增
+    SETWORKBENCH (params) {
+        return axios.post('/public/api/xlworkbench/set',params);
+    },
 
 };
 export default workflow;

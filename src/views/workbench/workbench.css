@@ -46,13 +46,13 @@
 .zf_img{
     border-radius: 3px;
     border:1px solid #e4e7ed;
-    width:400px;
+    width:250px;
     margin:20px auto;
     padding:10px;
     cursor: pointer;
 }
 .zf_img img{
-    width:100px;
+    width:150px;
 }
 .zf_p{
     font-size:18px;
