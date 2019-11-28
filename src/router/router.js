@@ -45,12 +45,12 @@ export const locking = {
 // 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
 // 客户管理
 export const otherRouter = {
-    path: '/',
+    path: '/customermanage',
     name: 'otherRouter',
-    redirect: '/home',
+    redirect: '/customermanage',
     component: Main,
     children: [
-        { path: 'home', title: {i18n: '客户管理'}, name: 'home_index', component: () => import('@/views/customermanage/customer-manage.vue') },
+        { path: 'customermanage', title: {i18n: '客户管理'}, name: 'customermanage_index', component: () => import('@/views/customermanage/customer-manage.vue') },
         { path: '/customermanage/see', title: '客户档案', name: 'see', component: () => import('@/views/customermanage/see.vue') },
         { path: '/customermanage/edit', title: '客户档案（编辑）', name: 'edit-custom', component: () => import('@/views/customermanage/edit.vue') },
         { path: '/customermanage/new', title: '客户档案（新建）', name: 'new-custom', component: () => import('@/views/customermanage/edit.vue') },
@@ -84,13 +84,13 @@ export const otherRouterOrder = {
 export const appRouter = [
     // 工作台
     {
-        path: '/workbench',
+        path: '/',
         icon: 'ios-grid-view',
-        name: 'workbench',
+        name: 'home',
         title: '工作台',
         component: Main,
         children: [
-            { path: 'workbench', title: '工作台', name: 'work-bench', icon: 'arrow-move', component: () => import('@/views/workbench/work-bench.vue') }
+            { path: 'workbench', title: '工作台', name: 'home_index', icon: 'arrow-move', component: () => import('@/views/workbench/work-bench.vue') }
         ]
     },
     // 客户管理
