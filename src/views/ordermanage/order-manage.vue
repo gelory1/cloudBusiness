@@ -151,7 +151,13 @@
           </div>
           <div>
             <span class="jbleft">设备数量：</span>
-            <span class="jbright">{{selectedOrder.device_count}}</span>
+            <span class="jbright">{{selectedOrder.device_count}}
+              <span>（<small style="color:green">本次交货：{{bcjh}}</small>，<small style="color:red">剩余待发：{{sydf}}</small>）</span>
+            </span>
+          </div>
+          <div>
+            <span class="jbleft">收货地址：</span>
+            <span class="jbright">{{selectedOrder.address_name}}</span>
           </div>
         </div>
       </div>
@@ -183,6 +189,25 @@
 </template>
 <script>
 import api from "@/api/axios";
+const orderStatus1 = [{
+    type: "全部",
+    name: 'name1',
+    index: 0
+  },{
+    type: "已下单",
+    name: 'name4',
+    index: 3
+  },
+  {
+    type: "已发货",
+    name: 'name5',
+    index: 4
+  },
+  {
+    type: "已到货",
+    name: 'name6',
+    index: 5
+  },];
 const orderStatus = [
   {
     type: "全部",
@@ -190,29 +215,71 @@ const orderStatus = [
     index: 0
   },
   {
-    type: "已下单",
+    type: "审批中",
     name: 'name2',
     index: 1
   },
   {
-    type: "已发货",
+    type: "待支付",
     name: 'name3',
     index: 2
   },
   {
-    type: "已到货",
+    type: "已下单",
     name: 'name4',
     index: 3
   },
   {
-    type: "已安装",
+    type: "已发货",
     name: 'name5',
     index: 4
   },
   {
-    type: "已上线",
+    type: "已到货",
     name: 'name6',
     index: 5
+  },
+  {
+    type: "被驳回",
+    name: 'name7',
+    index: 6
+  },
+];
+const orderStatus2 = [
+  {
+    type: "全部",
+    name: 'name1',
+    index: 0
+  },
+  {
+    type: "审批中",
+    name: 'name2',
+    index: 1
+  },
+  {
+    type: "待支付",
+    name: 'name3',
+    index: 2
+  },
+  {
+    type: "已下单",
+    name: 'name4',
+    index: 3
+  },
+  {
+    type: "已发货",
+    name: 'name5',
+    index: 4
+  },
+  {
+    type: "已到货",
+    name: 'name6',
+    index: 5
+  },
+  {
+    type: "被驳回",
+    name: 'name7',
+    index: 6
   },
 ];
 const orderTypes = [
@@ -313,6 +380,9 @@ const statusMap = {
 const statusMap2 = {
   0:'下单',1: '发货',2:'到货',3:'安装',4:'上线'
 };
+const statusMap3 = {
+  0:'下单',1: '发货',2:'到货'
+};
 const statusColorMap = {
   '已下单':{
     backgroundColor: '#FDF6EC',
@@ -410,6 +480,8 @@ export default {
   data() {
     return {
       orderStatus,
+      orderStatus1,
+      orderStatus2,
       tabName: 'name1',
       order_columns,
       order_data: {
@@ -432,8 +504,9 @@ export default {
       statusMap,
       loading: false,
       orderDetailOpen: false,
-      selectedOrder: {
-      },
+      selectedOrder: {},
+      bcjh:"700",
+      sydf:"9090",
       device_columns: [
         {
           title: "序号",
@@ -570,6 +643,7 @@ export default {
       deviceList_data: [],
       deviceSum: 0,
       statusMap2,
+      statusMap3,
       subjectName,
       glShow:false,
       moreShow:false,
@@ -593,11 +667,19 @@ export default {
       }
     },
     selectOrderType(index) {
+      if(index == 1){
+        this.orderStatus = this.orderStatus1
+      }else if(index == 2 || index==0){
+        this.orderStatus = this.orderStatus2
+      }
       this.selectedType = this.orderTypes[index];
       this.pageNum = 1;
       this.getOrderList(1);
     },
     openOrder(o){
+      if(o.type = "合同订单"){
+        
+      }
       this.orderDetailOpen = true;
       this.getOrderDetail(o);
     },

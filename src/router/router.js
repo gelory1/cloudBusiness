@@ -138,7 +138,8 @@ export const appRouter = [
         children: [
             { path: 'device-query', title: '设备资产查询', name: 'device-query', icon: 'compose', component: () => import('@/views/assetmanagement/device-query/device-query.vue') },
             { path: 'issue-query', title: '出/入库单查询', name: 'issue-query', icon: 'arrow-swap', component: () => import('@/views/assetmanagement/issue-query/issue-query.vue') },
-            { path: 'model-config', title: '产品型号配置', name: 'model-config', icon: 'arrow-swap', component: () => import('@/views/assetmanagement/model-config/model-config.vue') }
+            { path: 'delivery-manage', title: '发货管理', name: 'delivery-manage', icon: 'arrow-swap', component: () => import('@/views/assetmanagement/delivery-manage/delivery-manage.vue')},
+            { path: 'model-config', title: '产品型号配置', name: 'model-config', icon: 'arrow-swap', component: () => import('@/views/assetmanagement/model-config/model-config.vue')},
 
         ]
     },
