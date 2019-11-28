@@ -157,12 +157,16 @@
             <el-upload action="/" :on-change="importExcel" :auto-upload="false" :show-file-list="false">
               <Button class="but_change" type="ghost" icon="ios-cloud-upload-outline">批量导入</Button>
             </el-upload>
+            <span style="white-space: normal;color:#bbbec4">请上传excel文件，表格中三列名称分别为：到款时间，金额，付款方。</span>
           </div>
           <Table :columns="add_columns" :data="newgzForm.add_data" class="gztable"></Table>
         </FormItem>
         <FormItem label="负责人" prop="fzr">
-          <Select v-model="newgzForm.fzr" placeholder="请选择(默认不选为认领模式)" class="col-v">
-            <Option value="item" v-for="(item,index) in fzr" :key="index">{{item.val}}</Option>
+          <Select v-model="newgzForm.company" style="width:250px;">
+            <Option :value="item.id" v-for="(item,index) in companys" :key="index">{{item.name}}</Option>
+          </Select>
+          <Select v-model="newgzForm.fzr" placeholder="请选择(默认不选为认领模式)"  style="width:190px;">
+            <Option :value="item.id" v-for="(item,index) in fzr" :key="index">{{item.name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="要求完成时间" prop="wcsj">
@@ -383,10 +387,11 @@ export default {
         rwlx: 10,
         fzr: "",
         wcsj: "",
+        company:'',
         add_data: []
       },
-      fzr: [
-      ],
+      companys:[],
+      fzr: [],
       gz_columns: [
         {
           type: "selection",
@@ -986,11 +991,11 @@ export default {
         "typeid": 28002,
         "data": [
             {
-                "workBenchType": this.newgzForm.rwlx,
-                "accountId": this.$store.state.user.accountId,
-                "chargePerson": -1,
-                "dueTime": this.newgzForm.wcsj,
-                "workBenchContentList": workBenchContentList
+              "workBenchType": this.newgzForm.rwlx,
+              "accountId": this.$store.state.user.accountId,
+              "chargePerson": this.newgzForm.fzr === ''?-1:this.newgzForm.fzr,
+              "dueTime": this.newgzForm.wcsj,
+              "workBenchContentList": workBenchContentList
             }
         ]
       };
@@ -1083,10 +1088,32 @@ export default {
         }
         reader.readAsBinaryString(file.raw)
       })
+    },
+    getManagecompanys(){
+      let request = {
+        typeid:27001
+      }
+      this.$http.XLSELECT(request).then(response => {
+        this.companys = response.data.result.data;
+      })
+    },
+    getManagers(no){
+      let request = {
+        "typeid": 27008,
+          "data":[
+            {
+              "companyID":no
+            }
+          ]
+      }
+      this.$http.XLSELECT(request).then(response => {
+        this.fzr = response.data.result.data;
+      })
     }
   },
   mounted() {
     this.getWorkbench();
+    this.getManagecompanys();
   },
   watch:{
     tabName(){
@@ -1101,6 +1128,11 @@ export default {
           add_data: []
         };
         this.addStore = [];
+      }
+    },
+    'newgzForm.company'(nv){
+      if(nv !== ''){
+        this.getManagers(nv);
       }
     }
   },
