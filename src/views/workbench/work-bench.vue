@@ -139,7 +139,7 @@
     <!-- 新建工作待办 -->
     <Modal v-model="newgzmodal" class="aa" width="800">
       <p class="zf_p">新建工作待办</p>
-      <Form :model="newgzForm" :rules="newgzRules" :label-width="90">
+      <Form :model="newgzForm" :rules="newgzRules" :label-width="100">
         <FormItem label="任务类型" prop="rwlx">
           <Select v-model="newgzForm.rwlx" placeholder class="col-v">
             <Option :value="item.index" v-for="(item,index) in rwlxs" :key="index">{{item.val}}</Option>
@@ -148,15 +148,15 @@
         <FormItem label="任务内容" prop="rwnr">
           <button class="but_change" @click="addcolClick">添加行</button>
           <button class="but_change">批量导入</button>
-          <Table :columns="add_columns" :data="add_data" class="gztable"></Table>
+          <Table :columns="add_columns" :data="newgzForm.add_data" class="gztable"></Table>
         </FormItem>
         <FormItem label="负责人" prop="fzr">
           <Select v-model="newgzForm.fzr" placeholder="请选择(默认不选为认领模式)" class="col-v">
             <Option value="item" v-for="(item,index) in fzr" :key="index">{{item.val}}</Option>
           </Select>
         </FormItem>
-        <FormItem label="要求完成时间">
-          <DatePicker type="date" placeholder v-model="newgzForm.wcsj" class="col-v"></DatePicker>
+        <FormItem label="要求完成时间" prop="wcsj">
+          <DatePicker type="date" placeholder format="yyyy-MM-dd" @on-change="getDate" class="col-v"></DatePicker>
         </FormItem>
         <Button class="zf_butt" type="primary" style="margin-left:320px;" @click="addWork">完成</Button>
       </Form>
@@ -284,50 +284,50 @@ const typeMap = {
   11: '开票提醒',
 }
 const rwlxs = [
-  {
-    val: '审批提醒',
-    index: 1
-  },
-  {
-    val: '签署提醒',
-    index: 2
-  },
-  {
-    val: '支付提醒',
-    index: 3
-  },
-  {
-    val: '（财务）到款确认',
-    index: 4
-  },
-  {
-    val: '下单提醒',
-    index: 5
-  },
-  {
-    val: '发货提醒',
-    index: 6
-  },
-  {
-    val: '收货提醒',
-    index: 7
-  },
-  {
-    val: '上线审批',
-    index: 8
-  },
-  {
-    val: '上线通知',
-    index: 9
-  },
+  // {
+  //   val: '审批提醒',
+  //   index: 1
+  // },
+  // {
+  //   val: '签署提醒',
+  //   index: 2
+  // },
+  // {
+  //   val: '支付提醒',
+  //   index: 3
+  // },
+  // {
+  //   val: '（财务）到款确认',
+  //   index: 4
+  // },
+  // {
+  //   val: '下单提醒',
+  //   index: 5
+  // },
+  // {
+  //   val: '发货提醒',
+  //   index: 6
+  // },
+  // {
+  //   val: '收货提醒',
+  //   index: 7
+  // },
+  // {
+  //   val: '上线审批',
+  //   index: 8
+  // },
+  // {
+  //   val: '上线通知',
+  //   index: 9
+  // },
   {
     val: '回款核准',
     index: 10
   },
-  {
-    val: '开票提醒',
-    index: 11
-  },
+  // {
+  //   val: '开票提醒',
+  //   index: 11
+  // },
 ]
 const statusMap = {
   1:'待办',
@@ -369,9 +369,10 @@ export default {
       statusMap,
       rwlxs,
       newgzForm: {
-        rwlx: "",
+        rwlx: 10,
         fzr: "",
-        wcsj: ""
+        wcsj: "",
+        add_data: []
       },
       fzr: [
       ],
@@ -477,14 +478,14 @@ export default {
           key: "dksj",
           render: (h, params) => {
               return h('div', [
-                  h('datePicker', {
+                  h('DatePicker', {
                       props: {
                           "value": params.row.dksj,
+                          "format":"yyyy-MM-dd"
                       },
                       on:{
                         'on-change': (value) => {
-                          this.add.dksj = value;
-                          this.add_data_save[params.index].dksj = value;
+                          this.addStore[params.index].dksj = value;
                         }
                       }
                   }),
@@ -503,11 +504,8 @@ export default {
                           "type":"text"
                       },
                       on:{
-                        'input': (val) => {
-                          this.add.je = val;
-                        },
-                        'on-blur': () => {
-                          this.add_data_save[params.index].je = this.add.je;
+                        'input': (value) => {
+                          this.addStore[params.index].je = value;
                         }
                       }
                   })
@@ -526,10 +524,7 @@ export default {
                       },
                       on:{
                         'input': (value) => {
-                          this.add.fkf = value;
-                        },
-                        'on-blur': () => {
-                          this.add_data_save[params.index].fkf = this.add.fkf;
+                          this.addStore[params.index].fkf = value;
                         }
                       }
                   }),
@@ -537,12 +532,6 @@ export default {
           }
         }
       ],
-      add_data: [
-      ],
-      add_data_save:[],
-      add:{
-
-      },
       zf: {
         skf: "曹操",
         htbh: "456789",
@@ -576,11 +565,18 @@ export default {
             trigger: "blur"
           }
         ],
-        // rwnr: [
-        //   {
-        //     required: true
-        //   }
-        // ]
+        rwnr: [
+          {
+            // required: true,
+            // message:'请输入所有内容'
+          }
+        ],
+        wcsj: [
+          {
+            required: true,
+            message:'不能为空'
+          }
+        ]
       },
       hz1_columns: [
           {
@@ -651,7 +647,8 @@ export default {
         workBenchStatus:'',
         ensure:"",
         workBenchId:""
-      }
+      },
+      addStore:[]
     };
   },
   methods: {
@@ -661,7 +658,7 @@ export default {
           "data": [
             {
               "workBenchStatus": this.tabName === 'name1'?1:this.tabName === 'name2'?2:3,
-              "accountId": 520, //this.$store.state.user.accountId
+              "accountId": this.$store.state.user.accountId
             }
           ]
       }
@@ -741,7 +738,7 @@ export default {
         "typeid": 26010,
         "data": [
           {
-              "customerName": '致远互联',//this.workBenchData.workBenchContentObj.payUnitName,
+              "customerName": this.workBenchData.workBenchContentObj.payUnitName,
               "page_size": 10,
               "page_num": p
           }
@@ -813,7 +810,7 @@ export default {
         "typeid": 26004,
         "data": [
           {
-            "account_id": 1009, //this.$store.state.user.accountId,
+            "account_id": this.$store.state.user.accountId,
             "contractNo": this.hz1_data[this.indexStyle].htbh,
             "paybackAmount": (parseFloat(this.workBenchData.workBenchContentObj.payAmount)||0).toFixed(2),
             "paybackTime": this.workBenchData.workBenchContentObj.payTime,
@@ -832,9 +829,19 @@ export default {
       this.newgzmodal = true;
     },
     addcolClick(){
-      this.add = {};
-      this.add_data.push(this.add);
-      this.add_data_save.push({});
+      if(this.addStore.length>0){
+        this.newgzForm.add_data = JSON.parse(JSON.stringify(this.addStore));
+      }
+      this.newgzForm.add_data.push({
+        dksj:'',
+        je:'',
+        fkf:''
+      });
+      this.addStore.push({
+        dksj:'',
+        je:'',
+        fkf:''
+      });
     },
     nextzfClick() {
       this.zfmodal = false;
@@ -909,35 +916,64 @@ export default {
         this.ensurePayBack.ensure = '';
       }
     },
+    editSave(store){
+      let {index,key,value} = store;
+      this.newgzForm.add_data[index][key] = value;
+    },
     addWork(){
-      this.add_data = this.add_data_save;
-      console.log(this.newgzForm.wcsj);
+      this.newgzForm.add_data = JSON.parse(JSON.stringify(this.addStore));
+      if(this.newgzForm.wcsj === ''){
+        this.$Message.error('请选择完成时间！');
+        return;
+      }else if(this.newgzForm.add_data.length === 0){
+        this.$Message.error('请添加任务内容！');
+        return;
+      }
+      let workBenchContentList = [];
+      this.newgzForm.add_data.forEach(d => {
+        if(d.dksj === ''){
+          this.$Message.error('请选择到款时间！');
+          return;
+        }else if(d.fkf === ''){
+          this.$Message.error('请输入付款方！');
+          return;
+        }else if(d.je === ''||isNaN(Number(d.je))){
+          this.$Message.error('请输入正确金额！');
+          return;
+        }
+        workBenchContentList.push({
+          payTime: d.dksj,
+          payUnitName: d.fkf,
+          payAmount: d.je,
+        })
+      })
       let request = {
         "typeid": 28002,
         "data": [
             {
-                "workBenchType": 10,
-                "accountId": 1351,
-                "chargePerson": 520,
-                "dueTime": "2019-10-22 19:35:33",
-                "workBenchContentList": [
-                    {
-                        "payTime": 520,
-                        "payUnitName": "南京致远互联2",
-                        "payAmount": 50000
-                    },
-                    {
-                        "payTime": 520,
-                        "payUnitName": "南京致远互联",
-                        "payAmount": 10000
-                    }
-                ]
+                "workBenchType": this.newgzForm.rwlx,
+                "accountId": this.$store.state.user.accountId,
+                "chargePerson": -1,
+                "dueTime": this.newgzForm.wcsj,
+                "workBenchContentList": workBenchContentList
             }
         ]
       };
-      // this.$http.SETWORKBENCH(request).then(response => {
-
-      // })
+      this.$http.SETWORKBENCH(request).then(response => {
+        this.newgzForm = {
+          rwlx: 10,
+          fzr: "",
+          wcsj: "",
+          add_data: []
+        };
+        this.addStore = [];
+        this.newgzmodal = false;
+        this.$Message.success('新增成功！');
+        this.getWorkbench();
+      })
+    },
+    getDate(value){
+      this.newgzForm.wcsj = value;
     },
     selectedPayStyle(e){
       let index = e.target.getAttribute("index");
