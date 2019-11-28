@@ -17,6 +17,7 @@ Vue.use(VueI18n);
 Vue.use(iView);
 Vue.use(ElementUI);
 Vue.prototype.$http = api;
+Vue.prototype.$util = util;
 new Vue({
     el: '#app',
     router: router,

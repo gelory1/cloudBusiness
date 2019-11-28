@@ -113,6 +113,10 @@ const workflow = {
     XLORDER (params) {
         return axios.post('/public/api/xlorder/query',params);
     },
+    // 订单查询
+    SETORDER (params) {
+        return axios.post('/public/api/xlorder/set',params);
+    },
     // 客户查询
     XLCUSTOMER (params) {
         return axios.post('/public/api/xlcustomer/query',params);

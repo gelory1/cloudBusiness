@@ -4,7 +4,8 @@ const user = {
     state: {
         customerInfo: {},
         contractInfo: {},
-        accountId: 0
+        accountId: 0,
+        accountName: ''
     },
     mutations: {
         logout (state, vm) {
@@ -32,6 +33,9 @@ const user = {
         },
         setAccountId (state, data) {
             state.accountId = data;
+        },
+        setAccountName (state, data) {
+            state.accountName = data;
         }
     }
 };
