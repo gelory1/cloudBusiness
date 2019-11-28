@@ -151,8 +151,8 @@
           <Table :columns="add_columns" :data="add_data" class="gztable"></Table>
         </FormItem>
         <FormItem label="负责人" prop="fzr">
-          <Select v-model="newgzForm.fzr" placeholder class="col-v">
-            <Option value="item" v-for="(item,index) in fzr">{{item.val}}</Option>
+          <Select v-model="newgzForm.fzr" placeholder="请选择(默认不选为认领模式)" class="col-v">
+            <Option value="item" v-for="(item,index) in fzr" :key="index">{{item.val}}</Option>
           </Select>
         </FormItem>
         <FormItem label="要求完成时间">
@@ -335,28 +335,26 @@ const statusMap = {
 }
 const yb_columns = [
   {
-    type: "selection",
-    width: 60,
-    align: "center"
-  },
-  {
     title: "工作内容",
     key: "gznr",
   },
   {
     title: "类型",
     key: "type",
-    width: '100'
+    width: '100',
+    align: 'center'
   },
   {
     title: "负责人",
     key: "fzr",
-    width: '100'
+    width: '100',
+    align: 'center'
   },
   {
     title: "日期",
     key: "duetime",
-    width: '150'
+    width: '150',
+    align: 'center'
   }
 ];
 export default {
@@ -376,9 +374,6 @@ export default {
         wcsj: ""
       },
       fzr: [
-        {
-          val: "3423"
-        }
       ],
       gz_columns: [
         {
@@ -413,17 +408,20 @@ export default {
         {
           title: "类型",
           key: "type",
-          width: '100'
+          width: '100',
+          align: 'center'
         },
         {
           title: "负责人",
           key: "fzr",
-          width: '100'
+          width: '100',
+          align: 'center'
         },
         {
           title: "截至日期",
           key: "jztime",
-          width: '100'
+          width: '100',
+          align: 'center'
         }
       ],
       yb_columns,
@@ -437,17 +435,20 @@ export default {
         {
           title: "类型",
           key: "type",
-          width: '100'
+          width: '100',
+          align: 'center'
         },
         {
           title: "负责人",
           key: "fzr",
-          width: '100'
+          width: '100',
+          align: 'center'
         },
         {
           title: "状态",
           key: "zt",
           width: '100',
+          align: 'center',
           render: (h, params) => {
             return h("div", [
               h(
@@ -910,6 +911,33 @@ export default {
     },
     addWork(){
       this.add_data = this.add_data_save;
+      console.log(this.newgzForm.wcsj);
+      let request = {
+        "typeid": 28002,
+        "data": [
+            {
+                "workBenchType": 10,
+                "accountId": 1351,
+                "chargePerson": 520,
+                "dueTime": "2019-10-22 19:35:33",
+                "workBenchContentList": [
+                    {
+                        "payTime": 520,
+                        "payUnitName": "南京致远互联2",
+                        "payAmount": 50000
+                    },
+                    {
+                        "payTime": 520,
+                        "payUnitName": "南京致远互联",
+                        "payAmount": 10000
+                    }
+                ]
+            }
+        ]
+      };
+      // this.$http.SETWORKBENCH(request).then(response => {
+
+      // })
     },
     selectedPayStyle(e){
       let index = e.target.getAttribute("index");
