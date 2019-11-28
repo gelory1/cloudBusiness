@@ -16,7 +16,7 @@
             <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="getCustomList(1)" @on-click="getCustomList(1)" style="width: 200px;margin-right:20px;" />
             <span class="f_gl">
               <span @click="glkhClick" class="cor">
-                <Icon type="ios-list" />
+                <Icon type="ios-flask-outline"></Icon>
                 <span>过滤</span>
               </span>
 
@@ -87,7 +87,7 @@
             <span style="padding:0 5px">|</span>
             <span class="f-more">
               <span @click="moreClick" class="cor1">
-                <Icon type="ios-list" />
+                <Icon type="navicon-round"></Icon>
                 <span>更多</span>
               </span>
               <!-- 更多 -->
@@ -101,7 +101,7 @@
           <Button type="ghost" icon="ios-plus-empty" class="addBut" @click="addClick">添加客户</Button>
         </Header>
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '500px'}" style="padding-left:20px">
+      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
         <Table
           @on-selection-change="selectChange"
           style="position:relative;"
@@ -109,6 +109,7 @@
           :data="customList_data"
           size="small"
           :loading="loading"
+          class="table"
         ></Table>
         <Page
           :current.sync="pageNum"
@@ -174,15 +175,36 @@ export default {
         },
         {
           title: "客户名称",
-          key: "name"
+          key: "name",
+          align:"center",
+           render: (h, params) => {
+              return h('div', [
+                  h('a', {
+                      style:{
+                        color:"black"
+                      },
+                      on: {
+                          click: () => {
+                                this.$store.commit('selectedCustom',params.row);
+                                this.$router.push({ path: "/customermanage/see" });
+                            }
+                        }
+                  },params.row.name)
+              ]);
+          }
         },
         {
           title: " ",
-          width: 50,
+          width: 30,
+          align:"center",
           render: (h, params) => {
             return h('Dropdown',{
+                class:'iconShow',
                 props:{
                     trigger:"click"
+                },
+                style:{
+                  // display:"none"
                 },
                 on:{
                    'on-click':(value)=>{
@@ -233,27 +255,33 @@ export default {
         },
         {
           title: "客户性质",
-          key: "nature"
+          key: "nature",
+          align:"center"
         },
         {
           title: "客户等级",
-          key: "level"
+          key: "level",
+          align:"center"
         },
         {
           title: "省份/城市",
-          key: "city"
+          key: "city",
+          align:"center"
         },
         {
           title: "建档时间",
-          key: "time"
+          key: "time",
+          align:"center"
         },
         {
           title: "销售人员",
-          key: "salesman"
+          key: "salesman",
+          align:"center"
         },
         {
           title: "运营公司",
-          key: "company"
+          key: "company",
+          align:"center"
         }
       ],
       customList_data: [],

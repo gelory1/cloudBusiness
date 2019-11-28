@@ -39,16 +39,16 @@
         <Header :style="{background: '#fff',minWidth:'400px'}">
           <div style="float:right;">
             <Input icon="ios-search" placeholder="请输入内容" style="width: 200px;margin-right:20px;"  @on-enter="search" @on-click="search" v-model="inputVal" />
-            <Icon type="ios-list" />
+            <Icon type="ios-flask-outline"></Icon>
             <span>过滤</span>
             <span style="padding:0 5px">|</span>
-            <Icon type="ios-list" />
+            <Icon type="navicon-round"></Icon>
             <span>更多</span>
           </div>
         </Header>
         <Content
-          :style="{background: '#fff', minHeight: '800px'}"
-          style="padding-left:20px;margin-top:-20px;"
+          :style="{background: '#fff', minHeight: scrollHeight}"
+          style="padding-left:10px;margin-top:-20px;"
         >
           <Tabs ref="tab" v-model="tabName" @on-click="changeTab">
             <TabPane label="入库单据" name="name1">
@@ -57,6 +57,7 @@
                 :data="rkdj_data"
                 size="small"
                 :loading="inLoading"
+                :height="tableHeight"
               ></Table>
               <Page
                 :current.sync="inPageNum"
@@ -64,10 +65,8 @@
                 :page-size="10"
                 @on-change="getProductList"
                 size="small"
-                class="page"
                 show-elevator
-                
-                style="text-align:center;margin-top:20px;"
+                style="text-align:center;margin:20px 0;"
               ></Page>
             </TabPane>
             <TabPane label="出库单据" name="name2">
@@ -76,6 +75,7 @@
                 :data="ckdj_data"
                 size="small"
                 :loading="outLoading"
+                :height="tableHeight"
               ></Table>
               <Page
                 :current.sync="outPageNum"
@@ -84,9 +84,7 @@
                 @on-change="getProductList"
                 size="small"
                 show-elevator
-                
-                class="page"
-                style="text-align:center;margin-top:20px;"
+                style="text-align:center;margin:20px 0;"
               ></Page>
             </TabPane>
           </Tabs>
@@ -147,7 +145,7 @@
       <div style="clear:both;overflow: hidden;">
         <p class="djtitle">入库设备</p>
          <div style="width:17%;float:left;">
-         <Table :columns="device_columns1" ref="rktable" :data="indevice_data1" disabled-hover highlight-row @on-current-change="rkbhClick" 
+         <Table :columns="device_columns1" ref="rktable" :data="indevice_data1" disabled-hover highlight-row  @on-current-change="rkbhClick" 
          size="small" style="margin:10px 0 0 20px;overflow:auto"></Table>
            <!--  <ul>
             <li  class="li" v-for="(item,index) in rksbxq" :key="index" @click="rkbhClick(index)" style="cursor:pointer;padding:10px;">{{item.val}}</li>
@@ -265,27 +263,33 @@ export default {
       rkdj_columns: [
         {
           title: "单据编号",
-          key: "djbh"
+          key: "djbh",
+          align:"center"
         },
         {
           title: "入库类别",
-          key: "rklb"
+          key: "rklb",
+          align:"center"
         },
         {
           title: "入库日期",
-          key: "rkrq"
+          key: "rkrq",
+          align:"center"
         },
         {
           title: "订单编号",
-          key: "ddbh"
+          key: "ddbh",
+          align:"center"
         },
         {
           title: "客户名称",
-          key: "khmc"
+          key: "khmc",
+          align:"center"
         },
         {
           title: "设备数量",
-          key: "sbsl"
+          key: "sbsl",
+          align:"center",
         },
         {
           title: "状态",
@@ -374,27 +378,33 @@ export default {
       ckdj_columns: [
         {
           title: "单据编号",
-          key: "djbh"
+          key: "djbh",
+          align:"center",
         },
         {
           title: "出库类别",
-          key: "cklb"
+          key: "cklb",
+          align:"center"
         },
         {
           title: "出库日期",
-          key: "ckrq"
+          key: "ckrq",
+          align:"center"
         },
         {
           title: "订单编号",
-          key: "ddbh"
+          key: "ddbh",
+          align:"center"
         },
         {
           title: "客户名称",
-          key: "khmc"
+          key: "khmc",
+          align:"center"
         },
         {
           title: "设备数量",
-          key: "sbsl"
+          key: "sbsl",
+          align:"center",
         },
         {
           title: "状态",
@@ -675,6 +685,7 @@ export default {
       inPageNum:1,
       outPageNum:1,
       devicePageNum:1,
+      tableHeight:""
     };
   },
   methods: {
@@ -881,13 +892,17 @@ export default {
   },
   mounted() {
     this.selectClick(0);
+    this.tableHeight = document.body.scrollHeight-300
   },
   computed: {
     scrollHeight(){
       let h = 0;
-      h = (window.screen.height-330)+'px'
+      // h = (window.screen.height-330)+'px'
+       h=(document.body.scrollHeight-185)+'px'
       return h;
-    }
+    },
+
+    
   },
   watch:{
     tabName(nv){

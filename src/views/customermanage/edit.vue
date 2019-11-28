@@ -10,7 +10,7 @@
             </FormItem>
           </Col>
           <Col span="8">
-            <FormItem label="客户简称" prop="customer_abbreviation" class="con-right">
+            <FormItem label="客户简称" prop="customer_abbreviation" style="margin-left:100px">
               <Input class="col-m" v-model="formValidate.customer_abbreviation" placeholder="" />
             </FormItem>
           </Col>
@@ -31,11 +31,11 @@
             </FormItem>
           </Col>
           <Col span="8">
-            <FormItem label="省份/城市" prop="city" class="con-right">
-              <Select v-model="formValidate.province.id" placeholder="" class="col-d">
+            <FormItem label="省份/城市" prop="city"  style="margin-left:102px;width:280px;">
+              <Select v-model="formValidate.province.id" placeholder="" style="width:97px;">
                 <Option v-for="(item,index) in provinces" :value="item.id" :key="index">{{item.name}}</Option>
               </Select>
-              <Select v-model="formValidate.city.id" placeholder="" class="col-d">
+              <Select v-model="formValidate.city.id" placeholder="" style="width:97px;">
                 <Option v-for="(item,index) in citys" :value="item.id" :key="index">{{item.name}}</Option>
               </Select>
             </FormItem>
@@ -85,7 +85,7 @@
             </FormItem>
           </Col>
           <Col span="8">
-            <FormItem label="邮政编码" prop="post_code" class="con-right">
+            <FormItem label="邮政编码" prop="post_code"  style="margin-left:98px">
               <Input class="col-m" v-model="formValidate.post_code" placeholder="" />
             </FormItem>
           </Col>

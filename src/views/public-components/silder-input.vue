@@ -1,6 +1,6 @@
 <template>
   <div class="block">
-    <el-slider v-model="value" class="slider" show-input></el-slider>
+    <el-slider v-model="value" class="slider" show-input input-size="mini"></el-slider>
   </div>
 </template>
 

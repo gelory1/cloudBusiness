@@ -41,14 +41,14 @@
             <Input icon="ios-search" placeholder="请输入内容" style="width: 200px;margin-right:20px;" @on-enter="search" @on-click="search" v-model="inputVal"/>
             <span class="f_gl"> 
               <span @click="glkhClick" class="cor">            
-                <Icon type="ios-list" />
+                <Icon type="ios-flask-outline"></Icon>
                 <span>过滤</span>
               </span>
                 <!-- 过滤 -->
               <div v-show="glShow" class="gl">
                 <p class="gl_p">过滤条件</p>
                 <span @click="closeglClick" class="gl_p1">X</span>
-                <Form ref="filterItem" :model="filterItem" :label-width="80">
+                <Form ref="filterItem" :model="filterItem" :label-width="80" style="height:400px">
                   <FormItem label="存货编码" prop="chbm">
                     <Input type="text" v-model="filterItem.chbm"></Input>
                   </FormItem>
@@ -93,7 +93,8 @@
             <span style="padding:0 5px">|</span>
             <span class="f-more">
               <span @click="moreClick" class="cor1">
-                <Icon type="ios-list" />
+                <!-- <Icon type="navicon"></Icon> -->
+                <Icon type="navicon-round"></Icon>
                 <span>更多</span>
               </span>
               <!-- 更多 -->
@@ -104,17 +105,19 @@
           </div>
         </Header>
         <Content
-          :style="{background: '#fff', minHeight: '800px'}"
-          style="padding-left:20px;margin-top:-20px"
+          :style="{background: '#fff', minHeight: scrollHeight}"
+          style="padding-left:10px;margin-top:-20px"
         >
           <Tabs ref="tab" v-model="tabName" @on-click="changeTab">
             <TabPane label="在库设备资产" name="name1">
               <Table
+                class="table"
                 :columns="jbxx_columns"
                 :data="jbxx_data"
                 size="small"
                 :loading="ckLoading"
                 highlight-row
+                :height="tableHeight"
                 @on-current-change="changeRow"
               >
               </Table>
@@ -125,15 +128,17 @@
                 @on-change="getProductList"
                 size="small"
                 show-elevator
-                class="page"
-                style="text-align:center;margin-top:20px;"
+                style="text-align:center;margin:20px 0;"
               ></Page>
             </TabPane>
             <TabPane label="出入库记录" name="name2">
               <Table 
                 :columns="crk_columns"
-                :data="crk_data" size="small" 
-                @on-row-dblclick="zcrowClick"
+                :data="crk_data" 
+                size="small" 
+                highlight-row
+                :height="tableHeight"
+                @on-row-click="zcrowClick"
                 :loading="crkLoading"
                 >
               </Table>
@@ -143,17 +148,15 @@
                 :page-size="10"
                 @on-change="getCrkList"
                 size="small"
-                show-elevator
-                
-                class="page"
-                style="text-align:center;margin-top:20px;"
+                show-elevator 
+                style="text-align:center;margin:20px 0;"
               ></Page>
             </TabPane>
           </Tabs>
         </Content>
       </Layout>
     </Layout>
-    <Modal v-model="modal1" width="500" title="设备资产台账">
+    <Modal v-model="modal1" width="500" title="设备资产台账" class="tzmodal">
       <div>
         <div style="float:left;margin-left:20px;">
           <h3>能效集中采集终端</h3>
@@ -162,7 +165,7 @@
             <span>{{jbxx.tm}}</span>
           </p>
         </div>
-        <Button style="float:right;margin-right:20px;">领用</Button>
+        <!-- <Button style="float:right;margin-right:20px;">领用</Button> -->
       </div>
       <div class="changestyle">
         <Tabs style="clear:both;" size="small" :animated="false">
@@ -304,37 +307,85 @@ export default {
         {
           title: "存货编码",
           key: "chbm",
-          width: '150'
+          align:"center"
         },
         {
           title: "存货名称",
           key: "chmc",
-          width:'350'
+          align:"center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.chmc !== null && params.row.chmc !== undefined) {
+                if (params.row.chmc.length > 15) {
+                  texts = params.row.chmc.substring(0, 15) + '...'
+                } else {
+                  texts = params.row.chmc
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.chmc)
+              ])
+            }
         },
         {
           title: "规格型号",
-          key: "ggxh"
+          key: "ggxh",
+          align:"center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.ggxh !== null && params.row.ggxh !== undefined) {
+                if (params.row.ggxh.length > 20) {
+                  texts = params.row.ggxh.substring(0, 20) + '...'
+                } else {
+                  texts = params.row.ggxh
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.ggxh)
+              ])
+            }
         },
         {
           title: "计量单位",
           key: "jldw",
-          width: '90',
           align:'center'
         },
         {
           title: "数量",
           key: "sl",
-          width: '80',
+          width: 80,
           align:'center'
         },
         {
           title: "存放仓库",
-          key: "cfck"
+          key: "cfck",
+          align:"center"
         },
         {
           title: "操作",
           key: "action",
-          width: 150,
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -380,58 +431,114 @@ export default {
       yjjl_columns: [
         {
           title: "发生时间",
-          key: "fssj"
+          key: "fssj",
+          align:"center"
         },
         {
           title: "事件类型",
-          key: "sjlx"
+          key: "sjlx",
+          align:"center"
         },
         {
           title: "详细描述",
-          key: "xxms"
+          key: "xxms",
+          align:"center"
         },
         {
           title: "处理人",
-          key: "clr"
+          key: "clr",
+          align:"center"
         }
       ],
       crk_columns: [
         {
           title: "条码",
-          key: "tm"
+          key: "tm",
+          align:"center"
         },
         {
           title: "存货编码",
-          key: "chbm"
+          key: "chbm",
+          align:"center"
         },
         {
           title: "存货名称",
           key: "product_name",
-          width: '350'
+          align:"center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.product_name !== null) {
+                if (params.row.product_name.length > 15) {
+                  texts = params.row.product_name.substring(0, 15) + '...'
+                } else {
+                  texts = params.row.product_name
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.product_name)
+              ])
+            }
         },
         {
           title: "规格型号",
           key: "ggxh",
-          width: '350'
+          align:"center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.ggxh !== null) {
+                if (params.row.ggxh.length > 20) {
+                  texts = params.row.ggxh.substring(0, 20) + '...'
+                } else {
+                  texts = params.row.ggxh
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.ggxh)
+              ])
+            }
         },
         {
           title: "计量单位",
           key: "jldw",
-          width: '90',
+          width: 100,
           align:'center'
         },
         {
           title: "箱码",
           key: "xm",
+          align:"center"
         },
         {
           title: "状态",
-          key: "zt"
+          key: "zt",
+          align:"center"
         },
         {
           title: "最新操作时间",
           key: "czsj",
-          width: 150
+          align:"center"
         }
       ],
       crk_data: [
@@ -491,7 +598,8 @@ export default {
       selectedWhid:'',
       pageName1:1,
       pageName2:1,
-      filterStatus: false
+      filterStatus: false,
+      tableHeight:""
     };
   },
   methods: {
@@ -745,13 +853,15 @@ export default {
   },
   mounted() {
     this.selectClick(0);
+    this.tableHeight = document.body.scrollHeight-300
   },
   computed: {
     scrollHeight(){
       let h = 0;
-      h = (window.screen.height-330)+'px'
+      // h = (window.screen.height-330)+'px'
+      h=(document.body.scrollHeight-185)+'px'
       return h;
-    }
+    },
   },
   watch: {
     tabName(nv){
@@ -772,4 +882,14 @@ export default {
 
 <style>
 @import "../assetmanage.css";
+/* @media screen and (max-width: 1366px) {
+    .tableHeight {
+       max-height:350px;
+       overflow:auto
+
+    }
+} */
+.tzmodal .ivu-modal-footer {
+  display: none;
+}
 </style>

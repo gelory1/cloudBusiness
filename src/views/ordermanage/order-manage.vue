@@ -238,20 +238,24 @@ const order_columns = [
   {
     key: 'orderNO',
     title: '单据编号',
+    align:"center"
   },
   {
     key: 'type',
     title: '业务类型',
-    width: 100
+    width: 100,
+    align:"center"
   },
   {
     key: 'time',
     title: '下单时间',
+    align:"center"
   },
   {
     key: 'salesType',
     title: '销售类型',
-    width: 100
+    width: 100,
+    align:"center"
   },
   {
     key: 'customName',
@@ -261,12 +265,14 @@ const order_columns = [
   },
   {
     key: 'contractNO',
-    title: '合同编号'
+    title: '合同编号',
+    align:"center"
   },
   {
     key: 'count',
     title: '设备数量',
-    width: 100
+    width: 100,
+    align:"center"
   },
   {
     key: 'status',
@@ -344,36 +350,44 @@ const subjectName = {
 const deviceList_columns = [
    {
     title: "条码",
-    key: "tm"
+    key: "tm",
+    align:"center"
   },
   {
     title: "存货编码",
-    key: "chbm"
+    key: "chbm",
+    align:"center"
   },
   {
     title: "存货名称",
-    key: "chmc"
+    key: "chmc",
+    align:"center"
   },
   {
     title: "规格型号",
-    key: "ggxh"
+    key: "ggxh",
+    align:"center"
   },
   {
     title: "计量单位",
-    key: "jldw"
+    key: "jldw",
+    align:"center"
   },
   {
     title: "箱码",
-    key: "xm"
+    key: "xm",
+    align:"center"
   },
   {
     title: "状态",
-    key: "zt"
+    key: "zt",
+    align:"center"
   },
   {
     title: "最新操作时间",
     key: "newtime",
-    width:150
+    width:150,
+    align:"center"
   }
 ];
 const salesTypes = [
@@ -424,28 +438,83 @@ export default {
         {
           title: "序号",
           key: "index",
-          width:80
+          width:80,
+          align:"center"
         },
         {
           title: "存货编码",
-          key: "no"
+          key: "no",
+          align:"center"
         },
         {
           title: "存货名称",
-          key: "name"
+          key: "name",
+          align:"center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.name !== null) {
+                if (params.row.name.length > 15) {
+                  texts = params.row.name.substring(0, 15) + '...'
+                } else {
+                  texts = params.row.name
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.name)
+              ])
+            }
+
         },
         {
           title: "规格型号",
           key: "spec",
-          width: 200
+          width: 200,
+          align:"center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.spec !== null) {
+                if (params.row.spec.length > 20) {
+                  texts = params.row.spec.substring(0, 20) + '...'
+                } else {
+                  texts = params.row.spec
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.spec)
+              ])
+            }
         },
         {
           title: "计量单位",
-          key: "unit"
+          key: "unit",
+          align:"center"
         },
         {
           title: "数量",
-          key: "count"
+          key: "count",
+          align:"center"
         },
         // {
         //   title: "操作",
