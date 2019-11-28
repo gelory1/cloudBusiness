@@ -145,9 +145,19 @@
             <Option :value="item.index" v-for="(item,index) in rwlxs" :key="index">{{item.val}}</Option>
           </Select>
         </FormItem>
-        <FormItem label="任务内容" prop="rwnr">
-          <button class="but_change" @click="addcolClick">添加行</button>
-          <button class="but_change">批量导入</button>
+        <FormItem prop="rwnr">
+          <div style="margin-left:-70px;display:flex">
+            <span style="color:red">
+            *
+            </span>
+            <span style="margin-right:15px">
+              任务内容 
+            </span>
+            <button class="but_change" @click="addcolClick">添加行</button>
+            <el-upload action="/" :on-change="importExcel" :auto-upload="false" :show-file-list="false">
+              <Button class="but_change" type="ghost" icon="ios-cloud-upload-outline">批量导入</Button>
+            </el-upload>
+          </div>
           <Table :columns="add_columns" :data="newgzForm.add_data" class="gztable"></Table>
         </FormItem>
         <FormItem label="负责人" prop="fzr">
@@ -266,9 +276,10 @@
 </template>
 
 <script>
-import highchartsRing from './highcharts-ring.vue'
-import highchartsLine from './highcharts-line.vue'
-import { error } from 'highcharts'
+import highchartsRing from './highcharts-ring.vue';
+import highchartsLine from './highcharts-line.vue';
+import { error } from 'highcharts';
+import XLSX from 'xlsx';
 
 const typeMap = {
   1:' 审批提醒',
@@ -498,7 +509,7 @@ export default {
           render: (h, params) => {
               return h('Input', {
                       props: {
-                          "placeholder":"请输入......",
+                          "placeholder":"请输入金额",
                           "value": params.row.je,
                           "size":'small',
                           "type":"text"
@@ -518,8 +529,9 @@ export default {
               return h('div', [
                   h('Input', {
                       props: {
-                          "placeholder":"请输入......",
+                          "placeholder":"请输入付款方",
                           "value": params.row.fkf,
+                          "size":'small',
                           "type":"text"
                       },
                       on:{
@@ -529,6 +541,24 @@ export default {
                       }
                   }),
               ]);
+          }
+        },
+        {
+          title:'操作',
+          width: '100',
+          key: 'action',
+          render:(h,params) => {
+            return h('Button',{
+                props: {
+                    type: 'error',
+                    size: 'small'
+                },
+                on: {
+                    click: () => {
+                        this.addRemove(params.index);
+                    }
+                }
+            }, '删除')
           }
         }
       ],
@@ -921,6 +951,10 @@ export default {
       let {index,key,value} = store;
       this.newgzForm.add_data[index][key] = value;
     },
+    addRemove(index){
+      this.addStore = this.addStore.filter((d,i) => i!== index);
+      this.newgzForm.add_data = JSON.parse(JSON.stringify(this.addStore));
+    },
     addWork(){
       this.newgzForm.add_data = JSON.parse(JSON.stringify(this.addStore));
       if(this.newgzForm.wcsj === ''){
@@ -961,13 +995,6 @@ export default {
         ]
       };
       this.$http.SETWORKBENCH(request).then(response => {
-        this.newgzForm = {
-          rwlx: 10,
-          fzr: "",
-          wcsj: "",
-          add_data: []
-        };
-        this.addStore = [];
         this.newgzmodal = false;
         this.$Message.success('新增成功！');
         this.getWorkbench();
@@ -1015,6 +1042,47 @@ export default {
           this.dkqrmodal = false;
         }
       })
+    },
+    importExcel(file){
+      const types = file.name.split('.')[1]
+      const fileType = ['xlsx', 'xlc', 'xlm', 'xls', 'xlt', 'xlw', 'csv'].some(item => item === types)
+      if (!fileType) {
+        this.$Message.error('格式错误，请重新导入！');
+        return;
+      }
+      this.$Message.info('导入成功，处理中...');
+      this.file2Xce(file).then(tabJson => {
+        if (tabJson && tabJson.length > 0) {
+          tabJson[0].sheet.forEach((d) => {
+            this.addStore.push({
+              dksj:d.到款时间,
+              je:d.金额,
+              fkf:d.付款方,
+            })
+            this.newgzForm.add_data = JSON.parse(JSON.stringify(this.addStore));
+          })
+        }
+      })
+    },
+    file2Xce(file) {
+      return new Promise(function(resolve, reject) {
+        const reader = new FileReader()
+        reader.onload = function(e) {
+          const data = e.target.result
+          this.wb = XLSX.read(data, {
+            type: 'binary'
+          })
+          const result = []
+          this.wb.SheetNames.forEach((sheetName) => {
+            result.push({
+              sheetName: sheetName,
+              sheet: XLSX.utils.sheet_to_json(this.wb.Sheets[sheetName])
+            })
+          })
+          resolve(result)
+        }
+        reader.readAsBinaryString(file.raw)
+      })
     }
   },
   mounted() {
@@ -1023,6 +1091,17 @@ export default {
   watch:{
     tabName(){
       this.getWorkbench();
+    },
+    newgzmodal(nv){
+      if(!nv){
+        this.newgzForm = {
+          rwlx: 10,
+          fzr: "",
+          wcsj: "",
+          add_data: []
+        };
+        this.addStore = [];
+      }
     }
   },
   beforeDestroy(){
