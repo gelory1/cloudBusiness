@@ -755,9 +755,10 @@ export default {
             paymentList:d.paymentList,
             _checked:false
           })
+        })
+        this.hz2_data = [];
+        if(this.hz1_data.length>0) this.hz1Click(this.hz1_data[0],0);
       })
-      this.hz1Click(this.hz1_data[0],0);
-    })
     },
     rowClassName (row, index) {
         if (index === this.indexStyle) {
@@ -893,7 +894,7 @@ export default {
       this.zfmodal = false;
     },
     hz1Click(val,index){
-      this.indexStyle = index
+      this.indexStyle = index;
       this.hz1_data[index]._checked = true
       this.hz2_data = val.paymentList||[];
     },
