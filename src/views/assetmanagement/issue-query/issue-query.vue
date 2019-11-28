@@ -840,10 +840,10 @@ export default {
         ],
       };
       api.PostXLASSETS(request).then((response)=>{
-        let { data,sum } = response.data.result;
+        let { data } = response.data.result;
         this.sblb_data = [];
-        this.sblbSum = sum;
-        data.forEach((d)=>{
+        this.sblbSum = data[0].sum;
+        data[0].devicelist.forEach((d)=>{
           let crk_item = {};
           crk_item.tm = d.device_address;
           crk_item.chbm = d.product_code;
