@@ -698,8 +698,8 @@ export default {
             product_name: this.filterItem.chmc === ''?undefined:this.filterItem.chmc,  //存货名称
             device_address: this.filterItem.tm === ''?undefined:this.filterItem.tm,  //条码
             box_address: this.filterItem.xm === ''?undefined:this.filterItem.xm,  //箱码
-            device_start_time: this.filterItem.kssj === ''?undefined:this.filterItem.kssj,  //开始时间
-            device_end_time: this.filterItem.jssj === ''?undefined:this.filterItem.jssj,  //结束名称
+            device_start_time: this.filterItem.kssj === ''?undefined:this.filterItem.kssj.getFullYear() + '-' + (this.filterItem.kssj.getMonth()+1) + '-' + (this.filterItem.kssj.getDate())+ ' 00:00:00',  //开始时间
+            device_end_time: this.filterItem.jssj === ''?undefined:this.filterItem.jssj.getFullYear() + '-' + (this.filterItem.jssj.getMonth()+1) + '-' + (this.filterItem.jssj.getDate()) +' 23:59:59',  //结束名称
             device_status: this.filterItem.zt === ''?undefined:this.filterItem.zt,   //状态
             keyword: this.inputVal === ''?undefined:this.inputVal,
             page_num: p,
@@ -779,8 +779,10 @@ export default {
       if(this.$refs.menu.currentActiveName !== -1) this.$refs.menu.currentActiveName = -1;
       this.ck_current_index = '';
       if(this.tabName === 'name1'){
+        this.pageName1 = 1;
         this.getProductList(1);
       }else if(this.tabName === 'name2'){
+        this.pageName2 = 1;
         this.getCrkList(1);
       }   
     },

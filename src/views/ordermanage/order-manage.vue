@@ -13,7 +13,7 @@
         </div>
         <Header :style="{background: '#fff',minWidth:'400px',postion:'relative'}">
           <div style="float:right;">
-            <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="getOrderList(1)" @on-click="getOrderList(1)" style="width: 200px;margin-right:20px;" />
+            <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="search" @on-click="search" style="width: 200px;margin-right:20px;" />
             <!-- <Button type="text" @click="glShow=!glShow;">
               <Icon type="ios-list" />
               <span>过滤</span>
@@ -29,12 +29,12 @@
                 <span @click="closeglClick" class="gl_p1">X</span>
                 <Form ref="filterItem" :model="filterItem" :label-width="80">
                   <FormItem label="运营公司" prop="yygs">
-                    <Select v-model="filterItem.manageCompany" clearable>
+                    <Select v-model="filterItem.manageCompany" clearable filterable>
                       <Option :value="item.id" v-for="(item,index) in companys" :key="index">{{item.name}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="销售类型" prop="xslx">
-                    <Select v-model="filterItem.salesType" clearable>
+                    <Select v-model="filterItem.salesType" clearable filterable>
                       <Option :value="item.index" v-for="(item,index) in salesTypes" :key="index">{{item.val}}</Option>
                     </Select>
                   </FormItem>
@@ -693,8 +693,8 @@ export default {
             account_id: this.$store.state.user.accountId,
             order_status: this.selectedTab.index === 0?undefined:(this.selectedTab.index-1),
             // customer_name:'',
-            order_starttime:this.filterItem.startTime === ''?undefined:this.filterItem.startTime,
-            order_endtime:this.filterItem.endTime === ''?undefined:this.filterItem.endTime,
+            order_starttime:this.filterItem.startTime === ''?undefined:this.filterItem.startTime.getFullYear() + '-' + (this.filterItem.startTime.getMonth()+1) + '-' + (this.filterItem.startTime.getDate())+ ' 00:00:00',
+            order_endtime:this.filterItem.endTime === ''?undefined:this.filterItem.endTime.getFullYear() + '-' + (this.filterItem.endTime.getMonth()+1) + '-' + (this.filterItem.endTime.getDate()) +' 23:59:59',
             order_type: this.selectedType.ids,
             sale_type:this.filterItem.salesType === ''?undefined:this.filterItem.salesType,
             // contract_subject:0,
@@ -790,6 +790,10 @@ export default {
     closeglClick() {
       this.glShow = false;
       if(!this.filterStatus) $(".cor").css({ color: "#000000" });
+    },
+    search(){
+      this.pageNum = 1;
+      this.getOrderList(1)
     },
     glkhClick() {
       this.glShow = !this.glShow;

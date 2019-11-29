@@ -223,13 +223,13 @@ export default {
                   value: params.row.num
                 },
                 on: {
-                  'on-change': a => {
-                        this.formValidate.devices_list[params.index].num = a;
-                        this.formValidate.devices_list[params.index].totalPrice = a * params.row.price;
-                  }
+                    'on-change': a => {
+                        params.row.num = a;
+                        params.row.totalPrice = a * params.row.price;
+                        this.$set(this.deviceStore,params.index,params.row);
+                    }
                 }
-              },
-              1
+              }
             );
           }
         },
@@ -286,15 +286,9 @@ export default {
                 },
                 on: {
                     'on-change': a => {
-                        this.addsb_data[params.index].num = a;
-                        this.addsb_data[params.index]._checked = true;
-                        if(!this.addData[this.pageNum]||!this.addData[this.pageNum].find(data => data.product_code === params.row.product_code)){
-                            if(!this.addData[this.pageNum]) this.addData[this.pageNum] = [];
-                            this.addData[this.pageNum].push(params.row);
-                        }else{
-                            let index = this.addData[this.pageNum].findIndex(data => data.product_code === params.row.product_code);
-                            this.addData[this.pageNum][index].num = a;
-                        }
+                        this.addStore[params.index] = params.row;
+                        this.addStore[params.index].num = a;
+                        this.addStore.page = this.pageNum;
                     }
                 }
               })
@@ -304,47 +298,8 @@ export default {
       ],
       addsb_data: [],
       addData: {},
-      contactIndex: 0,
-      ticketIndex: 0,
-      formAddlxr: {
-        productCode: "",
-        contact_id: "",
-        productName: "",
-        spec: "",
-        unit: "",
-        price: "",
-        totalPrice: ""
-      },
-      ruleAddlxr: {
-        productCode: [
-          {
-            required: true,
-            message: "请输入姓名",
-            trigger: "blur"
-          }
-        ],
-        spec: [
-          {
-            required: true,
-            message: "请输入职位",
-            trigger: "blur"
-          }
-        ],
-        unit: [
-          {
-            required: true,
-            message: "请输入电话",
-            trigger: "blur"
-          }
-        ],
-        totalPrice: [
-          { type: "totalPrice", message: "请输入正确的邮箱", trigger: "blur" }
-        ],
-        productName: [
-          { required: true, message: "请选择性别", trigger: "change" }
-        ]
-      },
-      addlxrmodal: false,
+      addStore:{},
+      deviceStore:{},
       customs:[],
       cahceData:[],
       addsbmodal: false,
@@ -352,90 +307,6 @@ export default {
     };
   },
   methods: {
-    cancel() {
-      // this.$Message.info("Clicked cancel");
-    },
-    saveContact() {
-      let request1 = {
-        typeid: 25008,
-        data: [
-          {
-            customerNo: ((this.data || {}).data || {}).customer_no,
-            contactId: this.formAddlxr.contact_id,
-            contactName: this.formAddlxr.productCode,
-            productName: this.formAddlxr.productName === "男" ? 0 : 1,
-            positionName: this.formAddlxr.spec,
-            unit: this.formAddlxr.unit,
-            vcharnumber: this.formAddlxr.price,
-            eMail: this.formAddlxr.totalPrice
-          }
-        ]
-      };
-      let request2 = {
-        typeid: 25004,
-        data: {
-          customerNo: ((this.data || {}).data || {}).customer_no,
-          contactList: [
-            {
-              contactName: this.formAddlxr.productCode,
-              productName: this.formAddlxr.productName === "男" ? 0 : 1,
-              positionName: this.formAddlxr.spec,
-              unit: this.formAddlxr.unit,
-              vcharNumber: this.formAddlxr.price,
-              eMail: this.formAddlxr.totalPrice
-            }
-          ]
-        }
-      };
-      if (this.isNewCreate) {
-        if (this.contactStatus === "edit") {
-          for (let key in this.formValidate.devices_list[this.contactIndex]) {
-            this.$set(
-              this.formValidate.devices_list[this.contactIndex],
-              key,
-              this.formAddlxr[key]
-            );
-          }
-          this.newLocalData.contact.data.contactList[
-            this.contactIndex
-          ] = JSON.parse(JSON.stringify(request2.data.contactList[0]));
-        } else {
-          this.formValidate.devices_list.push(this.formAddlxr);
-          if (!this.newLocalData.contact) {
-            this.newLocalData.contact = request2;
-          } else {
-            this.newLocalData.contact.data.contactList.push(
-              request2.data.contactList[0]
-            );
-          }
-        }
-        return;
-      }
-      if (this.contactStatus === "edit") {
-        api.UPDATECUSTOMER(request1).then(response => {
-          if (response.data.code === 0) {
-            let index = this.formValidate.devices_list.findIndex(
-              data => data.contact_id === this.formAddlxr.contact_id
-            );
-            for (let key in this.formValidate.devices_list[index]) {
-              this.$set(
-                this.formValidate.devices_list[index],
-                key,
-                this.formAddlxr[key]
-              );
-            }
-            this.addlxrmodal = false;
-          }
-        });
-      } else {
-        api.SETCUSTOMER(request2).then(response => {
-          if (response.data.code === 0) {
-            this.formValidate.devices_list.push(this.formAddlxr);
-            this.addlxrmodal = false;
-          }
-        });
-      }
-    },
     getCmonpanys(){
         let request = {
             "typeid":23015,
@@ -461,6 +332,23 @@ export default {
         this.addDevices(1);
     },
     addDevices(p){
+        if(this.deviceStore&&Object.keys(this.deviceStore).length>0){
+            for(let key in this.deviceStore){
+                let index = this.formValidate.devices_list.findIndex(d => d.productCode === this.deviceStore[key].productCode);
+                if(index >= 0){
+                    this.formValidate.devices_list[index] = this.deviceStore[key];
+                }
+            }
+        }
+        if(this.addStore.page&&this.addData[this.addStore.page]){
+            for(let key in this.addStore){
+                let index = this.addData[this.addStore.page].findIndex(d => d.product_code === this.addStore[key].product_code);
+                if(index >= 0){
+                    this.addData[this.addStore.page][index] = this.addStore[key];
+                }
+            }
+        }
+        this.addStore = {};
         let request = {
             "typeid":23012,
             "data":[{
@@ -494,8 +382,20 @@ export default {
     },
     selectDevices(selection){
         this.addData[this.pageNum] = selection;
+        for(let key in this.addStore){
+            let index = selection.findIndex(d => d.product_code === this.addStore[key].product_code);
+            if(index >= 0){
+                this.addData[this.pageNum][index] = this.addStore[key];
+            }
+        }
     },
     ok(){
+        for(let key in this.addStore){
+            let index = (this.addData[this.pageNum]||[]).findIndex(d => d.product_code === this.addStore[key].product_code);
+            if(index >= 0){
+                this.addData[this.pageNum][index] = this.addStore[key];
+            }
+        }
         let data = [];
         for(let key in this.addData){
             data = data.concat(this.addData[key]);
@@ -514,22 +414,40 @@ export default {
         })
     },
     onSubmit(){
+        if(this.deviceStore&&Object.keys(this.deviceStore).length>0){
+            for(let key in this.deviceStore){
+                let index = this.formValidate.devices_list.findIndex(d => d.productCode === this.deviceStore[key].productCode);
+                if(index >=0){
+                    this.formValidate.devices_list[index] = this.deviceStore[key];
+                }
+            }
+        }
         let productList = [];
         this.formValidate.devices_list.forEach(data => {
             productList.push({
                 productCode: data.productCode,
+                productName: data.productName,
+                productModels: data.spec,
                 quantity: data.num,
                 price: data.price,
                 unit: data.unit,
             })
         })
+        let myDate = new Date();
+        let date = myDate.getFullYear() + '-' + (myDate.getMonth()+1) + '-' + myDate.getDate();
         let request = {
-            "typeid": 24004,
+            "typeid": 24006,
             "data": [
                 {
                     "account_id": this.$store.state.user.accountId,
-                    "orderTime": new Date(),
+                    "orderTime": date,
+                    "orderAmount": this.totalPrice,
+                    "whId": this.formValidate.store.index,
+                    "addressName": this.formValidate.adress.value,
                     "agent_id": this.formValidate.customer.index,
+                    "saleType": 2,
+                    "orderType": 1,
+                    "orderNo": '',
                     productList
                 }
             ]
@@ -603,9 +521,24 @@ export default {
         totalPrice(){
             let price = 0;
             if(this.formValidate.devices_list&&this.formValidate.devices_list.length>0){
-                this.formValidate.devices_list.forEach(data => {
-                    price += data.totalPrice;
-                })
+                if(this.deviceStore&&Object.keys(this.deviceStore).length>0){
+                    let obj = [];
+                    for(let key in this.deviceStore){
+                        if(obj.length === 0){
+                            obj = this.formValidate.devices_list.filter(d => d.productCode === this.deviceStore[key].productCode);
+                        }else{
+                            obj = obj.filter(d => d.productCode === this.deviceStore[key].productCode);
+                        }
+                        price += this.deviceStore[key].totalPrice;
+                    }
+                    obj.forEach(data => {
+                        price += data.totalPrice;
+                    })
+                }else{
+                    this.formValidate.devices_list.forEach(data => {
+                        price += data.totalPrice;
+                    })
+                }
             }
             return price;
         },

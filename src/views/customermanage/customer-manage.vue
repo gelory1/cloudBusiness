@@ -13,7 +13,7 @@
         </div>
         <Header :style="{background: '#fff',minWidth:'400px'}">
           <div style="float:right;">
-            <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="getCustomList(1)" @on-click="getCustomList(1)" style="width: 200px;margin-right:20px;" />
+            <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="search" @on-click="search" style="width: 200px;margin-right:20px;" />
             <span class="f_gl">
               <span @click="glkhClick" class="cor">
                 <Icon type="ios-flask-outline"></Icon>
@@ -26,19 +26,19 @@
                 <span @click="closeglClick" class="gl_p1">X</span>
                 <Form ref="filterItem" :model="filterItem" :label-width="80">
                   <FormItem label="客户等级" prop="khdj">
-                    <Select v-model="filterItem.nature" clearable>
+                    <Select v-model="filterItem.nature" clearable filterable>
                       <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="授权资质" prop="sqzz">
                     <Row>
                       <Col span="12">
-                        <Select v-model="filterItem.empower_province" clearable>
+                        <Select v-model="filterItem.empower_province" clearable filterable>
                           <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
                         </Select>
                       </Col>
                       <Col span="12">
-                        <Select v-model="filterItem.empower_city" clearable>
+                        <Select v-model="filterItem.empower_city" clearable filterable>
                           <Option :value="item.id" v-for="(item,index) in empowerCitys" :key="index">{{item.name}}</Option>
                         </Select>
                       </Col>
@@ -47,19 +47,19 @@
                   <FormItem label="省份/城市" prop="city">
                     <Row>
                       <Col span="12">
-                        <Select v-model="filterItem.province" clearable>
+                        <Select v-model="filterItem.province" clearable filterable>
                           <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
                         </Select>
                       </Col>
                       <Col span="12">
-                        <Select v-model="filterItem.city" clearable>
+                        <Select v-model="filterItem.city" clearable filterable>
                           <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
                         </Select>
                       </Col>
                     </Row>
                   </FormItem>
                   <FormItem label="运营公司" prop="yygs">
-                    <Select v-model="filterItem.manageCompany" clearable>
+                    <Select v-model="filterItem.manageCompany" clearable filterable>
                       <Option :value="item.id" v-for="(item,index) in companys" :key="index">{{item.name}}</Option>
                     </Select>
                   </FormItem>
@@ -134,7 +134,7 @@ const customerTypes= [
   },
   {
     no:1,
-    type: "客户"
+    type: "直销客户"
   },
   {
     no:2,
@@ -215,17 +215,32 @@ export default {
                         this.$store.commit('selectedCustom',params.row);
                         this.$router.push({ path: "/customermanage/edit" });
                       } else if (value == "删除") {
-                        let request = {
-                          "typeid": 25010,
-                          "data": [
+                        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                          confirmButtonText: '确定',
+                          cancelButtonText: '取消',
+                          type: 'warning'
+                        }).then(() => {
+                          let request = {
+                            "typeid": 25010,
+                            "data": [
                               {
-                                  "customerNo": params.row.data.customer_no
+                                "customerNo": params.row.data.customer_no
                               }
-                          ]
-                        }
-                        this.$http.DELETECUSTOMER(request).then(response =>{
-                          this.getCustomList(1);
-                        })
+                            ]
+                          }
+                          this.$http.DELETECUSTOMER(request).then(response =>{
+                            this.getCustomList(this.pageNum);
+                          })
+                          this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                          });
+                        }).catch(() => {
+                          this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                          });          
+                        });
                       }
                    }
                 }
@@ -348,6 +363,13 @@ export default {
       this.getCustomList(1);
     },
     getCustomList(p){
+      let startTime = '',endTime = '';
+      if(this.filterItem.startTime&&this.filterItem.startTime !== ''){
+        startTime = this.filterItem.startTime.getFullYear() + '-' + (this.filterItem.startTime.getMonth()+1) + '-' + (this.filterItem.startTime.getDate())+ ' 00:00:00';
+      }
+      if(this.filterItem.endTime&&this.filterItem.endTime !== ''){
+        endTime = this.filterItem.endTime.getFullYear() + '-' + (this.filterItem.endTime.getMonth()+1) + '-' + (this.filterItem.endTime.getDate()) +' 23:59:59';
+      }
       let request = {
         typeid: 25001,
         data: [
@@ -356,8 +378,8 @@ export default {
             page_num:p,
             page_size:10,
             customer_name:'',
-            create_starttime:this.filterItem.startTime,
-            create_endtime:this.filterItem.endTime,
+            create_starttime:startTime,
+            create_endtime:endTime,
             customer_level:this.filterItem.nature === ''?0:this.filterItem.nature,
             customer_nature:this.selectedCustomType.no,
             province:this.filterItem.province === ''?0:this.filterItem.province,
@@ -500,6 +522,10 @@ export default {
           this.citys = res;
         }
       });
+    },
+    search(){
+      this.pageNum = 1;
+      this.getCustomList(1);
     }
   },
   mounted() {
