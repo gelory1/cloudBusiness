@@ -424,12 +424,12 @@ export default {
         }
         let productList = [];
         this.formValidate.devices_list.forEach(data => {
-            productList.push({
+            if(data.num > 0) productList.push({
                 productCode: data.productCode,
                 productName: data.productName,
                 productModels: data.spec,
                 quantity: data.num,
-                price: data.price,
+                price: data.price + '',
                 unit: data.unit,
             })
         })
@@ -439,21 +439,42 @@ export default {
             "typeid": 24006,
             "data": [
                 {
-                    "account_id": this.$store.state.user.accountId,
-                    "orderTime": date,
-                    "orderAmount": this.totalPrice,
-                    "whId": this.formValidate.store.index,
-                    "addressName": this.formValidate.adress.value,
-                    "agent_id": this.formValidate.customer.index,
-                    "saleType": 2,
-                    "orderType": 1,
-                    "orderNo": '',
-                    productList
+                  "accountId": this.$store.state.user.accountId,
+                  "orderTime": date,
+                  "orderAmount": this.totalPrice + '',
+                  "whId": this.formValidate.store.index,
+                  "addressName": this.formValidate.adress.value,
+                  "agentId": this.formValidate.customer.index,
+                  "saleType": 2,
+                  "orderType": 1,
+                  "orderNo": '',
+                  productList
                 }
             ]
         }
         this.$http.SETORDER(request).then(response =>{
-            console.log(response);
+            this.$Message.success('添加成功！');
+            this.formValidate = {
+              name: "",
+              orderType: "",
+              customer: {
+                  index: '',
+                  value: '' 
+              },
+              store: {
+                  index:'',
+                  value:''
+              },
+              devices_list: [
+              ],
+              adress: {
+                  index:'',
+                  value: ''
+              }
+          },
+          this.$set(this.formValidate.customer,'index',this.customs[0].index);
+          this.$set(this.formValidate.customer,'value',this.customs[0].value);
+          this.$router.push('/ordermanage/ordermanage');
         })
     },
     onCancel(){
