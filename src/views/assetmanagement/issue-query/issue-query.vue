@@ -713,9 +713,9 @@ export default {
           }
         ],
       };
+      this.menudata = [];
       api.PostXLASSETS(request).then(response => {
         let res = response.data.result;
-         this.menudata = [];
           this.zkSum = res.sum;
           for (var i = 0; i < res.data.length; i++) {
             if(!this.menudata.find(data => data.wh_id === res.data[i].wh_id )){

@@ -666,6 +666,10 @@ export default {
           }
         ],
       };
+      if(request.data[0].wh_id){
+        this.inputVal = '';
+        request.data[0].keyword = undefined;
+      }
       this.jbxx_data = [];
       this.ckLoading = true;
       this.$http.PostXLASSETS(request).then((response)=>{
@@ -759,10 +763,9 @@ export default {
           }
         ],
       };
-     
+      this.menudata = [];
       this.$http.PostXLASSETS(request).then(response => {
         let res = response.data.result;
-         this.menudata = [];
           this.zkSum = res.sum;
           for (var i = 0; i < res.data.length; i++) {
             if(!this.menudata.find(data => data.wh_id === res.data[i].wh_id )){
