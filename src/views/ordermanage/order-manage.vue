@@ -95,17 +95,19 @@
             <h3>订单详情</h3>
             <p style="font-size:11px;">
               单据编号:
-              <span>{{selectedOrder.order_no}}</span>
+              <span>{{(selectedOrder.data||{}).order_no}}</span>
             </p>
           </div>
-          <Button :style="`position:absolute;margin:30px 0 0 0;
-          right:30px;top:30px;background-color:${(statusColorMap[selectedOrder.status]||{}).backgroundColor};
-          color:${(statusColorMap[selectedOrder.status]||{}).color}`">{{selectedOrder.status}}</Button>
-          <!-- <Poptip title="Title" content="去支付" placement="top" v-show="selectedOrder.status === '待支付'">
-            <Button :style="`position:absolute;margin:30px 0 0 0;
-          right:30px;top:30px;background-color:${(statusColorMap[selectedOrder.status]||{}).backgroundColor};
-          color:${(statusColorMap[selectedOrder.status]||{}).color}`">{{selectedOrder.status}}</Button>
-          </Poptip> -->
+          <Button :style="`position:absolute;margin-top:30px;right:30px;top:30px;background-color:${(statusColorMap[selectedOrder.status]||{}).backgroundColor};
+            color:${(statusColorMap[selectedOrder.status]||{}).color}`" v-show="selectedOrder.status !== '待支付'">
+            {{selectedOrder.status}}
+          </Button>
+          <Poptip ref="popTip" trigger="hover" content="去支付" placement="bottom" style="position:absolute;right:30px;top:30px;text-align:center;" v-show="selectedOrder.status === '待支付'">
+            <Button :style="`margin-top:30px;background-color:${(statusColorMap[selectedOrder.status]||{}).backgroundColor};
+              color:${(statusColorMap[selectedOrder.status]||{}).color}`">
+              {{selectedOrder.status}}
+            </Button>
+          </Poptip>
           
           <div style="position:relative;">
             <div :style="{
@@ -191,6 +193,7 @@
   </div>
 </template>
 <script>
+let $ = require("jquery");
 import api from "@/api/axios";
 const orderStatus1 = [{
     type: "全部",
@@ -746,6 +749,9 @@ export default {
     },
     addOrder(){
       this.$router.push('/ordermanage/create');
+    },
+    toPay(){
+      console.log(111);
     }
   },
   mounted(){
@@ -755,6 +761,9 @@ export default {
       this.orderDetailOpen = true;
       this.getOrderDetail({orderNO:this.$route.query.orderNo});
     }
+    $('.ivu-poptip-body-content-inner').css('color','#2d8cf0');
+    $('.ivu-poptip-body-content-inner').css('cursor','pointer');
+    $('.ivu-poptip-body').on('click',() => {this.toPay()});
   },
   computed:{
     selectedTab(){
