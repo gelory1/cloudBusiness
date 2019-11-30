@@ -654,6 +654,7 @@ export default {
       if(this.$refs.menu.currentActiveName !== -1) this.$refs.menu.currentActiveName = -1;
       this.ck_current_index = '';
       this.getProductList(1);
+      if(this.tabName !== 'name1') this.tabName = 'name1';
     },
     getProductList(p){
       let request = {
@@ -703,6 +704,7 @@ export default {
           {
             account_id: this.$store.state.user.accountId,
             wh_id: this.selectedWhid === ''?undefined:this.selectedWhid,
+            wh_type: this.cpxhpz[this.cktype_current_index].id,
             product_code: this.selectedProcode === ''?this.filterItem.chbm === ''?undefined:this.filterItem.chbm:this.selectedProcode,
             product_name: this.filterItem.chmc === ''?undefined:this.filterItem.chmc,  //存货名称
             device_address: this.filterItem.tm === ''?undefined:this.filterItem.tm,  //条码
