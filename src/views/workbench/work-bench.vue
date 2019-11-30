@@ -749,7 +749,7 @@ export default {
             this.$notify({
                 title: this.typeMap[d.workBenchType],
                 message: message,
-                offset: 10,
+                offset: 100,
                 duration: 0,
                 onClick: function(){
                   this.close();
