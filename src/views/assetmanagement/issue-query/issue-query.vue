@@ -261,7 +261,6 @@
 
 <script>
 import sblbTale from "../../public-components/sblb_table.vue";
-import api from "@/api/axios";
 export default {
   name: "deviceQuery",
   components: {
@@ -567,16 +566,20 @@ export default {
       },
       cpxhpz: [
         {
-          mc: "所有类型仓库"
+          mc: "所有类型仓库",
+          id: undefined
         },
         {
-          mc: "成品库"
+          mc: "成品库",
+          id: 0
         },
         {
-          mc: "工程物资库"
+          mc: "工程物资库",
+          id: 1
         },
         {
-          mc: "固定资产库"
+          mc: "固定资产库",
+          id: 2
         }
       ],
       rksbxq: [
@@ -714,7 +717,7 @@ export default {
         ],
       };
       this.menudata = [];
-      api.PostXLASSETS(request).then(response => {
+      this.$http.PostXLASSETS(request).then(response => {
         let res = response.data.result;
           this.zkSum = res.sum;
           for (var i = 0; i < res.data.length; i++) {
@@ -742,6 +745,7 @@ export default {
         data: [
           {
             account_id: this.$store.state.user.accountId,
+            wh_type: this.cpxhpz[this.cktype_current_index].id,
             wh_id: this.menudata&&this.menudata.length>0&&this.ck_current_index !== ''?this.menudata[this.ck_current_index].wh_id:undefined,
             keyword: this.inputVal === ''?undefined:this.inputVal,
             page_num: p,
@@ -758,7 +762,7 @@ export default {
         this.ckdj_data = [];
       }
       
-      api.PostXLASSETS(request).then((response)=>{
+      this.$http.PostXLASSETS(request).then((response)=>{
         let res = response.data.result.data;
         if(this.tabName === 'name1'){
           this.inLoading = true;
@@ -812,7 +816,7 @@ export default {
       }else{
         this.outdevice_data=[];
       }
-      api.XLORDER(param).then((res)=>{
+      this.$http.XLORDER(param).then((res)=>{
         res.data.result.data[0].product_list.forEach((data)=>{
           let item = {};
           item.chbm = data.product_code;
@@ -839,7 +843,7 @@ export default {
           }
         ],
       };
-      api.PostXLASSETS(request).then((response)=>{
+      this.$http.PostXLASSETS(request).then((response)=>{
         let { data } = response.data.result;
         this.sblb_data = [];
         this.sblbSum = data[0].sum;

@@ -558,16 +558,20 @@ export default {
       ],
       cpxhpz: [
         {
-          mc: "所有类型仓库"
+          mc: "所有类型仓库",
+          id:undefined
         },
         {
-          mc: "成品库"
+          mc: "成品库",
+          id:0
         },
         {
-          mc: "工程物资库"
+          mc: "工程物资库",
+          id:1
         },
         {
-          mc: "固定资产库"
+          mc: "固定资产库",
+          id:2
         }
       ],
       filterItem:{
@@ -657,6 +661,7 @@ export default {
         data: [
           {
             account_id: this.$store.state.user.accountId,
+            wh_type: this.cpxhpz[this.cktype_current_index].id,
             wh_id: this.menudata&&this.menudata.length>0&&this.ck_current_index !== ''?this.menudata[this.ck_current_index].wh_id:undefined,
             keyword: this.inputVal === ''?undefined:this.inputVal,
             product_code: this.filterItem.chbm === ''?undefined:this.filterItem.chbm,  //存货编码
