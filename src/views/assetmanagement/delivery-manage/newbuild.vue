@@ -192,12 +192,11 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.remove(params.index);
+                      var _self = this;
+                      _self.remove(params);
                     }
                   }
-                },
-                "X"
-              )
+                },"X")
             ]);
           }
         }
@@ -427,6 +426,9 @@ export default {
         // this.tz_data[index]._checked = false
         // return '';
     },
+    remove (index) {
+      this.outcksb_data1.splice(index, 1);
+    }
   }
 };
 </script>
