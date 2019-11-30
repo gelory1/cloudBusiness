@@ -28,36 +28,36 @@
                     <Input type="text" v-model="filterItem.customerName" />
                   </FormItem>
                   <FormItem label="合同性质" prop="contractNature">
-                    <Select v-model="filterItem.contractNature" clearable>
+                    <Select v-model="filterItem.contractNature" clearable filterable>
                       <Option :value="item.index" v-for="(item,index) in natures" :key="index">{{item.val}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="合同内容" prop="htnr">
-                    <Select v-model="filterItem.contractContent" clearable>
+                    <Select v-model="filterItem.contractContent" clearable filterable>
                       <Option :value="item.index" v-for="(item,index) in contents" :key="index">{{item.val}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="省份/城市" prop="city">
                     <Row>
                       <Col span="12">
-                        <Select v-model="filterItem.province" clearable>
+                        <Select v-model="filterItem.province" clearable filterable>
                           <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
                         </Select>
                       </Col>
                       <Col span="12">
-                        <Select v-model="filterItem.city" clearable>
+                        <Select v-model="filterItem.city" clearable filterable>
                           <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
                         </Select>
                       </Col>
                     </Row>
                   </FormItem>
                   <FormItem label="运营公司" prop="manageCompany">
-                    <Select v-model="filterItem.manageCompany" clearable>
+                    <Select v-model="filterItem.manageCompany" clearable filterable>
                       <Option :value="item.id" v-for="(item,index) in companys" :key="index">{{item.name}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="销售性质" prop="salesType">
-                    <Select v-model="filterItem.salesType" clearable>
+                    <Select v-model="filterItem.salesType" clearable filterable>
                       <Option :value="item.index" v-for="(item,index) in salesTypes" :key="index">{{item.val}}</Option>
                     </Select>
                   </FormItem>
@@ -517,10 +517,10 @@ export default {
           {
             "account_id": this.$store.state.user.accountId,
             "customerName": this.filterItem.customerName,
-            "signStarttime": this.filterItem.signStarttime,
-            "signEndtime": this.filterItem.signEndtime,
-            "dueStarttime": this.filterItem.dueStarttime,
-            "dueEndtime": this.filterItem.dueEndtime,
+            "signStarttime": this.filterItem.signStarttime === ''? '':(this.filterItem.signStarttime.getFullYear() + '-' + (this.filterItem.signStarttime.getMonth()+1) + '-' + (this.filterItem.signStarttime.getDate())+ ' 00:00:00'),
+            "signEndtime": this.filterItem.signEndtime === ''? '':(this.filterItem.signEndtime.getFullYear() + '-' + (this.filterItem.signEndtime.getMonth()+1) + '-' + (this.filterItem.signEndtime.getDate()) +' 23:59:59'),
+            "dueStarttime": this.filterItem.dueStarttime === ''? '':(this.filterItem.dueStarttime.getFullYear() + '-' + (this.filterItem.dueStarttime.getMonth()+1) + '-' + (this.filterItem.dueStarttime.getDate())+ ' 00:00:00'),
+            "dueEndtime": this.filterItem.dueEndtime === ''? '':(this.filterItem.dueEndtime.getFullYear() + '-' + (this.filterItem.dueEndtime.getMonth()+1) + '-' + (this.filterItem.dueEndtime.getDate()) +' 23:59:59'),
             "contractNature": this.filterItem.contractNature === ''?0:this.filterItem.contractNature,
             "contractContent": this.filterItem.contractContent === ''?0:this.filterItem.contractContent,
             "customerProvince": this.filterItem.province === ''?0:this.filterItem.province,

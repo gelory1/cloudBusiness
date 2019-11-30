@@ -6,17 +6,17 @@
         <Row>
           <Col span="8">
             <FormItem label="申请人" prop="name" :label-width="90">
-              <Input class v-model="formValidate.name" placeholder />
+              <Input class :value="$store.state.user.accountName" disabled placeholder />
             </FormItem>
           </Col>
           <Col span="8">
-            <FormItem label="业务类型" prop="orderType" class="con-right">
-              <Input class="col-m" v-model="formValidate.orderType" placeholder />
+            <FormItem label="业务类型" prop="type" class="con-right">
+              <Input class="col-m" value="备货订单" disabled placeholder />
             </FormItem>
           </Col>
           <Col span="8">
-            <FormItem label="销售类型" prop="orderType" class="con-right">
-              <Input class="col-m" v-model="formValidate.saleType" placeholder />
+            <FormItem label="销售类型" prop="saleType" class="con-right">
+              <Input class="col-m" value="渠道" disabled placeholder />
             </FormItem>
           </Col>
         </Row>
@@ -37,7 +37,7 @@
           <Col span="8">
             <FormItem label="仓库" prop="store" :label-width="90">
               <Select v-model="formValidate.store.index" placeholder>
-                <Option v-for="(item,index) in stores" :value="item.index" :key="index">{{item.val}}</Option>
+                <Option v-for="(item) in stores" :value="item.index" :key="item.index">{{item.value}}</Option>
               </Select>
             </FormItem>
           </Col>
@@ -45,8 +45,8 @@
         <Row>
           <Col span="16">
             <FormItem label="收货地址" prop="adress" :label-width="90">
-              <Select v-model="formValidate.adress.id" placeholder>
-                <Option v-for="(item,index) in adresses" :value="item.id" :key="index">{{item.name}}</Option>
+              <Select v-model="formValidate.adress.index" placeholder>
+                <Option v-for="(item) in adresses" :value="item.index" :key="item.index"><span v-if="item.status === 1" :style="{color: formValidate.adress.index === item.index?'white':'#3896f5'}">（工程库默认）</span> {{item.value}}</Option>
               </Select>
             </FormItem>
           </Col>
@@ -59,8 +59,8 @@
             class="dd_but"
             style="display:flex;justify-content:space-between;margin:0 0px 10px 10px;"
           >
-            <Button @click="addsbmodal = true">添加设备</Button>
-            <Input placeholder="请输入内容" style="width: 200px" icon="ios-search" />
+            <Button @click="addDeviceClick">添加设备</Button>
+            <Input placeholder="请输入内容" style="width: 200px" v-model="inputVal" icon="ios-search" />
           </div>
           <Table
             ref="selection"
@@ -71,124 +71,44 @@
           <div class="dd_div">
             <section>
               <span class="dd_span">货款总计（元）</span>
-              <span>787878</span>
+              <span>{{totalPrice}}</span>
             </section>
             <section>
               <span class="dd_span">大写</span>
-              <span>七八七八</span>
+              <span>{{upperTotalPrice}}</span>
             </section>
           </div>
         </div>
       </Form>
       <div style="margin-left:10px;">
-        <Button type="primary">提交</Button>
-        <Button>取消</Button>
+        <Button type="primary" @click="onSubmit">提交</Button>
+        <Button @click="onCancel">取消</Button>
       </div>
     </Layout>
-    <Modal v-model="addlxrmodal" @on-ok="saveContact()" @on-cancel="cancel">
-      <p style="margin:10px  0 20px 0;font-size:16px">添加联系人</p>
-      <Form ref="formAddlxr" :model="formAddlxr" :rules="ruleAddlxr" :label-width="120">
-        <FormItem label="姓名" prop="productCode">
-          <Input class="col-n" v-model="formAddlxr.productCode" placeholder />
-        </FormItem>
-        <FormItem label="性别" prop="productName">
-          <RadioGroup v-model="formAddlxr.productName">
-            <Radio label="男">男</Radio>
-            <Radio label="女">女</Radio>
-          </RadioGroup>
-        </FormItem>
-        <FormItem label="职位名称" prop="spec">
-          <Input class="col-n" v-model="formAddlxr.spec" placeholder />
-        </FormItem>
-        <FormItem label="电话" prop="unit">
-          <Input class="col-n" v-model="formAddlxr.unit" placeholder />
-        </FormItem>
-        <FormItem label="微信" prop="price">
-          <Input class="col-n" v-model="formAddlxr.price" placeholder />
-        </FormItem>
-        <FormItem label="邮箱" prop="totalPrice">
-          <Input class="col-n" v-model="formAddlxr.totalPrice" placeholder />
-        </FormItem>
-
-        <!-- <FormItem>
-          <Button type="primary" @click="saveContact()">确认并添加</Button>
-          <Button type="info" style="margin-left: 8px">保存并继续添加</Button>
-          <Button type="ghost" style="margin-left: 8px">取消</Button>
-        </FormItem>-->
-      </Form>
-    </Modal>
     <!-- 添加设备 -->
-    <Modal v-model="addsbmodal" width="800">
+    <Modal v-model="addsbmodal" width="800" @on-ok="ok">
       <p style="font-size:18px;">添加设备</p>
       <p class="sb_p">
         选择需要备货的
         <span>设备类型 </span>添加到
         <span>备货清单中</span>
       </p>
-      <Table :columns="addsb_columns" :data="addsb_data" style="margin:0 10px;"></Table>
+      <Table :columns="addsb_columns" :data="addsb_data" style="margin:0 10px;" height="500" @on-selection-change="selectDevices"></Table>
+      <Page
+       :current.sync="pageNum"
+       :total="sum"
+       :page-size="10"
+       size="small"
+       @on-change="addDevices"
+       show-elevator
+       style="text-align:center;margin-top:20px;"
+     ></Page>
     </Modal>
   </div>
 </template>
 
 <script>
 import silderInput from "../public-components/silder-input.vue";
-const customs = [
-  {
-    value: "客户",
-    index: 1
-  },
-  {
-    value: "合作伙伴",
-    index: 2
-  },
-  {
-    value: "其他",
-    index: 3
-  }
-];
-const stores = [
-  {
-    val: "公共事业及管理组织",
-    index: 1
-  },
-  {
-    val: "工业",
-    index: 2
-  },
-  {
-    val: "商业住宿餐饮",
-    index: 3
-  },
-  {
-    val: "金融房地产及居民服务",
-    index: 4
-  },
-  {
-    val: "运输仓储邮政",
-    index: 5
-  },
-  {
-    val: "信息计算机和软件",
-    index: 6
-  },
-  {
-    val: "农林牧渔水利",
-    index: 7
-  },
-  {
-    val: "建筑业",
-    index: 8
-  },
-  {
-    val: "军工保密",
-    index: 9
-  },
-  {
-    val: "其他",
-    index: 10
-  }
-];
-
 export default {
   name: "create",
   components: {
@@ -199,15 +119,23 @@ export default {
       formValidate: {
         name: "",
         orderType: "",
-        customer: customs[0],
-        store: stores[0],
+        customer: {
+            index: '',
+            value: '' 
+        },
+        store: {
+            index:'',
+            value:''
+        },
         devices_list: [
-          {
-            num: 1
-          }
         ],
-        adress: ""
+        adress: {
+            index:'',
+            value: ''
+        }
       },
+      pageNum:1,
+      sum:0,
       ruleValidate: {
         name: [
           {
@@ -292,15 +220,16 @@ export default {
               {
                 props: {
                   size: "small",
-                  value: 0
+                  value: params.row.num
                 },
                 on: {
-                  change: a => {
-                    console.log(a);
-                  }
+                    'on-change': a => {
+                        params.row.num = a;
+                        params.row.totalPrice = a * params.row.price;
+                        this.$set(this.deviceStore,params.index,params.row);
+                    }
                 }
-              },
-              1
+              }
             );
           }
         },
@@ -325,188 +254,330 @@ export default {
         },
         {
           title: "存货编码",
-          key: "chbm",
+          key: "product_code",
           align: "center"
         },
         {
           title: "存货名称",
-          key: "chmc",
+          key: "product_name",
           align: "center"
         },
         {
           title: "规格型号",
-          key: "ggxh",
+          key: "product_models",
           align: "center"
         },
         {
           title: "主计量",
-          key: "zjl",
+          key: "product_unit",
           align: "center"
         },
         {
           title: "发货数量",
-          key: "fhsl",
+          key: "num",
           align: "center",
           render: (h, params) => {
             return h("div", [
-              h(silderInput, {
+              h('InputNumber', {
                 props: {
-                  // job_id: params.row.id
+                  size:'small',
+                  min: 0,
+                  value: params.row.num
                 },
-                on: {}
+                on: {
+                    'on-change': a => {
+                        this.addStore[params.index] = params.row;
+                        this.addStore[params.index].num = a;
+                        this.addStore.page = this.pageNum;
+                    }
+                }
               })
             ]);
           }
         }
       ],
-      addsb_data: [{
-        chbm:"1",
-        zjl:"个"
-      }],
-      contactIndex: 0,
-      ticketIndex: 0,
-      formAddlxr: {
-        productCode: "",
-        contact_id: "",
-        productName: "",
-        spec: "",
-        unit: "",
-        price: "",
-        totalPrice: ""
-      },
-      ruleAddlxr: {
-        productCode: [
-          {
-            required: true,
-            message: "请输入姓名",
-            trigger: "blur"
-          }
-        ],
-        spec: [
-          {
-            required: true,
-            message: "请输入职位",
-            trigger: "blur"
-          }
-        ],
-        unit: [
-          {
-            required: true,
-            message: "请输入电话",
-            trigger: "blur"
-          }
-        ],
-        totalPrice: [
-          { type: "totalPrice", message: "请输入正确的邮箱", trigger: "blur" }
-        ],
-        productName: [
-          { required: true, message: "请选择性别", trigger: "change" }
-        ]
-      },
-      addlxrmodal: false,
-      customs,
-      stores,
-      adresses: [],
-      addsbmodal: false
+      addsb_data: [],
+      addData: {},
+      addStore:{},
+      deviceStore:{},
+      customs:[],
+      cahceData:[],
+      addsbmodal: false,
+      inputVal:''
     };
   },
   methods: {
-    cancel() {
-      // this.$Message.info("Clicked cancel");
+    getCmonpanys(){
+        let request = {
+            "typeid":23015,
+            "data":[{
+                "account_id": 520//this.$store.state.user.accountId
+            }]
+        }
+        if(this.cahceData.length>0) return;
+        this.$http.PostXLASSETS(request).then(response => {
+            this.cahceData = JSON.parse(JSON.stringify(response.data.result.data));
+            response.data.result.data.forEach(data => {
+                this.customs.push({
+                    index:data.agent_id,
+                    value:data.agent_name
+                })
+            })
+            this.$set(this.formValidate.customer,'index',this.customs[0].index);
+            this.$set(this.formValidate.customer,'value',this.customs[0].value);
+        })
     },
-    saveContact() {
-      let request1 = {
-        typeid: 25008,
-        data: [
-          {
-            customerNo: ((this.data || {}).data || {}).customer_no,
-            contactId: this.formAddlxr.contact_id,
-            contactName: this.formAddlxr.productCode,
-            productName: this.formAddlxr.productName === "男" ? 0 : 1,
-            positionName: this.formAddlxr.spec,
-            unit: this.formAddlxr.unit,
-            vcharnumber: this.formAddlxr.price,
-            eMail: this.formAddlxr.totalPrice
-          }
-        ]
-      };
-      let request2 = {
-        typeid: 25004,
-        data: {
-          customerNo: ((this.data || {}).data || {}).customer_no,
-          contactList: [
-            {
-              contactName: this.formAddlxr.productCode,
-              productName: this.formAddlxr.productName === "男" ? 0 : 1,
-              positionName: this.formAddlxr.spec,
-              unit: this.formAddlxr.unit,
-              vcharNumber: this.formAddlxr.price,
-              eMail: this.formAddlxr.totalPrice
+    addDeviceClick(){
+        this.addsbmodal = true;
+        this.addDevices(1);
+    },
+    addDevices(p){
+        if(this.deviceStore&&Object.keys(this.deviceStore).length>0){
+            for(let key in this.deviceStore){
+                let index = this.formValidate.devices_list.findIndex(d => d.productCode === this.deviceStore[key].productCode);
+                if(index >= 0){
+                    this.formValidate.devices_list[index] = this.deviceStore[key];
+                }
             }
-          ]
         }
-      };
-      if (this.isNewCreate) {
-        if (this.contactStatus === "edit") {
-          for (let key in this.formValidate.devices_list[this.contactIndex]) {
-            this.$set(
-              this.formValidate.devices_list[this.contactIndex],
-              key,
-              this.formAddlxr[key]
-            );
-          }
-          this.newLocalData.contact.data.contactList[
-            this.contactIndex
-          ] = JSON.parse(JSON.stringify(request2.data.contactList[0]));
-        } else {
-          this.formValidate.devices_list.push(this.formAddlxr);
-          if (!this.newLocalData.contact) {
-            this.newLocalData.contact = request2;
-          } else {
-            this.newLocalData.contact.data.contactList.push(
-              request2.data.contactList[0]
-            );
-          }
-        }
-        return;
-      }
-      if (this.contactStatus === "edit") {
-        api.UPDATECUSTOMER(request1).then(response => {
-          if (response.data.code === 0) {
-            let index = this.formValidate.devices_list.findIndex(
-              data => data.contact_id === this.formAddlxr.contact_id
-            );
-            for (let key in this.formValidate.devices_list[index]) {
-              this.$set(
-                this.formValidate.devices_list[index],
-                key,
-                this.formAddlxr[key]
-              );
+        if(this.addStore.page&&this.addData[this.addStore.page]){
+            for(let key in this.addStore){
+                let index = this.addData[this.addStore.page].findIndex(d => d.product_code === this.addStore[key].product_code);
+                if(index >= 0){
+                    this.addData[this.addStore.page][index] = this.addStore[key];
+                }
             }
-            this.addlxrmodal = false;
-          }
-        });
-      } else {
-        api.SETCUSTOMER(request2).then(response => {
-          if (response.data.code === 0) {
-            this.formValidate.devices_list.push(this.formAddlxr);
-            this.addlxrmodal = false;
-          }
-        });
-      }
+        }
+        this.addStore = {};
+        let request = {
+            "typeid":23012,
+            "data":[{
+                "keyword": this.inputVal === ''?undefined:this.inputVal,
+                "page_size": 10,
+                "page_num": p
+            }]
+        }
+        this.addsb_data = [];
+        this.$http.PostXLASSETS(request).then(response => {
+            let { data } = response.data.result;
+            this.sum = data[0].sum;
+            data[0].product_list.forEach(data => {
+                let _checked = false;
+                let num = 0;
+                if(this.addData[p]&&this.addData[p].length>0&&this.addData[p].find(d => d.product_code === data.product_code)){
+                    _checked = true;
+                    num = (this.addData[p].find(d => d.product_code === data.product_code)).num;
+                }
+                this.addsb_data.push({
+                    product_code:data.product_code,
+                    product_models:data.product_models,
+                    product_name:data.product_name,
+                    product_price:data.product_price,
+                    product_unit:data.product_unit,
+                    num,
+                    _checked
+                })
+            })
+        })
+    },
+    selectDevices(selection){
+        this.addData[this.pageNum] = selection;
+        for(let key in this.addStore){
+            let index = selection.findIndex(d => d.product_code === this.addStore[key].product_code);
+            if(index >= 0){
+                this.addData[this.pageNum][index] = this.addStore[key];
+            }
+        }
+    },
+    ok(){
+        for(let key in this.addStore){
+            let index = (this.addData[this.pageNum]||[]).findIndex(d => d.product_code === this.addStore[key].product_code);
+            if(index >= 0){
+                this.addData[this.pageNum][index] = this.addStore[key];
+            }
+        }
+        let data = [];
+        for(let key in this.addData){
+            data = data.concat(this.addData[key]);
+        }
+        data.forEach(d => {
+            this.formValidate.devices_list.push({
+                productCode:d.product_code,
+                productName:d.product_name,
+                spec:d.product_models,
+                unit:d.product_unit,
+                num:d.num,
+                price:d.product_price,
+                tax: '17%',
+                totalPrice: d.product_price * d.num,
+            })
+        })
+    },
+    onSubmit(){
+        if(this.deviceStore&&Object.keys(this.deviceStore).length>0){
+            for(let key in this.deviceStore){
+                let index = this.formValidate.devices_list.findIndex(d => d.productCode === this.deviceStore[key].productCode);
+                if(index >=0){
+                    this.formValidate.devices_list[index] = this.deviceStore[key];
+                }
+            }
+        }
+        let productList = [];
+        this.formValidate.devices_list.forEach(data => {
+            if(data.num > 0) productList.push({
+                productCode: data.productCode,
+                productName: data.productName,
+                productModels: data.spec,
+                quantity: data.num,
+                price: data.price + '',
+                unit: data.unit,
+            })
+        })
+        let myDate = new Date();
+        let date = myDate.getFullYear() + '-' + (myDate.getMonth()+1) + '-' + myDate.getDate();
+        let request = {
+            "typeid": 24006,
+            "data": [
+                {
+                  "accountId": this.$store.state.user.accountId,
+                  "orderTime": date,
+                  "orderAmount": this.totalPrice + '',
+                  "whId": this.formValidate.store.index,
+                  "addressName": this.formValidate.adress.value,
+                  "agentId": this.formValidate.customer.index,
+                  "saleType": 2,
+                  "orderType": 1,
+                  "orderNo": '',
+                  productList
+                }
+            ]
+        }
+        this.$http.SETORDER(request).then(response =>{
+            this.$Message.success('添加成功！');
+            this.formValidate = {
+              name: "",
+              orderType: "",
+              customer: {
+                  index: '',
+                  value: '' 
+              },
+              store: {
+                  index:'',
+                  value:''
+              },
+              devices_list: [
+              ],
+              adress: {
+                  index:'',
+                  value: ''
+              }
+          },
+          this.$set(this.formValidate.customer,'index',this.customs[0].index);
+          this.$set(this.formValidate.customer,'value',this.customs[0].value);
+          this.$router.push('/ordermanage/ordermanage');
+        })
+    },
+    onCancel(){
+        this.formValidate = {
+            name: "",
+            orderType: "",
+            customer: {
+                index: '',
+                value: '' 
+            },
+            store: {
+                index:'',
+                value:''
+            },
+            devices_list: [
+            ],
+            adress: {
+                index:'',
+                value: ''
+            }
+        },
+        this.$set(this.formValidate.customer,'index',this.customs[0].index);
+        this.$set(this.formValidate.customer,'value',this.customs[0].value);
+        this.$router.push('/ordermanage/ordermanage');
     }
   },
-  computed: {},
-  mounted() {},
   computed: {
-    isCustom() {
-      return this.formValidate.customer.index === 1;
-    },
-    isFriend() {
-      return this.formValidate.customer.index === 2;
-    }
+        stores(){
+            let stores = [];
+            if(this.formValidate.customer.index&&this.formValidate.customer.index !== ''){
+                let customer = this.cahceData.find(d => d.agent_id === this.formValidate.customer.index)||{};
+                if(customer.warehouseList&&customer.warehouseList.length>0){
+                    customer.warehouseList.forEach(w => {
+                        stores.push({
+                            index: w.wh_id,
+                            value: w.wh_name
+                        })
+                    })
+                }
+                this.$set(this.formValidate.store,'index',stores[0].index);
+                this.$set(this.formValidate.store,'value',stores[0].value);
+            }
+            return stores;
+        },
+        adresses(){
+            let adresses = [];
+            if(this.formValidate.customer.index&&this.formValidate.customer.index !== ''&&this.formValidate.store.index&&this.formValidate.store.index !== ''){
+                let cusomer = this.cahceData.find(d => d.agent_id === this.formValidate.customer.index)||{};
+                let store = cusomer.warehouseList.find(w => w.wh_id === this.formValidate.store.index) || {};
+                if(store.addressList&&store.addressList.length>0){
+                    store.addressList.forEach(a => {
+                        adresses.push({
+                            index: a.address_id,
+                            value: a.address_detail,
+                            status: a.address_status,
+                        })
+                    })
+                }
+                let selectAddress = adresses.find(a => a.status === 1);
+                this.$set(this.formValidate.adress,'index',selectAddress.index);
+                this.$set(this.formValidate.adress,'value',selectAddress.value);
+            }
+            return adresses;
+        },
+        totalPrice(){
+            let price = 0;
+            if(this.formValidate.devices_list&&this.formValidate.devices_list.length>0){
+                if(this.deviceStore&&Object.keys(this.deviceStore).length>0){
+                    let obj = [];
+                    for(let key in this.deviceStore){
+                        if(obj.length === 0){
+                            obj = this.formValidate.devices_list.filter(d => d.productCode === this.deviceStore[key].productCode);
+                        }else{
+                            obj = obj.filter(d => d.productCode === this.deviceStore[key].productCode);
+                        }
+                        price += this.deviceStore[key].totalPrice;
+                    }
+                    obj.forEach(data => {
+                        price += data.totalPrice;
+                    })
+                }else{
+                    this.formValidate.devices_list.forEach(data => {
+                        price += data.totalPrice;
+                    })
+                }
+            }
+            return price;
+        },
+        upperTotalPrice(){
+            return this.$util.NumberToChinese(Number(this.totalPrice));
+        }
   },
-  watch: {}
+  mounted() {
+        this.getCmonpanys();
+        this.addDevices(1);
+  },
+  watch: {
+      addsbmodal(nv){
+          if(!nv){
+              this.addData = {};
+          }
+      }
+  }
 };
 </script>
 
