@@ -76,8 +76,8 @@
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
         <Tabs ref="tab" v-model="tabName">
-          <TabPane v-for="(item,index) in orderStatus" :label="item.type" :name="item.name" :key="item.type">
-            <Table :columns="order_columns" :data="order_data[index]" size="small" @on-row-click="openOrder" :loading="loading"></Table>
+          <TabPane v-for="item in orderStatus" :label="item.type" :name="item.name" :key="item.name">
+            <Table :columns="order_columns" :data="order_data[item.index]" size="small" @on-row-click="openOrder" :loading="loading"></Table>
              <Page
               :current.sync="pageNum"
               :total="sum"
@@ -101,21 +101,31 @@
           <Button :style="`position:absolute;margin:30px 0 0 0;
           right:30px;top:30px;background-color:${(statusColorMap[selectedOrder.status]||{}).backgroundColor};
           color:${(statusColorMap[selectedOrder.status]||{}).color}`">{{selectedOrder.status}}</Button>
+          <!-- <Poptip title="Title" content="去支付" placement="top" v-show="selectedOrder.status === '待支付'">
+            <Button :style="`position:absolute;margin:30px 0 0 0;
+          right:30px;top:30px;background-color:${(statusColorMap[selectedOrder.status]||{}).backgroundColor};
+          color:${(statusColorMap[selectedOrder.status]||{}).color}`">{{selectedOrder.status}}</Button>
+          </Poptip> -->
+          
           <div style="position:relative;">
-            <div style="height:28px;position:absolute;z-index:0;background-color:#49D790;color:white;border-radius:20px;">
-              <div style="padding:5px;border-radius:20px;over-flow:hidden;display:flex;">
-                <div style="width:190px;text-align:center" v-for="(item,index) in orderStatus" v-show="index<=selectedOrder.order_status" :key="index">{{statusMap2[index]}}</div>
-              </div>
+            <div :style="{
+              height: 28 + 'px',
+              position:'absolute',
+              zIndex:0,
+              backgroundColor:'#49D790',
+              color:'white',
+              borderRadius: 20+'px',
+              display:'flex',
+              padding: 5+'px',
+              width: `${length}%`
+            }">
+                <div :style="{textAlign:'center',width:'100%' }" v-for="(item,index) in statuses" v-show="index < selectedIndex" :key="index">{{item.value}}</div>
             </div>
             <div style="display:flex;padding:5px;background-color:#F2F2F2;border-radius:20px">
-              <div style="width:20%;text-align:center">下单</div>
-              <div style="width:20%;text-align:center">出库</div>
-              <div style="width:20%;text-align:center">到货</div>
-              <div style="width:20%;text-align:center">安装</div>
-              <div style="width:20%;text-align:center">上线</div>
+              <div v-for="(item,index) in statuses" :style="{width:`${(100/statuses.length)}%`,textAlign:'center'}" :key="index">{{item.value}}</div>
             </div>
             <div style="display:flex;padding:5px;;border-radius:20px;">
-              <div style="width:20%;text-align:center" v-for="(item,index) in selectedOrder.order_resume" :key="index">{{item.operation_time}}</div>
+              <div :style="{textAlign:'center',width:`${(100/statuses.length)}%` }" v-for="(item,index) in (selectedOrder.data||{}).order_log" :key="index">{{item.orderlog_time}}</div>
             </div>
           </div>
           
@@ -125,63 +135,56 @@
         <div style="line-height:40px;width:40%;float:left">
           <div>
             <span class="jbleft">业务类型：</span>
-            <span class="jbright">{{selectedOrder.business_type}}</span>
+            <span class="jbright">{{selectedOrder.type}}</span>
           </div>
           <div>
             <span class="jbleft">下单时间：</span>
-            <span class="jbright">{{selectedOrder.order_time}}</span>
+            <span class="jbright">{{selectedOrder.time}}</span>
           </div>
           <div>
             <span class="jbleft">销售类型：</span>
-            <span class="jbright">{{selectedOrder.sale_type}}</span>
+            <span class="jbright">{{selectedOrder.salesType}}</span>
           </div>
           <div>
             <span class="jbleft">客户名称：</span>
-            <span class="jbright">{{selectedOrder.customer_name}}</span>
+            <span class="jbright">{{selectedOrder.customName}}</span>
           </div>
         </div>
         <div style="line-height:40px;width:50%;float:right">
           <div>
             <span class="jbleft">合同编号：</span>
-            <span class="jbright">{{selectedOrder.contract_no}}</span>
+            <span class="jbright">{{selectedOrder.contractNo}}</span>
           </div>
           <div>
             <span class="jbleft">合同主体：</span>
-            <span class="jbright">{{subjectName[selectedOrder.contract_subject]}}</span>
+            <span class="jbright">{{subjectName[(selectedOrder.data||{}).contract_subject]}}</span>
           </div>
           <div>
             <span class="jbleft">设备数量：</span>
-            <span class="jbright">{{selectedOrder.device_count}}
-              <span>（<small style="color:green">本次交货：{{bcjh}}</small>，<small style="color:red">剩余待发：{{sydf}}</small>）</span>
+            <span class="jbright">{{selectedOrder.count}}
+              <span>（<small style="color:green">本次交货：{{(selectedOrder.data||{}).issued_count}}</small>，<small style="color:red">剩余待发：{{selectedOrder.count - (selectedOrder.data||{}).issued_count}}</small>）</span>
             </span>
           </div>
           <div>
             <span class="jbleft">收货地址：</span>
-            <span class="jbright">{{selectedOrder.address_name}}</span>
+            <span style="color:#8D8D8D">{{(selectedOrder.data||{}).address_id}}</span>
           </div>
         </div>
       </div>
       <div style="clear:both;overflow: hidden;">
         <p class="djtitle">设备清单</p>
-        <div>
-          <Table :columns="device_columns" :data="device_data" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
-        </div>
+        <Tabs v-model="deviceTabName">
+          <TabPane label="全部" name="name1">
+            <Table :columns="device_columns" :data="device_data" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
+          </TabPane>
+          <TabPane :label="`已到货（${(selectedOrder.data||{}).issued_count}）`" name="name2">
+            <Table :columns="device_columns" :data="device_data1" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
+          </TabPane>
+          <TabPane :label="`待发货（${selectedOrder.count - (selectedOrder.data||{}).issued_count}）`" name='name3'>
+            <Table :columns="device_columns" :data="device_data2" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
+          </TabPane>
+        </Tabs>
       </div>
-      </Modal>
-      <Modal v-model="deviceListOpen" width="800" title="设备列表">
-       <Table 
-        :columns="deviceList_columns"
-        :data="deviceList_data" size="small" 
-        >
-        </Table>
-        <Page
-          :total="deviceSum"
-          :page-size="10"
-          @on-change="getDeviceList"
-          size="small"
-          show-elevator
-          style="text-align:center;margin-top:20px;margin-bottom:200px;"
-        ></Page>
       </Modal>
       </Content>
     </Layout>
@@ -195,56 +198,19 @@ const orderStatus1 = [{
     index: 0
   },{
     type: "已下单",
-    name: 'name4',
+    name: 'name8',
     index: 3
   },
   {
     type: "已发货",
-    name: 'name5',
+    name: 'name9',
     index: 4
   },
   {
     type: "已到货",
-    name: 'name6',
+    name: 'name10',
     index: 5
   },];
-const orderStatus = [
-  {
-    type: "全部",
-    name: 'name1',
-    index: 0
-  },
-  {
-    type: "审批中",
-    name: 'name2',
-    index: 1
-  },
-  {
-    type: "待支付",
-    name: 'name3',
-    index: 2
-  },
-  {
-    type: "已下单",
-    name: 'name4',
-    index: 3
-  },
-  {
-    type: "已发货",
-    name: 'name5',
-    index: 4
-  },
-  {
-    type: "已到货",
-    name: 'name6',
-    index: 5
-  },
-  {
-    type: "被驳回",
-    name: 'name7',
-    index: 6
-  },
-];
 const orderStatus2 = [
   {
     type: "全部",
@@ -375,34 +341,38 @@ const saleMap = {
   1: '渠道'
 };
 const statusMap = {
-  0:'已下单',1: '已发货',2:'已到货',3:'已安装',4:'已上线'
+  0:'审批中',1: '待支付',2:'已下单',3:'已发货',4:'已到货',5:'被驳回'
 };
 const statusMap2 = {
-  0:'下单',1: '发货',2:'到货',3:'安装',4:'上线'
+  0:'申请',1: '审批',2:'支付',3:'下单',4:'出库',5:'到货'
 };
 const statusMap3 = {
-  0:'下单',1: '发货',2:'到货'
+  3:'下单',4: '出库',5:'到货'
 };
 const statusColorMap = {
-  '已下单':{
+  '审批中':{
     backgroundColor: '#FDF6EC',
     color: '#E7A440'
   },
-  '已发货':{
+  '待支付':{
     backgroundColor: '#F0F9EC',
     color: '#78C950'
   },
-  '已到货': {
+  '已下单': {
     backgroundColor: '#F4F4F5',
     color: '#7D7F82'
   },
-  '已安装':{
+  '已发货':{
     backgroundColor: '#EEEEFF',
     color: '#7272D0'
   },
-  '已上线':{
+  '已到货':{
     backgroundColor: '#EBF5FE',
     color: '#54A3F6'
+  },
+  '被驳回':{
+    backgroundColor: '#F4F4F5',
+    color: '#7D7F82'
   }
 };
 const subjectName = {
@@ -479,7 +449,6 @@ export default {
   name: "orderManage",
   data() {
     return {
-      orderStatus,
       orderStatus1,
       orderStatus2,
       tabName: 'name1',
@@ -496,7 +465,8 @@ export default {
           4: [
         ],
           5: [
-        ]
+        ],
+        6:[]
       },
       tooptipShow: false,
       businessMap,
@@ -504,7 +474,9 @@ export default {
       statusMap,
       loading: false,
       orderDetailOpen: false,
-      selectedOrder: {},
+      selectedOrder: {
+        data:{}
+      },
       bcjh:"700",
       sydf:"9090",
       device_columns: [
@@ -588,47 +560,7 @@ export default {
           title: "数量",
           key: "count",
           align:"center"
-        },
-        // {
-        //   title: "操作",
-        //   key: "action",
-        //   width: 150,
-        //   align: "center",
-        //   render: (h, params) => {
-        //     return h("div", [
-        //       h("Icon", {
-        //         class: "demo-spin-icon-load",
-        //         props: {
-        //           type: "clipboard",
-        //           size: 12
-        //         }
-        //       }),
-        //       h(
-        //         "span",
-        //         {
-        //           props: {
-        //             type: "primary",
-        //             size: "small",
-        //             backgroundColor: "#3896f5 "
-        //           },
-        //           style: {
-        //             marginLeft: "3px",
-        //             color: "#3896f5 ",
-        //             cursor: "pointer"
-        //           },
-        //           on: {
-        //             click: () => {
-        //               this.deviceListOpen = true;
-        //               this.selectedprocode = params.row.no;
-        //               this.getDeviceList(1);
-        //             }
-        //           }
-        //         },
-        //         "设备列表"
-        //       )
-        //     ]);
-        //   }
-        // }
+        }
       ],
       filterItem:{
         manageCompany:"",
@@ -638,7 +570,6 @@ export default {
         endTime:""
       },
       device_data: [],
-      deviceListOpen: false,
       deviceList_columns,
       deviceList_data: [],
       deviceSum: 0,
@@ -656,6 +587,7 @@ export default {
       salesTypes,
       companys:[],
       filterStatus:false,
+      deviceTabName: 'name1'
     };
   },
   methods: {
@@ -667,11 +599,7 @@ export default {
       }
     },
     selectOrderType(index) {
-      if(index == 1){
-        this.orderStatus = this.orderStatus1
-      }else if(index == 2 || index==0){
-        this.orderStatus = this.orderStatus2
-      }
+      this.tabName = 'name1';
       this.selectedType = this.orderTypes[index];
       this.pageNum = 1;
       this.getOrderList(1);
@@ -685,6 +613,7 @@ export default {
     },
     getOrderList(p){
       this.order_data[this.selectedTab.index] = [];
+      console.log(this.selectedTab);
       this.loading = true;
       const param = {
         typeid: "24001",
@@ -722,28 +651,21 @@ export default {
           item.cellClassName = {
             status:`button${data.order_status}`
           };
+          item.data = data;
           this.order_data[index].push(item);
         });
+        this.selectedOrder = this.order_data[0];
         this.loading = false;
       },error => {
         this.loading = false;
       })
     },
     getOrderDetail(order){
-      const param = {
-        typeid: "24002",
-        data: [
-          {
-            order_no: order.orderNO
-          }
-        ],
-      };
+      let index = this.selectedTab.index||0;
+      this.selectedOrder = this.order_data[index].find(data => data.orderNO === order.orderNO);
       this.device_data = [];
-      api.XLORDER(param).then(res => {
-        let { data } = res.data.result;
-        this.selectedOrder = JSON.parse(JSON.stringify(data[0]));
-        this.selectedOrder.status = this.statusMap[this.selectedOrder.order_status];
-        data[0].product_list.forEach((p,i) => {
+      this.selectedOrder.status = this.statusMap[this.selectedOrder.data.order_status];
+        this.selectedOrder.data.product_list.forEach((p,i) => {
           let item = {};
           item.index = i+1;
           item.name = p.product_name;
@@ -751,41 +673,9 @@ export default {
           item.spec = p.product_models;
           item.count = p.device_count;
           item.unit = p.product_unit;
+          item.data = p;
           this.device_data.push(item);
         });
-      })
-    },
-    getDeviceList(p){
-      let request = {
-        typeid: "23009",
-        data: [
-          {
-            account_id: this.$store.state.user.accountId,
-            wh_id: this.selectedWhid,
-            product_code: this.selectedprocode,
-            page_num: p,
-            page_size: 10
-          }
-        ],
-              
-      };
-      api.PostXLASSETS(request).then((response)=>{
-        let { data } = response.data.result;
-        this.deviceList_data = [];
-        this.deviceSum = data[0].sum;
-        data[0].devicelist.forEach((d)=>{
-          let item = {};
-          item.tm = d.device_address;
-          item.chbm = d.product_code;
-          item.chmc = d.product_name;
-          item.ggxh = d.product_models;
-          item.jldw = d.product_unit;
-          item.xm = d.box_address;
-          item.zt = this.mapStatus[d.device_status];
-          item.newtime = d.device_ts;
-          this.deviceList_data.push(item);
-        })
-      })
     },
     closeglClick() {
       this.glShow = false;
@@ -868,13 +758,94 @@ export default {
   },
   computed:{
     selectedTab(){
-      return this.orderStatus.find(t => t.name === this.tabName);
-    }
+      let select = {};
+      if(this.orderStatus.length>0){
+        select = this.orderStatus.find(t => t.name === this.tabName);
+      }
+      return select;
+    },
+    statuses(){
+      let statuses = [];
+      if(this.selectedOrder){
+        if(this.selectedOrder.type === '合同订单'){
+          for(let key in this.statusMap3){
+            statuses.push({
+              index: key,
+              value: this.statusMap3[key]
+            })
+          }
+        }else{
+          for(let key in this.statusMap2){
+            statuses.push({
+              index: key,
+              value: this.statusMap2[key]
+            })
+          }
+        }
+      }
+      return statuses;
+    },
+    orderStatus(){
+      let orderStatus = [];
+      if(this.selectedType &&this.selectedType.type === '合同订单'){
+        this.orderStatus1.forEach((item) => {
+          orderStatus.push(item);
+        })
+      }else if(this.selectedType){
+        this.orderStatus2.forEach((item) => {
+          orderStatus.push(item);
+        })
+      }
+      return orderStatus;
+    },
+    selectedIndex(){
+      let index = 0;
+      if(this.selectedOrder){
+        if(this.selectedOrder.type === '合同订单'){
+          index = ((this.selectedOrder||{}).data||{}).order_status - 1;
+          if(index > 3) index = 3;
+          if(index < 1) index = 1;
+        }else{
+          index = ((this.selectedOrder||{}).data||{}).order_status + 1;
+          if(index > 6) index = 6;
+          if(index < 1) index = 1;
+        }
+      }
+      return index;
+    },
+    length(){
+      let length = 0;
+      length = this.selectedIndex*100/this.statuses.length;
+      return length;
+    },
+    device_data1(){
+      let data = [];
+      if(this.device_data&&this.device_data.length>0){
+        data = this.device_data.filter(d => d.data.issued_count !== 0);
+        data.forEach(d => {
+          d.count = d.data.issued_count;
+        })
+      }
+      return data;
+    },
+    device_data2(){
+      let data = [];
+      if(this.device_data&&this.device_data.length>0){
+        data = this.device_data.filter(d => d.data.device_count - d.data.issued_count !== 0);
+        data.forEach(d => {
+          d.count = d.data.device_count - d.data.issued_count;
+        })
+      }
+      return data;
+    },
   },
   watch: {
     tabName(nv){
       this.pageNum = 1;
       this.getOrderList(1);
+    },
+    orderDetailOpen(){
+      this.deviceTabName = 'name1';
     }
   }
 };
