@@ -751,7 +751,7 @@ export default {
       this.$router.push('/ordermanage/create');
     },
     toPay(){
-      console.log(111);
+      // console.log(111);
     }
   },
   mounted(){
