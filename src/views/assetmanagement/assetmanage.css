@@ -310,6 +310,113 @@
   margin-bottom:200px
 }
 /* 发货管理 */
-.fh_but{
-  
+.fh_but .ivu-btn{
+  border:none;
+  font-size:14px;
+  float:left
 }
+.fa_div p{
+  display: inline-block;
+  padding-right: 40px;
+}
+.left{
+  float:left
+}
+.right{
+  float:right
+}
+.fa_div{
+  margin:15px 0
+}
+.fa_div1 p{
+  line-height: 20px;
+}
+.fa_p{
+  margin-top:30px;
+}
+.fa_p span{
+  margin-left:30px;
+  float:right
+}
+.fa_b{
+  font-size:18px;
+  color:#67c23a;
+  border:1px solid #e1f3d8;
+  background: #f0f9ec;
+}
+.fa_co{
+  clear:both;
+  border-top:1px solid #d2d2d2;
+  padding:20px 0 10px 0;
+}
+.fa_c{
+  margin-bottom:10px;
+}
+.pro{
+  width:200px;
+  margin:0 -20px 0 10px;
+}
+.fa_se{
+  width:25%;
+  border:1px solid #d2d2d2;
+  border-bottom: none;
+  /* text-align: center; */
+  line-height: 40px;
+}
+.fa_se1{
+  width:100%;
+}
+.line{
+  display: inline-block;
+}
+.h_div{
+  clear: both;
+  border-bottom:1px solid #d2d2d2;
+
+}
+.ne_but .ivu-btn-ghost{
+    color:#409eff;
+    border:1px solid #b3d8ff;
+    background: #ecf5ff;
+    padding:0px 15px
+}
+.tz_p{
+  font-size:16px;
+}
+.tz_p1{
+  font-size:14px;
+  margin:20px 0 0px 10px;
+}
+.tz_in{
+  width: 180px;
+  margin:0 0 5px 0px;
+}
+.tz_ic{
+  color:#e6a23c;
+  transform:rotate(180deg);
+}
+.tz_ic1{
+  margin-top:-10px;
+  text-align: right;
+  margin-right:30px;
+  line-height: 20px;
+}
+.tz_i{
+  background: #fdf6ec;
+  height:60px;
+  padding:20px 10px 0 10px;
+  margin-left:10px; 
+}
+.dd_add{
+  color:#2d8cf0;
+  text-align: center;
+  margin:20px 0 0 50px;
+  cursor: pointer;
+}
+.gray{
+  color:#7e7e7e;
+}
+.ck_p span:nth-of-type(1){
+  margin-right:50px 
+}
+

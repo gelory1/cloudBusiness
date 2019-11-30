@@ -84,7 +84,8 @@ util.setCurrentPath = function (vm, name) {
     let routerMap = {
         'otherRouter': '0',
         'otherRouter1': '1',
-        'otherRouterOrder': '2'
+        'otherRouterOrder': '2',
+        'assetRouter':'3'
     };
     vm.$store.state.app.routers.forEach(item => {
         if (item.children.length === 1) {
@@ -137,6 +138,18 @@ util.setCurrentPath = function (vm, name) {
                 title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'ordermanage_index')),
                 path: '/ordermanage',
                 name: 'ordermanage_index'
+            },
+            {
+                title: title,
+                path: '',
+                name: name
+            }
+        ],
+        '3': [
+            {
+                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'delivery-manage_index')),
+                path: '/delivery-manage',
+                name: 'delivery-manage_index'
             },
             {
                 title: title,

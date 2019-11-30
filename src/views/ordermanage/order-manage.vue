@@ -44,11 +44,11 @@
                   <FormItem label="下单日期">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" placeholder="开始日期" v-model="filterItem.startTime"></DatePicker>
+                        <DatePicker type="date" placement="Bottom Right" placeholder="开始日期" v-model="filterItem.startTime"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" placeholder="结束日期" v-model="filterItem.endTime"></DatePicker>
+                        <DatePicker type="date" placement="Bottom Right" placeholder="结束日期" v-model="filterItem.endTime"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
@@ -192,94 +192,94 @@ import api from "@/api/axios";
 const orderStatus1 = [{
     type: "全部",
     name: 'name1',
-    index: 0
+    index: 6
   },{
     type: "已下单",
     name: 'name4',
-    index: 3
+    index: 2
   },
   {
     type: "已发货",
     name: 'name5',
-    index: 4
+    index: 3
   },
   {
     type: "已到货",
     name: 'name6',
-    index: 5
+    index: 4
   },];
 const orderStatus = [
   {
     type: "全部",
     name: 'name1',
-    index: 0
+    index: 6
   },
   {
     type: "审批中",
     name: 'name2',
-    index: 1
+    index: 0
   },
   {
     type: "待支付",
     name: 'name3',
-    index: 2
+    index: 1
   },
   {
     type: "已下单",
     name: 'name4',
-    index: 3
+    index: 2
   },
   {
     type: "已发货",
     name: 'name5',
-    index: 4
+    index: 3
   },
   {
     type: "已到货",
     name: 'name6',
-    index: 5
+    index: 4
   },
   {
     type: "被驳回",
     name: 'name7',
-    index: 6
+    index: 5
   },
 ];
 const orderStatus2 = [
   {
     type: "全部",
     name: 'name1',
-    index: 0
+    index: 6
   },
   {
     type: "审批中",
     name: 'name2',
-    index: 1
+    index: 0
   },
   {
     type: "待支付",
     name: 'name3',
-    index: 2
+    index: 1
   },
   {
     type: "已下单",
     name: 'name4',
-    index: 3
+    index: 2
   },
   {
     type: "已发货",
     name: 'name5',
-    index: 4
+    index: 3
   },
   {
     type: "已到货",
     name: 'name6',
-    index: 5
+    index:4
   },
   {
     type: "被驳回",
     name: 'name7',
-    index: 6
+    index: 5
   },
 ];
 const orderTypes = [

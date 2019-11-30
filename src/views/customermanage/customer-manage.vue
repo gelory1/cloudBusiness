@@ -69,11 +69,11 @@
                   <FormItem label="建档日期">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" v-model="filterItem.startTime"></DatePicker>
+                        <DatePicker placement="Bottom Right" type="date" v-model="filterItem.startTime"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" v-model="filterItem.endTime"></DatePicker>
+                        <DatePicker placement="Bottom Right" type="date" v-model="filterItem.endTime"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>

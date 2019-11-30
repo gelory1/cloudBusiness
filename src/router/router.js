@@ -80,6 +80,19 @@ export const otherRouterOrder = {
         { path: '/ordermanage/create', title: '申请备货', name: 'create', component: () => import('@/views/ordermanage/create-order.vue') },
     ]
 };
+// 资产管理
+export const assetRouter = {
+    path: '/assetmanage/delivery-manage',
+    name: 'assetRouter',
+    redirect: '/assetmanage/delivery-manage',
+    component: Main,
+    children: [
+        { path: 'delivery-manage', title: {i18n: '发货管理'}, name: 'delivery-manage_index', component: () => import('@/views/assetmanagement/delivery-manage/delivery-manage.vue') },
+        { path: '/assetmanage/delivery-manage/detail', title: '发货方案详情', name: 'delivery_detail', component: () => import('@/views/assetmanagement/delivery-manage/detail.vue') },
+        { path: '/assetmanage/delivery-manage/newbuild', title: '新建发货方案', name: 'delivery_detail1', component: () => import('@/views/assetmanagement/delivery-manage/newbuild.vue') },
+        { path: '/assetmanage/delivery-manage/editbuild', title: '发货方案（编辑）', name: 'delivery_detail2', component: () => import('@/views/assetmanagement/delivery-manage/newbuild.vue') },
+    ]
+};
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
     // 工作台
@@ -183,6 +196,7 @@ export const routers = [
     otherRouter,
     otherRouter1,
     otherRouterOrder,
+    assetRouter,
     locking,
     ...appRouter,
     page500,
