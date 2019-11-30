@@ -75,11 +75,11 @@
                   <FormItem label="操作时间段" v-if="tabName === 'name2'">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" placeholder="Select date" v-model="filterItem.kssj"></DatePicker>
+                        <DatePicker placement="Bottom Right" type="date" placeholder="Select date" v-model="filterItem.kssj"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" placeholder="Select date" v-model="filterItem.jssj"></DatePicker>
+                        <DatePicker placement="Bottom Right" type="date" placeholder="Select date" v-model="filterItem.jssj"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>

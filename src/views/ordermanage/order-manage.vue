@@ -44,11 +44,11 @@
                   <FormItem label="下单日期">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" placeholder="开始日期" v-model="filterItem.startTime"></DatePicker>
+                        <DatePicker type="date" placement="top" placeholder="开始日期" v-model="filterItem.startTime"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" placeholder="结束日期" v-model="filterItem.endTime"></DatePicker>
+                        <DatePicker type="date" placement="top" placeholder="结束日期" v-model="filterItem.endTime"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
@@ -240,7 +240,7 @@ const orderStatus2 = [
   {
     type: "已到货",
     name: 'name6',
-    index: 5
+    index:5
   },
   {
     type: "被驳回",
