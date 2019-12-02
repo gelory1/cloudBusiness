@@ -75,11 +75,11 @@
                   <FormItem label="操作时间段" v-if="tabName === 'name2'">
                     <Row>
                       <Col span="11">
-                        <DatePicker placement="Bottom Right" type="date" placeholder="Select date" v-model="filterItem.kssj"></DatePicker>
+                        <DatePicker placement="bottom" type="date" placeholder="Select date" v-model="filterItem.kssj"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker placement="Bottom Right" type="date" placeholder="Select date" v-model="filterItem.jssj"></DatePicker>
+                        <DatePicker placement="bottom" type="date" placeholder="Select date" v-model="filterItem.jssj"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
@@ -558,16 +558,20 @@ export default {
       ],
       cpxhpz: [
         {
-          mc: "所有类型仓库"
+          mc: "所有类型仓库",
+          id:undefined
         },
         {
-          mc: "成品库"
+          mc: "成品库",
+          id:0
         },
         {
-          mc: "工程物资库"
+          mc: "工程物资库",
+          id:1
         },
         {
-          mc: "固定资产库"
+          mc: "固定资产库",
+          id:2
         }
       ],
       filterItem:{
@@ -650,6 +654,7 @@ export default {
       if(this.$refs.menu.currentActiveName !== -1) this.$refs.menu.currentActiveName = -1;
       this.ck_current_index = '';
       this.getProductList(1);
+      if(this.tabName !== 'name1') this.tabName = 'name1';
     },
     getProductList(p){
       let request = {
@@ -657,6 +662,7 @@ export default {
         data: [
           {
             account_id: this.$store.state.user.accountId,
+            wh_type: this.cpxhpz[this.cktype_current_index].id,
             wh_id: this.menudata&&this.menudata.length>0&&this.ck_current_index !== ''?this.menudata[this.ck_current_index].wh_id:undefined,
             keyword: this.inputVal === ''?undefined:this.inputVal,
             product_code: this.filterItem.chbm === ''?undefined:this.filterItem.chbm,  //存货编码
@@ -666,6 +672,10 @@ export default {
           }
         ],
       };
+      if(request.data[0].wh_id){
+        this.inputVal = '';
+        request.data[0].keyword = undefined;
+      }
       this.jbxx_data = [];
       this.ckLoading = true;
       this.$http.PostXLASSETS(request).then((response)=>{
@@ -694,6 +704,7 @@ export default {
           {
             account_id: this.$store.state.user.accountId,
             wh_id: this.selectedWhid === ''?undefined:this.selectedWhid,
+            wh_type: this.cpxhpz[this.cktype_current_index].id,
             product_code: this.selectedProcode === ''?this.filterItem.chbm === ''?undefined:this.filterItem.chbm:this.selectedProcode,
             product_name: this.filterItem.chmc === ''?undefined:this.filterItem.chmc,  //存货名称
             device_address: this.filterItem.tm === ''?undefined:this.filterItem.tm,  //条码
@@ -759,10 +770,9 @@ export default {
           }
         ],
       };
-     
+      this.menudata = [];
       this.$http.PostXLASSETS(request).then(response => {
         let res = response.data.result;
-         this.menudata = [];
           this.zkSum = res.sum;
           for (var i = 0; i < res.data.length; i++) {
             if(!this.menudata.find(data => data.wh_id === res.data[i].wh_id )){

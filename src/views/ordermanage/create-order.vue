@@ -530,28 +530,54 @@ export default {
             ]
         }
         this.$http.SETORDER(request).then(response =>{
-            this.$Message.success('添加成功！');
-            this.formValidate = {
-              name: "",
-              orderType: "",
-              customer: {
-                  index: '',
-                  value: '' 
-              },
-              store: {
-                  index:'',
-                  value:''
-              },
-              devices_list: [
-              ],
-              adress: {
-                  index:'',
-                  value: ''
-              }
+          if(response.data.code !== 0) return;
+          this.$Message.success('添加成功！');
+          this.formValidate = {
+            name: "",
+            orderType: "",
+            customer: {
+                index: '',
+                value: '' 
+            },
+            store: {
+                index:'',
+                value:''
+            },
+            devices_list: [
+            ],
+            adress: {
+                index:'',
+                value: ''
+            }
           },
           this.$set(this.formValidate.customer,'index',this.customs[0].index);
           this.$set(this.formValidate.customer,'value',this.customs[0].value);
           this.$router.push('/ordermanage/ordermanage');
+        },error => {
+          if(error.data.code === 0){
+             this.$Message.success('添加成功！');
+              this.formValidate = {
+                name: "",
+                orderType: "",
+                customer: {
+                    index: '',
+                    value: '' 
+                },
+                store: {
+                    index:'',
+                    value:''
+                },
+                devices_list: [
+                ],
+                adress: {
+                    index:'',
+                    value: ''
+                }
+            },
+            this.$set(this.formValidate.customer,'index',this.customs[0].index);
+            this.$set(this.formValidate.customer,'value',this.customs[0].value);
+            this.$router.push('/ordermanage/ordermanage');
+          }
         })
     },
     onCancel(){
