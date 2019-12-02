@@ -3,6 +3,7 @@
     <Layout class="layout">
       <p class="div_p">基本信息</p>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+        <div style="width:90%">
         <Row>
           <Col span="16">
             <FormItem label="客户名称" prop="name" :label-width="90">
@@ -10,7 +11,7 @@
             </FormItem>
           </Col>
           <Col span="8">
-            <FormItem label="客户简称" prop="customer_abbreviation" style="margin-left:100px">
+            <FormItem label="客户简称" prop="customer_abbreviation" class="con-right">
               <Input class="col-m" v-model="formValidate.customer_abbreviation" placeholder="" />
             </FormItem>
           </Col>
@@ -31,11 +32,11 @@
             </FormItem>
           </Col>
           <Col span="8">
-            <FormItem label="省份/城市" prop="city"  style="margin-left:102px;width:280px;">
-              <Select v-model="formValidate.province.id" placeholder="" style="width:97px;">
+            <FormItem label="省份/城市" prop="city"   class="con-right">
+              <Select v-model="formValidate.province.id" placeholder="" class="col-d">
                 <Option v-for="(item,index) in provinces" :value="item.id" :key="index">{{item.name}}</Option>
               </Select>
-              <Select v-model="formValidate.city.id" placeholder="" style="width:97px;">
+              <Select v-model="formValidate.city.id" placeholder="" class="col-d">
                 <Option v-for="(item,index) in citys" :value="item.id" :key="index">{{item.name}}</Option>
               </Select>
             </FormItem>
@@ -85,7 +86,7 @@
             </FormItem>
           </Col>
           <Col span="8">
-            <FormItem label="邮政编码" prop="post_code"  style="margin-left:98px">
+            <FormItem label="邮政编码" prop="post_code" class="con-right">
               <Input class="col-m" v-model="formValidate.post_code" placeholder="" />
             </FormItem>
           </Col>
@@ -97,6 +98,7 @@
             </FormItem>
           </Col>
         </Row>
+        </div>
         <Row v-if="isCustom">
           <Col span="12" class="changeinput">
             <FormItem label="关联平台账户" prop="glzh" :label-width="90" style="color: #409eff;">
@@ -216,7 +218,8 @@
         ref="formAddkpxx"
         :model="formAddkpxx"
         :rules="ruleAddkpxx"
-        :label-width="120" 
+        :label-width="110" 
+        style="margin-right:40px"
       >
         <Row>
           <Col span="12">

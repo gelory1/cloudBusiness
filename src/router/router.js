@@ -98,23 +98,23 @@ export const appRouter = [
     // 工作台
     {
         path: '/',
-        icon: 'ios-grid-view',
+        icon: 'ios-monitor-outline',
         name: 'home',
         title: '工作台',
         component: Main,
         children: [
-            { path: 'workbench', title: '工作台', name: 'home_index', icon: 'arrow-move', component: () => import('@/views/workbench/work-bench.vue') }
+            { path: 'workbench', title: '工作台', name: 'home_index', icon: 'ios-monitor-outline', component: () => import('@/views/workbench/work-bench.vue') }
         ]
     },
     // 客户管理
     {
         path: '/customermanage',
-        icon: 'ios-grid-view',
+        icon: 'person-stalker',
         name: 'customermanage',
         title: '客户管理',
         component: Main,
         children: [
-            { path: 'customerManage', title: '客户管理', name: 'customer-manage', icon: 'arrow-move', component: () => import('@/views/customermanage/customer-manage.vue') },
+            { path: 'customerManage', title: '客户管理', name: 'customer-manage', icon: 'person-stalker', component: () => import('@/views/customermanage/customer-manage.vue') },
             // { path: 'customerManage1', title: '查看', name: 'customer-manage1', icon: 'arrow-move', component: () => import('@/views/customermanage/see.vue') },
             // { path: 'customerManage2', title: '编辑', name: 'customer-manage2', icon: 'arrow-move', component: () => import('@/views/customermanage/edit.vue') }
         ]
@@ -122,60 +122,61 @@ export const appRouter = [
     // 合同管理
     {
         path: '/contractmanage',
-        icon: 'ios-grid-view',
+        icon: 'ios-compose-outline',
         name: 'contractmanage',
         title: '合同管理',
         component: Main,
         children: [
-            { path: 'contractManage', title: '合同管理', name: 'contract-manage', icon: 'arrow-move', component: () => import('@/views/contractmanage/contract-manage.vue') }
+            { path: 'contractManage', title: '合同管理', name: 'contract-manage', icon: 'ios-compose-outline', component: () => import('@/views/contractmanage/contract-manage.vue') }
         ]
     },
     // 订单管理
     {
         path: '/ordermanage',
-        icon: 'ios-grid-view',
+        icon: 'android-list',
         name: 'ordermanage',
         title: '订单管理',
         component: Main,
         children: [
-            { path: 'orderManage', title: '订单管理', name: 'order-manage', icon: 'arrow-move', component: () => import('@/views/ordermanage/order-manage.vue') }
+            { path: 'orderManage', title: '订单管理', name: 'order-manage', icon: 'android-list', component: () => import('@/views/ordermanage/order-manage.vue') }
         ]
     },
     // 资产管理
     {
         path: '/assetmanage',
-        icon: 'android-checkbox',
+        icon: 'social-usd-outline',
         name: 'assetmanage',
         title: '资产管理',
         component: Main,
         children: [
-            { path: 'device-query', title: '设备资产查询', name: 'device-query', icon: 'compose', component: () => import('@/views/assetmanagement/device-query/device-query.vue') },
+            { path: 'device-query', title: '设备资产查询', name: 'device-query', icon: 'pull-request', component: () => import('@/views/assetmanagement/device-query/device-query.vue') },
             { path: 'issue-query', title: '出/入库单查询', name: 'issue-query', icon: 'arrow-swap', component: () => import('@/views/assetmanagement/issue-query/issue-query.vue') },
-            { path: 'delivery-manage', title: '发货管理', name: 'delivery-manage', icon: 'arrow-swap', component: () => import('@/views/assetmanagement/delivery-manage/delivery-manage.vue')},
-            { path: 'model-config', title: '产品型号配置', name: 'model-config', icon: 'arrow-swap', component: () => import('@/views/assetmanagement/model-config/model-config.vue')},
-
+            { path: 'delivery-manage', title: '发货管理', name: 'delivery-manage', icon: 'plane', component: () => import('@/views/assetmanagement/delivery-manage/delivery-manage.vue')},
+            { path: 'model-config', title: '产品型号配置', name: 'model-config', icon: 'gear-a', component: () => import('@/views/assetmanagement/model-config/model-config.vue')},
         ]
     },
     // 报表
     {
         path: '/tables',
-        icon: 'ios-grid-view',
+        icon: 'android-list',
         name: 'tables',
         title: '表格',
         component: Main,
         children: [
-            { path: 'dragableTable', title: '报表', name: 'dragable-table', icon: 'arrow-move', component: () => import('@/views/tables/dragable-table.vue') }
+            { path: 'dragableTable', title: '报表', name: 'dragable-table', icon: 'android-list', component: () => import('@/views/tables/dragable-table.vue') }
         ]
     },
     // 设置
     {
         path: '/setting',
-        icon: 'ios-grid-view',
+        icon: 'ios-gear',
         name: 'setting',
         title: '设置',
         component: Main,
         children: [
-            { path: 'settingFrom', title: '设置', name: 'setting-form', icon: 'arrow-move', component: () => import('@/views/setting/setting-form.vue') }
+            { path: 'personSetting', title: '个人设置', name: 'person-setting', icon: 'ios-person-outline', component: () => import('@/views/setting/person-setting.vue') },
+            { path: 'addressManage', title: '收货地址管理', name: 'address-manage', icon: 'ios-navigate-outline', component: () => import('@/views/setting/address-manage.vue') },
+            { path: 'memberManage', title: '成员管理', name: 'member-manage', icon: 'ios-people', component: () => import('@/views/setting/member-manage.vue') }
         ]
     },
     // {

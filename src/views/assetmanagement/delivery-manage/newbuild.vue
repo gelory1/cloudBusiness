@@ -88,9 +88,10 @@
             </div>
           </div>
         </content>
-        <FormItem style="margin:30px 0 0 -70px">
-          <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
-          <Button type="ghost" style="margin-left: 8px">取消</Button>
+        <FormItem style="margin:30px 0 20px -100px">
+          <Button type="primary" @click="saveSubmit('formValidate')">保存</Button>
+          <Button type="primary" @click="handleSubmit('formValidate')" style="margin-left: 8px">提交</Button>
+          <Button type="ghost" style="margin-left: 8px" @click="cancleSubmit()">取消</Button>
         </FormItem>
       </Form>
     </Layout>
@@ -155,6 +156,7 @@ export default {
         {
           title: "订单编号",
           key: "ddbh",
+          align:"left",
           render: (h, params) => {
             return h("div", [
               h("Icon", {
@@ -176,7 +178,7 @@ export default {
         {
           title: " ",
           key: "action",
-          width: 150,
+          width: 20,
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -417,6 +419,15 @@ export default {
         }
       });
     },
+    saveSubmit(name){
+
+    },
+    cancleSubmit(){
+      debugger;
+      this.$router.push({
+        path:'/assetmanage/delivery-manage'
+      })
+    },
     ckbhClick() {},
     rowClassName (row, index) {
         // if (index === this.indexStyle) {
@@ -444,5 +455,9 @@ export default {
 .hz1 .ivu-table .demo-table-info-row td{
         /* background-color: #2db7f5; */
         color: #60A9F4;
+}
+.del .ivu-table-cell{
+  padding-left:8px;
+  padding-right:0px;
 }
 </style>

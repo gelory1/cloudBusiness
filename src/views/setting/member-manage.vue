@@ -1,6 +1,6 @@
 <template>
   <div>
-      <p>设置</p>
+      <p>设置4</p>
   </div>
 </template>
 

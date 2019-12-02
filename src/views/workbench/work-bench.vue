@@ -147,11 +147,11 @@
         </FormItem>
         <FormItem prop="rwnr">
           <div style="margin-left:-70px;display:flex">
-            <span style="color:red">
-            *
+            <span style="color:red;font-size:16px;padding-top:2px;padding-right:2px">
+            * 
             </span>
             <span style="margin-right:15px">
-              任务内容 
+               任务内容 
             </span>
             <button class="but_change" @click="addcolClick">添加行</button>
             <el-upload action="/" :on-change="importExcel" :auto-upload="false" :show-file-list="false">
@@ -352,6 +352,7 @@ const yb_columns = [
   {
     title: "工作内容",
     key: "gznr",
+    align:"center"
   },
   {
     title: "类型",
@@ -401,6 +402,7 @@ export default {
         {
           title: "工作内容",
           key: "gznr",
+          align: "center",
           render: (h, params) => {
               return h('div', [
                   h('a', {
@@ -447,7 +449,8 @@ export default {
       fq_columns: [
         {
           title: "工作内容",
-          key: "gznr"
+          key: "gznr",
+          align: "center"
         },
         {
           title: "类型",
@@ -492,6 +495,7 @@ export default {
         {
           title: "到款时间",
           key: "dksj",
+          align: "center",
           render: (h, params) => {
               return h('div', [
                   h('DatePicker', {
@@ -511,6 +515,7 @@ export default {
         {
           title: "金额（元）",
           key: "je",
+          align: "center",
           render: (h, params) => {
               return h('Input', {
                       props: {
@@ -530,6 +535,7 @@ export default {
         {
           title: "付款方",
           key: "fkf",
+          align: "center",
           render: (h, params) => {
               return h('div', [
                   h('Input', {
@@ -552,6 +558,7 @@ export default {
           title:'操作',
           width: '100',
           key: 'action',
+          align: "center",
           render:(h,params) => {
             return h('Button',{
                 props: {
@@ -621,24 +628,30 @@ export default {
         },
         {
           title: "合同编号",
-          key: "htbh"
+          key: "htbh",
+          align: "center",
         },
         {
           title: "合同名称",
           key: "htmc",
+          align: "left",
+          width: 200,
         }],
       hz1_data: [],
       hz2_columns: [{
             title: '账期',
-            key: 'id'
+            key: 'id',
+            align: "center",
         },
         {
             title: '应付（元）',
-            key: 'paymentAmount'
+            key: 'paymentAmount',
+            align: "center",
         },
         {
             title: '实付（元）',
-            key: 'paybackAmount'
+            key: 'paybackAmount',
+            align: "center",
         }],
       hz2_data: [],
       zfmodal: false,

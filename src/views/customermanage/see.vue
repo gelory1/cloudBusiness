@@ -176,7 +176,7 @@
             <p class="lxr_icon">
               <Icon type="ios-person" />
             </p>
-            <div class="lxr_xq">
+            <div class="lxr_xq" style="height:35px;">
               <p>
                 <span>{{item.contact_name}}</span>
                 <span class="lxr_cor">{{item.position_name}}</span>

@@ -1,6 +1,6 @@
 <template>
   <div class="edit layout">
-    <Layout class="layout" style="width:95%;min-height:800px">
+    <Layout class="" style="width:95%;min-height:800px;padding-left:20px;background:#fff">
       <p class="div_p">订单信息</p>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
         <Row>
@@ -191,23 +191,52 @@ export default {
         {
           type: "selection",
           width: 60,
+          align: "center",
           align: "center"
         },
         {
           title: "存货编码",
-          key: "productCode"
+          key: "productCode",
+          align: "center"
         },
         {
           title: "存货名称",
-          key: "productName"
+          key: "productName",
+          align: "center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.productName !== null) {
+                if (params.row.productName.length > 20) {
+                  texts = params.row.productName.substring(0, 20) + '...'
+                } else {
+                  texts = params.row.productName
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.productName)
+              ])
+            }
         },
         {
           title: "规格型号",
-          key: "spec"
+          key: "spec",
+          align: "center"
         },
         {
           title: "主计量",
-          key: "unit"
+          key: "unit",
+          align: "center"
         },
         {
           title: "发货数量",
@@ -260,12 +289,60 @@ export default {
         {
           title: "存货名称",
           key: "product_name",
-          align: "center"
+          align: "center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.product_name !== null) {
+                if (params.row.product_name.length > 20) {
+                  texts = params.row.product_name.substring(0, 20) + '...'
+                } else {
+                  texts = params.row.product_name
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.product_name)
+              ])
+            }
         },
         {
           title: "规格型号",
           key: "product_models",
-          align: "center"
+          align: "center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.product_models !== null) {
+                if (params.row.product_models.length > 20) {
+                  texts = params.row.product_models.substring(0, 20) + '...'
+                } else {
+                  texts = params.row.product_models
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.product_models)
+              ])
+            }
         },
         {
           title: "主计量",

@@ -12,7 +12,7 @@
     vertical-align: top;
     margin-left:5px;
 }
-.ht_img section .cor{
+.ht_img section .cor_s{
     color:#797979;
 }
 .select_h{
@@ -101,7 +101,8 @@
 }
 .fj_add{
     color:#2d8cf0;
-    float:right
+    float:right;
+    cursor: pointer;
 }
 .kc_p{
     margin:20px 0 15px 15px;

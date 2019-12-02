@@ -67,22 +67,22 @@
                   <FormItem label="建档日期">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" placement="Bottom Right" placeholder="开始日期" v-model="filterItem.signStarttime"></DatePicker>
+                        <DatePicker type="date" placement="bottom-end" placeholder="开始日期" v-model="filterItem.signStarttime"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" placement="Bottom Right" placeholder="结束日期" v-model="filterItem.signEndtime"></DatePicker>
+                        <DatePicker type="date" placement="bottom-end"  placeholder="结束日期" v-model="filterItem.signEndtime"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
                   <FormItem label="合同到期时间于">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" placement="Bottom Right" placeholder="开始日期" v-model="filterItem.dueStarttime"></DatePicker>
+                        <DatePicker type="date" placement="bottom-end" placeholder="开始日期" v-model="filterItem.dueStarttime"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" placement="Bottom Right" placeholder="结束日期" v-model="filterItem.dueEndtime"></DatePicker>
+                        <DatePicker type="date" placement="bottom-end" placeholder="结束日期" v-model="filterItem.dueEndtime"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>

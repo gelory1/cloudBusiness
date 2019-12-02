@@ -52,43 +52,43 @@
           <TabPane label="签约信息" name="name1">
             <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
               <Row>
-                <Col span="16">
+                <Col span="14">
                   <FormItem label="客户名称" prop="khmc" :label-width="90">
                     <Input v-model="data.data.customerName" placeholder disabled></Input>
                   </FormItem>
                 </Col>
                 <Col span="8">
-                  <FormItem label="合同内容" prop="htnr" class="con-right">
+                  <FormItem label="合同内容" prop="htnr" :label-width="100" style="margin-left:50px">
                     <Input class="col-m" v-model="contractContentMap[data.data.contractContent]" placeholder disabled></Input>
                   </FormItem>
                 </Col>
               </Row>
               <Row>
-                <Col span="16">
+                <Col span="14">
                   <FormItem label="合同主体" prop="htzt" :label-width="90">
                     <Input v-model="subjectName[data.data.contractSubject]" placeholder disabled></Input>
                   </FormItem>
                 </Col>
                 <Col span="8">
-                  <FormItem label="签约时间" prop="qysj"  class="con-right">
+                  <FormItem label="签约时间" :label-width="100" prop="qysj"  style="margin-left:50px">
                     <Input class="col-m" v-model="data.data.signTime" placeholder disabled></Input>
                   </FormItem>
                 </Col>
               </Row>
               <Row>
-                <Col span="16">
+                <Col span="14">
                   <FormItem label="运营公司" prop="yygs" :label-width="90">
                     <Input v-model="data.manageCompany" placeholder disabled></Input>
                   </FormItem>
                 </Col>
                 <Col span="8">
-                  <FormItem label="签约点数" prop="qyds"  class="con-right">
+                  <FormItem label="签约点数" prop="qyds" :label-width="100" style="margin-left:50px">
                     <Input class="col-m" v-model="data.data.signPoint" placeholder  disabled></Input>
                   </FormItem>
                 </Col>
               </Row>
               <Row>
-                <Col span="8">
+                <Col span="7">
                   <FormItem label="省份/城市" prop="city" :label-width="90">
                     <Select v-model="formValidate.province" placeholder class="col-f" disabled>
                       <Option :value="data.data.customerProvince">{{data.data.customerProvince_cn}}</Option>
@@ -98,59 +98,59 @@
                     </Select>
                   </FormItem>
                 </Col>
-                <Col span="8">
+                <Col span="7">
                   <FormItem label="签约用户数" prop="qyyhs" class="con-right">
                     <Slider class="col-m" v-model="formValidate.signUserAmount" show-input></Slider>
                   </FormItem>
                 </Col>
                 <Col span="8">
-                  <FormItem label="合同年限" prop="htnx" class="con-right">
+                  <FormItem label="合同年限" prop="htnx" :label-width="100" style="margin-left:50px">
                     <Input class="col-m" v-model="data.data.contractYears" placeholder disabled></Input>
                   </FormItem>
                 </Col>
               </Row>
                 <Row>
-                <Col span="8">
+                <Col span="7">
                   <FormItem label="销售人员" prop="xsry" :label-width="90">
                     <Input class="col-a" v-model="data.saleManName" placeholder disabled></Input>
                   </FormItem>
                 </Col>
-                <Col span="8">
+                <Col span="7">
                   <FormItem label="销售方式" prop="xsfs"  class="con-right">
                     <Input class="col-m" v-model="data.saleType" placeholder disabled></Input>
                   </FormItem>
                 </Col>
                 <Col span="8">
-                  <FormItem label="赠送服务时间" prop="zssj" :label-width="100" class="con-right">
+                  <FormItem label="赠送服务时间" prop="zssj" :label-width="100" style="margin-left:50px">
                     <Input class="col-m" v-model="data.data.giftTime" placeholder disabled></Input>
                   </FormItem>
                 </Col>
               </Row>
             <Row>
-                <Col span="8">
+                <Col span="7">
                   <FormItem label="项目经理" prop="xmjl" :label-width="90">
                     <Input v-model="data.data.projectManager" placeholder disabled></Input>
                   </FormItem>
                 </Col>
-                <Col span="8">
+                <Col span="7">
                   <FormItem label="付款周期" prop="fkzq" class="con-right">
                     <Input class="col-m" v-model="data.data.paymentCycle" placeholder  disabled></Input>
                   </FormItem>
                 </Col>
                 <Col span="8">
-                  <FormItem label="合同总费用" prop="htzfy" class="con-right" disabled>
-                    <Input style="width:152px;" v-model="data.data.contractAmount" placeholder disabled></Input>元人民币
+                  <FormItem label="合同总费用" prop="htzfy" :label-width="100" style="margin-left:50px" disabled>
+                    <Input style="width:135px;" v-model="data.data.contractAmount" placeholder disabled></Input>元人民币
                   </FormItem>
                 </Col>
               </Row>
                 <Row>
-                <Col span="16">
+                <Col span="14">
                   <FormItem label="实施地点" prop="ssdd" :label-width="90">
                     <Input  v-model="data.data.implementation" placeholder disabled></Input>
                   </FormItem>
                 </Col>
                 <Col span="8">
-                  <FormItem label="联系人及电话" prop="rjdh" class="con-right" :label-width="100">
+                  <FormItem label="联系人及电话" prop="rjdh" style="margin-left:50px;" :label-width="100">
                     <Input class="col-m" v-model="data.data.contractInfo" placeholder disabled></Input>
                   </FormItem>
                 </Col>
@@ -161,7 +161,7 @@
                   </FormItem>
                 </Col>
               </Row>
-              <FormItem class="form_but">
+              <FormItem class="form_but" style="clear:both">
                 <Button type="primary" @click="handleSubmit()">提交</Button>
                 <Button
                   type="ghost"
