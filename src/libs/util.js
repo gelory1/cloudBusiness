@@ -85,7 +85,7 @@ util.setCurrentPath = function (vm, name) {
         'otherRouter': '0',
         'otherRouter1': '1',
         'otherRouterOrder': '2',
-        'assetRouter':'3'
+        'assetRouter': '3'
     };
     vm.$store.state.app.routers.forEach(item => {
         if (item.children.length === 1) {
@@ -111,9 +111,9 @@ util.setCurrentPath = function (vm, name) {
     let currentPathMap = {
         '0': [
             {
-                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'home_index')),
-                path: '/home',
-                name: 'home_index'
+                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'customermanage_index')),
+                path: '/customermanage',
+                name: 'customermanage_index'
             },
             {
                 title: title,
@@ -211,7 +211,6 @@ util.setCurrentPath = function (vm, name) {
             let childObj = currentPathObj.children.filter((child) => {
                 return child.name === name;
             })[0];
-            console.log(childObj);
             currentPathArr = [
                 {
                     title: '首页',
@@ -231,7 +230,6 @@ util.setCurrentPath = function (vm, name) {
             ];
         }
     }
-    console.log(currentPathArr);
     vm.$store.commit('setCurrentPath', currentPathArr);
     return currentPathArr;
 };
