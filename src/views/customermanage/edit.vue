@@ -755,7 +755,7 @@ export default {
             if(this.newLocalData.ticket&&this.newLocalData.ticket.data.ticketList.length>0) api.SETCUSTOMER(this.newLocalData.ticket);
             if(this.newLocalData.plat&&this.newLocalData.plat.data.platFormList.length>0) api.SETCUSTOMER(this.newLocalData.plat);
             this.$Message.success("客户信息更新成功！");
-            this.$router.push('/home');
+            this.$router.push('/customermanage/customermanage');
           }
         })
       }else{
@@ -763,7 +763,7 @@ export default {
         response => {
           if(response.data.code === 0){
             this.$Message.success("客户信息更新成功！");
-            this.$router.push('/home');
+            this.$router.push('/customermanage/customermanage');
           }
         })
       }
