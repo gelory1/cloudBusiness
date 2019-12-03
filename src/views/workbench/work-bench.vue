@@ -719,6 +719,9 @@ export default {
         data.forEach(d => {
           let item = {};
           switch (d.workBenchType) {
+            case 1:
+              item.gznr = this.tabName === 'name1'?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，您有一个待审批的工作`;
+              break;
             case 10:
               item.gznr = this.tabName === 'name1'?`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
@@ -749,6 +752,9 @@ export default {
             var _this = this;
             let message = '';
             switch (d.workBenchType) {
+              case 1:
+                message = `审批提醒，您有一个待审批的工作，点击直接处理`;
+                break;
               case 10:
                 message = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
                 break;
@@ -849,6 +855,12 @@ export default {
             ensure:'',
             workBenchId: params.row.data.workbenchId
           }
+        }else if(params.row.data.workBenchType === 1){
+          this.$alert(`您有一个合同待审批，合同号为 ${ params.row.data.workBenchContentObj.contractNo }`, '审批提醒', {
+            confirmButtonText: '确定',
+            callback: action => {
+            }
+          });
         }else if(params.row.data.workBenchType === 5){
           alert("敬请期待......")
         }
