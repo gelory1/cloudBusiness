@@ -184,7 +184,7 @@ export default {
           this.$http.SETCUSTOMER(request2).then(response => {
             if(response.data.code === 0){
               this.$Message.success("添加成功!");
-              this.$router.push({ path: "/home" });
+              this.$router.push('/customermanage/customermanage');
             }
           },error => {
             this.$Message.error('请按规则填写!');
