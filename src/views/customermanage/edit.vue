@@ -763,7 +763,7 @@ export default {
         response => {
           if(response.data.code === 0){
             this.$Message.success("客户信息更新成功！");
-            this.$router.push('/customermanage/customermanage');
+            // this.$router.push('/customermanage/customermanage');
           }
         })
       }
