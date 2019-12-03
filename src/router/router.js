@@ -82,7 +82,7 @@ export const otherRouterOrder = {
 };
 // 资产管理
 export const assetRouter = {
-    path: '/assetmanage/delivery-manage',
+    path: '/delivery-manage',
     name: 'assetRouter',
     redirect: '/assetmanage/delivery-manage',
     component: Main,
