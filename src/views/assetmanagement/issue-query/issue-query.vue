@@ -718,6 +718,7 @@ export default {
       };
       this.menudata = [];
       this.$http.PostXLASSETS(request).then(response => {
+        this.menudata = [];
         let res = response.data.result;
           this.zkSum = res.sum;
           for (var i = 0; i < res.data.length; i++) {
@@ -817,6 +818,11 @@ export default {
         this.outdevice_data=[];
       }
       this.$http.XLORDER(param).then((res)=>{
+        if(this.tabName === 'name1'){
+          this.indevice_data=[];
+        }else{
+          this.outdevice_data=[];
+        }
         res.data.result.data[0].product_list.forEach((data)=>{
           let item = {};
           item.chbm = data.product_code;
@@ -843,6 +849,7 @@ export default {
           }
         ],
       };
+      this.sblb_data = [];
       this.$http.PostXLASSETS(request).then((response)=>{
         let { data } = response.data.result;
         this.sblb_data = [];

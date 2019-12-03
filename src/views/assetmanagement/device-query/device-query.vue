@@ -626,6 +626,7 @@ export default {
       };
       this.czjldata = [];
       this.$http.PostXLASSETS(request).then(response => {
+        this.czjldata = [];
         let res = response.data.result.data;
         this.jbxx.tm = res[0].device_address;
         this.jbxx.chbh = res[0].product_code;
@@ -679,6 +680,7 @@ export default {
       this.jbxx_data = [];
       this.ckLoading = true;
       this.$http.PostXLASSETS(request).then((response)=>{
+        this.jbxx_data = [];
         let res = response.data.result.data;
         this.zkSum = res[0].sum;
         res[0].productlist.forEach(data => {
@@ -722,6 +724,7 @@ export default {
       this.crkLoading = true;
       this.crk_data = [];
       this.$http.PostXLASSETS(request).then(response=>{
+        this.crk_data = [];
         let { data } = response.data.result;
         this.crkSum = data[0].sum;
         data[0].devicelist.forEach((d)=>{
@@ -772,6 +775,7 @@ export default {
       };
       this.menudata = [];
       this.$http.PostXLASSETS(request).then(response => {
+        this.menudata = [];
         let res = response.data.result;
           this.zkSum = res.sum;
           for (var i = 0; i < res.data.length; i++) {
