@@ -67,38 +67,22 @@
                   <FormItem label="建档日期">
                     <Row>
                       <Col span="11">
-<<<<<<< HEAD
-                        <DatePicker type="date" placement="bottom-end" placeholder="开始日期" v-model="filterItem.signStarttime"></DatePicker>
-                      </Col>
-                      <Col span="2" style="text-align: center">-</Col>
-                      <Col span="11">
-                        <DatePicker type="date" placement="bottom-end"  placeholder="结束日期" v-model="filterItem.signEndtime"></DatePicker>
-=======
                         <DatePicker type="date" placement="bottom" placeholder="开始日期" v-model="filterItem.signStarttime"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
                         <DatePicker type="date" placement="bottom" placeholder="结束日期" v-model="filterItem.signEndtime"></DatePicker>
->>>>>>> 0f469212f29224cf454547924d1b02eab119e570
                       </Col>
                     </Row>
                   </FormItem>
                   <FormItem label="合同到期时间于">
                     <Row>
                       <Col span="11">
-<<<<<<< HEAD
-                        <DatePicker type="date" placement="bottom-end" placeholder="开始日期" v-model="filterItem.dueStarttime"></DatePicker>
-                      </Col>
-                      <Col span="2" style="text-align: center">-</Col>
-                      <Col span="11">
-                        <DatePicker type="date" placement="bottom-end" placeholder="结束日期" v-model="filterItem.dueEndtime"></DatePicker>
-=======
                         <DatePicker type="date" placement="bottom" placeholder="开始日期" v-model="filterItem.dueStarttime"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
                         <DatePicker type="date" placement="bottom" placeholder="结束日期" v-model="filterItem.dueEndtime"></DatePicker>
->>>>>>> 0f469212f29224cf454547924d1b02eab119e570
                       </Col>
                     </Row>
                   </FormItem>
