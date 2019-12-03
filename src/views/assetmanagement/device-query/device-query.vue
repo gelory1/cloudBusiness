@@ -785,6 +785,7 @@ export default {
     },
     search(val){
       // if(this.inputVal === '') return;
+      this.inputVal = this.inputVal.replace(/^\s+|\s+$/g,"");
       this.getMenuList(0);
       if(this.$refs.menu.currentActiveName !== -1) this.$refs.menu.currentActiveName = -1;
       this.ck_current_index = '';

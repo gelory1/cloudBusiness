@@ -44,19 +44,11 @@
                   <FormItem label="下单日期">
                     <Row>
                       <Col span="11">
-<<<<<<< HEAD
-                        <DatePicker type="date" placement="bottom-end" placeholder="开始日期" v-model="filterItem.startTime"></DatePicker>
-                      </Col>
-                      <Col span="2" style="text-align: center">-</Col>
-                      <Col span="11">
-                        <DatePicker type="date" placement="bottom-end" placeholder="结束日期" v-model="filterItem.endTime"></DatePicker>
-=======
                         <DatePicker type="date" placement="top" placeholder="开始日期" v-model="filterItem.startTime"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
                         <DatePicker type="date" placement="top" placeholder="结束日期" v-model="filterItem.endTime"></DatePicker>
->>>>>>> 0f469212f29224cf454547924d1b02eab119e570
                       </Col>
                     </Row>
                   </FormItem>
