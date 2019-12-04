@@ -45,7 +45,7 @@ export const locking = {
 // 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
 // 客户管理
 export const otherRouter = {
-    path: '/customermanage',
+    path: '/',
     name: 'otherRouter',
     redirect: '/customermanage',
     component: Main,
@@ -59,7 +59,7 @@ export const otherRouter = {
 };
 // 合同管理
 export const otherRouter1 = {
-    path: '/contractmanage',
+    path: '/',
     name: 'otherRouter1',
     redirect: '/contractmanage',
     component: Main,
@@ -71,7 +71,7 @@ export const otherRouter1 = {
 };
 // 订单管理
 export const otherRouterOrder = {
-    path: '/ordermanage',
+    path: '/',
     name: 'otherRouterOrder',
     redirect: '/ordermanage',
     component: Main,
@@ -82,7 +82,7 @@ export const otherRouterOrder = {
 };
 // 资产管理
 export const assetRouter = {
-    path: '/assetmanage/delivery-manage',
+    path: '/delivery-manage',
     name: 'assetRouter',
     redirect: '/assetmanage/delivery-manage',
     component: Main,
@@ -103,7 +103,7 @@ export const appRouter = [
         title: '工作台',
         component: Main,
         children: [
-            { path: 'workbench', title: '工作台', name: 'home_index', icon: 'ios-monitor-outline', component: () => import('@/views/workbench/work-bench.vue') }
+            { path: 'home', title: '工作台', name: 'home_index', icon: 'ios-monitor-outline', component: () => import('@/views/workbench/work-bench.vue') }
         ]
     },
     // 客户管理

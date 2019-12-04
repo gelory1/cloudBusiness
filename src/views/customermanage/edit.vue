@@ -859,14 +859,14 @@ export default {
             )
               api.SETCUSTOMER(this.newLocalData.plat);
             this.$Message.success("客户信息更新成功！");
-            this.$router.push("/home");
+            this.$router.push('/customermanage/customermanage');
           }
         });
       } else {
         api.UPDATECUSTOMER(request).then(response => {
           if (response.data.code === 0) {
             this.$Message.success("客户信息更新成功！");
-            this.$router.push("/home");
+            this.$router.push('/customermanage/customermanage');
           }
         });
       }
