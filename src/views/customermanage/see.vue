@@ -76,13 +76,17 @@
               </section>
             </div>
             <div class="select1">
-              <section>
+              <section style="width:50%;clear:both">
                 <p>通讯地址：</p>
                 <p>{{((data||{}).data||{}).mail_address}}</p>
               </section>
               <section style="width:25%">
+                <p>协议编号：</p>
+                <p>{{}}</p>
+              </section>
+              <section style="width:25%;">
                 <p>
-                  保证金:
+                  保证金：
                   <span class="eye" @click="eyeClick">
                     <Icon type="eye"></Icon>
                   </span>
