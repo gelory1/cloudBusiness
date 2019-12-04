@@ -78,3 +78,67 @@
     line-height: 130px;;
 
 }
+/* 成员管理 */
+.re_p{
+    margin:15px;
+    font-size:14px;
+    padding:0 0 5px 5px;
+    border-bottom:1px solid #dad7d7;
+}
+.cy_div{
+    margin:20px 0 20px 100px;
+    position: relative;
+    width:600px;
+    /* margin:0 auto; */
+}
+.cy_div img{
+    width:50px;
+    height:50px;
+    border-radius: 50%;
+    border:1px solid pink;
+    margin-right:5px;
+}
+.li{
+    display: inline-block;
+}
+.widrig{
+    width:100px;
+    text-align:right;
+}
+.yh_mess{
+    vertical-align: top;
+    margin-top:5px;
+    
+}
+.use{
+    position: absolute;
+    left:330px;
+    top:5px;
+    font-size:16px;
+}
+.cy_eait{
+    margin:50px 0 30px 150px;
+}
+.cy_eait .ivu-btn-ghost{
+    color:#409eff;
+    border:1px solid #b3d8ff;
+    background: #ecf5ff;
+}
+.yh_sec{
+    line-height: 40px;
+    margin:30px 0;
+}
+.cy_name{
+    font-size:14px;
+    color:#000000
+}
+.cy_icon{
+    color:red;
+    font-size:18px;
+    margin-left:5px;
+}
+.cy_icon1{
+    color:#409eff;
+    font-size:18px;
+    margin-left:5px;
+}

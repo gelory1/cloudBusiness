@@ -88,6 +88,17 @@
 export default {
   name: "addressmanage",
   data() {
+    const validatePhone = (rule, value, callback) => {
+      if (this.addadressform.tel !== "") {
+        var expression = /^1(3|4|5|7|8)\d{9}$/;
+        if (expression.test(value) == false) {
+          callback(new Error("请输入正确的电话号码"));
+        }
+      }else{
+        callback(new Error("请输入电话号码"));
+      }
+      callback();
+    };
     return {
       addadressmodal: false,
       addadressform: {
@@ -120,28 +131,28 @@ export default {
         dzbs: [
           {
             required: true,
-            message: "The dzbs cannot be empty",
+            message: "请输入地址标识",
             trigger: "blur"
           }
         ],
         name: [
           {
             required: true,
-            message: "The name cannot be empty",
+            message: "请输入联系人姓名",
             trigger: "blur"
           }
         ],
         tel: [
           {
             required: true,
-            message: "The tel cannot be empty",
-            trigger: "blur"
+            trigger: "blur",
+            validator: validatePhone,
           }
         ],
         xxdz: [
           {
             required: true,
-            message: "The xxdz cannot be empty",
+            message: "请输入详细地址",
             trigger: "blur"
           }
         ]
