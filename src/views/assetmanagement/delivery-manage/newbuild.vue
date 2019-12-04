@@ -4,10 +4,10 @@
       <p style="font-size:16px;margin:20px 0 10px 0;">发货要求</p>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem label="发起人" prop="name">
-          <Input v-model="formValidate.name" placeholder disabled style="width:325px;"></Input>
+          <Input :value="$store.state.user.accountName" placeholder disabled style="width:325px;" />
         </FormItem>
         <FormItem label="要求发货时间" prop="fhsj">
-          <DatePicker type="date" placeholder v-model="formValidate.fhsj" style="width:300px;"></DatePicker>之前
+          <DatePicker type="date" placeholder v-model="formValidate.fhsj" style="width:300px;margin-right:10px"></DatePicker>之前
         </FormItem>
         <FormItem label="方案描述" prop="desc">
           <Input
@@ -16,7 +16,7 @@
             :autosize="{minRows: 2,maxRows: 5}"
             placeholder="Enter something..."
             style="width:500px;"
-          ></Input>
+          />
         </FormItem>
         <Row>
           <Col span="7">
@@ -26,7 +26,7 @@
               </Select>
             </FormItem>
           </Col>
-          <Col span="1" style="text-align: center">至</Col>
+          <Col span="1" style="text-align: center;line-height:30px">至</Col>
           <Col span="6">
             <FormItem prop="pcyq1" :label-width="1">
               <Select v-model="formValidate.pcyq1" placeholder>
@@ -51,6 +51,7 @@
                   height="300"
                   highlight-row
                   @on-row-click="ckbhClick"
+                  @on-current-change="changeRow"
                   style="margin:20px 0 0 0px;overflow:auto"
                   class="del"
                 ></Table>
@@ -70,15 +71,25 @@
                   </span>
                 </p>-->
                 <!--  <p style="margin-left:10px;border-bottom:0.7px solid #e4e7ed">共<span>{{count}}</span>家客户（可筛选查看）</p> -->
-                <p class="ck_p">
-                  <span>南京----选中的订单编号前面有叹号显示这一部分</span>
-                  <span style="margin:0px 40px;">
-                    <Icon type="information-circled" class="tz_ic"></Icon>收货地址：
-                    <span style="color:#4a9af5">（未设置）</span>
-                  </span>
-                </p>
+                <div style="display:flex">
+                  <div style="flex:1">
+                    <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder">
+                        共{{outcksb_data1.length -1}}家客户（可筛选查看）
+                        <Icon type="arrow-down-b"></Icon>
+                      <DropdownMenu slot="list">
+                          <DropdownItem v-for="item in outcksb_data1" :value="item.ddbh" :key="item.ddbh" :name="item.ddbh" v-show="item.ddbh!=='汇总'">{{item.ddbh}}</DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
+                  <div style="margin:0px 40px;">
+                    订单数<span>{{outcksb_data1.length - 1}}</span>个
+                  </div>
+                  <div style="margin:0px 40px;">
+                    设备数<span>{{toatalQuantity}}</span>台
+                  </div>
+                </div>
                 <Table
-                  :columns="cksb_columns"
+                  :columns="outdevice_columns"
                   :data="outcksb_data"
                   size="small"
                   style="margin:0px 0 0 0;overflow:auto"
@@ -89,18 +100,18 @@
           </div>
         </content>
         <FormItem style="margin:30px 0 20px -100px">
-          <Button type="primary" @click="saveSubmit('formValidate')">保存</Button>
+          <Button type="primary" @click="handleSubmit('formValidate','save')">保存</Button>
           <Button type="primary" @click="handleSubmit('formValidate')" style="margin-left: 8px">提交</Button>
           <Button type="ghost" style="margin-left: 8px" @click="cancleSubmit()">取消</Button>
         </FormItem>
       </Form>
     </Layout>
     <!-- 调整弹框 -->
-    <Modal v-model="tzmodal" width="900" class="hz1">
+    <Modal v-model="tzmodal" width="900" class="hz1" @on-cancel="changeCountCancel" :mask-closable="false" :closable="false">
       <p class="tz_p">调整发货</p>
       <p class="tz_p1">
         对涉及型号为
-        <span style="color:#4a9af5">{{}}</span>的订单进行发货调整
+        <span style="color:#4a9af5">{{changeRowData.currentData.product_code}}</span>的订单进行发货调整
       </p>
       <Input icon="ios-search" placeholder="请输入内容" class="right tz_in" />
       <Table :columns="tz_columns" :data="tz_data" :row-class-name="rowClassName" style="clear:both;margin-left:10px;"></Table>
@@ -112,18 +123,18 @@
         <p class="tz_ic1 right">
           <span>
             发货设备数
-            <b style="color:red">{{}}</b>台
+            <b :style="{color:(changeRowData.currentData.product_quantity -changeRowData.currentData.repertory>0)? 'red':'#6fd000'}">{{changeRowData.currentData.product_quantity}}</b>台
           </span>
           <br />
           <span>
             库存现量
-            <b>{{}}</b>台
+            <b>{{changeRowData.currentData.repertory}}</b>台
           </span>
         </p>
       </div>
     </Modal>
     <!-- 添加订单 -->
-    <Modal v-model="ddmodal" width="900">
+    <Modal v-model="ddmodal" width="900" @on-ok="ok">
       <p class="tz_p">添加订单</p>
       <p class="tz_p1">
         选择
@@ -131,13 +142,34 @@
         <span style="color:#4a9af5">部分到货</span>的订单到发货方案中
       </p>
       <Input icon="ios-search" placeholder="请输入内容" class="right tz_in" />
-      <Table :columns="dd_columns" :data="dd_data" style="clear:both;margin-left:10px;"></Table>
+      <Table :columns="dd_columns" :data="dd_data" @on-selection-change="changeSelect" style="clear:both;margin-left:10px;"></Table>
+      <Page
+        :current.sync="pageNum"
+        :total="sum"
+        :page-size="10"
+        @on-change="getOrderList"
+        size="small"
+        show-elevator
+        style="text-align:center;margin:20px 0;"
+      ></Page>
     </Modal>
   </div>
 </template>
 
 <script>
 import silderInput from "../../public-components/silder-input.vue";
+
+const levelMap = {
+  1: 'A级', 
+  2: 'B级',
+  3: 'C级',
+  4: 'D级',
+  5: 'E级',
+}
+const orderMap = {
+  0: '合同订单', 
+  1: '备货订单'
+}
 export default {
   name: "newbuild",
   components: {
@@ -152,6 +184,17 @@ export default {
         pcyq: "",
         pcyq1: ""
       },
+      pageNum:1,
+      sum:0,
+      levelMap,
+      orderMap,
+      currentRow:{},
+      changeRowData: {
+        data: {},
+        currentData: {}
+      },
+      changeOkData: {},
+      selectOrder:'汇总',
       cksb_columns1: [
         {
           title: "订单编号",
@@ -194,11 +237,12 @@ export default {
                   },
                   on: {
                     click: () => {
+                      if(params.row.ddbh === '汇总') return;
                       var _self = this;
-                      _self.remove(params);
+                      _self.remove(params.index);
                     }
                   }
-                },"X")
+                },params.row.ddbh !== '汇总'?"X":'')
             ]);
           }
         }
@@ -206,28 +250,42 @@ export default {
       cksb_columns: [
         {
           title: "存货编码",
-          key: "chbm",
+          key: "product_code",
           align: "center"
         },
         {
           title: "存货名称",
-          key: "chmc",
+          key: "product_name",
           align: "center"
         },
         {
           title: "规格型号",
-          key: "ggxh",
+          key: "product_models",
           align: "center"
         },
         {
           title: "计量单位",
-          key: "jldw",
+          key: "product_unit",
           align: "center"
         },
         {
           title: "数量",
-          key: "sl",
-          align: "center"
+          key: "product_quantity",
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h('span', {
+                style:{
+                  color: (params.row.product_quantity - params.row.repertory>0)?'red':'#495060'
+                }
+              },(params.row.product_quantity)),
+              h('span', {
+                style:{
+                  color: 'red'
+                }
+              },(params.row.product_quantity - params.row.repertory>0)?`（库存：${params.row.repertory}）`:''),
+            ]);
+          }
         },
         {
           title: "操作",
@@ -245,7 +303,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.tzmodal = true;
+                      this.changeCount(params.row);
                     }
                   }
                 },
@@ -257,18 +315,7 @@ export default {
       ],
       outcksb_data1: [
         {
-          ddbh: "111111"
-        },
-        {
-          ddbh: "222222"
-        },
-        {
-          ddbh: "333333"
-        }
-      ],
-      outcksb_data: [
-        {
-          sl: "55"
+          ddbh: '汇总',
         }
       ],
       tz_columns: [
@@ -311,19 +358,40 @@ export default {
         },
         {
           title: "设备数量",
-          key: "sbsj",
+          key: "sbsl",
           align: "center",
           width: 150,
           sortable: true,
           render: (h, params) => {
-            return h("div", [
-              h(silderInput, {
+            return h(
+              "InputNumber",
+              {
                 props: {
-                  // job_id: params.row.id
+                  size: "small",
+                  value: params.row.sbsl,
+                  min: 0,
+                  max: params.row.sbsl
                 },
-                on: {}
-              })
-            ]);
+                on: {
+                    'on-change': a => {
+                        let product_code = params.row.data.product_list[0].product_code;
+                        let order_id = params.row.data.order_id;
+                        let index = this.outcksb_data1.findIndex(d1 => d1.ddbh === params.row.ddbh);
+                        let index2 = ((this.outcksb_data1[index]||{}).product_list||[]).findIndex(d => d.product_code === product_code);
+                        this.changeOkData[params.index] = {
+                          data: params.row
+                        };
+                        if(index2 !== -1){
+                          let num = this.outcksb_data1[index].product_list[index2].issued_count;
+                          this.$set(this.outcksb_data1[index].product_list[index2],'product_quantity',a + num);
+                          if(!this.changeRowData.data[product_code]) this.changeRowData.data[product_code] = {};
+                          this.changeRowData.data[product_code][order_id] = a;
+                          this.changeRowData.currentData = this.outcksb_data.find(c => c.product_code === this.changeRowData.currentData.product_code);
+                        }
+                    }
+                }
+              }
+            );
           }
         }
       ],
@@ -363,18 +431,19 @@ export default {
         },
         {
           title: "设备数量",
-          key: "sbsj",
+          key: "sbsl",
           align: "center",
           width: 150,
           sortable: true,
           render: (h, params) => {
             return h("div", [
-              h(silderInput, {
-                props: {
-                  // job_id: params.row.id
-                },
-                on: {}
-              })
+              h('span', {
+                style:{
+                  color: 'red'
+                }
+              },params.row.data.issued_count>0?'(剩余待发)':''),
+              h('span', {
+              },(params.row.data.product_quantity - params.row.data.issued_count))
             ]);
           }
         }
@@ -382,45 +451,70 @@ export default {
       dd_data: [],
       indexStyle:"",
       ruleValidate: {
-        name: [
-          {
-            required: true,
-            message: "The name cannot be empty",
-            trigger: "blur"
-          }
-        ],
         fhsj: [
           {
             required: true,
             type: "date",
-            message: "Please select the date",
+            message: "请选择时间",
             trigger: "change"
           }
         ],
         desc: [
           {
             required: true,
-            message: "Please enter a personal introduction",
+            message: "请输入描述",
             trigger: "blur"
           }
         ]
       },
       tzmodal: false,
-      ddmodal: false
+      ddmodal: false,
+      addAllData: [],
+      selectionData:{}
     };
   },
   methods: {
-    handleSubmit(name) {
+    handleSubmit(name,status) {
+      let list = [];
+      this.outcksb_data1.forEach(o => {
+        if(o.ddbh!=='汇总'&&o.product_list){
+          o.product_list.forEach(p => {
+            if(p.product_quantity > p.repertory){
+              this.$Message.error(`请依据库存量调整该产品 ${p.product_code}的发货数量！`);
+              return;
+            }
+            list.push({
+              order_id: o.data.order_id,
+              product_code: p.product_code,
+              quantity_shipped: (p.product_quantity - p.issued_count),
+            })
+          })
+        }
+      })
+      list = list.filter(l => l.quantity_shipped > 0);
       this.$refs[name].validate(valid => {
         if (valid) {
-          this.$Message.success("Success!");
+          let request = {
+            "typeid": 23016,
+            "data": [
+              {
+                "shipments_time": this.formValidate.fhsj,
+                "shipments_describe": this.formValidate.desc,
+                // "shipments_start_batch": "",
+                // "shipments_end_batch": "",
+                "shipments_creator": this.$store.state.user.accountId,
+                "product_list": list,
+                'shipments_status':status === 'save'?0:1
+              }     
+            ]
+          }
+          this.$http.SETXLASSETS(request).then(response => {
+            this.$Message.success("Success!");
+          })
         } else {
-          this.$Message.error("Fail!");
+          this.$Message.error("请按规定填写表格！");
         }
       });
-    },
-    saveSubmit(name){
-
     },
     cancleSubmit(){
       debugger;
@@ -439,6 +533,196 @@ export default {
     },
     remove (index) {
       this.outcksb_data1.splice(index, 1);
+    },
+    getOrderList(p){
+      let request = {
+        "typeid": 23017,
+        "data": [
+          {
+            "account_id": this.$store.state.user.accountId,
+            "page_num": p,
+            "page_size": 10,
+            "product_code":"",
+            "keyword":""
+          }
+        ]
+      };
+      this.dd_data = [];
+      this.$http.PostXLASSETS(request).then(response => {
+        this.dd_data = [];
+        let { data } = response.data.result;
+        this.sum = data[0].sum;
+        data[0].order_list.forEach(d => {
+          let item = {};
+          item.data = d;
+          item.ddbh = d.order_no;
+          item.ywlx = this.orderMap[d.order_type];
+          item.xdsj = d.order_time;
+          item.khmc = d.customer_name;
+          item.khdj = this.levelMap[d.customer_level];
+          item.sbsl = d.quantity;
+          item.product_list = d.product_list;
+          if((this.selectionData[p]||[]).find(d => d.ddbh === item.ddbh)){
+            item._checked = true;
+          }
+          this.dd_data.push(item);
+        })
+      })
+    },
+    changeSelect(data){
+      this.selectionData[this.pageNum] = data;
+      this.$set(this.selectionData,this.pageNum + '',data);
+    },
+    ok(){
+      let data = [{
+        ddbh:'汇总'
+      }]
+      for(let key in this.selectionData){
+        this.selectionData[key].forEach(s => {
+          data.push(s);
+        })
+      }
+      this.outcksb_data1 = data;
+      this.$nextTick(() => {
+        this.$refs['cktable'].objData[0]._isHighlight = true;
+        this.changeRow(this.outcksb_data1[0]);
+      })
+    },
+    changeRow(data){
+      this.currentRow = JSON.parse(JSON.stringify(data));
+    },
+    changeCount(data){
+      let { product_code, product_quantity, issued_count } = data;
+      this.tzmodal = true;
+      this.changeRowData.currentData = data;
+      let request = {
+        "typeid": 23017,
+        "data": [
+          {
+            "account_id": this.$store.state.user.accountId,
+            "order_list": data.ids,
+            "product_code":product_code,
+            "keyword":""
+          }
+        ]
+      };
+      this.tz_data = [];
+      this.$http.PostXLASSETS(request).then(response => {
+        this.tz_data = [];
+        let { data } = response.data.result;
+        data.forEach(d => {
+          let item = {};
+          item.data = d;
+          item.ddbh = d.order_no;
+          item.ywlx = this.orderMap[d.order_type];
+          item.xdsj = d.order_time;
+          item.khmc = d.customer_name;
+          item.khdj = this.levelMap[d.customer_level];
+          if(this.changeRowData.data[product_code]&&this.changeRowData.data[product_code][d.order_id]){
+            item.sbsl = this.changeRowData.data[product_code][d.order_id];
+          }else{
+            item.sbsl = d.product_list[0].product_quantity - d.product_list[0].issued_count;
+          }
+          item.ggxh = this.changeRowData.currentData.product_models;
+          this.changeRowData.currentData.repertory = d.product_list[0].repertory;
+          this.tz_data.push(item);
+        })
+      })
+    },
+    changeCountCancel(){
+      for(let key in this.changeOkData){
+        let params = this.changeOkData[key].data;
+        let product_code = params.data.product_list[0].product_code;
+        let order_id = params.data.order_id;
+        let index = this.outcksb_data1.findIndex(d1 => d1.ddbh === params.ddbh);
+        let index2 = ((this.outcksb_data1[index]||{}).product_list||[]).findIndex(d => d.product_code === product_code);
+        if(index2 !== -1){
+          this.$set(this.outcksb_data1[index].product_list[index2],'product_quantity',params.sbsl + params.data.product_list[0].issued_count);
+          (this.changeRowData.data[product_code]||{})[order_id] = params.sbsl;// params.data.product_list[0].product_quantity - params.data.product_list[0].issued_count;
+          this.changeRowData.currentData = this.outcksb_data.find(c => c.product_code === this.changeRowData.currentData.product_code);
+        }
+      }
+    },
+    changeOrder(name){
+      for(let key in this.$refs['cktable'].objData){
+        if(name === this.$refs['cktable'].objData[key].ddbh){
+          this.$refs['cktable'].objData[key]._isHighlight = true;
+          this.currentRow = this.$refs['cktable'].objData[key];
+        }else{
+          this.$refs['cktable'].objData[key]._isHighlight = false;
+        }
+      }
+    }
+  },
+  mounted(){
+    this.getOrderList(1);
+  },
+  computed:{
+    outcksb_data(){
+      let data = [];
+      if(this.outcksb_data1&&this.outcksb_data1.length>0&&this.currentRow&&this.currentRow.ddbh){
+        if(this.currentRow.ddbh === '汇总'){
+          this.outcksb_data1.forEach(d => {
+            if(d.product_list&&d.product_list.length>0){
+              d.product_list.forEach(p => {
+                if(data.find(o => o.product_code === p.product_code)){
+                  let index = data.findIndex(o => o.product_code === p.product_code);
+                  data[index].product_quantity += p.product_quantity - p.issued_count;
+                  (data[index].ids||[]).push(d.data.order_id);
+                }else{
+                  let item = JSON.parse(JSON.stringify(p))||{};
+                  item.ids = [];
+                  item.ids.push(d.data.order_id);
+                  item.product_quantity = item.product_quantity - item.issued_count;
+                  data.push(item);
+                }
+              })
+            }
+          });
+          this.addAllData = data;
+        }else{
+          data = JSON.parse(JSON.stringify((this.outcksb_data1.find( d => d.ddbh === this.currentRow.ddbh)||{}).product_list||[]));
+          data.forEach(d => {
+            d.product_quantity = d.product_quantity - d.issued_count;
+          })
+        }
+      }
+      return data;
+    },
+    outdevice_columns(){
+      let columns = this.cksb_columns;
+      if(this.currentRow&&this.currentRow.ddbh){
+        if(this.currentRow.ddbh !== '汇总'){
+          columns = columns.filter(c => c.key!== 'action');
+        }else{
+          columns = this.cksb_columns;
+        }
+      }
+      return columns;
+    },
+    toatalQuantity(){
+      let num = 0;
+      if(this.outcksb_data1&&this.outcksb_data1.length>0){
+        this.outcksb_data1.forEach(o => {
+          if(o.ddbh!=='汇总'&&o.product_list){
+            o.product_list.forEach(p => {
+              num += p.product_quantity - p.issued_count;
+            })
+          }
+        })
+      }
+      return num;
+    }
+  },
+  watch:{
+    ddmodal(nv){
+      if(!nv){
+        this.pageNum = 1;
+        this.getOrderList(1);
+      }
+    },
+    tzmodal(){
+      this.changeOkData = {};
     }
   }
 };

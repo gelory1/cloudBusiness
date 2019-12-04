@@ -11,8 +11,8 @@
               icon="ios-search"
               placeholder="请输入内容"
               v-model="inputVal"
-              @on-enter="getCustomList(1)"
-              @on-click="getCustomList(1)"
+              @on-enter="getDeliveryList(1)"
+              @on-click="getDeliveryList(1)"
               style="width: 200px;margin-right:20px;"
             />
             <span class="f_gl">
@@ -36,7 +36,7 @@
         </Header>
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
-        <Tabs ref="tab" v-model="tabName">
+        <Tabs ref="tab" v-model="tabName" @on-change="changeTab">
           <TabPane
             v-for="(item,index) in fhStatus"
             :label="item.type"
@@ -45,14 +45,17 @@
           >
             <Table
               :columns="fh_columns"
-              :data="fh_data[index]"
+              :data="fh_data"
               size="small"
               :loading="loading"
               @on-row-dblclick="editClick"
             ></Table>
             <Page
+              :total="sum"
+              :current.sync="pageNum"
               :page-size="10"
               size="small"
+              @on-change="getDeliveryList"
               show-elevator
               style="text-align:center;margin-top:20px;margin-bottom:200px"
             ></Page>
@@ -97,6 +100,8 @@ export default {
     return {
       fhStatus,
       inputVal: "",
+      sum:0,
+      pageNum:1,
       loading: false,
       fh_columns: [
         {
@@ -117,7 +122,8 @@ export default {
                   on: {
                     click: () => {
                       this.$router.push({
-                        path: "/assetmanage/delivery-manage/detail"
+                        name: "delivery_detail",
+                        query: params.row
                       });
                     }
                   }
@@ -163,17 +169,7 @@ export default {
           align: "center"
         }
       ],
-      fh_data: {
-        0: [
-          {
-            fabh: "3"
-          }
-        ],
-        1: [],
-        2: [],
-        3: [],
-        4: []
-      },
+      fh_data: [],
       tabName: "name1"
     };
   },
@@ -189,10 +185,57 @@ export default {
         path: "/assetmanage/delivery-manage/newbuild"
       });
     },
-    getCustomList(p) {}
+    getDeliveryList(p) {
+      let index = this.fhStatus.find(f => f.name === this.tabName).index -1;
+      let request = {
+        "typeid": 23019,
+        "data": [
+            {
+              "account_id": this.$store.state.user.accountId,
+              "page_num": p,
+              "page_size": 10,
+              "keyword": this.inputVal,
+              "shipments_status": index === -1?undefined:index
+            }
+        ]
+      };
+      this.fh_data = [];
+      this.loading = true;
+      this.$http.PostXLASSETS(request).then(response => {
+        this.loading = false;
+        this.fh_data = [];
+        let { data } = response.data.result;
+        this.sum = data[0].sum;
+        data[0].shipments_list.forEach(s => {
+          this.fh_data.push({
+            fabh: s.shipments_no,
+            fqr: s.user_name,
+            fqsj: s.shipments_creation_time,
+            fqms: s.shipments_describe,
+            ddsl: s.order_quantity,
+            sbsl: s.product_sum,
+            jexj: s.total_money,
+            zt: (this.fhStatus.find(f => f.index === s.shipments_status+1)||{}).type,
+            data:s
+          })
+        });
+      },error => {
+        this.loading = false;
+        this.fh_data = [];
+      })
+    },
+    changeTab(){
+      this.pageNum = 1;
+      this.getDeliveryList(1);
+    }
   },
   mounted() {
-    this.getCustomList(1);
+    this.getDeliveryList(1);
+  },
+  watch:{
+    tabName(){
+      this.changeTab();
+    }
   }
 };
 </script>
