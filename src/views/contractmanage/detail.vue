@@ -666,10 +666,10 @@ export default {
           item.paybackList = (this.data.data.paybackList || []).filter(
             (a, i) => i >= payIndex && i <= payEndIndex
           );
-          item.paybackList[0].paybackAmount = computeAmountStart;
-          item.paybackList[
+          (item.paybackList[0]||{}).paybackAmount = computeAmountStart;
+          (item.paybackList[
             item.paybackList.length - 1
-          ].paybackAmount = computeAmountEnd;
+          ]||{}).paybackAmount = computeAmountEnd;
           //计算发票信息
           let allTicketAmount = 0;
           if (
