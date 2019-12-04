@@ -153,7 +153,7 @@
             <span style="margin-right:15px">
                任务内容 
             </span>
-            <button class="but_change" @click="addcolClick">添加行</button>
+            <Button class="but_change" @click="addcolClick">添加行</button>
             <el-upload action="/" :on-change="importExcel" :auto-upload="false" :show-file-list="false">
               <Button class="but_change" type="ghost" icon="ios-cloud-upload-outline">批量导入</Button>
             </el-upload>
