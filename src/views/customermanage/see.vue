@@ -82,7 +82,7 @@
               </section>
               <section style="width:25%">
                 <p>协议编号：</p>
-                <p>{{}}</p>
+                <p>{{((data||{}).data||{}).protocolNumber}}</p>
               </section>
               <section style="width:25%;">
                 <p>

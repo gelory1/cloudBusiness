@@ -115,6 +115,13 @@
               </FormItem>
             </Col>
           </Row>
+          <Row v-if="isFriend">
+            <Col span="16">
+              <FormItem label="协议编号" prop="protocolNumber" :label-width="90">
+                <Input v-model="formValidate.protocolNumber" placeholde />
+              </FormItem>
+            </Col>
+          </Row>
           <Row>
             <Col span="16">
               <FormItem label="销售负责人" prop="salesman" :label-width="90">
@@ -476,7 +483,8 @@ export default {
         province: {},
         city: {},
         empower_province: "",
-        empower_city: ""
+        empower_city: "",
+        protocolNumber:''
       },
       ruleValidate: {
         name: [
@@ -533,6 +541,13 @@ export default {
             // message: "邮政编码为6位数字",
             trigger: "blur",
             validator: validatePost
+          }
+        ],
+        protocolNumber:[
+          {
+            required: true,
+            message: "请输入协议编号",
+            trigger: "blur"
           }
         ]
       },
@@ -824,7 +839,8 @@ export default {
             registeredCapital: Number(this.formValidate.registered_capital),
             customerAbbreviation: this.formValidate.customer_abbreviation,
             chargePerson: this.formValidate.charge_person,
-            postCode: this.formValidate.post_code
+            postCode: this.formValidate.post_code,
+            protocolNumber: this.formValidate.protocolNumber
           }
         ]
       };
@@ -1048,6 +1064,7 @@ export default {
       this.formValidate.mail_address =
         ((data || {}).data || {}).mail_address || "";
       this.formValidate.post_code = ((data || {}).data || {}).post_code || "";
+      this.formValidate.protocolNumber = ((data || {}).data || {}).protocolNumber || "";
       this.formValidate.salesman = data.salesman || "";
       this.formValidate.platformuser_list = JSON.parse(
         JSON.stringify(((data || {}).data || {}).platformuser_list || [])
