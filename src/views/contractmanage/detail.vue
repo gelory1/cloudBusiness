@@ -590,7 +590,7 @@ export default {
   },
   computed: {
     data() {
-      return this.$store.state.user.contractInfo || {};
+      return JSON.parse(JSON.stringify(this.$store.state.user.contractInfo||{}))||{};
     },
     kcmxSum() {
       let sum = 0;
@@ -715,13 +715,11 @@ export default {
         });
       }
       if (
-        this.data &&
-        this.data.data &&
-        this.data.data.paybackList &&
-        this.data.data.paybackList.length > 0
+        this.paymentList &&
+        this.paymentList.length > 0
       ) {
-        this.data.data.paybackList.forEach(p => {
-          payback += p.paybackAmount;
+        this.paymentList.forEach(p => {
+          payback += p.currentAmount;
         });
       }
       m = payment - payback > 0 ? payment - payback : 0;

@@ -403,8 +403,9 @@ export default {
         ]
       };
       this.$http.UPDATECONTRACT(request).then(response => {
-        this.data.data.signUserAmount = this.formValidate.signUserAmount;
-        this.$store.commit('selectedContract',this.data);
+        let data = JSON.parse(JSON.stringify(this.data));
+        data.data.signUserAmount = this.formValidate.signUserAmount;
+        this.$store.commit('selectedContract',data);
         this.$router.push({ path: "/contractmanage/detail"});
       })
     },
@@ -423,7 +424,7 @@ export default {
   },
   computed: {
     data(){
-      return this.$store.state.user.contractInfo||{};
+      return JSON.parse(JSON.stringify(this.$store.state.user.contractInfo||{}));
     },
     paymentList(){
       if(this.$route.query.paymentList&&this.$route.query.paymentList.length>0){

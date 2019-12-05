@@ -452,7 +452,7 @@ export default {
       this.getContracts(1);
     },
     openDetail(data){
-      this.$store.commit('selectedContract',data);
+      this.$store.commit('selectedContract',JSON.parse(JSON.stringify(data)));
       this.$router.push({ path: "/contractmanage/detail"});
     },
     handleSubmitht(name) {
