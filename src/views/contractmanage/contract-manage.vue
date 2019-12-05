@@ -8,12 +8,23 @@
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
           </p>
           <div class="tooltipslot" v-show="tooptipShow">
-            <p v-for="(item,index) in contractStatus" @click="changeStatus(index)" :key="index">{{item.status}}</p>
+            <p
+              v-for="(item,index) in contractStatus"
+              @click="changeStatus(index)"
+              :key="index"
+            >{{item.status}}</p>
           </div>
         </div>
         <Header :style="{background: '#fff',minWidth:'400px'}">
           <div style="float:right;">
-            <Input icon="ios-search" placeholder="请输入内容" style="width: 200px;margin-right:20px;" v-model="inputVal" @on-enter="goSearch" @on-click="goSearch"/>
+            <Input
+              icon="ios-search"
+              placeholder="请输入内容"
+              style="width: 200px;margin-right:20px;"
+              v-model="inputVal"
+              @on-enter="goSearch"
+              @on-click="goSearch"
+            />
             <span class="f_gl">
               <span @click="glhtztClick" class="cor">
                 <Icon type="ios-list" />
@@ -29,36 +40,60 @@
                   </FormItem>
                   <FormItem label="合同性质" prop="contractNature">
                     <Select v-model="filterItem.contractNature" clearable filterable>
-                      <Option :value="item.index" v-for="(item,index) in natures" :key="index">{{item.val}}</Option>
+                      <Option
+                        :value="item.index"
+                        v-for="(item,index) in natures"
+                        :key="index"
+                      >{{item.val}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="合同内容" prop="htnr">
                     <Select v-model="filterItem.contractContent" clearable filterable>
-                      <Option :value="item.index" v-for="(item,index) in contents" :key="index">{{item.val}}</Option>
+                      <Option
+                        :value="item.index"
+                        v-for="(item,index) in contents"
+                        :key="index"
+                      >{{item.val}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="省份/城市" prop="city">
                     <Row>
                       <Col span="12">
                         <Select v-model="filterItem.province" clearable filterable>
-                          <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
+                          <Option
+                            :value="item.id"
+                            v-for="(item,index) in provinces"
+                            :key="index"
+                          >{{item.name}}</Option>
                         </Select>
                       </Col>
                       <Col span="12">
                         <Select v-model="filterItem.city" clearable filterable>
-                          <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
+                          <Option
+                            :value="item.id"
+                            v-for="(item,index) in citys"
+                            :key="index"
+                          >{{item.name}}</Option>
                         </Select>
                       </Col>
                     </Row>
                   </FormItem>
                   <FormItem label="运营公司" prop="manageCompany">
                     <Select v-model="filterItem.manageCompany" clearable filterable>
-                      <Option :value="item.id" v-for="(item,index) in companys" :key="index">{{item.name}}</Option>
+                      <Option
+                        :value="item.id"
+                        v-for="(item,index) in companys"
+                        :key="index"
+                      >{{item.name}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="销售性质" prop="salesType">
                     <Select v-model="filterItem.salesType" clearable filterable>
-                      <Option :value="item.index" v-for="(item,index) in salesTypes" :key="index">{{item.val}}</Option>
+                      <Option
+                        :value="item.index"
+                        v-for="(item,index) in salesTypes"
+                        :key="index"
+                      >{{item.val}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="销售人员" prop="saleName">
@@ -67,22 +102,42 @@
                   <FormItem label="建档日期">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" placement="bottom" placeholder="开始日期" v-model="filterItem.signStarttime"></DatePicker>
+                        <DatePicker
+                          type="date"
+                          placement="bottom"
+                          placeholder="开始日期"
+                          v-model="filterItem.signStarttime"
+                        ></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" placement="bottom" placeholder="结束日期" v-model="filterItem.signEndtime"></DatePicker>
+                        <DatePicker
+                          type="date"
+                          placement="bottom"
+                          placeholder="结束日期"
+                          v-model="filterItem.signEndtime"
+                        ></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
                   <FormItem label="合同到期时间于">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" placement="bottom" placeholder="开始日期" v-model="filterItem.dueStarttime"></DatePicker>
+                        <DatePicker
+                          type="date"
+                          placement="bottom"
+                          placeholder="开始日期"
+                          v-model="filterItem.dueStarttime"
+                        ></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" placement="bottom" placeholder="结束日期" v-model="filterItem.dueEndtime"></DatePicker>
+                        <DatePicker
+                          type="date"
+                          placement="bottom"
+                          placeholder="结束日期"
+                          v-model="filterItem.dueEndtime"
+                        ></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
@@ -110,7 +165,13 @@
         </Header>
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
-        <Table style="position:relative;" @on-row-click="openDetail" :columns="contract_columns" :loading="loading" :data="contract_data" size="small"></Table>
+        <Table
+          style="position:relative;"
+          :columns="contract_columns"
+          :loading="loading"
+          :data="contract_data"
+          size="small"
+        ></Table>
         <Page
           :total="sum"
           :current.sync="pageNum"
@@ -129,178 +190,178 @@
 const contractStatus = [
   {
     status: "所有合同状态",
-    index:-1
+    index: -1
   },
   {
     status: "审批签约中",
-    index:0
+    index: 0
   },
   {
     status: "生效实施中",
-    index:1
+    index: 1
   },
   {
     status: "上线试运行",
-    index:2
+    index: 2
   },
   {
     status: "回款待确认",
-    index:3
+    index: 3
   },
   {
     status: "财务开票中",
-    index:4
+    index: 4
   },
   {
     status: "商务转运营",
-    index:5
+    index: 5
   },
   {
     status: "到期待续签",
-    index:6
+    index: 6
   }
 ];
 const contractNatureMap = {
-  1: '新签',
-  2: '续签',
-  3: '补装',
-  4: '移点',
-  5: '减点',
-  6: '重签',
-  7: '作废',
-  8: '续费',
-  9: '其他',
-}
+  1: "新签",
+  2: "续签",
+  3: "补装",
+  4: "移点",
+  5: "减点",
+  6: "重签",
+  7: "作废",
+  8: "续费",
+  9: "其他"
+};
 const contractContentMap = {
-  1: '配用电',
-  2: '环保设施智能监测系统',
-  3: '中央空调',
-  4: '油烟监测',
-  5: '工地扬尘',
-  6: '园区抄表',
-  7: '综合能源',
-  100: '其他',
-}
+  1: "配用电",
+  2: "环保设施智能监测系统",
+  3: "中央空调",
+  4: "油烟监测",
+  5: "工地扬尘",
+  6: "园区抄表",
+  7: "综合能源",
+  100: "其他"
+};
 const contents = [
   {
     val: "配用电",
-    index:1
+    index: 1
   },
   {
     val: "环保设施智能监测系统",
-    index:2
+    index: 2
   },
   {
     val: "中央空调",
-    index:3
+    index: 3
   },
   {
     val: "油烟监测",
-    index:4
+    index: 4
   },
   {
     val: "工地扬尘",
-    index:5
+    index: 5
   },
   {
     val: "园区抄表",
-    index:6
+    index: 6
   },
   {
     val: "综合能源",
-    index:7
+    index: 7
   },
   {
     val: "其他",
-    index:100
-  },
-]
+    index: 100
+  }
+];
 const natures = [
   {
     val: "新签",
-    index:1
+    index: 1
   },
   {
     val: "续签",
-    index:2
+    index: 2
   },
   {
     val: "补装",
-    index:3
+    index: 3
   },
   {
     val: "移点",
-    index:4
+    index: 4
   },
   {
     val: "减点",
-    index:5
+    index: 5
   },
   {
     val: "重签",
-    index:6
+    index: 6
   },
   {
     val: "作废",
-    index:7
+    index: 7
   },
   {
     val: "续费",
-    index:8
+    index: 8
   },
   {
     val: "其他",
-    index:9
-  },
+    index: 9
+  }
 ];
 const salesTypeMap = {
-  1: '渠道',
-  2: '直销',
-  3: '其他'
-}
+  1: "渠道",
+  2: "直销",
+  3: "其他"
+};
 const salesTypes = [
   {
-    val:'渠道',
-    index:1
+    val: "渠道",
+    index: 1
   },
   {
-    val:'直销',
-    index:2
+    val: "直销",
+    index: 2
   },
   {
-    val:'其他',
-    index:3
-  },
-]
+    val: "其他",
+    index: 3
+  }
+];
 const statusColorMap = {
-  '审批签约中':{
-    backgroundColor: '#FDF6EC',
-    color: '#E7A440'
+  审批签约中: {
+    backgroundColor: "#FDF6EC",
+    color: "#E7A440"
   },
-  '生效实施中':{
-    backgroundColor: '#F0F9EC',
-    color: '#78C950'
+  生效实施中: {
+    backgroundColor: "#F0F9EC",
+    color: "#78C950"
   },
-  '上线试运行': {
-    backgroundColor: '#CCF5F5',
-    color: '#66E0E0'
+  上线试运行: {
+    backgroundColor: "#CCF5F5",
+    color: "#66E0E0"
   },
-  '回款待确认':{
-    backgroundColor: '#EBF5FE',
-    color: '#54A3F6'
+  回款待确认: {
+    backgroundColor: "#EBF5FE",
+    color: "#54A3F6"
   },
-  '财务开票中':{
-    backgroundColor: '#EEEEFF',
-    color: '#7272D0'
+  财务开票中: {
+    backgroundColor: "#EEEEFF",
+    color: "#7272D0"
   },
-  '商务转运营':{
-    backgroundColor: '#F4F4F5',
-    color: '#7D7F82'
+  商务转运营: {
+    backgroundColor: "#F4F4F5",
+    color: "#7D7F82"
   },
-  '到期待续签':{
-    backgroundColor: '#F8EBEB',
-    color: '#F68C8C'
-  },
+  到期待续签: {
+    backgroundColor: "#F8EBEB",
+    color: "#F68C8C"
+  }
 };
 export default {
   name: "contract",
@@ -318,7 +379,24 @@ export default {
         {
           title: "合同编号",
           key: "contractNo",
-          align: "center"
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "a",
+                {
+                  class: "iconShow",
+                  style: {},
+                  on: {
+                    click: () => {
+                      this.openDetail(params.row);
+                    }
+                  }
+                },
+                params.row.contractNo
+              )
+            ]);
+          }
         },
         {
           title: "合同性质",
@@ -338,10 +416,15 @@ export default {
                     type: "ghost",
                     size: "small"
                   },
-                   style: {
-                    backgroundColor: params.row.contractStatus?statusColorMap[params.row.contractStatus].backgroundColor:'white',
-                    color: params.row.contractStatus?statusColorMap[params.row.contractStatus].color:'#7D7F82'
-                  },
+                  style: {
+                    backgroundColor: params.row.contractStatus
+                      ? statusColorMap[params.row.contractStatus]
+                          .backgroundColor
+                      : "white",
+                    color: params.row.contractStatus
+                      ? statusColorMap[params.row.contractStatus].color
+                      : "#7D7F82"
+                  }
                 },
                 params.row.contractStatus
               )
@@ -357,7 +440,7 @@ export default {
           title: "合同到期时间",
           key: "dueTime",
           align: "center",
-          width:120
+          width: 120
         },
         {
           title: "合同名称",
@@ -394,7 +477,7 @@ export default {
         customerName: "",
         contractNature: "",
         contractContent: "",
-        province:"",
+        province: "",
         city: "",
         manageCompany: "",
         salesType: "",
@@ -422,27 +505,27 @@ export default {
       glShow: false,
       moreShow: false,
       butZT: "XXX",
-      selectedStatus:contractStatus[0],
-      sum:0,
-      inputVal:'',
-      loading:false,
-      pageNum:1,
-      filterStatus:false,
+      selectedStatus: contractStatus[0],
+      sum: 0,
+      inputVal: "",
+      loading: false,
+      pageNum: 1,
+      filterStatus: false,
       natures,
       salesTypes,
-      provinces:[],
-      citys:[],
-      companys:[],
+      provinces: [],
+      citys: [],
+      companys: [],
       contractContentMap,
       contents
     };
   },
   methods: {
     contractClick(side) {
-      if(side === 'inside'){
+      if (side === "inside") {
         this.tooptipShow = !this.tooptipShow;
-      }else if(side === 'outside'){
-        if(this.tooptipShow) this.tooptipShow = false;
+      } else if (side === "outside") {
+        if (this.tooptipShow) this.tooptipShow = false;
       }
     },
     changeStatus(index) {
@@ -451,18 +534,18 @@ export default {
       this.pageNum = 1;
       this.getContracts(1);
     },
-    openDetail(data){
-      this.$store.commit('selectedContract',data);
-      this.$router.push({ path: "/contractmanage/detail"});
+    openDetail(data) {
+      this.$store.commit("selectedContract", data);
+      this.$router.push({ path: "/contractmanage/detail" });
     },
     handleSubmitht(name) {
       let status = true;
-      for(let key in this.filterItem){
-        if(this.filterItem[key] !== ''&&this.filterItem[key] !== 0){
+      for (let key in this.filterItem) {
+        if (this.filterItem[key] !== "" && this.filterItem[key] !== 0) {
           status = false;
         }
       }
-      if(status){
+      if (status) {
         this.filterStatus = false;
         $(".cor").css({ color: "#000000" });
         this.glShow = false;
@@ -482,14 +565,14 @@ export default {
     },
     handleResetht() {
       this.filterStatus = false;
-      for(let key in this.filterItem){
-        this.filterItem[key] = '';
+      for (let key in this.filterItem) {
+        this.filterItem[key] = "";
       }
     },
     glhtztClick() {
       this.glShow = !this.glShow;
       this.moreShow = false;
-      if (this.glShow||this.filterStatus) {
+      if (this.glShow || this.filterStatus) {
         $(".cor").css({ color: "#4a9af5" });
         $(".cor1").css({ color: "#000000" });
       } else {
@@ -508,80 +591,131 @@ export default {
     },
     closeglClick() {
       this.glShow = false;
-      if(!this.filterStatus) $(".cor").css({ color: "#000000" });
+      if (!this.filterStatus) $(".cor").css({ color: "#000000" });
     },
-    getContracts(p){
+    getContracts(p) {
       let request = {
-          "typeid": 26001,
-          "data": [
+        typeid: 26001,
+        data: [
           {
-            "account_id": this.$store.state.user.accountId,
-            "customerName": this.filterItem.customerName,
-            "signStarttime": this.filterItem.signStarttime === ''? '':(this.filterItem.signStarttime.getFullYear() + '-' + (this.filterItem.signStarttime.getMonth()+1) + '-' + (this.filterItem.signStarttime.getDate())+ ' 00:00:00'),
-            "signEndtime": this.filterItem.signEndtime === ''? '':(this.filterItem.signEndtime.getFullYear() + '-' + (this.filterItem.signEndtime.getMonth()+1) + '-' + (this.filterItem.signEndtime.getDate()) +' 23:59:59'),
-            "dueStarttime": this.filterItem.dueStarttime === ''? '':(this.filterItem.dueStarttime.getFullYear() + '-' + (this.filterItem.dueStarttime.getMonth()+1) + '-' + (this.filterItem.dueStarttime.getDate())+ ' 00:00:00'),
-            "dueEndtime": this.filterItem.dueEndtime === ''? '':(this.filterItem.dueEndtime.getFullYear() + '-' + (this.filterItem.dueEndtime.getMonth()+1) + '-' + (this.filterItem.dueEndtime.getDate()) +' 23:59:59'),
-            "contractNature": this.filterItem.contractNature === ''?0:this.filterItem.contractNature,
-            "contractContent": this.filterItem.contractContent === ''?0:this.filterItem.contractContent,
-            "customerProvince": this.filterItem.province === ''?0:this.filterItem.province,
-            "customerCity": this.filterItem.city === ''?0:this.filterItem.city,
-            "manageCompany": this.filterItem.manageCompany === ''?0:this.filterItem.manageCompany,
-            "saleType": this.filterItem.salesType === ''?0:this.filterItem.salesType,
-            "saleName": this.filterItem.saleName,
-            "keyword":this.inputVal,
-            "contractStatus":this.selectedStatus.index,
-            "page_num": p,
-            "page_size": 10
+            account_id: this.$store.state.user.accountId,
+            customerName: this.filterItem.customerName,
+            signStarttime:
+              this.filterItem.signStarttime === ""
+                ? ""
+                : this.filterItem.signStarttime.getFullYear() +
+                  "-" +
+                  (this.filterItem.signStarttime.getMonth() + 1) +
+                  "-" +
+                  this.filterItem.signStarttime.getDate() +
+                  " 00:00:00",
+            signEndtime:
+              this.filterItem.signEndtime === ""
+                ? ""
+                : this.filterItem.signEndtime.getFullYear() +
+                  "-" +
+                  (this.filterItem.signEndtime.getMonth() + 1) +
+                  "-" +
+                  this.filterItem.signEndtime.getDate() +
+                  " 23:59:59",
+            dueStarttime:
+              this.filterItem.dueStarttime === ""
+                ? ""
+                : this.filterItem.dueStarttime.getFullYear() +
+                  "-" +
+                  (this.filterItem.dueStarttime.getMonth() + 1) +
+                  "-" +
+                  this.filterItem.dueStarttime.getDate() +
+                  " 00:00:00",
+            dueEndtime:
+              this.filterItem.dueEndtime === ""
+                ? ""
+                : this.filterItem.dueEndtime.getFullYear() +
+                  "-" +
+                  (this.filterItem.dueEndtime.getMonth() + 1) +
+                  "-" +
+                  this.filterItem.dueEndtime.getDate() +
+                  " 23:59:59",
+            contractNature:
+              this.filterItem.contractNature === ""
+                ? 0
+                : this.filterItem.contractNature,
+            contractContent:
+              this.filterItem.contractContent === ""
+                ? 0
+                : this.filterItem.contractContent,
+            customerProvince:
+              this.filterItem.province === "" ? 0 : this.filterItem.province,
+            customerCity:
+              this.filterItem.city === "" ? 0 : this.filterItem.city,
+            manageCompany:
+              this.filterItem.manageCompany === ""
+                ? 0
+                : this.filterItem.manageCompany,
+            saleType:
+              this.filterItem.salesType === "" ? 0 : this.filterItem.salesType,
+            saleName: this.filterItem.saleName,
+            keyword: this.inputVal,
+            contractStatus: this.selectedStatus.index,
+            page_num: p,
+            page_size: 10
           }
         ]
       };
       this.contract_data = [];
       this.loading = true;
-      this.$http.XLCONTRACT(request).then(response => {
-        let { data } = response.data.result;
-        this.sum = data.sum;
-        data.contractList.forEach(con => {
-          let item = {};
-          item.contractNo = con.contractNo;
-          item.contractNature = this.contractNatureMap[con.contractNature];
-          item.contractStatus = this.contractStatus.find(s => s.index === con.contractStatus).status;
-          item.archiveTime = con.archiveTime;
-          item.dueTime = con.dueTime;
-          item.customerName = con.customerName + '-' + this.contractContentMap[con.contractContent];
-          item.city = con.customerProvince_cn + ' ' + con.customerCity_cn;
-          item.saleType = this.salesTypeMap[con.saleType];
-          item.saleManName = con.saleManName;
-          item.manageCompany = con.manageCompanyName;
-          item.data = con;
-          this.contract_data.push(item);
-        });
-        this.loading = false;
-      },error => {
-        this.loading = false;
-      })
-
+      this.$http.XLCONTRACT(request).then(
+        response => {
+          let { data } = response.data.result;
+          this.sum = data.sum;
+          data.contractList.forEach(con => {
+            let item = {};
+            item.contractNo = con.contractNo;
+            item.contractNature = this.contractNatureMap[con.contractNature];
+            item.contractStatus = this.contractStatus.find(
+              s => s.index === con.contractStatus
+            ).status;
+            item.archiveTime = con.archiveTime;
+            item.dueTime = con.dueTime;
+            item.customerName =
+              con.customerName +
+              "-" +
+              this.contractContentMap[con.contractContent];
+            item.city = con.customerProvince_cn + " " + con.customerCity_cn;
+            item.saleType = this.salesTypeMap[con.saleType];
+            item.saleManName = con.saleManName;
+            item.manageCompany = con.manageCompanyName;
+            item.data = con;
+            this.contract_data.push(item);
+          });
+          this.loading = false;
+        },
+        error => {
+          this.loading = false;
+        }
+      );
     },
-    goSearch(){
+    goSearch() {
       this.pageNum = 1;
       this.getContracts(1);
     },
-    getProvinces(){
+    getProvinces() {
       let request = {
         typeid: 27002
       };
       this.$http.XLSELECT(request).then(response => {
         let res = response.data.result.data;
         this.provinces = res;
-        this.$store.commit('getProvinces',res);
+        this.$store.commit("getProvinces", res);
       });
     },
-    getCitys(){
-      if(this.filterItem.province.id === '') this.filterItem.province.id = 0;
+    getCitys() {
+      if (this.filterItem.province.id === "") this.filterItem.province.id = 0;
       let request = {
         typeid: 27003,
         data: [
           {
-            province:this.filterItem.province.id
+            province: this.filterItem.province.id
           }
         ]
       };
@@ -591,24 +725,24 @@ export default {
         this.citys = res;
       });
     },
-    getManagecompanys(){
+    getManagecompanys() {
       let request = {
-        typeid:27001
-      }
+        typeid: 27001
+      };
       this.$http.XLSELECT(request).then(response => {
         this.companys = response.data.result.data;
-      })
-    },
+      });
+    }
   },
-  mounted(){
+  mounted() {
     this.getContracts(1);
     this.getProvinces();
     this.getManagecompanys();
   },
-  watch:{
-    'filterItem.province':function(nv){
-      if(nv !==0&&nv!=='') this.getCitys();
-    },
+  watch: {
+    "filterItem.province": function(nv) {
+      if (nv !== 0 && nv !== "") this.getCitys();
+    }
   }
 };
 </script>

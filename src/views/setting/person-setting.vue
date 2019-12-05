@@ -1,7 +1,7 @@
 <template>
   <div class="person layout">
     <Layout>
-      <Tabs size="small" style="background:#fff;minHeight:800px">
+      <Tabs size="small" style="background:#fff;minHeight:900px">
         <TabPane label="基本资料">
           <Form ref="jbzlform" :model="jbzlform" :rules="jbzlrule" :label-width="80" class="formTop">
             <Row>

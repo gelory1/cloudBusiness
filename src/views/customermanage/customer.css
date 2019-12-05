@@ -3,6 +3,7 @@
     padding:10px 20px;
     background-color: #fff;
     font-size:14px;
+    
 }
 .header_top{
     font-size:14px;
@@ -30,8 +31,9 @@
     color:#c7cbd3;
 }
 .header_p{
-    font-size:16px;
+    font-size:1em;
     margin:30px  0;
+    font-weight:bold;
 }
 .det_p{
     color:#8d8d8d;
@@ -41,14 +43,19 @@
 .det_span{
     margin-right:30px;
 }
+.select{
+    width:100%;
+    clear: both;
+    color:black
+}
 .select section{
-    width:25%;
+    width:20%;
     float:left;
-    margin-bottom:35px;
+    margin-bottom:60px;
 }
 .select section p:nth-of-type(1),.header_con .select1 section p:nth-of-type(1),.kpxx_sec section p:nth-of-type(1){
-    color:#8d8d8d;
-    margin-bottom:5px;
+    color:#626262;
+    margin-bottom:10px;
 }
 .select1 section{
     float:left;
@@ -58,7 +65,7 @@
     margin-left:10px;
 }
 .select2 .sele2{
-    color:#8d8d8d;
+    color:#626262;
 }
 .eye{
     font-size:18px;
@@ -72,11 +79,15 @@
     padding:6px 10px;
     margin:10px 0 20px 0;
 }
+.header_con{
+    font-size:15px;
+}
 .header_con .select2{
     clear: both;
 }
 .kpxx{
-    box-shadow: 0px 0px 3px #888888;    
+    box-shadow: 0px 0px 3px #888888;   
+    width:90%;
 }
 .kpxx_con{
     padding: 20px;
@@ -159,7 +170,8 @@
 }
 .butt{
     width:140px;
-    margin-left:30px;
+    margin-left:50px;
+    display:inline-block;
 }
 .div_p{
     font-size: 16px;
@@ -239,4 +251,17 @@ width:100px;
 #divcz p{
     width:50px;
     cursor: pointer;
+}
+.ivu-icon-android-more-vertical:before {
+    content: "\F397";
+    padding: 0 15px;
+    cursor: pointer;
+}
+.butBlue .ivu-btn-ghost{ 
+    color:#409eff;
+    border:1px solid #b3d8ff;
+    background: #ecf5ff;
+}
+.customer .ivu-layout-header{
+    line-height:75px
 }
