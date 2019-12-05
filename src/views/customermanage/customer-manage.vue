@@ -398,7 +398,7 @@ export default {
           res.customerList.forEach(data => {
             let item = {};
             item.name = data.customer_name;
-            item.nature = this.customerTypes.find(t => t.no === data.customer_nature).type ;
+            item.nature = this.customerTypes.find(t => t.no === data.customer_nature).type;
             item.level = levelMap[data.customer_level];
             item.city = (data.province_cn||'') + ' ' + (data.city_cn||'');
             item.time = data.create_date;

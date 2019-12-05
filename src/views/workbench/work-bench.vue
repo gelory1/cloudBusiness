@@ -153,7 +153,7 @@
             <span style="margin-right:15px">
                任务内容 
             </span>
-            <button class="but_change" @click="addcolClick">添加行</button>
+            <Button class="but_change" @click="addcolClick">添加行</button>
             <el-upload action="/" :on-change="importExcel" :auto-upload="false" :show-file-list="false">
               <Button class="but_change" type="ghost" icon="ios-cloud-upload-outline">批量导入</Button>
             </el-upload>
@@ -398,6 +398,12 @@ export default {
           type: "selection",
           width: 60,
           align: "center"
+        },
+        {
+          title: '序号',
+          width: 60,
+          align: "center",
+          key:'index'
         },
         {
           title: "工作内容",
@@ -716,7 +722,7 @@ export default {
       if(this.tabName === 'name1') this.$notify.closeAll();
       this.$http.XLWORKBENCH(request).then(response => {
         let { data } = response.data.result;
-        data.forEach(d => {
+        data.forEach((d,i) => {
           let item = {};
           switch (d.workBenchType) {
             case 1:
@@ -733,11 +739,12 @@ export default {
               break;
           }
           item.type = this.typeMap[d.workBenchType];
-          item.fzr = d.accountName;
+          item.fzr = d.accountName||'待认领';
           item.jztime = d.dueTimeDescribe;
           item.duetime = d.dueTime;
           item._checked = d.false;
           item.zt = d.workBenchStatus;
+          item.index = i+1;
           item.data = d;
           if(this.tabName === 'name1'){
             this.gz_data.push(item);
