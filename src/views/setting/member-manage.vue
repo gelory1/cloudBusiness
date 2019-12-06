@@ -1,7 +1,7 @@
 <template>
   <div class="member">
     <Layout>
-      <Sider style="background:#fff;min-height:800px">
+      <Sider style="background:#fff;min-height:900px">
         <p class="re_p">所有成员</p>
         <Menu active-name="1-2" :open-names="['1']" style="width:200px">
           <Submenu name="1">
@@ -372,6 +372,7 @@ export default {
         },
         {
           title: "全选",
+          type:"selection",
           key: "allselect",
           align: "right",
           width: 150,
@@ -477,7 +478,7 @@ export default {
                 "a",
                 {
                   style: {
-                    color: "black"
+                
                   },
                   on: {
                     click: () => {
@@ -490,60 +491,15 @@ export default {
             ]);
           }
         },
-        {
-          title: "登陆账户",
-          key: "accound",
-          align: "center"
-        },
-        {
-          title: "职务",
-          key: "job",
-          align: "center"
-        },
-        {
-          title: "所属企业",
-          key: "company",
-          align: "center"
-        },
-        {
-          title: "角色",
-          key: "role",
-          align: "center",
-          render: (h, params) => {
-            return h("div", [
-              h(
-                "a",
                 {
-                  style: {
-                    color: "black"
-                  },
-                  on: {
-                    click: () => {
-                      this.addRolemodal = true;
-                      this.addRoleShow = false;
-                      this.seeRoleShow = true;
-                      this.editRoleShow = false;
-                    }
-                  }
-                },
-                params.row.role
-              )
-            ]);
-          }
-        },
-        {
-          title: "状态",
-          key: "state",
-          align: "center"
-        },
-        {
           title: " ",
           width: "50",
+          align:"center",
           render: (h, params) => {
             return h(
               "Dropdown",
               {
-                class: "iconShow",
+                // class: "iconShow",
                 props: {
                   trigger: "click"
                 },
@@ -588,11 +544,12 @@ export default {
                 h("a", [
                   h("span", ""),
                   h("Icon", {
+                    class:"iconshow",
                     props: {
                       type: "android-more-vertical",
                       size: "18",
-                      class:"iconShow"
-                    }
+                    },
+                    
                   })
                 ]),
                 h(
@@ -615,7 +572,53 @@ export default {
               ]
             );
           }
-        }
+        },
+        {
+          title: "登陆账户",
+          key: "accound",
+          align: "center"
+        },
+        {
+          title: "职务",
+          key: "job",
+          align: "center"
+        },
+        {
+          title: "所属企业",
+          key: "company",
+          align: "center"
+        },
+        {
+          title: "角色",
+          key: "role",
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "a",
+                {
+                  style: {
+                   
+                  },
+                  on: {
+                    click: () => {
+                      this.addRolemodal = true;
+                      this.addRoleShow = false;
+                      this.seeRoleShow = true;
+                      this.editRoleShow = false;
+                    }
+                  }
+                },
+                params.row.role
+              )
+            ]);
+          }
+        },
+        {
+          title: "状态",
+          key: "state",
+          align: "center"
+        },
       ],
       member_data: [
         {
@@ -730,17 +733,13 @@ export default {
       this.glShow = false;
       if (this.moreShow) {
         $(".cor1").css({ color: "#4a9af5" });
-        // $(".cor").css({ color: "#000000" });
       } else {
         $(".cor1").css({ color: "#000000" });
       }
     }
   },
   mounted() {
-    // if($(".ww").find("tr").hasClass("ivu-table-row-hover")){
-    //   alert("8")
-    //   $(".iconShow").css({"display":"inline-block"})
-    // }
+
   }
 };
 </script>
@@ -757,8 +756,10 @@ export default {
 .member .ivu-icon-ios-arrow-down:before {
   display: none;
 }
-.iconShow{
+.iconshow{
   display: none;
 }
-
+.ivu-table-row:hover .iconshow{
+  display: inline-block;
+}
 </style>

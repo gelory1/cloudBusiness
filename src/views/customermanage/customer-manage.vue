@@ -2,7 +2,7 @@
   <div class="customer" @click="customerClick('outside')">
     <Layout>
       <Menu width="auto" size="small" style="padding-top:30px;">
-        <div class="tip" style="float:left">
+        <div class="tip" style="float:left;margin-top:20px;">
           <p class="tooltip" @click.stop="customerClick('inside')">
             {{selectedCustomType.type}}
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
@@ -98,7 +98,7 @@
               </div>
             </span>
           </div>
-          <Button type="ghost" icon="ios-plus-empty" class="addBut" @click="addClick">添加客户</Button>
+          <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" @click="addClick">添加客户</Button>
         </Header>
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
@@ -109,7 +109,7 @@
           :data="customList_data"
           size="small"
           :loading="loading"
-          class="table"
+          class="ww"
         ></Table>
         <Page
           :current.sync="pageNum"
@@ -180,8 +180,8 @@ export default {
            render: (h, params) => {
               return h('div', [
                   h('a', {
+                      class:"iconShow",
                       style:{
-                        color:"black"
                       },
                       on: {
                           click: () => {
@@ -195,16 +195,13 @@ export default {
         },
         {
           title: " ",
-          width: 30,
+          width: "50",
           align:"center",
           render: (h, params) => {
             return h('Dropdown',{
                 class:'iconShow',
                 props:{
                     trigger:"click"
-                },
-                style:{
-                  // display:"none"
                 },
                 on:{
                    'on-click':(value)=>{
@@ -248,10 +245,11 @@ export default {
                 h('a',[
                     h('span',''),
                     h('Icon',{
+                        class:"iconshow",
                         props: {
                             type: 'android-more-vertical',
                             size:'18'
-                        }
+                        },
                     })
                 ]),
                 h('DropdownMenu',{
@@ -532,6 +530,7 @@ export default {
     this.getCustomList(1);
     this.getProvinces();
     this.getManagecompanys();
+    
   },
   watch:{
     'filterItem.empower_province':function(nv){
@@ -547,4 +546,10 @@ export default {
 <style>
 @import "../assetmanagement/assetmanage.css";
 @import "./customer.css";
+.iconshow{
+  display: none;
+}
+.ivu-table-row:hover .iconshow{
+  display: inline-block;
+}
 </style>

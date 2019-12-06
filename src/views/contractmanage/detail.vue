@@ -415,13 +415,11 @@ export default {
           title: "更新时间",
           key: "updateTime",
           align: "center",
-          width:100
         },
         {
           title: "更新者",
           key: "accountName",
           align: "center",
-          width:100
         },
         {
           title: "更新内容",

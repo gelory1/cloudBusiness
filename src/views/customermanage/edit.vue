@@ -1,23 +1,23 @@
 <template>
   <div class="edit">
-    <Layout class="layout">
+    <Layout class="layout" style="min-height:850px">
       <p class="div_p">基本信息</p>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
         <div style="width:90%">
           <Row>
-            <Col span="16">
+            <Col span="14">
               <FormItem label="客户名称" prop="name" :label-width="90">
-                <Input class v-model="formValidate.name" placeholder />
+                <Input  v-model="formValidate.name" placeholder />
               </FormItem>
             </Col>
-            <Col span="8">
+            <Col span="10">
               <FormItem label="客户简称" prop="customer_abbreviation" class="con-right">
-                <Input class="col-m" v-model="formValidate.customer_abbreviation" placeholder />
+                <Input style="width:350px;" v-model="formValidate.customer_abbreviation" placeholder />
               </FormItem>
             </Col>
           </Row>
           <Row>
-            <Col span="8">
+            <Col span="7">
               <FormItem label="客户性质" prop="nature" :label-width="90">
                 <Select v-model="formValidate.nature.index" placeholder>
                   <Option
@@ -28,7 +28,7 @@
                 </Select>
               </FormItem>
             </Col>
-            <Col span="8">
+            <Col span="7">
               <FormItem label="客户等级" prop="level">
                 <Select v-model="formValidate.level.index" placeholder>
                   <Option
@@ -39,23 +39,23 @@
                 </Select>
               </FormItem>
             </Col>
-            <Col span="8">
+            <Col span="10">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <Select v-model="formValidate.province.id" placeholder class="col-d">
+                <Select v-model="formValidate.province.id" placeholder style="width:174px;">
                   <Option
                     v-for="(item,index) in provinces"
                     :value="item.id"
                     :key="index"
                   >{{item.name}}</Option>
                 </Select>
-                <Select v-model="formValidate.city.id" placeholder class="col-d">
+                <Select v-model="formValidate.city.id" placeholder style="width:173px;">
                   <Option v-for="(item,index) in citys" :value="item.id" :key="index">{{item.name}}</Option>
                 </Select>
               </FormItem>
             </Col>
           </Row>
           <Row>
-            <Col span="16">
+            <Col span="14">
               <FormItem label="行业" prop="industry" :label-width="90">
                 <!-- <Input v-model="formValidate.hy" placeholder="Enter your name"></Input> -->
                 <Select v-model="formValidate.industry.index" placeholder>
@@ -67,28 +67,28 @@
                 </Select>
               </FormItem>
             </Col>
-            <Col span="8" v-if="isFriend">
+            <Col span="10" v-if="isFriend">
               <FormItem label="注册资金" prop="registered_capital" class="con-right">
-                <Input class="col-s" v-model="formValidate.registered_capital" placeholder />人民币
+                <Input style="width:313px" v-model="formValidate.registered_capital" placeholder />人民币
               </FormItem>
             </Col>
           </Row>
           <Row>
-            <Col span="8">
+            <Col span="7">
               <FormItem label="法定代表人" prop="charge_person" :label-width="90">
                 <Input v-model="formValidate.charge_person" placeholder />
               </FormItem>
             </Col>
-            <Col span="8" v-if="isFriend">
+            <Col span="7" v-if="isFriend">
               <FormItem label="授权资质" prop="sqzz">
-                <Select v-model="formValidate.empower_province.id" placeholder class="col-d">
+                <Select v-model="formValidate.empower_province.id" placeholder style="width:169px;">
                   <Option
                     v-for="(item,index) in provinces"
                     :value="item.id"
                     :key="index"
                   >{{item.name}}</Option>
                 </Select>
-                <Select v-model="formValidate.empower_city.id" placeholder class="col-d">
+                <Select v-model="formValidate.empower_city.id" placeholder style="width:170px;">
                   <Option
                     v-for="(item,index) in empower_citys"
                     :value="item.id"
@@ -97,21 +97,21 @@
                 </Select>
               </FormItem>
             </Col>
-            <Col span="8" v-if="isFriend">
+            <Col span="10" v-if="isFriend">
               <FormItem label="保证金" prop="bond_amount" class="con-right">
-                <Input class="col-s" v-model="formValidate.bond_amount" placeholder />人民币
+                <Input style="width:313px" v-model="formValidate.bond_amount" placeholder />人民币
               </FormItem>
             </Col>
           </Row>
           <Row>
-            <Col span="16">
+            <Col span="14">
               <FormItem label="通信地址" prop="mail_address" :label-width="90">
                 <Input v-model="formValidate.mail_address" placeholder />
               </FormItem>
             </Col>
-            <Col span="8">
+            <Col span="10">
               <FormItem label="邮政编码" prop="post_code" class="con-right">
-                <Input class="col-m" v-model="formValidate.post_code" placeholder />
+                <Input style="width:350px" v-model="formValidate.post_code" placeholder />
               </FormItem>
             </Col>
           </Row>
@@ -123,7 +123,7 @@
             </Col>
           </Row>
           <Row>
-            <Col span="16">
+            <Col span="14">
               <FormItem label="销售负责人" prop="salesman" :label-width="90">
                 <Input v-model="formValidate.salesman" placeholder="Enter your name" readonly />
               </FormItem>
@@ -131,7 +131,7 @@
           </Row>
         </div>
         <Row v-if="isCustom">
-          <Col span="12" class="changeinput">
+          <Col class="changeinput">
             <FormItem label="关联平台账户" prop="glzh" :label-width="90" style="color: #409eff;">
               <Tag
                 closable
@@ -141,10 +141,11 @@
                 :key="index"
                 @on-close="deletePlatForm(index)"
               >({{item.platform_id}}){{item.platform_name}}</Tag>
-              <P v-show="formValidate.platformuser_list.length===0" style="color:#495060">暂未关联账户平台</P>
-            </FormItem>
+              <P v-show="formValidate.platformuser_list.length===0" style="color:#495060;display:inline">暂未关联账户平台</P>
+              <Button type="ghost" class="butt" @click="platFormShow()">+</Button>
+            </FormItem>     
           </Col>
-          <Button type="ghost" class="butt" @click="platFormShow()">+</Button>
+          
         </Row>
         <!-- middle-->
         <div>
@@ -315,10 +316,10 @@
     </Modal>
     <Modal v-model="addPlatShow" @on-ok="savePlat()">
       <p style="margin:10px  0 20px 0;font-size:16px">添加账户平台信息</p>
-      <Form :model="plat" :label-width="80">
+      <Form :model="plat" :label-width="120">
         <Row>
-          <Col span="12">
-            <FormItem label="账户平台选项" :label-width="90">
+          <Col span="20">
+            <FormItem label="账户平台选项">
               <Select v-model="plat.platform_id" placeholder>
                 <Option
                   v-for="(item,index) in plat.list"
@@ -330,12 +331,14 @@
           </Col>
         </Row>
         <Row>
-          <Col span="12">
+          <Col span="20">
             <FormItem label="账户：">
               <Input v-model="plat.platform_id" placeholder />
             </FormItem>
-          </Col>
-          <Col span="12">
+          </Col> 
+        </Row>
+        <Row>
+          <Col span="20">
             <FormItem label="名称：">
               <Input v-model="plat.platform_name" placeholder />
             </FormItem>

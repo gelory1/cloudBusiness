@@ -138,7 +138,6 @@
                 size="small" 
                 highlight-row
                 :height="tableHeight"
-                @on-row-click="zcrowClick"
                 :loading="crkLoading"
                 >
               </Table>
@@ -454,7 +453,21 @@ export default {
         {
           title: "条码",
           key: "tm",
-          align:"center"
+          align:"center",
+          render: (h, params) => {
+              return h('div', [
+                  h('a', {
+                      style:{
+                        cursor:"pointer"
+                      },
+                      on: {
+                          click: () => {
+                                this.zcrowClick(params.row)
+                            }
+                        }
+                  },params.row.tm)
+              ]);
+          }
         },
         {
           title: "存货编码",
