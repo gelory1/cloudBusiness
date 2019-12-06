@@ -619,7 +619,7 @@ export default {
       console.log(this.selectedTab);
       this.loading = true;
       const param = {
-        typeid: "24001",
+        typeid: 24001,
         data: [
           {
             account_id: this.$store.state.user.accountId,
