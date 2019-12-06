@@ -5,7 +5,7 @@
         <div class="gz_left left bor" style="min-height:800px;">
           <!-- <Input icon="ios-search" placeholder="请输入。。。。" class="gz_input"></Input> -->
           <Tabs value="name1" v-model="tabName" >
-            <TabPane label="待办工作" name="name1">
+            <TabPane :label="label" name="name1">
               <Table
                 :columns="gz_columns"
                 :data="gz_data"
@@ -710,7 +710,17 @@ export default {
         workBenchId:""
       },
       addStore:[],
-      noticeStatus:true
+      noticeStatus:true,
+      label:(h) =>{
+        return h('div', [
+            h('span', '待办工作'),
+            h('Badge', {
+              props: {
+                  count: this.$store.state.app.workBenchData.length
+              }
+            })
+        ])
+      }
     };
   },
   methods: {
