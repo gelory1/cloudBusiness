@@ -534,15 +534,9 @@ export default {
       this.pageNum = 1;
       this.getContracts(1);
     },
-<<<<<<< HEAD
     openDetail(data){
       this.$store.commit('selectedContract',JSON.parse(JSON.stringify(data)));
       this.$router.push({ path: "/contractmanage/detail"});
-=======
-    openDetail(data) {
-      this.$store.commit("selectedContract", data);
-      this.$router.push({ path: "/contractmanage/detail" });
->>>>>>> 2afada855daeb42fdffe4c10cfaee40982a87258
     },
     handleSubmitht(name) {
       let status = true;
