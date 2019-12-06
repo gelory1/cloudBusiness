@@ -3,20 +3,19 @@
     <Layout style="background:#fff;min-height:800px">
       <p class="ad_p">收货地址列表</p>
       <div>
-        <div v-for="(item,index) in shdzData" class="ad_div">
+        <el-card v-for="(item,index) in shdzData" :key="index" shadow='hover' class="ad_div" style="overflow:inherit;">
           <p class="p_span">
             <b>{{item.company}}</b>
-            <span class="ad_span" v-if="index == 0">默认</span>
             <!--  -->
             <span class="icon">
-              <Dropdown  style="float:right;text-align:center">
-                <a href="javascript:void(0)">
+              <Dropdown  style="float:right;text-align:center;position:relative" trigger="click" @on-click="dropDownClick">
+                <div style="width:12px" @click="changeSelectItem(item)">
                   <Icon type="android-more-vertical"></Icon>
-                </a>
+                </div>
                 <DropdownMenu slot="list">
-                  <DropdownItem>编辑</DropdownItem>
-                  <DropdownItem>设为默认</DropdownItem>
-                  <DropdownItem>删除</DropdownItem>
+                  <DropdownItem name="edit">编辑</DropdownItem>
+                  <DropdownItem name="default">设为默认</DropdownItem>
+                  <DropdownItem name="delete">删除</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </span>
@@ -24,17 +23,19 @@
           <p class="p_span1">
             <span>{{item.name}}</span>
             <span>&#x3000;{{item.tel}}</span>
+            <span class="ad_span" v-if="item.isDefault">默认</span>
           </p>
           <p>{{item.address}}</p>
-        </div>
+        </el-card>
       </div>
       <div class="add_adress">
-        <p @click="addadressmodal = true" style="cursor:pointer">+&#x3000;添加新地址</p>
+        <p @click="createNewAddr" style="cursor:pointer">+&#x3000;添加新地址</p>
       </div>
     </Layout>
     <!-- 添加地址弹框 -->
     <Modal v-model="addadressmodal" width="800" class="aa">
-      <p class="ad_p">添加新地址</p>
+      <p class="ad_p" v-if="status === 'new'">添加新地址</p>
+      <p class="ad_p" v-else>编辑地址</p>
       <Form
         ref="addadressform"
         :model="addadressform"
@@ -44,8 +45,10 @@
       >
         <Row>
           <Col span="15">
-            <FormItem label="地址标识" prop="dzbs">
-              <Input v-model="addadressform.dzbs" placeholder></Input>
+            <FormItem label="地址标识" prop="company">
+              <Select v-model="addadressform.company" clearable filterable>
+                <Option :value="item.wh_id" v-for="(item,index) in whData" :key="index">{{item.wh_name}}</Option>
+              </Select>
             </FormItem>
           </Col>
         </Row>
@@ -65,9 +68,9 @@
         </Row>
         <Row>
           <Col span="20">
-            <FormItem label="详细地址" prop="xxdz">
+            <FormItem label="详细地址" prop="address">
               <Input
-                v-model="addadressform.xxdz"
+                v-model="addadressform.address"
                 type="textarea"
                 :autosize="{minRows: 2,maxRows: 5}"
                 placeholder
@@ -102,33 +105,14 @@ export default {
     return {
       addadressmodal: false,
       addadressform: {
-        dzbs: "",
+        company: "",
         name: "",
         tel: "",
-        xxdz: ""
+        address: ""
       },
-      shdzData: [
-        {
-          company: "南京还挺鲲鹏工程物资库",
-          name: "刘协",
-          tel: "1234567890",
-          address: "苏州高新区蓝天白云路"
-        },
-        {
-          company: "南京还挺鲲鹏工程物资库",
-          name: "刘协",
-          tel: "1234567890",
-          address: "苏州高新区蓝天白云路"
-        },
-        {
-          company: "南京还挺鲲鹏工程物资库",
-          name: "刘协",
-          tel: "1234567890",
-          address: "苏州高新区蓝天白云路"
-        }
-      ],
+      shdzData: [],
       addadressrule: {
-        dzbs: [
+        company: [
           {
             required: true,
             message: "请输入地址标识",
@@ -149,43 +133,189 @@ export default {
             validator: validatePhone,
           }
         ],
-        xxdz: [
+        address: [
           {
             required: true,
             message: "请输入详细地址",
             trigger: "blur"
           }
         ]
-      }
+      },
+      selectItem:{},
+      status:'new',
+      whData: []
     };
   },
   methods: {
+    getAddresses(){
+      let request = {
+        typeid: 23013,
+        data: [
+          {
+            account_id: this.$store.state.user.accountId,
+          }
+        ]
+      };
+      this.shdzData = [];
+      this.$http.PostXLASSETS(request).then(response => {
+        let { data } = response.data.result;
+        data.forEach(d => {
+          this.shdzData.push({
+            company: d.wh_name,
+            name: d.manager_name,
+            tel: d.manager_phone,
+            address: d.address_detail,
+            isDefault:d.address_status === 1?true:false,
+            wh_id:d.wh_id,
+            address_id:d.address_id,
+          })
+        });
+        
+      })
+    },
+    getWhs(){
+      let request = {
+        typeid: 23001,
+        data: [
+          {
+            account_id: this.$store.state.user.accountId,
+          }
+        ]
+      };
+      this.whData = [];
+      this.$http.PostXLASSETS(request).then(response => {
+        let { data } = response.data.result;
+        this.whData = data;
+      })
+    },
     czClick() {},
     saveSubmit(name) {
       this.$refs[name].validate(valid => {
+        let request = {
+          "typeid": 23014,
+          "data": [
+              {
+                "account_id": this.$store.state.user.accountId,
+                "wh_id": this.addadressform.company,
+                "address_title": (this.whData.find(w =>w.wh_id === this.addadressform.company)||{}).wh_name||'',
+                "manager_name": this.addadressform.name,
+                "manager_phone": this.addadressform.tel,
+                "address_detail": this.addadressform.address
+              }
+          ]
+        }
         if (valid) {
-          this.$Message.success("Success!");
+          if(this.status === 'edit'){
+            request.typeid = 23023;
+            request.data[0].address_id = this.selectItem.address_id;
+            this.$http.UPDATEXLASSETS(request).then(response => {
+              this.$Message.success("Success!");
+              this.getAddresses();
+              this.addadressmodal = false;
+            },error => {
+              if(error.data.code === 0){
+                this.$Message.success("Success!");
+                this.getAddresses();
+                this.addadressmodal = false;
+              }
+            })
+          }else if(this.status === 'new'){
+            this.$http.SETXLASSETS(request).then(response => {
+              this.$Message.success("Success!");
+              this.getAddresses();
+              this.addadressmodal = false;
+            },error => {
+              if(error.data.code === 0){
+                this.$Message.success("Success!");
+                this.getAddresses();
+                this.addadressmodal = false;
+              }
+            })
+          }
         } else {
           this.$Message.error("Fail!");
         }
       });
+    },
+    dropDownClick(name){
+      if(name === 'edit'){
+        this.edit();
+      }else if(name === 'default'){
+        this.setDefault();
+      }else if(name === 'delete'){
+        this.delete();
+      }
+    },
+    edit(){
+      this.status = 'edit';
+      this.addadressform = {...this.selectItem};
+      this.addadressform.company = (this.whData.find(w => w.wh_id === this.selectItem.wh_id)||{}).wh_id;
+      this.addadressmodal = true;
+    },
+    setDefault(){
+      let request = {
+        "typeid": 23023,
+        "data": [
+          {
+            "account_id": this.$store.state.user.accountId,
+            "address_id": this.selectItem.address_id,
+            "wh_id": this.selectItem.wh_id
+          }
+        ]
+      };
+      this.$http.UPDATEXLASSETS(request).then(response =>{
+        this.$Message.success("设置成功!");
+        this.getAddresses();
+      },error => {
+        if(error.data.code === 0){
+          this.$Message.success("设置成功!");
+          this.getAddresses();
+        }
+      })
+    },
+    delete(){
+      let request = {
+        "typeid": 23022,
+        "data": [
+          {
+            "account_id": this.$store.state.user.accountId,
+            "address_id": this.selectItem.address_id
+          }
+        ]
+      };
+      this.$http.DELXLASSETS(request).then(response =>{
+        this.$Message.success("删除成功!");
+        this.getAddresses();
+      },error => {
+        if(error.data.code === 0){
+          this.$Message.success("删除成功!");
+          this.getAddresses();
+        }
+      })
+    },
+    changeSelectItem(item){
+      this.selectItem = item;
+    },
+    createNewAddr(){
+      this.status = 'new';
+      this.addadressmodal = true;
     }
   },
   mounted() {
-    $(".ad_div").hover(
-      function() {
-        $(this).css({ border: "1px solid #3896f5" });
-        $(this)
-          .find(".icon")
-          .css({ display: "inline" });
-      },
-      function() {
-        $(this).css({ border: "1px solid #e6e4e4" });
-        $(this)
-          .find(".icon")
-          .css({ display: "none" });
+    this.getAddresses();
+    this.getWhs();
+  },
+  watch:{
+    addadressmodal(nv){
+      if(!nv){
+        this.addadressform = {
+          company: "",
+          name: "",
+          tel: "",
+          address: ""
+        }
       }
-    );
+    }
   }
 };
 </script>

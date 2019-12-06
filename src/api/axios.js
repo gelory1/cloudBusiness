@@ -51,6 +51,14 @@ const workflow = {
     SETXLASSETS (params) {
         return axios.post('/public/api/xlassets/set', params);
     },
+    // 删除发货
+    DELXLASSETS (params) {
+        return axios.post('/public/api/xlassets/delete', params);
+    },
+    // 编辑发货
+    UPDATEXLASSETS (params) {
+        return axios.post('/public/api/xlassets/update', params);
+    },
     // 订单查询
     XLORDER (params) {
         return axios.post('/public/api/xlorder/query', params);
