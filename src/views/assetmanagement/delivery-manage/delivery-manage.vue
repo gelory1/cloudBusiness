@@ -174,11 +174,15 @@ export default {
     };
   },
   methods: {
-    editClick() {
-    //草稿状态下才能进入编辑
-      this.$router.push({
-        path: "/assetmanage/delivery-manage/editbuild"
-      });
+    editClick(item) {
+      if(item.data.shipments_status === 0){
+        this.$router.push({
+          name: "delivery_detail2",
+          query: item
+        });
+      }else{
+        this.$Message.error('当前状态不支持编辑！');
+      }
     },
     addClick() {
       this.$router.push({

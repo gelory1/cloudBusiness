@@ -73,13 +73,14 @@
                 <!--  <p style="margin-left:10px;border-bottom:0.7px solid #e4e7ed">共<span>{{count}}</span>家客户（可筛选查看）</p> -->
                 <div style="display:flex">
                   <div style="flex:1">
-                    <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder">
+                    <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder" v-if="currentRow.ddbh==='汇总'">
                         共{{outcksb_data1.length -1}}家客户（可筛选查看）
                         <Icon type="arrow-down-b"></Icon>
                       <DropdownMenu slot="list">
-                          <DropdownItem v-for="item in outcksb_data1" :value="item.ddbh" :key="item.ddbh" :name="item.ddbh" v-show="item.ddbh!=='汇总'">{{item.ddbh}}</DropdownItem>
+                          <DropdownItem v-for="item in outcksb_data1" :value="item.ddbh" :key="item.ddbh" :name="item.ddbh" v-show="item.ddbh!=='汇总'">{{((item.product_list||[])[0]||{}).customer_name}}</DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
+                    <p v-if="currentRow.ddbh!=='汇总'">{{((currentRow.product_list||[])[0]||{}).customer_name}}</p>
                   </div>
                   <div style="margin:0px 40px;">
                     订单数<span>{{outcksb_data1.length - 1}}</span>个
@@ -113,7 +114,7 @@
         对涉及型号为
         <span style="color:#4a9af5">{{changeRowData.currentData.product_code}}</span>的订单进行发货调整
       </p>
-      <Input icon="ios-search" placeholder="请输入内容" class="right tz_in" />
+      <Input icon="ios-search" placeholder="请输入内容" class="right tz_in" v-model="changeCountInput" @on-enter="changeCount(changeRowData.currentData)" @on-click="changeCount(changeRowData.currentData)"/>
       <Table :columns="tz_columns" :data="tz_data" :row-class-name="rowClassName" style="clear:both;margin-left:10px;"></Table>
       <div class="tz_i">
         <p class="left" style="color:#e6a23c">
@@ -141,7 +142,7 @@
         <span style="color:#4a9af5">已下单</span>或
         <span style="color:#4a9af5">部分到货</span>的订单到发货方案中
       </p>
-      <Input icon="ios-search" placeholder="请输入内容" class="right tz_in" />
+      <Input icon="ios-search" placeholder="请输入内容" class="right tz_in" v-model="addOrderInput" @on-enter="getOrderList(1)" @on-click="getOrderList(1)"/>
       <Table :columns="dd_columns" :data="dd_data" @on-selection-change="changeSelect" style="clear:both;margin-left:10px;"></Table>
       <Page
         :current.sync="pageNum"
@@ -195,6 +196,8 @@ export default {
       },
       changeOkData: {},
       selectOrder:'汇总',
+      addOrderInput: '',
+      changeCountInput: '',
       cksb_columns1: [
         {
           title: "订单编号",
@@ -383,7 +386,8 @@ export default {
                         };
                         if(index2 !== -1){
                           let num = this.outcksb_data1[index].product_list[index2].issued_count;
-                          this.$set(this.outcksb_data1[index].product_list[index2],'product_quantity',a + num);
+                          if(!this.isEdit) this.$set(this.outcksb_data1[index].product_list[index2],'product_quantity',a + num);
+                          if(this.isEdit) this.$set(this.outcksb_data1[index].product_list[index2],'quantity_shipped',a);
                           if(!this.changeRowData.data[product_code]) this.changeRowData.data[product_code] = {};
                           this.changeRowData.data[product_code][order_id] = a;
                           this.changeRowData.currentData = this.outcksb_data.find(c => c.product_code === this.changeRowData.currentData.product_code);
@@ -476,11 +480,13 @@ export default {
   methods: {
     handleSubmit(name,status) {
       let list = [];
+      let s = false;
       this.outcksb_data1.forEach(o => {
         if(o.ddbh!=='汇总'&&o.product_list){
           o.product_list.forEach(p => {
             if(p.product_quantity > p.repertory){
               this.$Message.error(`请依据库存量调整该产品 ${p.product_code}的发货数量！`);
+              s = true;
               return;
             }
             list.push({
@@ -491,7 +497,7 @@ export default {
           })
         }
       })
-      list = list.filter(l => l.quantity_shipped > 0);
+      if(s) return; //校验失败跳出
       this.$refs[name].validate(valid => {
         if (valid) {
           let request = {
@@ -504,7 +510,9 @@ export default {
                 // "shipments_end_batch": "",
                 "shipments_creator": this.$store.state.user.accountId,
                 "product_list": list,
-                'shipments_status':status === 'save'?0:1
+                'shipments_status':status === 'save'?0:1,
+                'shipments_id':this.isEdit?this.$route.query.data.shipments_id:undefined,
+                'shipments_no':this.isEdit?this.$route.query.data.shipments_no:undefined
               }     
             ]
           }
@@ -543,11 +551,12 @@ export default {
             "page_num": p,
             "page_size": 10,
             "product_code":"",
-            "keyword":""
+            "keyword": this.addOrderInput
           }
         ]
       };
       this.dd_data = [];
+      this.sum = 0;
       this.$http.PostXLASSETS(request).then(response => {
         this.dd_data = [];
         let { data } = response.data.result;
@@ -565,13 +574,31 @@ export default {
           if((this.selectionData[p]||[]).find(d => d.ddbh === item.ddbh)){
             item._checked = true;
           }
+          if((this.selectionData.edit||[]).find(d => d.ddbh === item.ddbh)){
+            item._checked = true;
+            if(!this.selectionData[p]) {
+              this.selectionData[p] = [];
+            }
+            this.selectionData[p].push((this.selectionData.edit||[]).find(d => d.ddbh === item.ddbh));
+            let index = this.selectionData.edit.findIndex(d => d.ddbh === item.ddbh);
+            this.selectionData.edit[index] = {};
+          }
           this.dd_data.push(item);
         })
       })
     },
     changeSelect(data){
-      this.selectionData[this.pageNum] = data;
-      this.$set(this.selectionData,this.pageNum + '',data);
+      // this.selectionData[this.pageNum] = data;
+      let arr = [];
+      data.forEach(d => {
+        if(!(this.selectionData[this.pageNum]||[]).find(s => s.ddbh === d.ddbh)){
+          if(!this.selectionData[this.pageNum]) this.selectionData[this.pageNum] = [];
+          arr.push(d);
+        }else{
+          arr.push((this.selectionData[this.pageNum]||[]).find(s => s.ddbh === d.ddbh));
+        }
+      })
+      this.$set(this.selectionData,this.pageNum + '',arr);
     },
     ok(){
       let data = [{
@@ -579,7 +606,7 @@ export default {
       }]
       for(let key in this.selectionData){
         this.selectionData[key].forEach(s => {
-          data.push(s);
+          if(s.ddbh) data.push(s);
         })
       }
       this.outcksb_data1 = data;
@@ -602,7 +629,7 @@ export default {
             "account_id": this.$store.state.user.accountId,
             "order_list": data.ids,
             "product_code":product_code,
-            "keyword":""
+            "keyword": this.changeCountInput
           }
         ]
       };
@@ -652,9 +679,49 @@ export default {
           this.$refs['cktable'].objData[key]._isHighlight = false;
         }
       }
+    },
+    editInit(){
+      let request = {
+        "typeid": 23020,
+        "data": [
+            {
+              "account_id": this.$store.state.user.accountId,
+              "shipments_id": (this.$route.query||{}).data.shipments_id
+            }
+        ]
+      };
+      this.$http.PostXLASSETS(request).then(response => {
+        let { data } = response.data.result;
+        this.formValidate.fhsj = data[0].shipments_time;
+        this.formValidate.desc = data[0].shipments_describe;
+        data[0].product_list.forEach(p =>{
+          let item = {};
+          item.ddbh = p.order_no;
+          if(this.outcksb_data1.find(o => o.ddbh === p.order_no)){
+            let obj = this.outcksb_data1.find(o => o.ddbh === p.order_no);
+            obj.product_list.push(p);
+          }else{
+            item.data = JSON.parse(JSON.stringify(data[0]));
+            item.data.order_id = p.order_id;
+            item.product_list = [];
+            item.product_list.push(p);
+            this.outcksb_data1.push(item);
+            if(!this.selectionData.edit) this.selectionData.edit = [];
+            this.selectionData.edit.push(item);
+          }
+          if(!this.changeRowData.data[p.product_code]) this.changeRowData.data[p.product_code] = {};
+          this.changeRowData.data[p.product_code][p.order_id] = p.quantity_shipped;
+          this.$refs['cktable'].objData[0]._isHighlight = true;
+          this.changeRow(this.outcksb_data1[0]);
+        })
+        
+      })
     }
   },
   mounted(){
+    if(this.isEdit){
+      this.editInit();
+    }
     this.getOrderList(1);
   },
   computed:{
@@ -667,13 +734,13 @@ export default {
               d.product_list.forEach(p => {
                 if(data.find(o => o.product_code === p.product_code)){
                   let index = data.findIndex(o => o.product_code === p.product_code);
-                  data[index].product_quantity += p.product_quantity - p.issued_count;
+                  data[index].product_quantity += (p.product_quantity - p.issued_count)||p.quantity_shipped;
                   (data[index].ids||[]).push(d.data.order_id);
                 }else{
                   let item = JSON.parse(JSON.stringify(p))||{};
                   item.ids = [];
                   item.ids.push(d.data.order_id);
-                  item.product_quantity = item.product_quantity - item.issued_count;
+                  item.product_quantity = (item.product_quantity - item.issued_count)||p.quantity_shipped;
                   data.push(item);
                 }
               })
@@ -683,7 +750,7 @@ export default {
         }else{
           data = JSON.parse(JSON.stringify((this.outcksb_data1.find( d => d.ddbh === this.currentRow.ddbh)||{}).product_list||[]));
           data.forEach(d => {
-            d.product_quantity = d.product_quantity - d.issued_count;
+            d.product_quantity = (d.product_quantity - d.issued_count)||d.quantity_shipped;
           })
         }
       }
@@ -706,18 +773,25 @@ export default {
         this.outcksb_data1.forEach(o => {
           if(o.ddbh!=='汇总'&&o.product_list){
             o.product_list.forEach(p => {
-              num += p.product_quantity - p.issued_count;
+              num += (p.product_quantity - p.issued_count)||p.quantity_shipped;
             })
           }
         })
       }
       return num;
+    },
+    isEdit(){
+      return !!this.$route.query.data;
+    },
+    editData(){
+      return this.$route.query.data;
     }
   },
   watch:{
     ddmodal(nv){
       if(!nv){
         this.pageNum = 1;
+        this.addOrderInput = '';
         this.getOrderList(1);
       }
     },

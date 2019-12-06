@@ -76,13 +76,14 @@
             <div style="width:83%;float:right;">
               <div>
                 <p class="ck_p">
-                  <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder">
+                  <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder" v-if="currentRow.orderNo==='汇总'">
                     共{{orderData.length -1}}家客户（可筛选查看）
                     <Icon type="arrow-down-b"></Icon>
                     <DropdownMenu slot="list">
-                      <DropdownItem v-for="item in orderData" :value="item.orderNo" :key="item.orderNo" :name="item.orderNo" v-show="item.orderNo!=='汇总'">{{item.orderNo}}</DropdownItem>
+                      <DropdownItem v-for="item in orderData" :value="item.orderNo" :key="item.orderNo" :name="item.orderNo" v-show="item.orderNo!=='汇总'">{{item.customer_name}}</DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
+                  <p v-if="currentRow.orderNo!=='汇总'">{{currentRow.customer_name}}</p>
                 </p>
               </div>
               <Table
@@ -168,6 +169,7 @@ export default {
         "typeid": 23020,
         "data": [
             {
+              "account_id": this.$store.state.user.accountId,
               "shipments_id": (this.$route.query||{}).data.shipments_id
             }
         ]
@@ -186,7 +188,8 @@ export default {
             this.detailData.orderList.push({
               orderNo: p.order_no,
               order_id: p.order_id,
-              productList: [p]
+              productList: [p],
+              customer_name:p.customer_name
             })
           }else{
             let obj = this.detailData.orderList.find(o => o.order_id === p.order_id);
