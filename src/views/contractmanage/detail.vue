@@ -661,9 +661,9 @@ export default {
                 ? allAmount - backAmount
                 : 0;
           }
-          item.paybackList = (this.data.data.paybackList || []).filter(
+          item.paybackList = JSON.parse(JSON.stringify((this.data.data.paybackList || []).filter(
             (a, i) => i >= payIndex && i <= payEndIndex
-          );
+          )));
           (item.paybackList[0]||{}).paybackAmount = computeAmountStart;
           (item.paybackList[
             item.paybackList.length - 1
@@ -713,11 +713,13 @@ export default {
         });
       }
       if (
-        this.paymentList &&
-        this.paymentList.length > 0
+        this.data &&
+        this.data.data &&
+        this.data.data.paybackList &&
+        this.data.data.paybackList.length > 0
       ) {
-        this.paymentList.forEach(p => {
-          payback += p.currentAmount;
+        this.data.data.paybackList.forEach(p => {
+          payback += p.paybackAmount;
         });
       }
       m = payment - payback > 0 ? payment - payback : 0;

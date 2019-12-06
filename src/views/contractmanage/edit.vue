@@ -424,7 +424,7 @@ export default {
   },
   computed: {
     data(){
-      return JSON.parse(JSON.stringify(this.$store.state.user.contractInfo||{}));
+      return JSON.parse(JSON.stringify(this.$store.state.user.contractInfo||{}))||{};
     },
     paymentList(){
       if(this.$route.query.paymentList&&this.$route.query.paymentList.length>0){
