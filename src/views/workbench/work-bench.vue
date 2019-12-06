@@ -815,7 +815,7 @@ export default {
               this.$notify({
                 title: this.typeMap[d.data.workBenchType],
                 message: message,
-                // offset: 100,
+                offset: 100,
                 duration: 60000,
                 openData: () => {
                   this.$notify.close();
@@ -842,7 +842,7 @@ export default {
                 this.$notify({
                   title:this.typeMap[d.data.workBenchType],
                   message:message,
-                  // offset: 100,
+                  offset: 100,
                   duration: 60000,
                   openData: () => {
                     let item = {

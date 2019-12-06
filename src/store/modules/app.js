@@ -255,6 +255,7 @@ const app = {
                             title: typeMap[d.workBenchType],
                             message: message,
                             duration: 60000,
+                            offset: 100,
                             openData: () => {
                                 let item = {
                                     data: d
