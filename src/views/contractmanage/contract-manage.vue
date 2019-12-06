@@ -681,7 +681,7 @@ export default {
               con.customerName +
               "-" +
               this.contractContentMap[con.contractContent];
-            item.city = con.customerProvince_cn + " " + con.customerCity_cn;
+            item.city = (con.customerProvince_cn||'--') + " " + (con.customerCity_cn||'--');
             item.saleType = this.salesTypeMap[con.saleType];
             item.saleManName = con.saleManName;
             item.manageCompany = con.manageCompanyName;
