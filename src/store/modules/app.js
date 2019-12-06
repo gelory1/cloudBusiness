@@ -1,4 +1,4 @@
-import {otherRouter, otherRouter1, otherRouterOrder,assetRouter, appRouter} from '@/router/router';
+import {otherRouter, otherRouter1, otherRouterOrder, assetRouter, appRouter} from '@/router/router';
 import Util from '@/libs/util';
 import Cookies from 'js-cookie';
 import Vue from 'vue';
@@ -32,10 +32,11 @@ const app = {
             assetRouter,
             ...appRouter
         ],
-        tagsList: [...otherRouter.children, ...otherRouter1.children,...assetRouter.children, ...otherRouterOrder.children],
+        tagsList: [...otherRouter.children, ...otherRouter1.children, ...assetRouter.children, ...otherRouterOrder.children],
         messageCount: 0,
         dontCache: ['text-editor', 'artical-publish'], // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
-        provinces: []
+        provinces: [],
+        workBenchData: []
     },
     mutations: {
         setTagsList (state, list) {
@@ -195,8 +196,11 @@ const app = {
             state.pageOpenedList.push(tagObj);
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         },
-        getProvinces(state,data){
+        getProvinces (state, data) {
             state.provinces = data;
+        },
+        setWorkBenchData (state, data) {
+            state.workBenchData = data;
         }
     }
 };
