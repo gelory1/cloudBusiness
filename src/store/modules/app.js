@@ -271,7 +271,7 @@ const app = {
                         });
                     }
                 });
-                if (updateStatus) context.commit('setWorkBenchData', data);
+                if (updateStatus || data.length < context.state.workBenchData.length) context.commit('setWorkBenchData', data);
             });
         }
     }

@@ -212,7 +212,7 @@
         </section>
         <section>
           <div class="hz1">
-            <Table :row-class-name="rowClassName" :columns="hz1_columns" :data="hz1_data" @on-row-click="hz1Click" height="400"></Table>
+            <Table :row-class-name="rowClassName" :columns="hz1_columns" :loading="hz1Loading" :data="hz1_data" @on-row-click="hz1Click" height="400"></Table>
             <Page
               :total="sum"
               :page-size="10"
@@ -390,6 +390,7 @@ export default {
       inputVal: '',
       customName: '',
       loading: false,
+      hz1Loading: false,
       newgzForm: {
         rwlx: 10,
         fzr: "",
@@ -880,7 +881,9 @@ export default {
         ]
       }
       this.hz1_data = [];
+      this.hz1Loading = true;
       this.$http.XLCONTRACT(request).then(response => {
+        this.hz1Loading = false;
         let { data } = response.data.result;
         this.sum = data.sum;
         data.contractList.forEach(d => {
@@ -893,6 +896,8 @@ export default {
         })
         this.hz2_data = [];
         if(this.hz1_data.length>0) this.hz1Click(this.hz1_data[0],0);
+      },error => {
+        this.hz1Loading = false;
       })
     },
     rowClassName (row, index) {
@@ -966,7 +971,7 @@ export default {
       }
       this.$http.SETCONTRACT(request).then(response => {
         this.hkhzmodal = false;
-        this.getWorkbench();
+        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
         this.$Message.success('成功！');
       })
     },
@@ -1027,10 +1032,10 @@ export default {
         ]
       }
       this.$http.UPDATEWORKBENCH(request).then(response => {
-        this.getWorkbench();
+        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
       },error => {
         if(error.data.code === 0){
-          this.getWorkbench();
+          this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
           this.$Message.success('成功！');
         }
       })
@@ -1046,7 +1051,6 @@ export default {
       this.indexStyle1 = index
     },
     radioClick(val) {
-      console.log(val)
       if (val == "ydz") {
         $(".green").css({ color: "green" });
         $(".red").css({ color: "black" });
@@ -1111,7 +1115,7 @@ export default {
       this.$http.SETWORKBENCH(request).then(response => {
         this.newgzmodal = false;
         this.$Message.success('新增成功！');
-        // this.getWorkbench();
+        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
       })
     },
     getDate(value){
@@ -1146,13 +1150,13 @@ export default {
       this.$http.UPDATEWORKBENCH(request).then(() => {
         this.sfdz = '';
         this.radioClick(this.sfdz);
-        this.getWorkbench();
+        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
         this.dkqrmodal = false;
       },error => {
         if(error.data.code === 103||error.data.code === 0){
           this.sfdz = '';
           this.radioClick(this.sfdz);
-          this.getWorkbench();
+          this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
           this.dkqrmodal = false;
         }
       })
