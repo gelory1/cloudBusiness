@@ -80,6 +80,7 @@ import themeSwitch from "./main-components/theme-switch/theme-switch.vue";
 import Cookies from "js-cookie";
 import util from "@/libs/util.js";
 import scrollBar from "@/views/my-components/scroll-bar/vue-scroller-bars";
+import axios from "../api/axios"
 
 export default {
   components: {
@@ -138,6 +139,35 @@ export default {
       this.messageCount = messageCount.toString();
       this.checkTag(this.$route.name);
       this.$store.commit("setMessageCount", 3);
+      setTimeout(() => {
+        setInterval(() => {
+          this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+        },10000*12)
+      },10000)
+      
+      // var websocaket =null;
+		 	// if('WebSocket' in window){
+			// 	 websocaket = new WebSocket("ws://localhost:8080/WebSockt/WebSocketTest");//用于创建 WebSocket 对象。WebSocketTest对应的是java类的注解值
+		 	// }
+		 	// else {
+			// 	alert("当前浏览器不支持");
+			// }
+      // //连接发生错误的时候回调方法；
+      // websocaket.onerror=function(){
+      //                 alert("连接错误");
+      // }
+      // //连接成功时建立回调方法；
+      // websocaket.onopen=function(){
+      //     alert("连接成功");
+      // }
+      // //收到消息的回调方法
+      // websocaket.onmessage=function(msg){
+      //   setdivInnerHTML(msg.data);
+      // }
+      // //连接关闭的回调方法
+      // websocaket.onclose=function(){
+      //   alert("关闭成功");
+      // }
     },
     toggleClick() {
       this.shrink = !this.shrink;

@@ -722,7 +722,7 @@ export default {
           this.checkedData = [item]; //暂时只能一条一条支付
           this.checkIndex = this.checkedData.length;
         }
-        this.gz_data = this.$store.state.app.workBenchData;
+        this.parse(this.$store.state.app.workBenchData,false);
         this.noticeStatus = false;
         return;
       }
@@ -740,10 +740,20 @@ export default {
       this.gz_data = [];
       this.fq_data = [];
       this.yb_data = [];
+      if(this.tabName === 'name1'&&this.$store.state.app.workBenchData.length>0){
+        this.parse(this.$store.state.app.workBenchData,false);
+        return;
+      }
       if(this.tabName === 'name1') this.$notify.closeAll();
       this.$http.XLWORKBENCH(request).then(response => {
         let { data } = response.data.result;
-        data.forEach((d,i) => {
+        this.parse(data,true);
+      },error=>{
+        this.loading = false;
+      })
+    },
+    parse(data,status){
+      data.forEach((d,i) => {
           let item = {};
           switch (d.workBenchType) {
             case 1:
@@ -776,13 +786,10 @@ export default {
           }
         });
         if(this.gz_data&&this.gz_data.length>0){
-          this.$store.commit('setWorkBenchData',this.gz_data);
+          this.$store.commit('setWorkBenchData',data);
         }
-        this.showNotice();
+        if(status) this.showNotice();
         this.loading = false;
-      },error=>{
-        this.loading = false;
-      })
     },
     showNotice(){
       if(this.gz_data&&this.gz_data.length > 0){
@@ -808,8 +815,8 @@ export default {
               this.$notify({
                 title: this.typeMap[d.data.workBenchType],
                 message: message,
-                offset: 100,
-                duration: 60000*5,
+                // offset: 100,
+                duration: 60000,
                 openData: () => {
                   this.$notify.close();
                   let item = {
@@ -836,7 +843,7 @@ export default {
                   title:this.typeMap[d.data.workBenchType],
                   message:message,
                   // offset: 100,
-                  duration: 60000*5,
+                  duration: 60000,
                   openData: () => {
                     let item = {
                       data:d.data
@@ -1104,7 +1111,7 @@ export default {
       this.$http.SETWORKBENCH(request).then(response => {
         this.newgzmodal = false;
         this.$Message.success('新增成功！');
-        this.getWorkbench();
+        // this.getWorkbench();
       })
     },
     getDate(value){
@@ -1241,6 +1248,9 @@ export default {
       if(!nv){
         this.customName = '';
       }
+    },
+    '$store.state.app.workBenchData.length'(){
+      this.getWorkbench();
     }
   }
 };
