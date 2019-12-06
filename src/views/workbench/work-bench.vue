@@ -29,14 +29,14 @@
         </div>
         <div class="gz_right right">
           <div class="left gz_rig bor">
-            <Select v-model="bhlmodel" size="small" style="width:100px">
+            <Select v-model="bhlmodel" size="small" clearable filterable style="width:100px">
                 <Option value="by">本月备货量</Option>
                 <Option value="sgy">上个月备货量</Option>
             </Select>
             <p class="bh_p"><big>3000</big><i> 台</i><span>&#x3000;+<b>10.5%</b></span></p>
           </div>
           <div class="right gz_rig bor">
-            <Select v-model="kclmodel" size="small" style="width:100px">
+            <Select v-model="kclmodel" size="small" clearable filterable style="width:100px">
                 <Option value="bd">本地库存量</Option>
                 <Option value="ck">仓库库存量</Option>
             </Select>
@@ -45,14 +45,14 @@
           <div style="clear: both;">
           </div>
           <div class="gz_div bor" style="height:340px">
-            <Select v-model="zzmodel" size="small" style="width:150px">
+            <Select v-model="zzmodel" size="small" clearable filterable style="width:150px">
                 <Option value="sy">上月订单追踪</Option>
                 <Option value="sgy">近3个月订单追踪</Option>
             </Select>
             <highchartsRing></highchartsRing>
           </div>
           <div class="gz_div bor" style="height:340px">
-            <Select v-model="yxmodel" size="small" style="width:150px">
+            <Select v-model="yxmodel" size="small" clearable filterable style="width:150px">
                 <Option value="ndyx">年度有效用户</Option>
                 <Option value="ndyx1">.....</Option>
             </Select>
@@ -141,7 +141,7 @@
       <p class="zf_p">新建工作待办</p>
       <Form :model="newgzForm" :rules="newgzRules" :label-width="100">
         <FormItem label="任务类型" prop="rwlx">
-          <Select v-model="newgzForm.rwlx" placeholder class="col-v">
+          <Select v-model="newgzForm.rwlx" placeholder class="col-v" clearable filterable>
             <Option :value="item.index" v-for="(item,index) in rwlxs" :key="index">{{item.val}}</Option>
           </Select>
         </FormItem>
@@ -162,10 +162,10 @@
           <Table :columns="add_columns" :data="newgzForm.add_data" class="gztable"></Table>
         </FormItem>
         <FormItem label="负责人" prop="fzr">
-          <Select v-model="newgzForm.company" style="width:250px;">
+          <Select v-model="newgzForm.company" clearable filterable style="width:250px;">
             <Option :value="item.id" v-for="(item,index) in companys" :key="index">{{item.name}}</Option>
           </Select>
-          <Select v-model="newgzForm.fzr" placeholder="请选择(默认不选为认领模式)"  style="width:190px;">
+          <Select v-model="newgzForm.fzr" placeholder="请选择(默认不选为认领模式)"  clearable filterable style="width:190px;">
             <Option :value="item.id" v-for="(item,index) in fzr" :key="index">{{item.name}}</Option>
           </Select>
         </FormItem>
@@ -528,13 +528,19 @@ export default {
                           "placeholder":"请输入金额",
                           "value": params.row.je,
                           "size":'small',
-                          "type":"text"
+                          "type":"number"
                       },
                       on:{
                         'input': (value) => {
                           this.addStore[params.index].je = value;
-                        }
-                      }
+                        },
+                        //  'on-keyup':()=>{
+                        //    debugger
+                        //   //  alert(this.newgzForm.add_data.je)
+                        //    alert(value)
+                        //    this.addStore[params.index].je = this.addStore[params.index].je.replace(/[^\d]/g, '')
+                        // }
+                      },
                   })
           }
         },
@@ -1188,4 +1194,12 @@ export default {
         color: #ffffff;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0;
+}
+input[type="number"]{
+        -moz-appearance: textfield;
+    }
 </style>

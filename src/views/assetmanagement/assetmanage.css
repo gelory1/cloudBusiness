@@ -85,7 +85,7 @@
     line-height: 38px;
     border-radius: 5px;
     position: absolute;
-    top: 30px;
+    top: 35px;
     left: 60px;
     z-index: 999999;
   }
@@ -312,8 +312,9 @@
 /* 发货管理 */
 .fh_but .ivu-btn{
   border:none;
-  font-size:14px;
-  float:left
+  font-size:16px;
+  float:left;
+  margin-top:10px;
 }
 .fa_div p{
   display: inline-block;

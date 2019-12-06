@@ -165,7 +165,7 @@
         <Row>
           <Col span="22">
             <FormItem label="所属企业" prop="ssqy">
-              <Select v-model="adduserform.ssqy">
+              <Select v-model="adduserform.ssqy" clearable filterable>
                 <Option value="one">百事可乐</Option>
               </Select>
             </FormItem>
@@ -188,7 +188,7 @@
         <Row>
           <Col span="15">
             <FormItem label="角色" prop="role">
-              <Select v-model="adduserform.role">
+              <Select v-model="adduserform.role" clearable filterable>
                 <Option value="one1">百事可乐</Option>
               </Select>
             </FormItem>

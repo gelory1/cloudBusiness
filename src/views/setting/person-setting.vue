@@ -7,7 +7,7 @@
             <Row>
               <Col span="16">
                 <FormItem label="所属企业" prop="ssqy">
-                  <Select v-model="jbzlform.ssqy" placeholder>
+                  <Select v-model="jbzlform.ssqy" placeholder clearable filterable>
                     <Option value="1">南京</Option>
                   </Select>
                 </FormItem>
@@ -30,7 +30,7 @@
             <Row>
               <Col span="8">
                 <FormItem label="所属企业" prop="js">
-                  <Select v-model="jbzlform.js" placeholder>
+                  <Select v-model="jbzlform.js" placeholder clearable filterable>
                     <Option value="1">军事</Option>
                   </Select>
                 </FormItem>

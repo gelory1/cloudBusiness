@@ -1,8 +1,8 @@
 <template>
   <div class="contract" @click="contractClick('outside')">
     <Layout>
-      <Menu width="auto" size="small" style="padding-top:30px;">
-        <div class="tip" style="float:left">
+      <Menu width="auto" size="small">
+        <div class="tip" style="float:left;margin-top:10px;">
           <p class="tooltip" @click.stop="contractClick('inside')">
             {{selectedStatus.status}}
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>

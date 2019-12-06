@@ -2,7 +2,7 @@
   <div class="order" @click="selectedDown('outside')">
     <Layout>
       <Menu width="auto" size="small" style="padding-top:30px;">
-        <div class="tip" style="float:left">
+        <div class="tip" style="float:left;margin-top:20px">
           <p class="tooltip" @click.stop="selectedDown('inside')">
             {{selectedType.type ==='全部'?'所有订单类型':selectedType.type}}
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
@@ -14,10 +14,6 @@
         <Header :style="{background: '#fff',minWidth:'400px',postion:'relative'}">
           <div style="float:right;">
             <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="search" @on-click="search" style="width: 200px;margin-right:20px;" />
-            <!-- <Button type="text" @click="glShow=!glShow;">
-              <Icon type="ios-list" />
-              <span>过滤</span>
-            </Button> -->
             <span class="f_gl">
               <span @click="glkhClick" class="cor">
                 <Icon type="ios-list" />
@@ -71,10 +67,10 @@
               </div>
             </span>
           </div>  
-          <Button type="ghost" icon="ios-plus-empty" class="addBut" style="position:absolute;right:10px;top:10px" @click="addOrder">申请备货</Button>     
+          <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" style="position:absolute;right:10px;top:10px;" @click="addOrder">申请备货</Button>     
         </Header>
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
+      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px;margin-top:-10px;">
         <Tabs ref="tab" v-model="tabName">
           <TabPane v-for="item in orderStatus" :label="item.type" :name="item.name" :key="item.name">
             <Table :columns="order_columns" :data="order_data[item.index]" size="small" @on-row-click="openOrder" :loading="loading"></Table>

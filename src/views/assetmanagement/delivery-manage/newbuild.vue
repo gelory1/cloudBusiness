@@ -21,7 +21,7 @@
         <Row>
           <Col span="7">
             <FormItem label="批次要求" prop="pcyq">
-              <Select v-model="formValidate.pcyq" placeholder>
+              <Select v-model="formValidate.pcyq" placeholder clearable filterable>
                 <Option value="one">one</Option>
               </Select>
             </FormItem>
@@ -29,7 +29,7 @@
           <Col span="1" style="text-align: center;line-height:30px">至</Col>
           <Col span="6">
             <FormItem prop="pcyq1" :label-width="1">
-              <Select v-model="formValidate.pcyq1" placeholder>
+              <Select v-model="formValidate.pcyq1" placeholder clearable filterable>
                 <Option value="one">one</Option>
               </Select>
             </FormItem>

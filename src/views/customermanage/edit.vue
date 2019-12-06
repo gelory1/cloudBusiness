@@ -5,21 +5,25 @@
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
         <div style="width:90%">
           <Row>
-            <Col span="14">
+            <Col span="12">
               <FormItem label="客户名称" prop="name" :label-width="90">
-                <Input  v-model="formValidate.name" placeholder />
+                <Input v-model="formValidate.name" placeholder />
               </FormItem>
             </Col>
-            <Col span="10">
+            <Col span="12">
               <FormItem label="客户简称" prop="customer_abbreviation" class="con-right">
-                <Input style="width:350px;" v-model="formValidate.customer_abbreviation" placeholder />
+                <Input
+                  style="width:350px;"
+                  v-model="formValidate.customer_abbreviation"
+                  placeholder
+                />
               </FormItem>
             </Col>
           </Row>
           <Row>
-            <Col span="7">
+            <Col span="6">
               <FormItem label="客户性质" prop="nature" :label-width="90">
-                <Select v-model="formValidate.nature.index" placeholder>
+                <Select v-model="formValidate.nature.index" placeholder clearable filterable>
                   <Option
                     v-for="(item,index) in natures"
                     :value="item.index"
@@ -28,9 +32,9 @@
                 </Select>
               </FormItem>
             </Col>
-            <Col span="7">
+            <Col span="6">
               <FormItem label="客户等级" prop="level">
-                <Select v-model="formValidate.level.index" placeholder>
+                <Select v-model="formValidate.level.index" placeholder clearable filterable>
                   <Option
                     v-for="(item,index) in levels"
                     :value="item.index"
@@ -39,26 +43,38 @@
                 </Select>
               </FormItem>
             </Col>
-            <Col span="10">
+            <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <Select v-model="formValidate.province.id" placeholder style="width:174px;">
+                <Select
+                  v-model="formValidate.province.id"
+                  placeholder
+                  style="width:174px;"
+                  clearable
+                  filterable
+                >
                   <Option
                     v-for="(item,index) in provinces"
                     :value="item.id"
                     :key="index"
                   >{{item.name}}</Option>
                 </Select>
-                <Select v-model="formValidate.city.id" placeholder style="width:173px;">
+                <Select
+                  v-model="formValidate.city.id"
+                  placeholder
+                  clearable
+                  filterable
+                  style="width:173px;"
+                >
                   <Option v-for="(item,index) in citys" :value="item.id" :key="index">{{item.name}}</Option>
                 </Select>
               </FormItem>
             </Col>
           </Row>
           <Row>
-            <Col span="14">
+            <Col span="12">
               <FormItem label="行业" prop="industry" :label-width="90">
                 <!-- <Input v-model="formValidate.hy" placeholder="Enter your name"></Input> -->
-                <Select v-model="formValidate.industry.index" placeholder>
+                <Select v-model="formValidate.industry.index" clearable filterable placeholder>
                   <Option
                     v-for="(item,index) in industrys"
                     :value="item.index"
@@ -67,28 +83,59 @@
                 </Select>
               </FormItem>
             </Col>
-            <Col span="10" v-if="isFriend">
+            <Col span="12" v-if="isFriend">
               <FormItem label="注册资金" prop="registered_capital" class="con-right">
                 <Input style="width:313px" v-model="formValidate.registered_capital" placeholder />人民币
               </FormItem>
             </Col>
           </Row>
           <Row>
-            <Col span="7">
+            <Col span="12">
               <FormItem label="法定代表人" prop="charge_person" :label-width="90">
                 <Input v-model="formValidate.charge_person" placeholder />
               </FormItem>
             </Col>
-            <Col span="7" v-if="isFriend">
-              <FormItem label="授权资质" prop="sqzz">
-                <Select v-model="formValidate.empower_province.id" placeholder style="width:169px;">
+            
+            <Col span="12" v-if="isFriend">
+              <FormItem label="保证金" prop="bond_amount" class="con-right">
+                <Input style="width:313px" v-model="formValidate.bond_amount" placeholder />人民币
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <FormItem label="通信地址" prop="mail_address" :label-width="90">
+                <Input v-model="formValidate.mail_address" placeholder />
+              </FormItem>
+            </Col>
+            <Col span="12">
+              <FormItem label="邮政编码" prop="post_code" class="con-right">
+                <Input style="width:350px" v-model="formValidate.post_code" placeholder />
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12"  v-if="isFriend">
+              <FormItem label="协议编号" prop="protocolNumber" :label-width="90">
+                <Input v-model="formValidate.protocolNumber" placeholde />
+              </FormItem>
+            </Col>
+            <Col span="12" v-if="isFriend">
+              <FormItem label="授权资质" prop="sqzz" class="con-right">
+                <Select v-model="formValidate.empower_province.id" placeholder clearable filterable style="width:174px;">
                   <Option
                     v-for="(item,index) in provinces"
                     :value="item.id"
                     :key="index"
                   >{{item.name}}</Option>
                 </Select>
-                <Select v-model="formValidate.empower_city.id" placeholder style="width:170px;">
+                <Select
+                  v-model="formValidate.empower_city.id"
+                  placeholder
+                  clearable
+                  filterable
+                  style="width:173px;"
+                >
                   <Option
                     v-for="(item,index) in empower_citys"
                     :value="item.id"
@@ -97,33 +144,9 @@
                 </Select>
               </FormItem>
             </Col>
-            <Col span="10" v-if="isFriend">
-              <FormItem label="保证金" prop="bond_amount" class="con-right">
-                <Input style="width:313px" v-model="formValidate.bond_amount" placeholder />人民币
-              </FormItem>
-            </Col>
           </Row>
           <Row>
-            <Col span="14">
-              <FormItem label="通信地址" prop="mail_address" :label-width="90">
-                <Input v-model="formValidate.mail_address" placeholder />
-              </FormItem>
-            </Col>
-            <Col span="10">
-              <FormItem label="邮政编码" prop="post_code" class="con-right">
-                <Input style="width:350px" v-model="formValidate.post_code" placeholder />
-              </FormItem>
-            </Col>
-          </Row>
-          <Row v-if="isFriend">
-            <Col span="16">
-              <FormItem label="协议编号" prop="protocolNumber" :label-width="90">
-                <Input v-model="formValidate.protocolNumber" placeholde />
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span="14">
+            <Col span="12">
               <FormItem label="销售负责人" prop="salesman" :label-width="90">
                 <Input v-model="formValidate.salesman" placeholder="Enter your name" readonly />
               </FormItem>
@@ -141,11 +164,13 @@
                 :key="index"
                 @on-close="deletePlatForm(index)"
               >({{item.platform_id}}){{item.platform_name}}</Tag>
-              <P v-show="formValidate.platformuser_list.length===0" style="color:#495060;display:inline">暂未关联账户平台</P>
+              <P
+                v-show="formValidate.platformuser_list.length===0"
+                style="color:#495060;display:inline"
+              >暂未关联账户平台</P>
               <Button type="ghost" class="butt" @click="platFormShow()">+</Button>
-            </FormItem>     
+            </FormItem>
           </Col>
-          
         </Row>
         <!-- middle-->
         <div>
@@ -213,7 +238,7 @@
         </footer>
         <FormItem class="form_but">
           <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
-          <Button type="ghost" @click="handleCancel('formValidate')" style="margin-left: 8px">取消</Button>
+          <Button type="ghost" @click="handleCancel('formValidate')" style="margin-left: 20px">取消</Button>
         </FormItem>
       </Form>
     </Layout>
@@ -280,7 +305,7 @@
           </Col>
           <Col span="12">
             <FormItem label="电话" prop="phone">
-              <Input v-model="formAddkpxx.phone" placeholder />
+              <Input v-model="formAddkpxx.phone" placeholder @on-keyup="inputChange"/>
             </FormItem>
           </Col>
         </Row>
@@ -292,7 +317,7 @@
           </Col>
           <Col span="12">
             <FormItem label="银行账号" prop="bank_account">
-              <Input v-model="formAddkpxx.bank_account" placeholder />
+              <Input v-model="formAddkpxx.bank_account" placeholder @on-keyup="inputChange"/>
             </FormItem>
           </Col>
         </Row>
@@ -320,7 +345,7 @@
         <Row>
           <Col span="20">
             <FormItem label="账户平台选项">
-              <Select v-model="plat.platform_id" placeholder>
+              <Select v-model="plat.platform_id" clearable filterable placeholder>
                 <Option
                   v-for="(item,index) in plat.list"
                   :value="item.platform_id"
@@ -335,7 +360,7 @@
             <FormItem label="账户：">
               <Input v-model="plat.platform_id" placeholder />
             </FormItem>
-          </Col> 
+          </Col>
         </Row>
         <Row>
           <Col span="20">
@@ -450,23 +475,26 @@ export default {
         if (expression.test(value) == false) {
           callback(new Error("请输入正确的电话号码"));
         }
-      }else{
+      } else {
         callback(new Error("请输入电话号码"));
       }
       callback();
     };
     // 纯数字正则
-    const validateNum = (rule, value, callback) => {
-      if (this.formAddkpxx.dutyparagraph !== "" || this.formAddkpxx.bank_account !=="") {
-        var expression = /^[0-9]*$/;
-        if (expression.test(value) == false) {
-          callback(new Error("该字段为数字"));
-        }
-      }else{
-        callback(new Error("该字段不能为空"));
-      }
-      callback();
-    };
+    // const validateNum = (rule, value, callback) => {
+    //   if (
+    //     this.formAddkpxx.dutyparagraph !== "" ||
+    //     this.formAddkpxx.bank_account !== ""
+    //   ) {
+    //     var expression = /^[0-9]*$/;
+    //     if (expression.test(value) == false) {
+    //       callback(new Error("该字段为数字"));
+    //     }
+    //   } else {
+    //     callback(new Error("该字段不能为空"));
+    //   }
+    //   callback();
+    // };
     return {
       formValidate: {
         name: "",
@@ -487,7 +515,7 @@ export default {
         city: {},
         empower_province: "",
         empower_city: "",
-        protocolNumber:''
+        protocolNumber: ""
       },
       ruleValidate: {
         name: [
@@ -546,7 +574,7 @@ export default {
             validator: validatePost
           }
         ],
-        protocolNumber:[
+        protocolNumber: [
           {
             required: true,
             message: "请输入协议编号",
@@ -725,9 +753,9 @@ export default {
         dutyparagraph: [
           {
             required: true,
-            // message: "请输入税号",
+            message: "请输入税号",
             trigger: "blur",
-            validator: validateNum,
+            // validator: validateNum
           }
         ],
         ticket_address: [
@@ -741,7 +769,7 @@ export default {
           {
             required: true,
             trigger: "blur",
-            validator: validatePhone,
+            validator: validatePhone
           }
         ],
         bank_name: [
@@ -754,9 +782,9 @@ export default {
         bank_account: [
           {
             required: true,
-            // message: "请输入银行账号",
+            message: "请输入银行账号",
             trigger: "blur",
-            validator: validateNum,
+            // validator: validateNum
           }
         ],
         post_info: [
@@ -809,6 +837,10 @@ export default {
     };
   },
   methods: {
+    inputChange() {
+      this.formAddkpxx.bank_account = this.formAddkpxx.bank_account.replace(/[^\d]/g, '')
+      this.formAddkpxx.phone = this.formAddkpxx.phone.replace(/[^\d]/g, '')
+    },
     handleSubmit(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
@@ -878,14 +910,14 @@ export default {
             )
               api.SETCUSTOMER(this.newLocalData.plat);
             this.$Message.success("客户信息更新成功！");
-            this.$router.push('/customermanage/customermanage');
+            this.$router.push("/customermanage/customermanage");
           }
         });
       } else {
         api.UPDATECUSTOMER(request).then(response => {
           if (response.data.code === 0) {
             this.$Message.success("客户信息更新成功！");
-            this.$router.push('/customermanage/customermanage');
+            this.$router.push("/customermanage/customermanage");
           }
         });
       }
@@ -1067,7 +1099,8 @@ export default {
       this.formValidate.mail_address =
         ((data || {}).data || {}).mail_address || "";
       this.formValidate.post_code = ((data || {}).data || {}).post_code || "";
-      this.formValidate.protocolNumber = ((data || {}).data || {}).protocolNumber || "";
+      this.formValidate.protocolNumber =
+        ((data || {}).data || {}).protocolNumber || "";
       this.formValidate.salesman = data.salesman || "";
       this.formValidate.platformuser_list = JSON.parse(
         JSON.stringify(((data || {}).data || {}).platformuser_list || [])
