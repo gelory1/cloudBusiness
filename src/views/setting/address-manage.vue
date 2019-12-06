@@ -254,7 +254,7 @@ export default {
     },
     setDefault(){
       let request = {
-        "typeid": 23023,
+        "typeid": 23024,
         "data": [
           {
             "account_id": this.$store.state.user.accountId,

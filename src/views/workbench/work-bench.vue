@@ -5,27 +5,30 @@
         <div class="gz_left left bor" style="min-height:800px;">
           <!-- <Input icon="ios-search" placeholder="请输入。。。。" class="gz_input"></Input> -->
           <Tabs value="name1" v-model="tabName" >
-            <TabPane label="待办工作" name="name1">
+            <TabPane :label="label" name="name1">
               <Table
                 :columns="gz_columns"
                 :data="gz_data"
                 @on-selection-change="gzselClick"
+                :loading="loading"
               ></Table>
             </TabPane>
             <TabPane label="已办工作" name="name2">
               <Table
                 :columns="yb_columns"
                 :data="yb_data"
+                :loading="loading"
                 @on-selection-change="gzselClick"
               ></Table>
             </TabPane>
             <TabPane label="我发起的" name="name3">
-              <Table :columns="fq_columns" :data="fq_data"></Table>
+              <Table :columns="fq_columns" :data="fq_data" :loading="loading"></Table>
             </TabPane>
           </Tabs>
           <p class="gzadd" @click="newgzClick">
             <img src="../../images/workbench/add.png" alt />
           </p>
+          <Input class="gz_input" icon="ios-search" v-model="inputVal" placeholder="请输入内容" style="margin-top:6px" @on-enter="getWorkbench" @on-click="getWorkbench"/>
         </div>
         <div class="gz_right right">
           <div class="left gz_rig bor">
@@ -157,7 +160,7 @@
             <el-upload action="/" :on-change="importExcel" :auto-upload="false" :show-file-list="false">
               <Button class="but_change" type="ghost" icon="ios-cloud-upload-outline">批量导入</Button>
             </el-upload>
-            <span style="white-space: normal;color:#bbbec4">请上传excel文件，表格中三列名称分别为：到款时间，金额，付款方。</span>
+            <span style="white-space: normal;color:#bbbec4">请上传excel文件,表格中三列名称分别为:到款时间,金额,付款方</span>(<a href="http://www.chinadny.com:9010/front/userfiles/xlcloud/paybackAmount.xls">点击下载模板</a>)
           </div>
           <Table :columns="add_columns" :data="newgzForm.add_data" class="gztable"></Table>
         </FormItem>
@@ -200,7 +203,7 @@
         </header>
         <section class="hk_s">
           <div class="hk_d">
-            <Input icon="ios-search" placeholder="请输入内容" style="width: 200px;"></Input>
+            <Input icon="ios-search" placeholder="请输入内容" style="width: 200px;" v-model="customName" @on-enter="getRebackAppr(1)" @on-click="getRebackAppr(1)"/>
             <span class="cor">
               <Icon type="ios-list" />
               <span>过滤</span>
@@ -209,7 +212,7 @@
         </section>
         <section>
           <div class="hz1">
-            <Table :row-class-name="rowClassName" :columns="hz1_columns" :data="hz1_data" @on-row-click="hz1Click" height="400"></Table>
+            <Table :row-class-name="rowClassName" :columns="hz1_columns" :loading="hz1Loading" :data="hz1_data" @on-row-click="hz1Click" height="400"></Table>
             <Page
               :total="sum"
               :page-size="10"
@@ -384,6 +387,10 @@ export default {
       typeMap,
       statusMap,
       rwlxs,
+      inputVal: '',
+      customName: '',
+      loading: false,
+      hz1Loading: false,
       newgzForm: {
         rwlx: 10,
         fzr: "",
@@ -708,27 +715,62 @@ export default {
         ensure:"",
         workBenchId:""
       },
-      addStore:[]
+      addStore:[],
+      noticeStatus:true,
+      label:(h) =>{
+        return h('div', [
+            h('span', '待办工作'),
+            h('Badge', {
+              props: {
+                  count: this.$store.state.app.workBenchData.length
+              }
+            })
+        ])
+      }
     };
   },
   methods: {
     getWorkbench(){
+      if(this.$route.query.notice&&typeof(this.$route.query.notice) === 'object'&&this.noticeStatus){
+        let item = this.$route.query.notice;
+        this.dbgzTableClick({row:item});
+        if(item.data.workBenchType === 3){
+          // this.gzselClick([item]);
+          this.checkedData = [item]; //暂时只能一条一条支付
+          this.checkIndex = this.checkedData.length;
+        }
+        this.parse(this.$store.state.app.workBenchData,false);
+        this.noticeStatus = false;
+        return;
+      }
       let request = {
           "typeid": 28001,
           "data": [
             {
               "workBenchStatus": this.tabName === 'name1'?1:this.tabName === 'name2'?2:3,
-              "accountId": this.$store.state.user.accountId
+              "accountId": this.$store.state.user.accountId,
+              "keyword": this.inputVal
             }
           ]
       }
+      this.loading = true;
       this.gz_data = [];
       this.fq_data = [];
       this.yb_data = [];
+      if(this.tabName === 'name1'&&this.$store.state.app.workBenchData.length>0){
+        this.parse(this.$store.state.app.workBenchData,false);
+        return;
+      }
       if(this.tabName === 'name1') this.$notify.closeAll();
       this.$http.XLWORKBENCH(request).then(response => {
         let { data } = response.data.result;
-        data.forEach((d,i) => {
+        this.parse(data,true);
+      },error=>{
+        this.loading = false;
+      })
+    },
+    parse(data,status){
+      data.forEach((d,i) => {
           let item = {};
           switch (d.workBenchType) {
             case 1:
@@ -760,59 +802,104 @@ export default {
             this.yb_data.push(item);
           }
         });
-        if(this.tabName === 'name1'){
-          data.reverse().forEach(d => {
+        if(this.gz_data&&this.gz_data.length>0){
+          this.$store.commit('setWorkBenchData',data);
+        }
+        if(status) this.showNotice();
+        this.loading = false;
+    },
+    showNotice(){
+      if(this.gz_data&&this.gz_data.length > 0){
+        
+          this.gz_data.forEach((d,i) => {
             var _this = this;
             let message = '';
-            switch (d.workBenchType) {
+            switch (d.data.workBenchType) {
               case 1:
                 message = `审批提醒，您有一个待审批的工作，点击直接处理`;
                 break;
               case 10:
-                message = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
+                message = `回款待核准，金额：${d.data.workBenchContentObj.payAmount}(付款方：${d.data.workBenchContentObj.payUnitName})，点击直接处理`;
                 break;
               case 4:
-                message = `到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
+                message = `到账待确认，金额：${d.data.workBenchContentObj.payAmount}(付款方：${d.data.workBenchContentObj.payUnitName})，点击直接处理`;
                 break;
               case 3:
-                message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
+                message = `${d.data.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
                 break;
             }
-            this.$notify({
-                title: this.typeMap[d.workBenchType],
+            if(this.gz_data.length >= 6){
+              this.$notify({
+                title: this.typeMap[d.data.workBenchType],
                 message: message,
                 offset: 100,
-                duration: 0,
-                onClick: function(){
-                  this.close();
+                duration: 60000,
+                openData: () => {
+                  this.$notify.close();
                   let item = {
-                    data:d
+                    data:d.data
                   }
-                  _this.dbgzTableClick({row:item});
+                  if(this.$route.path !== '/home'){
+                    this.$router.push({path:'/home',query:{notice:item}});
+                  }
+                  this.dbgzTableClick({row:item});
                   if(item.data.workBenchType === 3){
                     // this.gzselClick([item]);
-                    _this.checkedData = [item]; //暂时只能一条一条支付
-                    _this.checkIndex = _this.checkedData.length;
+                    this.checkedData = [item]; //暂时只能一条一条支付
+                    this.checkIndex = this.checkedData.length;
                   }
+                },
+                onClick:function() {
+                  this.close();
+                  this.openData();
                 }
               });
+            }else{
+              setTimeout(() => {
+                this.$notify({
+                  title:this.typeMap[d.data.workBenchType],
+                  message:message,
+                  offset: 100,
+                  duration: 60000,
+                  openData: () => {
+                    let item = {
+                      data:d.data
+                    }
+                    if(this.$route.path !== '/home'){
+                      this.$router.push({path:'/home',query:{notice:item}});
+                    }
+                    this.dbgzTableClick({row:item});
+                    if(item.data.workBenchType === 3){
+                      // this.gzselClick([item]);
+                      this.checkedData = [item]; //暂时只能一条一条支付
+                      this.checkIndex = this.checkedData.length;
+                    }
+                  },
+                  onClick:function() {
+                    this.close();
+                    this.openData();
+                  }
+                })
+              }, 0);
+            }
           })
-        }
-      })
+      }
     },
     getRebackAppr(p){
       let request = {
         "typeid": 26010,
         "data": [
           {
-              "customerName": this.workBenchData.workBenchContentObj.payUnitName,
+              "customerName": this.customName,
               "page_size": 10,
               "page_num": p
           }
         ]
       }
       this.hz1_data = [];
+      this.hz1Loading = true;
       this.$http.XLCONTRACT(request).then(response => {
+        this.hz1Loading = false;
         let { data } = response.data.result;
         this.sum = data.sum;
         data.contractList.forEach(d => {
@@ -825,6 +912,8 @@ export default {
         })
         this.hz2_data = [];
         if(this.hz1_data.length>0) this.hz1Click(this.hz1_data[0],0);
+      },error => {
+        this.hz1Loading = false;
       })
     },
     rowClassName (row, index) {
@@ -879,7 +968,10 @@ export default {
         }
     },
     surehrClick(){
-      console.log(this.workBenchData);
+      if(!this.hz1_data[this.indexStyle]||!this.hz2_data[this.indexStyle1]){
+        this.$Message.error('请选择相应合同及账期后再核入！');
+        return;
+      }
       let request = {
         "typeid": 26004,
         "data": [
@@ -895,7 +987,7 @@ export default {
       }
       this.$http.SETCONTRACT(request).then(response => {
         this.hkhzmodal = false;
-        this.getWorkbench();
+        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
         this.$Message.success('成功！');
       })
     },
@@ -956,10 +1048,10 @@ export default {
         ]
       }
       this.$http.UPDATEWORKBENCH(request).then(response => {
-        this.getWorkbench();
+        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
       },error => {
         if(error.data.code === 0){
-          this.getWorkbench();
+          this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
           this.$Message.success('成功！');
         }
       })
@@ -975,7 +1067,6 @@ export default {
       this.indexStyle1 = index
     },
     radioClick(val) {
-      console.log(val)
       if (val == "ydz") {
         $(".green").css({ color: "green" });
         $(".red").css({ color: "black" });
@@ -1040,7 +1131,7 @@ export default {
       this.$http.SETWORKBENCH(request).then(response => {
         this.newgzmodal = false;
         this.$Message.success('新增成功！');
-        this.getWorkbench();
+        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
       })
     },
     getDate(value){
@@ -1075,13 +1166,13 @@ export default {
       this.$http.UPDATEWORKBENCH(request).then(() => {
         this.sfdz = '';
         this.radioClick(this.sfdz);
-        this.getWorkbench();
+        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
         this.dkqrmodal = false;
       },error => {
         if(error.data.code === 103||error.data.code === 0){
           this.sfdz = '';
           this.radioClick(this.sfdz);
-          this.getWorkbench();
+          this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
           this.dkqrmodal = false;
         }
       })
@@ -1172,10 +1263,15 @@ export default {
       if(nv !== ''){
         this.getManagers(nv);
       }
+    },
+    hkhzmodal(nv){
+      if(!nv){
+        this.customName = '';
+      }
+    },
+    '$store.state.app.workBenchData.length'(){
+      this.getWorkbench();
     }
-  },
-  beforeDestroy(){
-    this.$notify.closeAll();
   }
 };
 </script>

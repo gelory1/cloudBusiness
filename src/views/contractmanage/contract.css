@@ -48,10 +48,13 @@
     cursor: pointer;
 }
 .zq_div2{
-    height:100px;
+    /* height:100px; */
     border:1px solid #b3b2b2;
     border-top:none;
     clear: both;
+}
+.zq_div2 .payList{
+    border-bottom: 1px solid #b3b2b2;
 }
 .zq_div2 section{
     height:50px;

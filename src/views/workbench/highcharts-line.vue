@@ -80,7 +80,7 @@ export default {
             {
               y: 26.5,
               marker: {
-                symbol: "url(https://www.highcharts.com/demo/gfx/sun.png)"
+                // symbol: "url(https://www.highcharts.com/demo/gfx/sun.png)"
               }
             },
             23.3,
@@ -98,7 +98,7 @@ export default {
             {
               y: 3.9,
               marker: {
-                symbol: "url(https://www.highcharts.com/demo/gfx/snow.png)"
+                // symbol: "url(https://www.highcharts.com/demo/gfx/snow.png)"
               }
             },
             4.2,

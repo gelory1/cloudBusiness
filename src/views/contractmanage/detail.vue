@@ -208,14 +208,14 @@
                   </div>
                 </section>
               </div>
-              <div class="zq_div2" v-show="showObj[index]">
-                <div v-for="(p,i) in item.paybackList" :key="i">
-                  <section class="zq_se2">
-                    <div>ID</div>
-                    <div>支付时间</div>
-                    <div>确认时间</div>
-                    <div>支付金额（元）</div>
-                  </section>
+              <div class="zq_div2" v-show="showObj[index]&&item.paybackList.length>0">
+                <section class="zq_se2">
+                  <div>ID</div>
+                  <div>支付时间</div>
+                  <div>确认时间</div>
+                  <div>支付金额（元）</div>
+                </section>
+                <div v-for="(p,i) in item.paybackList" :key="i" class="payList">
                   <section>
                     <div>{{p.paybackId}}</div>
                     <div>{{p.paybackTime}}</div>
@@ -645,8 +645,8 @@ export default {
               ) {
                 payEndIndex = i;
                 computeAmountEnd =
-                  allAmount - backAmount - item.paymentAmount > 0
-                    ? item.paymentAmount
+                  allAmount - backAmount - (item.paymentAmount - allAmount + Number(b.paybackAmount)) > 0
+                    ? (item.paymentAmount - allAmount + Number(b.paybackAmount))
                     : allAmount - backAmount;
               }
             });
