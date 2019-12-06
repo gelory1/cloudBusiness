@@ -492,7 +492,7 @@ export default {
             list.push({
               order_id: o.data.order_id,
               product_code: p.product_code,
-              quantity_shipped: (p.product_quantity - p.issued_count),
+              quantity_shipped: (p.product_quantity - p.issued_count)||p.quantity_shipped,
             })
           })
         }
@@ -518,6 +518,14 @@ export default {
           }
           this.$http.SETXLASSETS(request).then(response => {
             this.$Message.success("Success!");
+          },error => {
+            if(error.data.code === 0){
+              if(status === 'save'){
+                this.$Message.success("保存成功!");
+              }else{
+                this.$Message.success("提交成功!");
+              }
+            }
           })
         } else {
           this.$Message.error("请按规定填写表格！");
