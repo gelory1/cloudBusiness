@@ -203,10 +203,6 @@
         <section class="hk_s">
           <div class="hk_d">
             <Input icon="ios-search" placeholder="请输入内容" style="width: 200px;" v-model="customName" @on-enter="getRebackAppr(1)" @on-click="getRebackAppr(1)"/>
-            <span class="cor">
-              <Icon type="ios-list" />
-              <span>过滤</span>
-            </span>
           </div>
         </section>
         <section>
@@ -902,10 +898,24 @@ export default {
         let { data } = response.data.result;
         this.sum = data.sum;
         data.contractList.forEach(d => {
+          let paymentList = JSON.parse(JSON.stringify(d.paymentList))||[];
+          let allBack = 0;
+          let backAmount = 0;
+          (d.paybackList||[]).forEach(p => {
+            allBack += p.paybackAmount;
+          })
+          paymentList.forEach(p => {
+            if(allBack - backAmount - p.paymentAmount>0){
+              p.paybackAmount = p.paymentAmount;
+            }else{
+              p.paybackAmount = allBack - backAmount;
+            }
+            backAmount += p.paybackAmount;
+          })
           this.hz1_data.push({
             htbh:d.contractNo,
             htmc:d.customerName,
-            paymentList:d.paymentList,
+            paymentList:paymentList,
             _checked:false
           })
         })
@@ -970,6 +980,12 @@ export default {
       if(!this.hz1_data[this.indexStyle]||!this.hz2_data[this.indexStyle1]){
         this.$Message.error('请选择相应合同及账期后再核入！');
         return;
+      }
+      for(let i =0;i<this.indexStyle1;i++){
+        if(this.hz2_data[i].paybackAmount<this.hz2_data[i].paymentAmount){
+          this.$Message.error('请先选择未付清的账期核入！');
+          return;
+        }
       }
       let request = {
         "typeid": 26004,

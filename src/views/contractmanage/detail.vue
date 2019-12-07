@@ -647,7 +647,7 @@ export default {
                 computeAmountEnd =
                   allAmount - backAmount - (item.paymentAmount - allAmount + Number(b.paybackAmount)) > 0
                     ? (item.paymentAmount - allAmount + Number(b.paybackAmount))
-                    : allAmount - backAmount;
+                    : Number(b.paybackAmount);
               }
             });
             if (payEndIndex === "")
@@ -669,7 +669,7 @@ export default {
             )));
           }
           (item.paybackList[0]||{}).paybackAmount = computeAmountStart;
-          if(item.paybackList.length >1) (item.paybackList[
+          if(item.paybackList.length >1&&computeAmountEnd!=='') (item.paybackList[
             item.paybackList.length - 1
           ]||{}).paybackAmount = computeAmountEnd;
           //计算发票信息
