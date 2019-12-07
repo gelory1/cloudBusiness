@@ -32,10 +32,10 @@
               <!-- 更多页面... -->
             </span>
           </div>
-          <Button type="ghost" icon="ios-plus-empty" class="addBut" @click="addClick">新建发货方案</Button>
+          <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" @click="addClick">新建发货方案</Button>
         </Header>
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
+      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px;margin-top:-10px;">
         <Tabs ref="tab" v-model="tabName" @on-change="changeTab">
           <TabPane
             v-for="(item,index) in fhStatus"
@@ -246,4 +246,7 @@ export default {
 
 <style>
 @import "../assetmanage.css";
+.ivu-layout-header{
+    line-height:80px
+}
 </style>

@@ -68,18 +68,18 @@
                     <Input type="text" v-model="filterItem.sysyq"></Input>
                   </FormItem> -->
                    <FormItem label="状态" prop="zt" v-if="tabName === 'name2'">
-                    <Select v-model="filterItem.zt" clearable>
+                    <Select v-model="filterItem.zt" clearable filterable>
                       <Option :value="item.index" v-for="(item,index) in status" :key="index">{{item.val}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="操作时间段" v-if="tabName === 'name2'">
                     <Row>
                       <Col span="11">
-                        <DatePicker placement="bottom" type="date" placeholder="Select date" v-model="filterItem.kssj"></DatePicker>
+                        <DatePicker placement="left" type="date" placeholder="Select date" v-model="filterItem.kssj"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker placement="bottom" type="date" placeholder="Select date" v-model="filterItem.jssj"></DatePicker>
+                        <DatePicker placement="left" type="date" placeholder="Select date" v-model="filterItem.jssj"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>

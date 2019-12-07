@@ -114,14 +114,14 @@
             <div class="select2">
               <section>
                 <p class="sele2">关联平台账户：</p>
-                <p v-show="((data||{}).data||{}).platformuser_list.length===0" style="color:#000000;">暂无</p>
+                <p v-show="((data||{}).data||{}).platformuser_list.length===0" style="color:#000000;margin-top:5px">暂无</p>
                 <span class="bg_p" v-for="(item,index) in ((data||{}).data||{}).platformuser_list" :key="index" style="margin:0 5px">({{item.platform_id}}){{item.platform_name}}</span>
               </section>
             </div>
           </content>
           <footer>
             <p class="header_p" style="border-bottom:1px solid #d2d2d2;">开票信息</p>
-            <p v-show="((data||{}).data||{}).ticket_list.length===0" style="color:#000000;">暂未开票信息</p>
+            <p v-show="((data||{}).data||{}).ticket_list.length===0" style="color:#8d8d8d;text-align:center;margin-top:40px;">暂无开票信息</p>
             <div class="kpxx" v-for="(item,index) in ((data||{}).data||{}).ticket_list" :key="index">
               <div class="kpxx_head">
                 <p>{{item.ticket_customer}}</p>
@@ -194,7 +194,7 @@
         </div>
         <div class="lxr_right" style="minHeight:820px">
           <div style="padding:10px;border-bottom:1px solid black;">联系人</div>
-          <p v-show="((data||{}).data||{}).contacts_list.length===0" style="color:#000000;margin:10px;">暂无联系人</p>
+          <p v-show="((data||{}).data||{}).contacts_list.length===0" style="color:#8d8d8d;text-align:center;margin-top:20px;">暂无联系人</p>
           <div class="lxr"   v-for="(item,index) in ((data||{}).data||{}).contacts_list" :key="index">
             <p class="lxr_icon">
               <Icon type="ios-person" />

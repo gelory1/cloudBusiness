@@ -11,7 +11,7 @@
         <Row>
           <Col span="12">
             <FormItem label="客户档案" prop="khda">
-              <Select v-model="selectedCustom">
+              <Select v-model="selectedCustom" clearable filterable>
                 <Option v-for="item in customerList" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
             </FormItem>
