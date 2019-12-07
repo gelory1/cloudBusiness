@@ -661,9 +661,13 @@ export default {
                 ? allAmount - backAmount
                 : 0;
           }
-          item.paybackList = JSON.parse(JSON.stringify((this.data.data.paybackList || []).filter(
-            (a, i) => i >= payIndex && i <= payEndIndex
-          )));
+          if(payIndex === ''){
+            item.paybackList = [];
+          }else{
+            item.paybackList = JSON.parse(JSON.stringify((this.data.data.paybackList || []).filter(
+              (a, i) => i >= payIndex && i <= payEndIndex
+            )));
+          }
           (item.paybackList[0]||{}).paybackAmount = computeAmountStart;
           if(item.paybackList.length >1) (item.paybackList[
             item.paybackList.length - 1
