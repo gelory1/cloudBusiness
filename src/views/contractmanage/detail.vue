@@ -623,8 +623,8 @@ export default {
           let payEndIndex = "";
           let computeAmountStart = "";
           let computeAmountEnd = "";
-          for (let i = 0; i < index; i++) {
-            backAmount += this.data.data.paymentList[index].currentAmount || 0;
+          for (let i = 1; i <= index; i++) {
+            backAmount += this.data.data.paymentList[index -1].paymentAmount || 0;
           }
           if (
             this.data.data.paybackList &&
@@ -665,7 +665,7 @@ export default {
             (a, i) => i >= payIndex && i <= payEndIndex
           )));
           (item.paybackList[0]||{}).paybackAmount = computeAmountStart;
-          (item.paybackList[
+          if(item.paybackList.length >1) (item.paybackList[
             item.paybackList.length - 1
           ]||{}).paybackAmount = computeAmountEnd;
           //计算发票信息
