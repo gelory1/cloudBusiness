@@ -182,6 +182,8 @@ export default {
         // 退出登录
         this.$store.commit("logout", this);
         this.$store.commit("clearOpenedSubmenu");
+        this.$store.commit('setWorkBenchData',[]);
+        this.$notify.closeAll();
         this.$router.push({
           name: "login"
         });
@@ -238,7 +240,7 @@ export default {
       setTimeout(() => {
         this.scrollBarResize();
       }, 250);
-    }
+    },
   },
   beforeMount(){
     let accountId = Number(localStorage.accountId);

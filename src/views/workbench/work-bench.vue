@@ -82,7 +82,6 @@
       <Button class="zf_butt" type="primary" @click="nextzfClick" :disabled="disabled">下一步</Button>
       
     </Modal>
-    </Modal>
     <!-- 支付确认-单条/多条 -->
     <Modal v-model="zfqrmodal" class="aa">
       <p class="zf_p" v-show="dtzfShow">支付-确认</p>
