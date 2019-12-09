@@ -539,6 +539,9 @@ export default {
   watch:{
     'filterItem.empower_province':function(nv){
       if(nv !==0&&nv!=='') this.getCitys(nv,true);
+      if(this.filterItem.empower_province == ''){
+        this.filterItem.empower_city = ''
+      }
     },
     'filterItem.province':function(nv){
       if(nv !==0&&nv!=='') this.getCitys(nv,false);

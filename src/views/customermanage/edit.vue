@@ -47,7 +47,7 @@
               <FormItem label="省份/城市" prop="city" class="con-right">
                 <Select
                   v-model="formValidate.province.id"
-                  placeholder
+                  placeholder="请选择"
                   style="width:174px;"
                   clearable
                   filterable
@@ -60,7 +60,7 @@
                 </Select>
                 <Select
                   v-model="formValidate.city.id"
-                  placeholder
+                  placeholder="请选择"
                   clearable
                   filterable
                   style="width:173px;"
@@ -122,7 +122,7 @@
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="授权资质" prop="sqzz" class="con-right">
-                <Select v-model="formValidate.empower_province.id" placeholder clearable filterable style="width:174px;">
+                <Select v-model="formValidate.empower_province.id" placeholder="请选择" clearable filterable style="width:174px;">
                   <Option
                     v-for="(item,index) in provinces"
                     :value="item.id"
@@ -131,7 +131,7 @@
                 </Select>
                 <Select
                   v-model="formValidate.empower_city.id"
-                  placeholder
+                  placeholder="请选择"
                   clearable
                   filterable
                   style="width:173px;"
@@ -1446,10 +1446,16 @@ export default {
     "formValidate.province.id": function() {
       // this.formValidate.province.id = (this.provinces.find(p => p.name === this.formValidate.province.name)||{}).id;
       this.getCitys();
+      if(this.formValidate.province.id == ''){
+        this.formValidate.city.id =''
+      }
     },
     "formValidate.empower_province.id": function() {
       // this.formValidate.empower_province.id = (this.provinces.find(p => p.name === this.formValidate.empower_province.name)||{}).id;
       this.getEmpowerCitys();
+      if(this.empower_province.id == ''){
+        this.empower_city.id = ''
+      }
     },
     // 'formValidate.level.index':function(){
     //   this.formValidate.level.index = (this.levels.find(p => p.val === this.formValidate.level.val)||{}).index;

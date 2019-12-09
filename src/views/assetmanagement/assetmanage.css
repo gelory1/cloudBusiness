@@ -411,8 +411,12 @@
 .dd_add{
   color:#2d8cf0;
   text-align: center;
-  margin:20px 0 0 50px;
+  padding:20px 0 0 100px;
   cursor: pointer;
+  width:100%;
+  height:50px;
+  border:1px solid #dddee1;
+  border-top:none;
 }
 .gray{
   color:#7e7e7e;
@@ -458,4 +462,10 @@
   margin-left:10px;
   margin-top:10px;
 }
-
+.form_b{
+  margin:40px auto;
+  width:400px;
+}
+.form_b button{
+  width:60px;
+}

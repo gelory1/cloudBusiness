@@ -52,7 +52,7 @@
                   highlight-row
                   @on-row-click="ckbhClick"
                   @on-current-change="changeRow"
-                  style="margin:20px 0 0 0px;overflow:auto"
+                  style="margin:20px 0 0 0px;overflow:auto;"
                   class="del"
                 ></Table>
                 <p class="dd_add" @click="ddmodal = true">
@@ -72,8 +72,8 @@
                 </p>-->
                 <!--  <p style="margin-left:10px;border-bottom:0.7px solid #e4e7ed">共<span>{{count}}</span>家客户（可筛选查看）</p> -->
                 <div style="display:flex">
-                  <div style="flex:1">
-                    <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder">
+                  <div style="flex:1;" >
+                    <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder" v-show="customShow">
                         {{selectedCustom === '全部'?`共${customList.length-1}家客户（可筛选查看）`:selectedCustom}}
                     <Icon type="arrow-down-b"></Icon>
                     <DropdownMenu slot="list">
@@ -99,10 +99,10 @@
             </div>
           </div>
         </content>
-        <FormItem style="margin:30px 0 20px -100px">
+        <FormItem  class="form_b">
           <Button type="primary" @click="handleSubmit('formValidate','save')">保存</Button>
-          <Button type="primary" @click="handleSubmit('formValidate')" style="margin-left: 8px">提交</Button>
-          <Button type="ghost" style="margin-left: 8px" @click="cancleSubmit()">取消</Button>
+          <Button type="primary" @click="handleSubmit('formValidate')" style="margin-left: 20px">提交</Button>
+          <Button type="ghost" style="margin-left: 20px" @click="cancleSubmit()">取消</Button>
         </FormItem>
       </Form>
     </Layout>
@@ -475,7 +475,8 @@ export default {
       tzmodal: false,
       ddmodal: false,
       addAllData: [],
-      selectionData:{}
+      selectionData:{},
+      customShow:false,
     };
   },
   methods: {
@@ -624,6 +625,7 @@ export default {
       })
     },
     changeRow(data){
+      this.customShow=true
       this.currentRow = JSON.parse(JSON.stringify(data));
     },
     changeCount(data){

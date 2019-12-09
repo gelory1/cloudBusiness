@@ -743,6 +743,9 @@ export default {
   watch: {
     "filterItem.province": function(nv) {
       if (nv !== 0 && nv !== "") this.getCitys();
+      if(this.filterItem.province == ''){
+        this.filterItem.city = ''
+      }
     }
   }
 };
