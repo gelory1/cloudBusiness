@@ -79,7 +79,7 @@
           <img index="2" src="../../images/workbench/xx.png" alt />
         </div>
       </div>
-      <Button class="zf_butt" type="primary" @click="nextzfClick" :disabled="disabled">下一步</Button>
+      <Button class="zf_butt" type="primary" @click="nextzfClick" :disabled="disabled&&buttonDisabled">下一步</Button>
       
     </Modal>
     <!-- 支付确认-单条/多条 -->
@@ -129,14 +129,14 @@
           </div>
         </section>
       </div>
-      <Upload multiple type="drag" action="//jsonplaceholder.typicode.com/posts/" class="upload">
+      <Upload multiple type="drag" action="/" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" class="upload">
         <div style="padding: 20px 0">
           <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
           <p>上传付款凭证</p>
           <p>(格式：JPG、PNG、JPEG)</p>
         </div>
       </Upload>
-      <Button class="zf_butt" type="primary" @click="sureClick">确认已支付</Button>
+      <Button class="zf_butt" type="primary" @click="sureClick" :disabled="buttonDisabled">确认已支付</Button>
     </Modal>
     <!-- 新建工作待办 -->
     <Modal v-model="newgzmodal" class="aa" width="800">
@@ -220,7 +220,7 @@
           <div class="hz2"><Table :row-class-name="rowClassName1" :columns="hz2_columns" :data="hz2_data" @on-row-click="hz2Click"></Table></div>
         </section>
       </div>
-      <Button class="zf_butt" type="primary" style="margin-left:450px;" @click="surehrClick">确认核入</Button>
+      <Button class="zf_butt" type="primary" style="margin-left:450px;" @click="surehrClick" :disabled="buttonDisabled">确认核入</Button>
     </Modal>
     <!-- 财务-到款确认 -->
     <Modal v-model="dkqrmodal" class="aa">
@@ -272,7 +272,7 @@
           <span class="red">已在财务系统核准，款未到帐</span>
         </Radio>
       </RadioGroup>
-      <Button class="kh_but" type="primary" @click="ensurePayBackSub">提交</Button>
+      <Button class="kh_but" type="primary" @click="ensurePayBackSub" :disabled="buttonDisabled">提交</Button>
     </Modal>
     <!-- 发货方案审批 -->
     <Modal v-model="refusemodal" width="1200" class="aa">
@@ -316,7 +316,7 @@
           <p>
             <span>
               金额
-              <b>{{($route.query||{}).jexj||0}}</b>元
+              <b>{{deliveryData.amount||0}}</b>元
             </span>
             <span>
               订单数
@@ -371,8 +371,8 @@
           </div>
         </div>
         <div class="agree_but">
-        <Button type="primary">同意</Button>
-        <Button type="ghost" @click="refuseShow = true">拒绝</Button>
+        <Button type="primary" :disabled="buttonDisabled" @click="agreeDelivery">同意</Button>
+        <Button type="ghost" @click="refuseShow = true" :disabled="buttonDisabled">拒绝</Button>
         <div v-show="refuseShow" class="refuse">
           <p>拒绝理由<span style="float:right;cursor:pointer;color:#8d8d8d" @click="refuseShow = false">x</span></p>
           <Input v-model="textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请填写审批拒绝理由"></Input>
@@ -462,31 +462,6 @@ const statusMap = {
   1:'待办',
   2:'已办'
 }
-const yb_columns = [
-  {
-    title: "工作内容",
-    key: "gznr",
-    align:"center"
-  },
-  {
-    title: "类型",
-    key: "type",
-    width: '100',
-    align: 'center'
-  },
-  {
-    title: "负责人",
-    key: "fzr",
-    width: '100',
-    align: 'center'
-  },
-  {
-    title: "日期",
-    key: "duetime",
-    width: '150',
-    align: 'center'
-  }
-];
 const deliveryMap = {
   1:"草稿",
   2:"审批中",
@@ -577,14 +552,66 @@ export default {
           align: 'center'
         }
       ],
-      yb_columns,
+      yb_columns:[
+        {
+          title: "工作内容",
+          key: "gznr",
+          align:"center",
+          render: (h, params) => {
+            return h('div', [
+                h('a', {
+                    props: {
+                        href: '',
+                    },
+                    on: {
+                        click: () => {
+                            this.dbgzTableClick(params);
+                          }
+                      }
+                },params.row.gznr)
+            ]);
+          }
+        },
+        {
+          title: "类型",
+          key: "type",
+          width: '100',
+          align: 'center'
+        },
+        {
+          title: "负责人",
+          key: "fzr",
+          width: '100',
+          align: 'center'
+        },
+        {
+          title: "日期",
+          key: "duetime",
+          width: '150',
+          align: 'center'
+        }
+      ],
       gz_data: [
         ],
       fq_columns: [
         {
           title: "工作内容",
           key: "gznr",
-          align: "center"
+          align: "center",
+          render: (h, params) => {
+            return h('div', [
+                h('a', {
+                    props: {
+                        href: '',
+                    },
+                    on: {
+                        click: () => {
+                            this.dbgzTableClick(params);
+                          }
+                      }
+                },params.row.gznr)
+            ]);
+          }
         },
         {
           title: "类型",
@@ -906,8 +933,38 @@ export default {
     changeRow(data) {
       this.currentRow = JSON.parse(JSON.stringify(data));
     },
+    updateDelivery(no){
+      let request = {
+        "typeid": 28007,
+        "data": [
+          {
+            "workBenchId": this.deliveryData.workBenchId,
+            "shipmentsId": this.deliveryData.shipmentsId,
+            "operationNo":no,
+            "returnReason": no === 2?undefined:this.textarea
+          }
+        ]
+      };
+      this.$http.UPDATEWORKBENCH(request).then(response => {
+        this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
+        this.textarea = '';
+        this.refusemodal = false;
+        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+      },error => {
+        if(error.data.code === 0){
+          this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
+          this.textarea = '';
+          this.refusemodal = false;
+          this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+        }
+      })
+    },
     refuseSure(){
-      this.refuseShow = false
+      this.refuseShow = false;
+      this.updateDelivery(3);
+    },
+    agreeDelivery(){
+      this.updateDelivery(2);
     },
     getWorkbench(){
       if(this.$route.query.notice&&typeof(this.$route.query.notice) === 'object'&&this.noticeStatus){
@@ -964,9 +1021,12 @@ export default {
             case 3:
               item.gznr = this.tabName === 'name1'?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
               break;
+            case 12:
+              item.gznr = this.tabName === 'name1'?`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`:`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。`;
+              break;
           }
           item.type = this.typeMap[d.workBenchType];
-          item.fzr = d.accountName||(d.workBenchType === 10?'待认领':'');
+          item.fzr = d.accountId === -1?'待认领':(d.accountName||'');
           item.jztime = d.dueTimeDescribe;
           item.duetime = d.dueTime;
           item._checked = d.false;
@@ -1006,61 +1066,64 @@ export default {
               case 3:
                 message = `${d.data.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
                 break;
+              case 12:
+                message = `发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`;
+              break;
             }
-            if(this.gz_data.length >= 6){
-              this.$notify({
-                title: this.typeMap[d.data.workBenchType],
-                message: message,
-                offset: 100,
-                duration: 60000,
-                openData: () => {
-                  this.$notify.close();
-                  let item = {
-                    data:d.data
-                  }
-                  if(this.$route.path !== '/home'){
-                    this.$router.push({path:'/home',query:{notice:item}});
-                  }
-                  this.dbgzTableClick({row:item});
-                  if(item.data.workBenchType === 3){
-                    // this.gzselClick([item]);
-                    this.checkedData = [item]; //暂时只能一条一条支付
-                    this.checkIndex = this.checkedData.length;
-                  }
-                },
-                onClick:function() {
-                  this.close();
-                  this.openData();
-                }
-              });
-            }else{
-              setTimeout(() => {
-                this.$notify({
-                  title:this.typeMap[d.data.workBenchType],
-                  message:message,
-                  offset: 100,
-                  duration: 60000,
-                  openData: () => {
-                    let item = {
-                      data:d.data
-                    }
-                    if(this.$route.path !== '/home'){
-                      this.$router.push({path:'/home',query:{notice:item}});
-                    }
-                    this.dbgzTableClick({row:item});
-                    if(item.data.workBenchType === 3){
-                      // this.gzselClick([item]);
-                      this.checkedData = [item]; //暂时只能一条一条支付
-                      this.checkIndex = this.checkedData.length;
-                    }
-                  },
-                  onClick:function() {
-                    this.close();
-                    this.openData();
-                  }
-                })
-              }, 0);
-            }
+            // if(this.gz_data.length >= 6){
+            //   this.$notify({
+            //     title: this.typeMap[d.data.workBenchType],
+            //     message: message,
+            //     offset: 100,
+            //     duration: 60000,
+            //     openData: () => {
+            //       this.$notify.close();
+            //       let item = {
+            //         data:d.data
+            //       }
+            //       if(this.$route.path !== '/home'){
+            //         this.$router.push({path:'/home',query:{notice:item}});
+            //       }
+            //       this.dbgzTableClick({row:item});
+            //       if(item.data.workBenchType === 3){
+            //         // this.gzselClick([item]);
+            //         this.checkedData = [item]; //暂时只能一条一条支付
+            //         this.checkIndex = this.checkedData.length;
+            //       }
+            //     },
+            //     onClick:function() {
+            //       this.close();
+            //       this.openData();
+            //     }
+            //   });
+            // }else{
+            //   setTimeout(() => {
+            //     this.$notify({
+            //       title:this.typeMap[d.data.workBenchType],
+            //       message:message,
+            //       offset: 100,
+            //       duration: 60000,
+            //       openData: () => {
+            //         let item = {
+            //           data:d.data
+            //         }
+            //         if(this.$route.path !== '/home'){
+            //           this.$router.push({path:'/home',query:{notice:item}});
+            //         }
+            //         this.dbgzTableClick({row:item});
+            //         if(item.data.workBenchType === 3){
+            //           // this.gzselClick([item]);
+            //           this.checkedData = [item]; //暂时只能一条一条支付
+            //           this.checkIndex = this.checkedData.length;
+            //         }
+            //       },
+            //       onClick:function() {
+            //         this.close();
+            //         this.openData();
+            //       }
+            //     })
+            //   }, 0);
+            // }
           })
       }
     },
@@ -1160,7 +1223,7 @@ export default {
           alert("敬请期待......")
         }else if(params.row.data.workBenchType === 12){
           this.refusemodal = true;
-          this.getDelivery(params.row.data.workBenchContentObj);
+          this.getDelivery(params.row.data);
         }
     },
     surehrClick(){
@@ -1447,7 +1510,7 @@ export default {
         "data": [
             {
               "account_id": this.$store.state.user.accountId,
-              "shipments_id": (workData||{}).shipmentsId
+              "shipments_id": (workData||{}).workBenchContentObj.shipmentsId
             }
         ]
       };
@@ -1461,7 +1524,9 @@ export default {
         this.deliveryData.shipments_start_batch = data[0].shipments_start_batch;
         this.deliveryData.shipments_end_batch = data[0].shipments_end_batch;
         this.deliveryData.status = data[0].shipments_status;
-        this.deliveryData.amount = (workData||{}).amount;
+        this.deliveryData.amount = (workData||{}).workBenchContentObj.shipmentsAmount;
+        this.deliveryData.workBenchId = workData.workbenchId;
+        this.deliveryData.shipmentsId = (workData||{}).workBenchContentObj.shipmentsId;
         data[0].product_list.forEach(p => {
           if(!this.deliveryData.orderList.find(o => o.order_id === p.order_id)){
             this.deliveryData.orderList.push({
@@ -1580,6 +1645,9 @@ export default {
         })
       }
       return customList;
+    },
+    buttonDisabled(){
+      return this.tabName !== 'name1';
     }
   }
 };

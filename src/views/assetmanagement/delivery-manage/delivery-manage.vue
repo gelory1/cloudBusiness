@@ -177,7 +177,7 @@ export default {
   },
   methods: {
     editClick(item) {
-      if(item.data.shipments_status === 0){
+      if(item.data.shipments_status === 0||item.data.shipments_status === 3){
         item.shipments_id = item.data.shipments_id;
         this.$router.push({
           name: "delivery_detail2",

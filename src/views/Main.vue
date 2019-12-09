@@ -141,7 +141,7 @@ export default {
       this.$store.commit("setMessageCount", 3);
       setTimeout(() => {
         setInterval(() => {
-          this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+          if(Cookies.get('user')) this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
         },10000*12)
       },10000)
       
@@ -182,11 +182,11 @@ export default {
         // 退出登录
         this.$store.commit("logout", this);
         this.$store.commit("clearOpenedSubmenu");
-        this.$store.commit('setWorkBenchData',[]);
-        this.$notify.closeAll();
         this.$router.push({
           name: "login"
         });
+        this.$store.commit('setWorkBenchData',[]);
+        this.$notify.closeAll();
       }
     },
     checkTag(name) {
