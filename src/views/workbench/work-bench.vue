@@ -274,6 +274,118 @@
       </RadioGroup>
       <Button class="kh_but" type="primary" @click="ensurePayBackSub">提交</Button>
     </Modal>
+    <!-- 发货方案审批 -->
+    <Modal v-model="refusemodal" width="1200" class="aa">
+       <p style="font-size:18px;margin:10px 0 20px 0">发货方案审批</p>
+        <div style="margin:0 20px;">
+           <header class="fa_mid">
+        <Button type="ghost" class="right fa_b">{{$route.query.zt}}</Button>
+        <h2>发货方案详情</h2>
+
+        <div class="fa_div">
+          <p>
+            <span class="gray">方案编号：</span>
+            <!-- {{detailData.schemeNo}} -->
+          </p>
+          <p>
+            <span class="gray">发起时间：</span>
+            <!-- {{detailData.time}} -->
+          </p>
+          <p>
+            <span class="gray">发起人：</span>
+            <!-- {{detailData.manageMan}} -->
+          </p>
+          <p>
+            <span class="gray">期望发货时间：</span>
+            <!-- {{detailData.deliveryTime}} -->
+             之前
+          </p>
+        </div>
+        <div class="fa_div1">
+          <p class="left">方案描述：</p>
+          <div class="left">
+            <!-- <p>{{detailData.des}}</p> -->
+          </div>
+        </div>
+      </header>
+      <content>
+        <div class="fa_p" style="margin-top:50px;">
+          <p class="left">批次要求： 
+            <!-- {{detailData.shipments_start_batch}} - {{detailData.shipments_end_batch}} -->
+            </p>
+          <p>
+            <span>
+              金额
+              <!-- <b>{{($route.query||{}).jexj||0}}</b>元 -->
+            </span>
+            <span>
+              订单数
+              <!-- <b>{{orderData.length - 1}}</b>个 -->
+            </span>
+            <span>
+              设备数
+              <!-- <b>{{productNum}}</b>台 -->
+            </span>
+          </p>
+        </div>
+        <div class="fa_co">
+          <div class="fa_c">
+            <span style="font-size:16px">出库设备</span>
+            <p class="right">
+              <span>整体完成度</span>
+              <Progress class="pro" :percent="25"></Progress>
+            </p>
+          </div>
+          <div style="clear:both;overflow: hidden;">
+            <div style="width:17%;float:left;">
+              <Table
+                :columns="orderColumns"
+                ref="cktable"
+                :data="orderData"
+                size="small"
+                disabled-hover
+                highlight-row
+                @on-current-change="changeRow"
+                style="margin:20px 0 0 0px;overflow:auto"
+              ></Table>
+            </div>
+            <div style="width:83%;float:right;">
+              <div>
+                <p class="ck_p">
+                  <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder" v-if="currentRow.orderNo==='汇总'">
+                    共{{orderData.length -1}}家客户（可筛选查看）
+                    <Icon type="arrow-down-b"></Icon>
+                    <DropdownMenu slot="list">
+                      <DropdownItem v-for="item in orderData" :value="item.orderNo" :key="item.orderNo" :name="item.orderNo" v-show="item.orderNo!=='汇总'">{{item.customer_name}}</DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                  <p v-if="currentRow.orderNo!=='汇总'">{{currentRow.customer_name}}</p>
+                </p>
+              </div>
+              <Table
+                :columns="device_columns"
+                :data="device_data"
+                size="small"
+                style="margin:0px 0 0 0;overflow:auto"
+              ></Table>
+            </div>
+          </div>
+        </div>
+        <div class="agree_but">
+        <Button type="primary">同意</Button>
+        <Button type="ghost" @click="refuseShow = true">拒绝</Button>
+        <div v-show="refuseShow" class="refuse">
+          <p>拒绝理由<span style="float:right;cursor:pointer;color:#8d8d8d" @click="refuseShow = false">x</span></p>
+          <Input v-model="textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请填写审批拒绝理由"></Input>
+          <section>
+            <Button type="primary" @click="refuseSure">确定</Button>
+            <Button @click="refuseShow = false">取消</Button>
+          </section>
+        </div>
+        </div>
+      </content>
+        </div>
+    </Modal>
   </div>
 </template>
 
@@ -379,6 +491,9 @@ export default {
   },
   data() {
     return {
+      device_data:[],
+      textarea:"",
+      refuseShow:false,
       typeMap,
       statusMap,
       rwlxs,
@@ -668,6 +783,45 @@ export default {
             key: 'paybackAmount',
             align: "center",
         }],
+        orderColumns: [
+        {
+          title: "订单编号",
+          key: "orderNo"
+        }
+      ],
+      device_columns: [
+        {
+          title: "存货编码",
+          key: "product_code",
+          align: "center"
+        },
+        {
+          title: "存货名称",
+          key: "product_name",
+          align: "center"
+        },
+        {
+          title: "规格型号",
+          key: "product_models",
+          align: "center"
+        },
+        {
+          title: "计量单位",
+          key: "product_unit",
+          align: "center"
+        },
+        {
+          title: "数量",
+          key: "quantity_shipped",
+          align: "center"
+        }
+      ],
+      orderData: [
+        {
+          orderNo:'汇总'
+        }
+      ],
+      currentRow:{},
       hz2_data: [],
       zfmodal: false,
       newgzmodal: false,
@@ -677,6 +831,7 @@ export default {
       dtzfShow: false,
       hkhzmodal: false,
       dkqrmodal: false,
+      refusemodal:true,
       checkIndex: 0,
       sfdz: "",
       zffsIndex:"",
@@ -726,6 +881,12 @@ export default {
     };
   },
   methods: {
+    changeRow(data) {
+      // this.currentRow = JSON.parse(JSON.stringify(data));
+    },
+    refuseSure(){
+      this.refuseShow = false
+    },
     getWorkbench(){
       if(this.$route.query.notice&&typeof(this.$route.query.notice) === 'object'&&this.noticeStatus){
         let item = this.$route.query.notice;
@@ -975,6 +1136,8 @@ export default {
           });
         }else if(params.row.data.workBenchType === 5){
           alert("敬请期待......")
+        }else if(params.row.data.workBenchType === 12){
+          this.refusemodal = true
         }
     },
     surehrClick(){
@@ -1294,6 +1457,7 @@ export default {
 
 <style>
 @import "./workbench.css";
+@import "../assetmanagement/assetmanage.css";
 .aa .ivu-modal-footer {
   display: none;
 }
