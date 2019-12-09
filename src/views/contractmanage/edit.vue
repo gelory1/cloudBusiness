@@ -414,7 +414,7 @@ export default {
     }
   },
   beforeCreate(){
-    if(Object.keys(this.$store.state.user.contractInfo).length === 0) this.$router.push({path:'/contractmanage/contractmanage'});
+    if(Object.keys(JSON.parse(localStorage.getItem('contractInfo'))||{}).length === 0) this.$router.push({path:'/contractmanage/contractmanage'});
   }, 
   mounted() {
     this.formValidate.signUserAmount = this.data.data.signUserAmount;
@@ -424,7 +424,7 @@ export default {
   },
   computed: {
     data(){
-      return JSON.parse(JSON.stringify(this.$store.state.user.contractInfo||{}))||{};
+      return JSON.parse(localStorage.getItem('contractInfo'))||{};
     },
     paymentList(){
       if(this.$route.query.paymentList&&this.$route.query.paymentList.length>0){

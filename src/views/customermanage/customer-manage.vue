@@ -186,6 +186,7 @@ export default {
                       on: {
                           click: () => {
                                 this.$store.commit('selectedCustom',params.row);
+                                localStorage.setItem('customInfo',JSON.stringify(params.row));
                                 this.$router.push({ path: "/customermanage/see" });
                             }
                         }
@@ -207,9 +208,11 @@ export default {
                    'on-click':(value)=>{
                        if (value == "查看") {
                         this.$store.commit('selectedCustom',params.row);
+                        localStorage.setItem('customInfo',JSON.stringify(params.row));
                         this.$router.push({ path: "/customermanage/see" });
                       } else if (value == "编辑") {
                         this.$store.commit('selectedCustom',params.row);
+                        localStorage.setItem('customInfo',JSON.stringify(params.row));
                         this.$router.push({ path: "/customermanage/edit" });
                       } else if (value == "删除") {
                         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -482,6 +485,7 @@ export default {
     },
     addClick(){
       this.$store.commit('selectedCustom',{});
+      localStorage.setItem('customInfo',JSON.stringify({}));
       this.$router.push({ path: "/customermanage/new" });
     },
     getProvinces(){
@@ -492,6 +496,7 @@ export default {
         let res = response.data.result.data;
         this.provinces = res;
         this.$store.commit('getProvinces',res);
+        localStorage.setItem('provinces',JSON.stringify(res));
       });
     },
     getManagecompanys(){

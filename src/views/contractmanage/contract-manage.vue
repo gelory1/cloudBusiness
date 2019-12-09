@@ -536,6 +536,7 @@ export default {
     },
     openDetail(data){
       this.$store.commit('selectedContract',JSON.parse(JSON.stringify(data)));
+      localStorage.setItem('contractInfo',JSON.stringify(data));
       this.$router.push({ path: "/contractmanage/detail"});
     },
     handleSubmitht(name) {

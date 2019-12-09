@@ -574,7 +574,7 @@ export default {
     }
   },
   beforeCreate() {
-    if (Object.keys(this.$store.state.user.contractInfo).length === 0)
+    if (Object.keys(JSON.parse(localStorage.getItem('contractInfo'))||{}).length === 0)
       this.$router.push({ path: "/contractmanage/contractmanage" });
   },
   mounted() {
@@ -588,7 +588,7 @@ export default {
   },
   computed: {
     data() {
-      return JSON.parse(JSON.stringify(this.$store.state.user.contractInfo||{}))||{};
+      return JSON.parse(localStorage.getItem('contractInfo'))||{};
     },
     kcmxSum() {
       let sum = 0;

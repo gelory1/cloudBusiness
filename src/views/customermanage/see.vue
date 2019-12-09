@@ -255,7 +255,7 @@ export default {
         typeid: 27003,
         data: [
           {
-            province:this.$store.state.user.customerInfo.data.empower_province
+            province:(this.data.data||{}).empower_province
           }
         ]
       };
@@ -270,7 +270,7 @@ export default {
   },
   computed: {
     data(){
-      return this.$store.state.user.customerInfo;
+      return JSON.parse(localStorage.getItem('customInfo'))||{};
     },
     empower_city(){
       let province = this.$store.state.app.provinces.find(c => c.id === ((this.data||{}).data||{}).empower_province)||{};

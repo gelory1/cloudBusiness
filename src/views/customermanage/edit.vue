@@ -1424,14 +1424,14 @@ export default {
   },
   computed: {
     data() {
-      return this.$store.state.user.customerInfo;
+      return JSON.parse(localStorage.getItem('customInfo'))||{};
     },
     provinces() {
-      return this.$store.state.app.provinces;
+      return JSON.parse(localStorage.getItem('provinces'))||{};
     },
     isNewCreate() {
       return (
-        Object.keys(this.$store.state.user.customerInfo).length === 0 &&
+        Object.keys(JSON.parse(localStorage.getItem('customInfo'))||{}).length === 0 &&
         this.customer_id === ""
       );
     },
