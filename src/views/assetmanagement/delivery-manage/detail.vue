@@ -205,11 +205,12 @@ export default {
     changeOrder(name){
       this.selectedCustom = name;
       if(Object.keys(this.orderDataCache).length === 0) this.orderDataCache = JSON.parse(JSON.stringify(this.orderData));
-      if(name === '全部'){
-        this.orderData = JSON.parse(JSON.stringify(this.orderDataCache));
-      }else{
+      this.orderData = JSON.parse(JSON.stringify(this.orderDataCache));
+      if(name !== '全部'){
         this.orderData = this.orderData.filter(o => o.customer_name === name||o.orderNo === '汇总');
       }
+      this.$refs['cktable'].objData[0]._isHighlight = true;
+      this.currentRow = this.orderData[0];
       // for(let key in this.$refs['cktable'].objData){
       //   if(name === this.$refs['cktable'].objData[key].orderNo){
       //     this.$refs['cktable'].objData[key]._isHighlight = true;
@@ -261,6 +262,15 @@ export default {
     },
     customList(){
       let customList = ['全部'];
+      if(this.orderDataCache&&this.orderDataCache.length>0){
+        this.orderDataCache.forEach(o => {
+          if(o.orderNo === '汇总') return;
+          if(customList.indexOf(o.customer_name) === -1){
+            customList.push(o.customer_name);
+          }
+        })
+        return customList;
+      }
       if(this.orderData&&this.orderData.length>0){
         this.orderData.forEach(o => {
           if(o.orderNo === '汇总') return;

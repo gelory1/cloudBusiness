@@ -279,52 +279,52 @@
        <p style="font-size:18px;margin:10px 0 20px 0">发货方案审批</p>
         <div style="margin:0 20px;">
            <header class="fa_mid">
-        <Button type="ghost" class="right fa_b">{{$route.query.zt}}</Button>
+        <Button type="ghost" class="right fa_b">{{deliveryMap[deliveryData.status]}}</Button>
         <h2>发货方案详情</h2>
 
         <div class="fa_div">
           <p>
             <span class="gray">方案编号：</span>
-            <!-- {{detailData.schemeNo}} -->
+            {{deliveryData.schemeNo}}
           </p>
           <p>
             <span class="gray">发起时间：</span>
-            <!-- {{detailData.time}} -->
+            {{deliveryData.time}}
           </p>
           <p>
             <span class="gray">发起人：</span>
-            <!-- {{detailData.manageMan}} -->
+            {{deliveryData.manageMan}}
           </p>
           <p>
             <span class="gray">期望发货时间：</span>
-            <!-- {{detailData.deliveryTime}} -->
+            {{deliveryData.deliveryTime}}
              之前
           </p>
         </div>
         <div class="fa_div1">
           <p class="left">方案描述：</p>
           <div class="left">
-            <!-- <p>{{detailData.des}}</p> -->
+            <p>{{deliveryData.des}}</p>
           </div>
         </div>
       </header>
       <content>
         <div class="fa_p" style="margin-top:50px;">
           <p class="left">批次要求： 
-            <!-- {{detailData.shipments_start_batch}} - {{detailData.shipments_end_batch}} -->
+            {{deliveryData.shipments_start_batch}} - {{deliveryData.shipments_end_batch}}
             </p>
           <p>
             <span>
               金额
-              <!-- <b>{{($route.query||{}).jexj||0}}</b>元 -->
+              <b>{{($route.query||{}).jexj||0}}</b>元
             </span>
             <span>
               订单数
-              <!-- <b>{{orderData.length - 1}}</b>个 -->
+              <b>{{orderData.length - 1}}</b>个
             </span>
             <span>
               设备数
-              <!-- <b>{{productNum}}</b>台 -->
+              <b>{{productNum}}</b>台
             </span>
           </p>
         </div>
@@ -352,14 +352,13 @@
             <div style="width:83%;float:right;">
               <div>
                 <p class="ck_p">
-                  <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder" v-if="currentRow.orderNo==='汇总'">
-                    共{{orderData.length -1}}家客户（可筛选查看）
+                  <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder">
+                    {{selectedCustom === '全部'?`共${customList.length-1}家客户（可筛选查看）`:selectedCustom}}
                     <Icon type="arrow-down-b"></Icon>
                     <DropdownMenu slot="list">
-                      <DropdownItem v-for="item in orderData" :value="item.orderNo" :key="item.orderNo" :name="item.orderNo" v-show="item.orderNo!=='汇总'">{{item.customer_name}}</DropdownItem>
+                      <DropdownItem v-for="item in customList" :value="item" v-model="selectedCustom" :key="item" :name="item">{{item}}</DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
-                  <p v-if="currentRow.orderNo!=='汇总'">{{currentRow.customer_name}}</p>
                 </p>
               </div>
               <Table
@@ -407,6 +406,7 @@ const typeMap = {
   9:'上线通知',
   10: '回款核准',
   11: '开票提醒',
+  12: '发货方案审批'
 }
 const rwlxs = [
   // {
@@ -453,6 +453,10 @@ const rwlxs = [
   //   val: '开票提醒',
   //   index: 11
   // },
+  // {
+  //   val: '发货方案审批',
+  //   index: 12
+  // },
 ]
 const statusMap = {
   1:'待办',
@@ -483,6 +487,12 @@ const yb_columns = [
     align: 'center'
   }
 ];
+const deliveryMap = {
+  1:"草稿",
+  2:"审批中",
+  3:"已通过",
+  4:"被驳回",
+};
 export default {
   name: "work-bench",
   components:{
@@ -491,12 +501,12 @@ export default {
   },
   data() {
     return {
-      device_data:[],
       textarea:"",
       refuseShow:false,
       typeMap,
       statusMap,
       rwlxs,
+      deliveryMap,
       inputVal: '',
       customName: '',
       loading: false,
@@ -831,7 +841,7 @@ export default {
       dtzfShow: false,
       hkhzmodal: false,
       dkqrmodal: false,
-      refusemodal:true,
+      refusemodal:false,
       checkIndex: 0,
       sfdz: "",
       zffsIndex:"",
@@ -877,12 +887,24 @@ export default {
               }
             })
         ])
-      }
+      },
+      deliveryData:{
+        schemeNo:'',
+        time:'',
+        manageMan:'',
+        deliveryTime:'',
+        des:'',
+        shipments_end_batch:'',
+        shipments_start_batch:'',
+        orderList: []
+      },
+      selectedCustom: '全部',
+      orderDataCache: []
     };
   },
   methods: {
     changeRow(data) {
-      // this.currentRow = JSON.parse(JSON.stringify(data));
+      this.currentRow = JSON.parse(JSON.stringify(data));
     },
     refuseSure(){
       this.refuseShow = false
@@ -1137,7 +1159,8 @@ export default {
         }else if(params.row.data.workBenchType === 5){
           alert("敬请期待......")
         }else if(params.row.data.workBenchType === 12){
-          this.refusemodal = true
+          this.refusemodal = true;
+          this.getDelivery(params.row.data.workBenchContentObj);
         }
     },
     surehrClick(){
@@ -1417,6 +1440,55 @@ export default {
       this.$http.XLSELECT(request).then(response => {
         this.fzr = response.data.result.data;
       })
+    },
+    getDelivery(workData){
+      let request = {
+        "typeid": 23020,
+        "data": [
+            {
+              "account_id": this.$store.state.user.accountId,
+              "shipments_id": (workData||{}).shipmentsId
+            }
+        ]
+      };
+      this.$http.PostXLASSETS(request).then(response => {
+        let { data } = response.data.result;
+        this.deliveryData.schemeNo = data[0].shipments_no;
+        this.deliveryData.time = data[0].shipments_time;
+        this.deliveryData.manageMan = data[0].user_name;
+        this.deliveryData.deliveryTime = data[0].shipments_creationtime;
+        this.deliveryData.des = data[0].shipments_describe;
+        this.deliveryData.shipments_start_batch = data[0].shipments_start_batch;
+        this.deliveryData.shipments_end_batch = data[0].shipments_end_batch;
+        this.deliveryData.status = data[0].shipments_status;
+        this.deliveryData.amount = (workData||{}).amount;
+        data[0].product_list.forEach(p => {
+          if(!this.deliveryData.orderList.find(o => o.order_id === p.order_id)){
+            this.deliveryData.orderList.push({
+              orderNo: p.order_no,
+              order_id: p.order_id,
+              productList: [p],
+              customer_name:p.customer_name||'--'
+            })
+          }else{
+            let obj = this.deliveryData.orderList.find(o => o.order_id === p.order_id);
+            obj.productList.push(p);
+          }
+        })
+        this.orderData = this.orderData.concat(this.deliveryData.orderList);
+        this.$refs['cktable'].objData[0]._isHighlight = true;
+        this.currentRow = this.orderData[0];
+      })
+    },
+    changeOrder(name){
+      this.selectedCustom = name;
+      if(Object.keys(this.orderDataCache).length === 0) this.orderDataCache = JSON.parse(JSON.stringify(this.orderData));
+      this.orderData = JSON.parse(JSON.stringify(this.orderDataCache));
+      if(name !== '全部'){
+        this.orderData = this.orderData.filter(o => o.customer_name === name||o.orderNo === '汇总');
+      }
+      this.$refs['cktable'].objData[0]._isHighlight = true;
+      this.currentRow = this.orderData[0];
     }
   },
   mounted() {
@@ -1450,6 +1522,64 @@ export default {
     },
     '$store.state.app.workBenchData.length'(){
       this.getWorkbench();
+    }
+  },
+  computed:{
+    device_data(){
+      let data = [];
+      if(this.orderData&&this.orderData.length>0&&this.currentRow&&this.currentRow.orderNo){
+        if(this.currentRow.orderNo === '汇总'){
+          this.orderData.forEach(d => {
+            if(d.productList&&d.productList.length>0){
+              d.productList.forEach(p => {
+                if(data.find(o => o.product_code === p.product_code)){
+                  let index = data.findIndex(o => o.product_code === p.product_code);
+                  data[index].quantity_shipped += p.quantity_shipped
+                }else{
+                  data.push(JSON.parse(JSON.stringify(p))||{});
+                }
+              })
+            }
+          });
+        }else{
+          data = (this.orderData.find(d => d.orderNo === this.currentRow.orderNo)||{}).productList||[];
+        }
+      }
+      return data;
+    },
+    productNum(){
+      let num = 0;
+      if(this.orderData&&this.orderData.length>0){
+        this.orderData.forEach(o => {
+          if(o.ddbh!=='汇总'&&o.productList){
+            o.productList.forEach(p => {
+              num += p.quantity_shipped;
+            })
+          }
+        })
+      }
+      return num;
+    },
+    customList(){
+      let customList = ['全部'];
+      if(this.orderDataCache&&this.orderDataCache.length>0){
+        this.orderDataCache.forEach(o => {
+          if(o.orderNo === '汇总') return;
+          if(customList.indexOf(o.customer_name) === -1){
+            customList.push(o.customer_name);
+          }
+        })
+        return customList;
+      }
+      if(this.orderData&&this.orderData.length>0){
+        this.orderData.forEach(o => {
+          if(o.orderNo === '汇总') return;
+          if(customList.indexOf(o.customer_name) === -1){
+            customList.push(o.customer_name);
+          }
+        })
+      }
+      return customList;
     }
   }
 };

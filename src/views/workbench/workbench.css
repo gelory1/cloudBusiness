@@ -261,3 +261,6 @@
     float:right;
     cursor: pointer;
 }
+.ivu-select-dropdown{
+    z-index: 1001;
+}
