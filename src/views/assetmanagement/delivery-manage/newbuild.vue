@@ -73,14 +73,13 @@
                 <!--  <p style="margin-left:10px;border-bottom:0.7px solid #e4e7ed">共<span>{{count}}</span>家客户（可筛选查看）</p> -->
                 <div style="display:flex">
                   <div style="flex:1">
-                    <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder" v-if="currentRow.ddbh==='汇总'">
-                        共{{outcksb_data1.length -1}}家客户（可筛选查看）
-                        <Icon type="arrow-down-b"></Icon>
-                      <DropdownMenu slot="list">
-                          <DropdownItem v-for="item in outcksb_data1" :value="item.ddbh" :key="item.ddbh" :name="item.ddbh" v-show="item.ddbh!=='汇总'">{{((item.product_list||[])[0]||{}).customer_name}}</DropdownItem>
+                    <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder">
+                        {{selectedCustom === '全部'?`共${customList.length-1}家客户（可筛选查看）`:selectedCustom}}
+                    <Icon type="arrow-down-b"></Icon>
+                    <DropdownMenu slot="list">
+                      <DropdownItem v-for="item in customList" :value="item" v-model="selectedCustom" :key="item" :name="item">{{item}}</DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
-                    <p v-if="currentRow.ddbh!=='汇总'">{{((currentRow.product_list||[])[0]||{}).customer_name}}</p>
                   </div>
                   <div style="margin:0px 40px;">
                     订单数<span>{{outcksb_data1.length - 1}}</span>个
@@ -198,6 +197,8 @@ export default {
       selectOrder:'汇总',
       addOrderInput: '',
       changeCountInput: '',
+      selectedCustom: '全部',
+      orderDataCache: {},
       cksb_columns1: [
         {
           title: "订单编号",
@@ -533,7 +534,6 @@ export default {
       });
     },
     cancleSubmit(){
-      debugger;
       this.$router.push({
         path:'/assetmanage/delivery-manage'
       })
@@ -679,14 +679,21 @@ export default {
       }
     },
     changeOrder(name){
-      for(let key in this.$refs['cktable'].objData){
-        if(name === this.$refs['cktable'].objData[key].ddbh){
-          this.$refs['cktable'].objData[key]._isHighlight = true;
-          this.currentRow = this.$refs['cktable'].objData[key];
-        }else{
-          this.$refs['cktable'].objData[key]._isHighlight = false;
-        }
+      this.selectedCustom = name;
+      if(Object.keys(this.orderDataCache).length === 0) this.orderDataCache = JSON.parse(JSON.stringify(this.outcksb_data1));
+      if(name === '全部'){
+        this.outcksb_data1 = JSON.parse(JSON.stringify(this.orderDataCache));
+      }else{
+        this.outcksb_data1 = this.outcksb_data1.filter(o => o.customer_name === name||o.orderNo === '汇总');
       }
+      // for(let key in this.$refs['cktable'].objData){
+      //   if(name === this.$refs['cktable'].objData[key].ddbh){
+      //     this.$refs['cktable'].objData[key]._isHighlight = true;
+      //     this.currentRow = this.$refs['cktable'].objData[key];
+      //   }else{
+      //     this.$refs['cktable'].objData[key]._isHighlight = false;
+      //   }
+      // }
     },
     editInit(){
       let request = {
@@ -694,7 +701,7 @@ export default {
         "data": [
             {
               "account_id": this.$store.state.user.accountId,
-              "shipments_id": (this.$route.query||{}).data.shipments_id
+              "shipments_id": (this.$route.query||{}).shipments_id
             }
         ]
       };
@@ -793,6 +800,19 @@ export default {
     },
     editData(){
       return this.$route.query.data;
+    },
+    customList(){
+      let customList = ['全部'];
+      if(this.outcksb_data1&&this.outcksb_data1.length>0){
+        this.outcksb_data1.forEach(o => {
+          if(o.orderNo === '汇总') return;
+          o.customer_name = o.customer_name||'--';
+          if(customList.indexOf(o.customer_name) === -1){
+            customList.push(o.customer_name);
+          }
+        })
+      }
+      return customList;
     }
   },
   watch:{

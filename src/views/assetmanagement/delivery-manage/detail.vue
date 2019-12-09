@@ -76,14 +76,13 @@
             <div style="width:83%;float:right;">
               <div>
                 <p class="ck_p">
-                  <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder" v-if="currentRow.orderNo==='汇总'">
-                    共{{orderData.length -1}}家客户（可筛选查看）
+                  <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder">
+                    {{selectedCustom === '全部'?`共${customList.length-1}家客户（可筛选查看）`:selectedCustom}}
                     <Icon type="arrow-down-b"></Icon>
                     <DropdownMenu slot="list">
-                      <DropdownItem v-for="item in orderData" :value="item.orderNo" :key="item.orderNo" :name="item.orderNo" v-show="item.orderNo!=='汇总'">{{item.customer_name}}</DropdownItem>
+                      <DropdownItem v-for="item in customList" :value="item" v-model="selectedCustom" :key="item" :name="item">{{item}}</DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
-                  <p v-if="currentRow.orderNo!=='汇总'">{{currentRow.customer_name}}</p>
                 </p>
               </div>
               <Table
@@ -153,7 +152,9 @@ export default {
           orderNo:'汇总'
         }
       ],
-      currentRow:{}
+      currentRow:{},
+      selectedCustom: '全部',
+      orderDataCache:{}
     };
   },
   methods: {
@@ -170,7 +171,7 @@ export default {
         "data": [
             {
               "account_id": this.$store.state.user.accountId,
-              "shipments_id": (this.$route.query||{}).data.shipments_id
+              "shipments_id": (this.$route.query||{}).shipments_id
             }
         ]
       };
@@ -189,7 +190,7 @@ export default {
               orderNo: p.order_no,
               order_id: p.order_id,
               productList: [p],
-              customer_name:p.customer_name
+              customer_name:p.customer_name||'--'
             })
           }else{
             let obj = this.detailData.orderList.find(o => o.order_id === p.order_id);
@@ -202,14 +203,21 @@ export default {
       })
     },
     changeOrder(name){
-      for(let key in this.$refs['cktable'].objData){
-        if(name === this.$refs['cktable'].objData[key].orderNo){
-          this.$refs['cktable'].objData[key]._isHighlight = true;
-          this.currentRow = this.$refs['cktable'].objData[key];
-        }else{
-          this.$refs['cktable'].objData[key]._isHighlight = false;
-        }
+      this.selectedCustom = name;
+      if(Object.keys(this.orderDataCache).length === 0) this.orderDataCache = JSON.parse(JSON.stringify(this.orderData));
+      if(name === '全部'){
+        this.orderData = JSON.parse(JSON.stringify(this.orderDataCache));
+      }else{
+        this.orderData = this.orderData.filter(o => o.customer_name === name||o.orderNo === '汇总');
       }
+      // for(let key in this.$refs['cktable'].objData){
+      //   if(name === this.$refs['cktable'].objData[key].orderNo){
+      //     this.$refs['cktable'].objData[key]._isHighlight = true;
+      //     this.currentRow = this.$refs['cktable'].objData[key];
+      //   }else{
+      //     this.$refs['cktable'].objData[key]._isHighlight = false;
+      //   }
+      // }
     }
   },
   mounted() {
@@ -250,6 +258,18 @@ export default {
         })
       }
       return num;
+    },
+    customList(){
+      let customList = ['全部'];
+      if(this.orderData&&this.orderData.length>0){
+        this.orderData.forEach(o => {
+          if(o.orderNo === '汇总') return;
+          if(customList.indexOf(o.customer_name) === -1){
+            customList.push(o.customer_name);
+          }
+        })
+      }
+      return customList;
     }
   }
 };

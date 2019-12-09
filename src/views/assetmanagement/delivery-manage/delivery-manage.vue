@@ -121,9 +121,11 @@ export default {
                   props: {},
                   on: {
                     click: () => {
+                      let data = {...params.row};
+                      data.shipments_id = data.data.shipments_id;
                       this.$router.push({
                         name: "delivery_detail",
-                        query: params.row
+                        query: data
                       });
                     }
                   }
@@ -176,6 +178,7 @@ export default {
   methods: {
     editClick(item) {
       if(item.data.shipments_status === 0){
+        item.shipments_id = item.data.shipments_id;
         this.$router.push({
           name: "delivery_detail2",
           query: item
