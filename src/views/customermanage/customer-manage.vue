@@ -529,13 +529,12 @@ export default {
     search(){
       this.pageNum = 1;
       this.getCustomList(1);
-    }
+    },
   },
   mounted() {
     this.getCustomList(1);
     this.getProvinces();
-    this.getManagecompanys();
-    
+    this.getManagecompanys();  
   },
   watch:{
     'filterItem.empower_province':function(nv){
@@ -543,6 +542,9 @@ export default {
     },
     'filterItem.province':function(nv){
       if(nv !==0&&nv!=='') this.getCitys(nv,false);
+      if(this.filterItem.province == ''){
+        this.filterItem.city = ''
+      }
     },
   }
 };
