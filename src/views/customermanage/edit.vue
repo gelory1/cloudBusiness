@@ -47,7 +47,7 @@
               <FormItem label="省份/城市" prop="city" class="con-right">
                 <Select
                   v-model="formValidate.province.id"
-                  placeholder
+                  placeholder="请选择"
                   style="width:174px;"
                   clearable
                   filterable
@@ -60,7 +60,7 @@
                 </Select>
                 <Select
                   v-model="formValidate.city.id"
-                  placeholder
+                  placeholder="请选择"
                   clearable
                   filterable
                   style="width:173px;"
@@ -1446,6 +1446,9 @@ export default {
     "formValidate.province.id": function() {
       // this.formValidate.province.id = (this.provinces.find(p => p.name === this.formValidate.province.name)||{}).id;
       this.getCitys();
+      if(this.formValidate.province.id == ''){
+        this.formValidate.city.id =''
+      }
     },
     "formValidate.empower_province.id": function() {
       // this.formValidate.empower_province.id = (this.provinces.find(p => p.name === this.formValidate.empower_province.name)||{}).id;
