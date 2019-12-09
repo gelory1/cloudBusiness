@@ -511,7 +511,7 @@ export default {
             })
         })
         let myDate = new Date();
-        let date = myDate.getFullYear() + '-' + (myDate.getMonth()+1) + '-' + myDate.getDate();
+        let date = myDate.getFullYear() + '-' + (myDate.getMonth()+1) + '-' + myDate.getDate() + ' ' + myDate.getHours() + ':' + myDate.getMinutes() + ':' + myDate.getSeconds();
         let request = {
             "typeid": 24006,
             "data": [
