@@ -645,8 +645,8 @@ export default {
               ) {
                 payEndIndex = i;
                 computeAmountEnd =
-                  allAmount - backAmount - (item.paymentAmount - allAmount + Number(b.paybackAmount)) > 0
-                    ? (item.paymentAmount - allAmount + Number(b.paybackAmount))
+                  Number(b.paybackAmount)  - item.paymentAmount + (allAmount - Number(b.paybackAmount) - backAmount) > 0
+                    ? item.paymentAmount - (allAmount - Number(b.paybackAmount) - backAmount)
                     : Number(b.paybackAmount);
               }
             });
