@@ -23,7 +23,7 @@
         <Row>
           <Col span="16">
             <FormItem label="客户名称" prop="customer" :label-width="90">
-              <Select v-model="formValidate.customer.index" placeholder>
+              <Select v-model="formValidate.customer.index" placeholder filterable clearable>
                 <Option
                   v-for="(item,index) in customs"
                   :value="item.index"
@@ -36,7 +36,7 @@
         <Row>
           <Col span="8">
             <FormItem label="仓库" prop="store" :label-width="90">
-              <Select v-model="formValidate.store.index" placeholder>
+              <Select v-model="formValidate.store.index" placeholder filterable clearable>
                 <Option v-for="(item) in stores" :value="item.index" :key="item.index">{{item.value}}</Option>
               </Select>
             </FormItem>
@@ -45,7 +45,7 @@
         <Row>
           <Col span="16">
             <FormItem label="收货地址" prop="adress" :label-width="90">
-              <Select v-model="formValidate.adress.index" placeholder>
+              <Select v-model="formValidate.adress.index" placeholder filterable clearable>
                 <Option v-for="(item) in adresses" :value="item.index" :key="item.index"><span v-if="item.status === 1" :style="{color: formValidate.adress.index === item.index?'white':'#3896f5'}">（工程库默认）</span> {{item.value}}</Option>
               </Select>
             </FormItem>
@@ -387,9 +387,9 @@ export default {
     getCmonpanys(){
         let request = {
             "typeid":23015,
-            "data":[{
-                "account_id": 520//this.$store.state.user.accountId
-            }]
+            // "data":[{
+            //     "account_id": 520//this.$store.state.user.accountId
+            // }]
         }
         if(this.cahceData.length>0) return;
         this.$http.PostXLASSETS(request).then(response => {

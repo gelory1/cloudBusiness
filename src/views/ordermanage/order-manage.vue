@@ -159,7 +159,7 @@
           </div>
           <div>
             <span class="jbleft">设备数量：</span>
-            <span class="jbright">{{selectedOrder.count}}
+            <span style="color:#8D8D8D">{{selectedOrder.count}}
               <span>（<small style="color:green">本次交货：{{(selectedOrder.data||{}).issued_count}}</small>，<small style="color:red">剩余待发：{{selectedOrder.count - (selectedOrder.data||{}).issued_count}}</small>）</span>
             </span>
           </div>
