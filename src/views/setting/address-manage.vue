@@ -45,7 +45,7 @@
       >
         <Row>
           <Col span="15">
-            <FormItem label="地址标识" prop="company">
+            <FormItem label="仓库名称" prop="company">
               <Select v-model="addadressform.company" clearable filterable>
                 <Option :value="item.wh_id" v-for="(item,index) in whData" :key="index">{{item.wh_name}}</Option>
               </Select>
@@ -115,7 +115,7 @@ export default {
         company: [
           {
             required: true,
-            message: "请输入地址标识",
+            message: "请输入仓库名称",
             trigger: "blur"
           }
         ],
