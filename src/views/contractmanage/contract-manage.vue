@@ -678,7 +678,7 @@ export default {
             item.archiveTime = con.archiveTime;
             item.dueTime = con.dueTime;
             item.customerName =
-              con.customerName +
+              (con.customerName||'') +
               "-" +
               this.contractContentMap[con.contractContent];
             item.city = (con.customerProvince_cn||'--') + " " + (con.customerCity_cn||'--');

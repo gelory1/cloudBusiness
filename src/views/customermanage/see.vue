@@ -1,10 +1,10 @@
 <template>
   <div class="see">
     <Layout class="layout" style="color:black;font-size:15px">
-      <div class="header_top" @click="goBack">
-        <Icon type="ios-arrow-left"></Icon>
-        <span>返回</span>
-        <Button type="primary" size="large" style="float:right;width:80px;">编辑</Button>
+      <div class="header_top">
+        <Icon type="ios-arrow-left"  @click="goBack"></Icon>
+        <span  @click="goBack">返回</span>
+        <Button type="primary" size="large" style="float:right;width:80px;" @click="$router.push('/customermanage/edit')">编辑</Button>
       </div>
       
       <header class="header_mid">
@@ -16,28 +16,28 @@
             <span class="icon">
               <Icon type="person-stalker"></Icon>
             </span>
-            <span v-show="data.nature.length===0" style="color:#000000;">暂无</span>
+            <span v-show="!data.nature||data.nature.length===0" style="color:#000000;">暂无</span>
             <span>{{data.nature}}</span>
           </div>
           <div>
             <span class="icon">
               <Icon type="ribbon-a"></Icon>
             </span>
-            <span v-show="data.level.length===0" style="color:#000000;">暂无</span>
+            <span v-show="!data.level||data.level.length===0" style="color:#000000;">暂无</span>
             <span>{{data.level}}</span>
           </div>
           <div>
             <span class="icon">
               <Icon type="android-pin"></Icon>
             </span>
-            <span v-show="data.city.length===0" style="color:#000000;">暂无</span>
+            <span v-show="!data.level||data.city.length===0" style="color:#000000;">暂无</span>
             <span>{{data.city}}</span>
           </div>
           <div>
             <span class="icon">
               <Icon type="android-person"></Icon>
             </span>
-            <span v-show="data.salesman.length===0" style="color:#000000;">暂无</span>
+            <span v-show="!data.salesman||data.salesman.length===0" style="color:#000000;">暂无</span>
             <span>{{data.salesman}}</span>
           </div>
         </div>
@@ -49,51 +49,51 @@
             <div class="select">
               <section>
                 <p>客户简称：</p>
-                <p v-show="((data||{}).data||{}).customer_abbreviation.length===0" style="color:#000000;">暂无</p>
+                <p v-show="!((data||{}).data||{}).customer_abbreviation||((data||{}).data||{}).customer_abbreviation.length===0" style="color:#000000;">暂无</p>
                 <p>{{((data||{}).data||{}).customer_abbreviation}}</p>
               </section>
               <section>
                 <p>客户性质：</p>
-                <p v-show="data.nature.length===0" style="color:#000000;">暂无</p>
+                <p v-show="!data.nature||data.nature.length===0" style="color:#000000;">暂无</p>
                 <p>{{data.nature}}</p>
               </section>
               <section>
                 <p>客户等级：</p>
-                <p v-show="data.level.length===0" style="color:#000000;">暂无</p>
+                <p v-show="!data.level||data.level.length===0" style="color:#000000;">暂无</p>
                 <p>{{data.level}}</p>
               </section>
               <section>
                 <p>省份/城市：</p>
-                <p v-show="data.city.length===0" style="color:#000000;">暂无</p>
+                <p v-show="!data.city||data.city.length===0" style="color:#000000;">暂无</p>
                 <p>{{data.city}}</p>
               </section>
             </div>
             <div class="select">
               <section>
                 <p>行业：</p>
-                <p v-show="industryMap[((data||{}).data||{}).industry].length===0" style="color:#000000;">暂无</p>
+                <p v-show="!industryMap[((data||{}).data||{}).industry]||industryMap[((data||{}).data||{}).industry].length===0" style="color:#000000;">暂无</p>
                 <p>{{industryMap[((data||{}).data||{}).industry]}}</p>
               </section>
               <section>
                 <p>注册资金：</p>
-                <p v-show="((data||{}).data||{}).registered_capital.length===0" style="color:#000000;">暂无</p>
+                <p v-show="!((data||{}).data||{}).registered_capital||((data||{}).data||{}).registered_capital.length===0" style="color:#000000;">暂无</p>
                 <p>{{((data||{}).data||{}).registered_capital}}</p>
               </section>
               <section>
                 <p>法定代表人：</p>
-                <p v-show="((data||{}).data||{}).charge_person.length===0" style="color:#000000;">暂无</p>
+                <p v-show="!((data||{}).data||{}).charge_person||((data||{}).data||{}).charge_person.length===0" style="color:#000000;">暂无</p>
                 <p>{{((data||{}).data||{}).charge_person}}</p>
               </section>
               <section>
                 <p>授权资质：</p>
-                <p v-show="empower_city.length===0" style="color:#000000;">暂无</p>
+                <p v-show="!empower_city||empower_city.length===0" style="color:#000000;">暂无</p>
                 <p>{{empower_city}}</p>
               </section>
             </div>
             <div class="select1">
               <section style="width:40.5%;">
                 <p>通讯地址：</p>
-                <p v-show="((data||{}).data||{}).mail_address.length===0" style="color:#000000;">暂无</p>
+                <p v-show="!((data||{}).data||{}).mail_address||((data||{}).data||{}).mail_address.length===0" style="color:#000000;">暂无</p>
                 <p>{{((data||{}).data||{}).mail_address}}</p>
               </section>
               <section style="width:20%">
@@ -114,14 +114,14 @@
             <div class="select2">
               <section>
                 <p class="sele2">关联平台账户：</p>
-                <p v-show="((data||{}).data||{}).platformuser_list.length===0" style="color:#000000;margin-top:5px">暂无</p>
+                <p v-show="(((data||{}).data||{}).platformuser_list||[]).length===0" style="color:#000000;margin-top:5px">暂无</p>
                 <span class="bg_p" v-for="(item,index) in ((data||{}).data||{}).platformuser_list" :key="index" style="margin:0 5px">({{item.platform_id}}){{item.platform_name}}</span>
               </section>
             </div>
           </content>
           <footer>
             <p class="header_p" style="border-bottom:1px solid #d2d2d2;">开票信息</p>
-            <p v-show="((data||{}).data||{}).ticket_list.length===0" style="color:#8d8d8d;text-align:center;margin-top:40px;">暂无开票信息</p>
+            <p v-show="(((data||{}).data||{}).ticket_list||[]).length===0" style="color:#8d8d8d;text-align:center;margin-top:40px;">暂无开票信息</p>
             <div class="kpxx" v-for="(item,index) in ((data||{}).data||{}).ticket_list" :key="index">
               <div class="kpxx_head">
                 <p>{{item.ticket_customer}}</p>
@@ -194,7 +194,7 @@
         </div>
         <div class="lxr_right" style="minHeight:820px">
           <div style="padding:10px;border-bottom:1px solid black;">联系人</div>
-          <p v-show="((data||{}).data||{}).contacts_list.length===0" style="color:#8d8d8d;text-align:center;margin-top:20px;">暂无联系人</p>
+          <p v-show="(((data||{}).data||{}).contacts_list||[]).length===0" style="color:#8d8d8d;text-align:center;margin-top:20px;">暂无联系人</p>
           <div class="lxr"   v-for="(item,index) in ((data||{}).data||{}).contacts_list" :key="index">
             <p class="lxr_icon">
               <Icon type="ios-person" />

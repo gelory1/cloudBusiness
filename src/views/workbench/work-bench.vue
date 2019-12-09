@@ -260,7 +260,7 @@
           </p>
           <p>
             <span>付款凭证：</span>
-            <img src alt class="fk_img" />
+            <img src="../../images/workbench/payback.png" alt :class="{fk_img:true,active:isActive}" @click="isActive = !isActive"  />
           </p>
         </div>
       </div>
@@ -386,6 +386,7 @@ export default {
       customName: '',
       loading: false,
       hz1Loading: false,
+      isActive: false,
       newgzForm: {
         rwlx: 10,
         fzr: "",
@@ -782,7 +783,7 @@ export default {
               break;
           }
           item.type = this.typeMap[d.workBenchType];
-          item.fzr = d.accountName||'待认领';
+          item.fzr = d.accountName||(d.workBenchType === 10?'待认领':'');
           item.jztime = d.dueTimeDescribe;
           item.duetime = d.dueTime;
           item._checked = d.false;

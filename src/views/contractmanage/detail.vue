@@ -551,7 +551,7 @@ export default {
         typeid: 26009,
         data: [
           {
-            customerNo: this.data.data.customerNo
+            customerNo: this.data.data.customerNo||''
           }
         ]
       };
