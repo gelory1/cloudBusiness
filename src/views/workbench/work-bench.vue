@@ -2,11 +2,12 @@
   <div class="workbench">
     <layout class="layout">
       <div>
-        <div class="gz_left left bor" style="min-height:800px;">
+        <div class="gz_left left bor" style="min-height:700px;">
           <!-- <Input icon="ios-search" placeholder="请输入。。。。" class="gz_input"></Input> -->
           <Tabs value="name1" v-model="tabName" >
             <TabPane :label="label" name="name1">
               <Table
+                height="720"
                 :columns="gz_columns"
                 :data="gz_data"
                 @on-selection-change="gzselClick"
@@ -15,6 +16,7 @@
             </TabPane>
             <TabPane label="已办工作" name="name2">
               <Table
+                height="700"
                 :columns="yb_columns"
                 :data="yb_data"
                 :loading="loading"
@@ -22,7 +24,7 @@
               ></Table>
             </TabPane>
             <TabPane label="我发起的" name="name3">
-              <Table :columns="fq_columns" :data="fq_data" :loading="loading"></Table>
+              <Table height="700" :columns="fq_columns" :data="fq_data" :loading="loading"></Table>
             </TabPane>
           </Tabs>
           <p class="gzadd" @click="newgzClick">
@@ -47,14 +49,14 @@
           </div>
           <div style="clear: both;">
           </div>
-          <div class="gz_div bor" style="height:340px">
+          <div class="gz_div bor" style="height:330px">
             <Select v-model="zzmodel" size="small" clearable filterable style="width:150px">
                 <Option value="sy">上月订单追踪</Option>
                 <Option value="sgy">近3个月订单追踪</Option>
             </Select>
             <highchartsRing></highchartsRing>
           </div>
-          <div class="gz_div bor" style="height:340px">
+          <div class="gz_div bor" style="height:330px">
             <Select v-model="yxmodel" size="small" clearable filterable style="width:150px">
                 <Option value="ndyx">年度有效用户</Option>
                 <Option value="ndyx1">.....</Option>
@@ -463,10 +465,10 @@ const statusMap = {
   2:'已办'
 }
 const deliveryMap = {
-  1:"草稿",
-  2:"审批中",
-  3:"已通过",
-  4:"被驳回",
+  0:"草稿",
+  1:"审批中",
+  2:"已通过",
+  3:"被驳回",
 };
 export default {
   name: "work-bench",
@@ -960,31 +962,26 @@ export default {
             ]
           };
           this.$http.SETXLASSETS(request).then(response => {
-          });
+          },error => {
+              if(error.data.code === 0){
+                let {allocationList} = error.data;
+                let request = {
+                "typeid": 23007,
+                "data": [
+                    {
+                        "account_id": this.$store.state.user.accountId,
+                        "allocation_id": allocationList
+                    }
+                  ]
+                };
+                this.$http.SETXLASSETS(request).then(res => {
+
+                })
+              }
+            });
         }
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
         
-      },error => {
-        if(error.data.code === 0){
-          this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
-          this.textarea = '';
-          this.refusemodal = false;
-          this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
-          if(no === 2){
-            let request = {
-              "typeid": 23006,
-              "data": [
-                {
-                  "account_id": this.$store.state.user.accountId,
-                  "shipments_id": this.deliveryData.shipmentsId
-                }     
-              ]
-            };
-            this.$http.SETXLASSETS(request).then(response => {
-
-            });
-          }
-        }
       })
     },
     refuseSure(){
