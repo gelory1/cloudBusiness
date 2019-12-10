@@ -252,6 +252,9 @@ const app = {
                             case 3:
                                 message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
                                 break;
+                            case 12:
+                                message = '发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里';
+                                break;
                         };
                         _this.$notify({
                             title: typeMap[d.workBenchType],
