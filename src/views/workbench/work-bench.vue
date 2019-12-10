@@ -910,7 +910,7 @@ export default {
             h('span', '待办工作'),
             h('Badge', {
               props: {
-                  count: this.$store.state.app.workBenchData.length
+                  count: this.gz_data.length
               }
             })
         ])
@@ -1021,7 +1021,7 @@ export default {
       this.gz_data = [];
       this.fq_data = [];
       this.yb_data = [];
-      if(this.tabName === 'name1'&&this.$store.state.app.workBenchData.length>0){
+      if(this.tabName === 'name1'&&this.$store.state.app.workBenchData.length>0&&this.inputVal === ''){
         this.parse(this.$store.state.app.workBenchData,false);
         return;
       }
@@ -1069,7 +1069,7 @@ export default {
             this.yb_data.push(item);
           }
         });
-        if(this.gz_data&&this.gz_data.length>0){
+        if(this.gz_data&&this.gz_data.length>0&&this.inputVal === ''){
           this.$store.commit('setWorkBenchData',data);
         }
         if(status) this.showNotice();
