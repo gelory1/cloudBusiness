@@ -1562,7 +1562,33 @@ export default {
             }
         ]
       };
+      this.orderData = [{
+        orderNo:'汇总'
+      }]
+      this.deliveryData = {
+        schemeNo:'',
+        time:'',
+        manageMan:'',
+        deliveryTime:'',
+        des:'',
+        shipments_end_batch:'',
+        shipments_start_batch:'',
+        orderList: []
+      };
       this.$http.PostXLASSETS(request).then(response => {
+        this.orderData = [{
+          orderNo:'汇总'
+        }];
+        this.deliveryData = {
+          schemeNo:'',
+          time:'',
+          manageMan:'',
+          deliveryTime:'',
+          des:'',
+          shipments_end_batch:'',
+          shipments_start_batch:'',
+          orderList: []
+        };
         let { data } = response.data.result;
         this.deliveryData.schemeNo = data[0].shipments_no;
         this.deliveryData.time = data[0].shipments_time;
