@@ -50,7 +50,8 @@ const app = {
         messageCount: 0,
         dontCache: ['text-editor', 'artical-publish'], // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
         provinces: [],
-        workBenchData: []
+        workBenchData: [],
+        showNotice: false
     },
     mutations: {
         setTagsList (state, list) {
@@ -214,6 +215,7 @@ const app = {
             state.provinces = data;
         },
         setWorkBenchData (state, data) {
+            state.showNotice = true;
             state.workBenchData = data;
         }
     },
@@ -234,7 +236,7 @@ const app = {
                 let { data } = response.data.result;
                 let updateStatus = false;
                 data.forEach(d => {
-                    if (!context.state.workBenchData.find(w => d.workbenchId === w.workbenchId)) {
+                    if (!context.state.workBenchData.find(w => d.workbenchId === w.workbenchId) && context.state.showNotice) {
                         updateStatus = true;
                         let message = '';
                         switch (d.workBenchType) {
@@ -250,6 +252,9 @@ const app = {
                             case 3:
                                 message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
                                 break;
+                            case 12:
+                                message = '发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里';
+                                break;
                         };
                         _this.$notify({
                             title: typeMap[d.workBenchType],
@@ -262,6 +267,8 @@ const app = {
                                 };
                                 if (_this.$route.path !== '/home') {
                                     _this.$router.push({path: '/home', query: {notice: item}});
+                                } else {
+                                    _this.dbgzTableClick({row: item});
                                 }
                             },
                             onClick: function () {

@@ -375,12 +375,22 @@ export default {
           key: "ddbh",
           align: "center",
           render: (h, params) => {
+<<<<<<< HEAD
             let texts = "";
             if (params.row.ddbh !== null) {
               if (params.row.ddbh.length > 25) {
                 texts = params.row.ddbh.substring(0, 25) + "...";
               } else {
                 texts = params.row.ddbh;
+=======
+              let texts = ''
+              if (params.row.ddbh&&params.row.ddbh !== null) {
+                if (params.row.ddbh.length > 25) {
+                  texts = params.row.ddbh.substring(0, 25) + '...'
+                } else {
+                  texts = params.row.ddbh
+                }
+>>>>>>> 4663abcca6f6abe71e359ea6f1df4b2b1fdab787
               }
             }
             return h(
@@ -1058,10 +1068,11 @@ export default {
     },
     getDevices(order_id) {
       let param = {
-        typeid: 24002,
+        typeid: 23018,
         data: [
           {
-            order_no: order_id
+            order_no: order_id,
+            allocation_id: this.djxx.allocation_id,
           }
         ]
       };
@@ -1070,20 +1081,20 @@ export default {
       } else {
         this.outdevice_data = [];
       }
-      this.$http.XLORDER(param).then(res => {
-        if (this.tabName === "name1") {
-          this.indevice_data = [];
-        } else {
-          this.outdevice_data = [];
+      this.$http.PostXLASSETS(param).then((res)=>{
+        if(this.tabName === 'name1'){
+          this.indevice_data=[];
+        }else{
+          this.outdevice_data=[];
         }
-        res.data.result.data[0].product_list.forEach(data => {
+        res.data.result.data.forEach((data)=>{
           let item = {};
           item.chbm = data.product_code;
-          item.chmc = data.product_name;
-          item.ggxh = data.product_models;
-          item.jldw = data.product_unit;
-          item.sl = data.device_count;
-          if (this.tabName === "name1") {
+            item.chmc = data.product_name;
+            item.ggxh = data.product_models;
+            item.jldw = data.product_unit;
+            item.sl = data.quantity_shipped;
+          if(this.tabName === 'name1'){
             this.indevice_data.push(item);
           } else {
             this.outdevice_data.push(item);
@@ -1134,39 +1145,8 @@ export default {
       }
       this.hasloadout = true;
     },
-    // -----------------------------------------------------
     handleSubmitgl(name) {
-      // let status = true;
-      // for(let key in this.cusfilterItem){
-      //   if(this.cusfilterItem[key] !== ''&&this.cusfilterItem[key] !== 0){
-      //     status = false;
-      //   }
-      // }
-      // if(status){
-      //   this.filterStatus = false;
-      //   $(".cor").css({ color: "#000000" });
-      //   this.glShow = false;
-      //   if(this.tabName === 'name1'){
-      //     this.getDevicesList(1);
-      //   }else{
-      //     this.getDevicesList(1);
-      //   }
-      //   return;
-      // }
-      // this.$refs[name].validate(valid => {
-      //   if (valid) {
-      //     this.filterStatus = true;
-      //     this.glShow = false;
-      //     if(this.tabName === 'name1'){
-      //       this.getDevicesList(1);
-      //     }else{
-      //       this.getDevicesList(1);
-      //     }
-      //     this.$Message.success("查询成功！");
-      //   } else {
-      //     this.$Message.error("查询失败，请重试!");
-      //   }
-      // });
+      
     },
     handleReset(name) {
       this.filterStatus = false;

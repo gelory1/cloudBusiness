@@ -79,7 +79,7 @@
           <img index="2" src="../../images/workbench/xx.png" alt />
         </div>
       </div>
-      <Button class="zf_butt" type="primary" @click="nextzfClick" :disabled="disabled&&buttonDisabled">下一步</Button>
+      <Button class="zf_butt" type="primary" @click="nextzfClick" :disabled="disabled||buttonDisabled">下一步</Button>
       
     </Modal>
     <!-- 支付确认-单条/多条 -->
@@ -129,7 +129,7 @@
           </div>
         </section>
       </div>
-      <Upload multiple type="drag" action="/" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" class="upload">
+      <Upload multiple type="drag" action="/" class="upload">
         <div style="padding: 20px 0">
           <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
           <p>上传付款凭证</p>
@@ -949,13 +949,41 @@ export default {
         this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
         this.textarea = '';
         this.refusemodal = false;
+        if(no === 2){
+          let request = {
+            "typeid": 23006,
+            "data": [
+              {
+                "account_id": this.$store.state.user.accountId,
+                "shipments_id": this.deliveryData.shipmentsId
+              }     
+            ]
+          };
+          this.$http.SETXLASSETS(request).then(response => {
+          });
+        }
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+        
       },error => {
         if(error.data.code === 0){
           this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
           this.textarea = '';
           this.refusemodal = false;
           this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+          if(no === 2){
+            let request = {
+              "typeid": 23006,
+              "data": [
+                {
+                  "account_id": this.$store.state.user.accountId,
+                  "shipments_id": this.deliveryData.shipmentsId
+                }     
+              ]
+            };
+            this.$http.SETXLASSETS(request).then(response => {
+
+            });
+          }
         }
       })
     },
@@ -1214,9 +1242,22 @@ export default {
             workBenchId: params.row.data.workbenchId
           }
         }else if(params.row.data.workBenchType === 1){
-          this.$alert(`您有一个合同待审批，合同号为 ${ params.row.data.workBenchContentObj.contractNo }`, '审批提醒', {
+          this.$alert(`您有一个合同待审批，合同号为 ${ (params.row.data.workBenchContentObj||{}).contractNo }`, '审批提醒', {
             confirmButtonText: '确定',
             callback: action => {
+              if(action === 'confirm'){
+                let request = {
+                  typeid: 28008,
+                  data: [
+                    {
+                      workBenchId: params.row.data.workbenchId
+                    }
+                  ]
+                };
+                this.$http.UPDATEWORKBENCH(request).then(res =>{
+                  this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+                })
+              }
             }
           });
         }else if(params.row.data.workBenchType === 5){
@@ -1408,11 +1449,16 @@ export default {
         if(i === Number(index)){
           this.$set(this.borderColor,i,'red');
           this.zffsIndex = i;
-          this.disabled = false;
         }else{
           this.$set(this.borderColor,i,'#e4e7ed');
         }
       });
+      if(Number(index) === 2) {
+        this.disabled = false;
+      }else{
+        this.disabled = true;
+        this.$Message.error('暂时只支持线下支付！');
+      }
     },
     ensurePayBackSub(){
       if(this.ensurePayBack.ensure === ''){
@@ -1433,12 +1479,14 @@ export default {
         this.radioClick(this.sfdz);
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
         this.dkqrmodal = false;
+        this.$Message.success('操作成功！');
       },error => {
         if(error.data.code === 103||error.data.code === 0){
           this.sfdz = '';
           this.radioClick(this.sfdz);
           this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
           this.dkqrmodal = false;
+          this.$Message.success('操作成功！');
         }
       })
     },
@@ -1585,7 +1633,7 @@ export default {
         this.customName = '';
       }
     },
-    '$store.state.app.workBenchData.length'(){
+    '$store.state.app.workBenchData'(){
       this.getWorkbench();
     }
   },

@@ -175,7 +175,17 @@ export default {
             }
         ]
       };
+      this.orderData =[
+        {
+          orderNo:'汇总'
+        }
+      ];
       this.$http.PostXLASSETS(request).then(response => {
+        this.orderData =[
+          {
+            orderNo:'汇总'
+          }
+        ];
         let { data } = response.data.result;
         this.detailData.schemeNo = data[0].shipments_no;
         this.detailData.time = data[0].shipments_time;
@@ -280,6 +290,21 @@ export default {
         })
       }
       return customList;
+    }
+  },
+  watch:{
+    '$route'(){
+      this.detailData = {
+        schemeNo:'',
+        time:'',
+        manageMan:'',
+        deliveryTime:'',
+        des:'',
+        shipments_end_batch:'',
+        shipments_start_batch:'',
+        orderList: []
+      };
+      this.getDetail();
     }
   }
 };

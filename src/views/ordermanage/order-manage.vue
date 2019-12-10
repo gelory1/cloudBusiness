@@ -612,7 +612,6 @@ export default {
       if(o.type = "合同订单"){
         
       }
-      this.orderDetailOpen = true;
       this.getOrderDetail(o);
     },
     getOrderList(p){
@@ -658,17 +657,19 @@ export default {
           item.data = data;
           this.order_data[index].push(item);
         });
-        this.selectedOrder = this.order_data[0];
+        // this.selectedOrder = this.order_data[0];
         this.loading = false;
       },error => {
         this.loading = false;
       })
     },
     getOrderDetail(order){
-      let index = this.selectedTab.index||0;
-      this.selectedOrder = this.order_data[index].find(data => data.orderNO === order.orderNO);
-      this.device_data = [];
-      this.selectedOrder.status = this.statusMap[this.selectedOrder.data.order_status];
+      if(order.type){
+        this.orderDetailOpen = true;
+        let index = this.selectedTab.index||0;
+        this.selectedOrder = this.order_data[index].find(data => data.orderNO === order.orderNO);
+        this.device_data = [];
+        this.selectedOrder.status = this.statusMap[this.selectedOrder.data.order_status];
         this.selectedOrder.data.product_list.forEach((p,i) => {
           let item = {};
           item.index = i+1;
@@ -680,6 +681,50 @@ export default {
           item.data = p;
           this.device_data.push(item);
         });
+        return;
+      }
+      const param = {
+        typeid: 24001,
+        data: [
+          {
+            account_id: this.$store.state.user.accountId,
+            order_no: order.orderNO,
+            order_type: [0,1],
+            page_num: 1,
+            page_size: 10
+          }
+        ],
+      };
+      api.XLORDER(param).then((res)=>{
+        this.orderDetailOpen = true;
+        let data = res.data.result.data[0].orderlist[0]||{};
+        this.selectedOrder = {};
+        this.selectedOrder.orderNO = data.order_no;
+        this.selectedOrder.type = this.businessMap[data.order_type];
+        this.selectedOrder.time = data.order_time;
+        this.selectedOrder.salesType = this.saleMap[data.sale_type];
+        this.selectedOrder.customName = data.customer_name;
+        this.selectedOrder.contractNO = data.contract_no;
+        this.selectedOrder.count = data.product_count;
+        this.selectedOrder.status = this.statusMap[data.order_status];
+        this.selectedOrder.cellClassName = {
+          status:`button${data.order_status}`
+        };
+        this.selectedOrder.data = data;
+        this.device_data = [];
+        this.selectedOrder.status = this.statusMap[data.order_status];
+        data.product_list.forEach((p,i) => {
+          let item = {};
+          item.index = i+1;
+          item.name = p.product_name;
+          item.no = p.product_code;
+          item.spec = p.product_models;
+          item.count = p.device_count;
+          item.unit = p.product_unit;
+          item.data = p;
+          this.device_data.push(item);
+        });
+      })
     },
     closeglClick() {
       this.glShow = false;
@@ -759,7 +804,6 @@ export default {
     this.getOrderList(1);
     this.getManagecompanys();
     if(this.$route.query.orderNo){
-      this.orderDetailOpen = true;
       this.getOrderDetail({orderNO:this.$route.query.orderNo});
     }
     $('.ivu-poptip-body-content-inner').css('color','#2d8cf0');
