@@ -282,6 +282,7 @@
 .gl_p{
   font-size: 16px;
   display: inline;
+  margin-left:10px;
 }
 .gl_p1{
   float: right;

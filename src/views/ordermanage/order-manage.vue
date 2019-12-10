@@ -63,7 +63,7 @@
               </span>
               <!-- 更多 -->
               <div v-show="moreShow" class="more">
-                <p>敬请期待....</p>
+                <p @click="plfhClick" style="cursor:pointer">批量发货</p>
               </div>
             </span>
           </div>  
@@ -590,6 +590,11 @@ export default {
     };
   },
   methods: {
+    plfhClick(){
+       this.$router.push({
+        path: "/assetmanage/delivery-manage/newbuild"
+      });
+    },
     selectedDown(side) {
        if(side === 'inside'){
         this.tooptipShow = !this.tooptipShow;

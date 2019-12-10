@@ -68,7 +68,7 @@
                         </Select>
                       </Col>
                       <Col span="12">
-                        <Select v-model="filterItem.city" clearable filterable>
+                        <Select v-model="filterItem.city" clearable filterable :disabled="dis">
                           <Option
                             :value="item.id"
                             v-for="(item,index) in citys"
@@ -485,7 +485,7 @@ export default {
         signStarttime: "",
         signEndtime: "",
         dueStarttime: "",
-        dueEndtime: ""
+        dueEndtime: "",
       },
       khmch: [
         {
@@ -504,6 +504,7 @@ export default {
       tooptipShow: false,
       glShow: false,
       moreShow: false,
+      disabled:true,
       butZT: "XXX",
       selectedStatus: contractStatus[0],
       sum: 0,
@@ -558,7 +559,7 @@ export default {
           this.filterStatus = true;
           this.glShow = false;
           this.getContracts(1);
-          this.$Message.success("Success!");
+          // this.$Message.success("Success!");
         } else {
           this.$Message.error("Fail!");
         }
@@ -745,6 +746,9 @@ export default {
       if (nv !== 0 && nv !== "") this.getCitys();
       if(this.filterItem.province == ''){
         this.filterItem.city = ''
+        this.disabled = true
+      }else{
+        this.disabled = false
       }
     }
   }

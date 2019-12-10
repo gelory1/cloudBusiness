@@ -90,7 +90,7 @@
                 <p>{{empower_city}}</p>
               </section>
             </div>
-            <div class="select1">
+            <div class="select1" style="clear:both">
               <section style="width:40.5%;">
                 <p>通讯地址：</p>
                 <p v-show="!((data||{}).data||{}).mail_address||((data||{}).data||{}).mail_address.length===0" style="color:#000000;">暂无</p>
@@ -112,14 +112,18 @@
               </section>
             </div>
             <div class="select2">
-              <section>
+              <section style="width:40.5%;float:left">
                 <p class="sele2">关联平台账户：</p>
                 <p v-show="(((data||{}).data||{}).platformuser_list||[]).length===0" style="color:#000000;margin-top:5px">暂无</p>
                 <span class="bg_p" v-for="(item,index) in ((data||{}).data||{}).platformuser_list" :key="index" style="margin:0 5px">({{item.platform_id}}){{item.platform_name}}</span>
               </section>
+              <section style="width:40%;float:left">
+                <p class="sele2">收货地址：</p>
+                <span class="">8888888{{}}</span>
+              </section>
             </div>
           </content>
-          <footer>
+          <footer style="clear:both;padding-top:10px;">
             <p class="header_p" style="border-bottom:1px solid #d2d2d2;">开票信息</p>
             <p v-show="(((data||{}).data||{}).ticket_list||[]).length===0" style="color:#8d8d8d;text-align:center;margin-top:40px;">暂无开票信息</p>
             <div class="kpxx" v-for="(item,index) in ((data||{}).data||{}).ticket_list" :key="index">
