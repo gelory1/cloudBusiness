@@ -588,6 +588,9 @@ export default {
   },
   computed: {
     data() {
+      if(Object.keys(this.$store.state.user.contractInfo).length>0){
+        return this.$store.state.user.contractInfo;
+      }
       return JSON.parse(localStorage.getItem('contractInfo'))||{};
     },
     kcmxSum() {
