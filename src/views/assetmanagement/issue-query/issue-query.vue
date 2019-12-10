@@ -375,22 +375,12 @@ export default {
           key: "ddbh",
           align: "center",
           render: (h, params) => {
-<<<<<<< HEAD
             let texts = "";
             if (params.row.ddbh !== null) {
               if (params.row.ddbh.length > 25) {
                 texts = params.row.ddbh.substring(0, 25) + "...";
               } else {
                 texts = params.row.ddbh;
-=======
-              let texts = ''
-              if (params.row.ddbh&&params.row.ddbh !== null) {
-                if (params.row.ddbh.length > 25) {
-                  texts = params.row.ddbh.substring(0, 25) + '...'
-                } else {
-                  texts = params.row.ddbh
-                }
->>>>>>> 4663abcca6f6abe71e359ea6f1df4b2b1fdab787
               }
             }
             return h(
