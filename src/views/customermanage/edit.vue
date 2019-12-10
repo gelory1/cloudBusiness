@@ -154,6 +154,9 @@
           <Row>
             <Col span="12">
               <FormItem label="销售负责人" prop="salesman" :label-width="90">
+                <!-- <Select v-model="formValidate.salesman" clearable filterable>
+                      <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
+                  </Select> -->
                 <Input v-model="formValidate.salesman" placeholder="Enter your name" readonly />
               </FormItem>
             </Col>
@@ -547,8 +550,8 @@ export default {
           {
             required: true,
             message: "请选择城市",
-            type: "object"
-            // trigger: "blur"
+            type: "object",
+            trigger: "change"
           }
         ],
         customer_abbreviation: [
@@ -853,7 +856,11 @@ export default {
       this.$refs[name].validate(valid => {
         if (valid) {
           // this.$Message.success("Success!");
-          this.editCustomer();
+          if(this.formValidate.level.index == '' || this.formValidate.province.id == '' || this.formValidate.city.id == ''){
+            this.$Message.error("请将信息补充完整后再提交");
+          }else{
+            this.editCustomer();
+          }      
         } else {
           this.$Message.error("请将信息补充完整后再提交");
         }

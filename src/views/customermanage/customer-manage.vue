@@ -436,10 +436,8 @@ export default {
       this.glShow = false;
       if (this.moreShow) {
         $(".cor1").css({ color: "#4a9af5" });
-        // $(".cor").css({ color: "#000000" });
-      } else {
-        $(".cor1").css({ color: "#000000" });
-      }
+        $(".cor").css({ color: "#000000" });
+      } 
     },
     handleSubmitgl(name) {
       let status = true;
@@ -460,7 +458,7 @@ export default {
           this.filterStatus = true;
           this.glShow = false;
           this.getCustomList(1);
-          this.$Message.success("Success!");
+          // this.$Message.success("Success!");
         } else {
           this.$Message.error("Fail!");
         }
