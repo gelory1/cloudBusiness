@@ -526,6 +526,18 @@ export default {
                 this.$Message.success("保存成功!");
               }else{
                 this.$Message.success("提交成功!");
+                let request = {
+                  "typeid": 23006,
+                  "data": [
+                    {
+                      "account_id": this.$store.state.user.accountId,
+                      "shipments_id": error.data.shipments_id
+                    }     
+                  ]
+                };
+                this.$http.SETXLASSETS(request).then(response => {
+
+                });
               }
             }
           })

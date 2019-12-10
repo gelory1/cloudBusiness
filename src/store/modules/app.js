@@ -50,7 +50,8 @@ const app = {
         messageCount: 0,
         dontCache: ['text-editor', 'artical-publish'], // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
         provinces: [],
-        workBenchData: []
+        workBenchData: [],
+        showNotice: false
     },
     mutations: {
         setTagsList (state, list) {
@@ -214,6 +215,7 @@ const app = {
             state.provinces = data;
         },
         setWorkBenchData (state, data) {
+            state.showNotice = true;
             state.workBenchData = data;
         }
     },
@@ -234,7 +236,7 @@ const app = {
                 let { data } = response.data.result;
                 let updateStatus = false;
                 data.forEach(d => {
-                    if (!context.state.workBenchData.find(w => d.workbenchId === w.workbenchId)) {
+                    if (!context.state.workBenchData.find(w => d.workbenchId === w.workbenchId) && context.state.showNotice) {
                         updateStatus = true;
                         let message = '';
                         switch (d.workBenchType) {

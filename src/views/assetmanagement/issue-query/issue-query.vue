@@ -805,10 +805,11 @@ export default {
     },
     getDevices(order_id){
       let param = {
-        typeid: 24002,
+        typeid: 23018,
         data: [
           {
-            order_no: order_id
+            order_no: order_id,
+            allocation_id: this.djxx.allocation_id,
           }
         ],
       };
@@ -817,19 +818,19 @@ export default {
       }else{
         this.outdevice_data=[];
       }
-      this.$http.XLORDER(param).then((res)=>{
+      this.$http.PostXLASSETS(param).then((res)=>{
         if(this.tabName === 'name1'){
           this.indevice_data=[];
         }else{
           this.outdevice_data=[];
         }
-        res.data.result.data[0].product_list.forEach((data)=>{
+        res.data.result.data.forEach((data)=>{
           let item = {};
           item.chbm = data.product_code;
             item.chmc = data.product_name;
             item.ggxh = data.product_models;
             item.jldw = data.product_unit;
-            item.sl = data.device_count;
+            item.sl = data.quantity_shipped;
           if(this.tabName === 'name1'){
             this.indevice_data.push(item);
           }else{
