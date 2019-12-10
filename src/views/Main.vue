@@ -139,11 +139,9 @@ export default {
       this.messageCount = messageCount.toString();
       this.checkTag(this.$route.name);
       this.$store.commit("setMessageCount", 3);
-      setTimeout(() => {
-        setInterval(() => {
-          if(Cookies.get('user')) this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
-        },10000*12)
-      },10000)
+      setInterval(() => {
+        if(Cookies.get('user')) this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+      },10000*12)
       
       // var websocaket =null;
 		 	// if('WebSocket' in window){

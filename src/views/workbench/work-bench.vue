@@ -949,13 +949,41 @@ export default {
         this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
         this.textarea = '';
         this.refusemodal = false;
+        if(no === 2){
+          let request = {
+            "typeid": 23006,
+            "data": [
+              {
+                "account_id": this.$store.state.user.accountId,
+                "shipments_id": this.deliveryData.shipmentsId
+              }     
+            ]
+          };
+          this.$http.SETXLASSETS(request).then(response => {
+          });
+        }
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+        
       },error => {
         if(error.data.code === 0){
           this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
           this.textarea = '';
           this.refusemodal = false;
           this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+          if(no === 2){
+            let request = {
+              "typeid": 23006,
+              "data": [
+                {
+                  "account_id": this.$store.state.user.accountId,
+                  "shipments_id": this.deliveryData.shipmentsId
+                }     
+              ]
+            };
+            this.$http.SETXLASSETS(request).then(response => {
+
+            });
+          }
         }
       })
     },
@@ -1217,6 +1245,12 @@ export default {
           this.$alert(`您有一个合同待审批，合同号为 ${ params.row.data.workBenchContentObj.contractNo }`, '审批提醒', {
             confirmButtonText: '确定',
             callback: action => {
+              if(action === 'confirm'){
+                let request = {
+
+                };
+
+              }
             }
           });
         }else if(params.row.data.workBenchType === 5){
