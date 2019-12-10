@@ -1242,14 +1242,21 @@ export default {
             workBenchId: params.row.data.workbenchId
           }
         }else if(params.row.data.workBenchType === 1){
-          this.$alert(`您有一个合同待审批，合同号为 ${ params.row.data.workBenchContentObj.contractNo }`, '审批提醒', {
+          this.$alert(`您有一个合同待审批，合同号为 ${ (params.row.data.workBenchContentObj||{}).contractNo }`, '审批提醒', {
             confirmButtonText: '确定',
             callback: action => {
               if(action === 'confirm'){
                 let request = {
-
+                  typeid: 28008,
+                  data: [
+                    {
+                      workBenchId: params.row.data.workbenchId
+                    }
+                  ]
                 };
-
+                this.$http.UPDATEWORKBENCH(request).then(res =>{
+                  this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+                })
               }
             }
           });
