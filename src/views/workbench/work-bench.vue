@@ -910,7 +910,7 @@ export default {
             h('span', '待办工作'),
             h('Badge', {
               props: {
-                  count: this.$store.state.app.workBenchData.length
+                  count: this.gz_data.length
               }
             })
         ])
@@ -1021,7 +1021,7 @@ export default {
       this.gz_data = [];
       this.fq_data = [];
       this.yb_data = [];
-      if(this.tabName === 'name1'&&this.$store.state.app.workBenchData.length>0){
+      if(this.tabName === 'name1'&&this.$store.state.app.workBenchData.length>0&&this.inputVal === ''){
         this.parse(this.$store.state.app.workBenchData,false);
         return;
       }
@@ -1069,7 +1069,7 @@ export default {
             this.yb_data.push(item);
           }
         });
-        if(this.gz_data&&this.gz_data.length>0){
+        if(this.gz_data&&this.gz_data.length>0&&this.inputVal === ''){
           this.$store.commit('setWorkBenchData',data);
         }
         if(status) this.showNotice();
@@ -1562,7 +1562,33 @@ export default {
             }
         ]
       };
+      this.orderData = [{
+        orderNo:'汇总'
+      }]
+      this.deliveryData = {
+        schemeNo:'',
+        time:'',
+        manageMan:'',
+        deliveryTime:'',
+        des:'',
+        shipments_end_batch:'',
+        shipments_start_batch:'',
+        orderList: []
+      };
       this.$http.PostXLASSETS(request).then(response => {
+        this.orderData = [{
+          orderNo:'汇总'
+        }];
+        this.deliveryData = {
+          schemeNo:'',
+          time:'',
+          manageMan:'',
+          deliveryTime:'',
+          des:'',
+          shipments_end_batch:'',
+          shipments_start_batch:'',
+          orderList: []
+        };
         let { data } = response.data.result;
         this.deliveryData.schemeNo = data[0].shipments_no;
         this.deliveryData.time = data[0].shipments_time;
