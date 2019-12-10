@@ -121,11 +121,7 @@
           <div>
             <span class="jbleft">客户名称：</span>
             <span class="jbright wid">{{djxx.khmc}}</span>
-          </div>
-          <div>
-            <span class="jbleft">订单编号：</span>
-            <span class="jbright wid">{{djxx.ddbh}}</span>
-          </div>
+          </div> 
         </div>
         <div style="line-height:40px;width:50%;float:right">
           <div>
@@ -141,8 +137,12 @@
             <span class="jbright wid">{{djxx.shsj}}</span>
           </div>
         </div>
+        <div style="clear:both;padding-top:10px;">
+            <span class="jbleft">订单编号：</span>
+            <span class="jbright" style="width:700px;word-wrap: break-word;word-break: break-all;overflow: hidden;vertical-align: text-top;">{{djxx.ddbh}}</span>
+          </div>
       </div>
-      <div style="clear:both;overflow: hidden;">
+      <div style="clear:both;overflow: hidden;margin-top:20px;">
         <Tabs v-model="tabDeviceName1">
           <TabPane label="入库设备" name="name1">
             <div style="width:17%;float:left;">
@@ -204,10 +204,10 @@
             <span class="jbleft">客户名称：</span>
             <span class="jbright wid">{{djxx.khmc}}</span>
           </div>
-          <div>
+          <!-- <div>
             <span class="jbleft">订单编号：</span>
             <span class="jbright wid">{{djxx.ddbh}}</span>
-          </div>
+          </div> -->
         </div>
         <div style="line-height:40px;width:50%;float:right">
           <div>
@@ -223,8 +223,12 @@
             <span class="jbright wid">{{djxx.shsj}}</span>
           </div>
         </div>
+        <div style="clear:both;padding-top:10px;">
+            <span class="jbleft">订单编号：</span>
+            <span class="jbright" style="width:700px;word-wrap: break-word;word-break: break-all;overflow: hidden;vertical-align: text-top;">{{djxx.ddbh}}</span>
+          </div>
       </div>
-      <div style="clear:both;overflow: hidden;">
+      <div style="clear:both;overflow: hidden;margin-top:20px;">
         <Tabs v-model="tabDeviceName2">
           <TabPane label="出库设备" name="name1">
             <div style="width:17%;float:left;">
@@ -292,7 +296,31 @@ export default {
         {
           title: "订单编号",
           key: "ddbh",
-          align:"center"
+          align:"center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.ddbh !== null) {
+                if (params.row.ddbh.length > 25) {
+                  texts = params.row.ddbh.substring(0, 25) + '...'
+                } else {
+                  texts = params.row.ddbh
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.ddbh)
+              ])
+            }
         },
         {
           title: "客户名称",
@@ -411,7 +439,32 @@ export default {
         {
           title: "订单编号",
           key: "ddbh",
-          align:"center"
+          align:"center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.ddbh !== null) {
+                if (params.row.ddbh.length > 25) {
+                  texts = params.row.ddbh.substring(0, 25) + '...'
+                } else {
+                  texts = params.row.ddbh
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.ddbh)
+              ])
+            }
+
         },
         {
           title: "客户名称",
@@ -513,29 +566,82 @@ export default {
       device_columns1: [
         {
           title: "订单编号",
-          key: "ddbh"
+          key: "ddbh",
         },
       ],
       device_columns: [
         {
           title: "存货编码",
-          key: "chbm"
+          key: "chbm",
+          align:"center"
         },
         {
           title: "存货名称",
-          key: "chmc"
+          key: "chmc",
+          align:"center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.chmc !== null) {
+                if (params.row.chmc.length > 20) {
+                  texts = params.row.chmc.substring(0, 20) + '...'
+                } else {
+                  texts = params.row.chmc
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.chmc)
+              ])
+            }
         },
         {
           title: "规格型号",
-          key: "ggxh"
+          key: "ggxh",
+          align:"center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.ggxh !== null) {
+                if (params.row.ggxh.length > 25) {
+                  texts = params.row.ggxh.substring(0, 25) + '...'
+                } else {
+                  texts = params.row.ggxh
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.ggxh)
+              ])
+            }
         },
         {
           title: "计量单位",
-          key: "jldw"
+          key: "jldw",
+          align:"center"
         },
         {
           title: "数量",
-          key: "sl"
+          key: "sl",
+          align:"center"
         }
       ],
       indevice_data1: [

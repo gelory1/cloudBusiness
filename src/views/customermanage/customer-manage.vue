@@ -562,4 +562,7 @@ export default {
 .ivu-table-row:hover .iconshow{
   display: inline-block;
 }
+.aa .ivu-modal-footer {
+  display: none;
+}
 </style>

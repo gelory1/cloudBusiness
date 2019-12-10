@@ -95,7 +95,7 @@
                 <Input v-model="formValidate.charge_person" placeholder />
               </FormItem>
             </Col>
-            
+
             <Col span="12" v-if="isFriend">
               <FormItem label="保证金" prop="bond_amount" class="con-right">
                 <Input style="width:313px" v-model="formValidate.bond_amount" placeholder />人民币
@@ -115,14 +115,20 @@
             </Col>
           </Row>
           <Row>
-            <Col span="12"  v-if="isFriend">
+            <Col span="12" v-if="isFriend">
               <FormItem label="协议编号" prop="protocolNumber" :label-width="90">
                 <Input v-model="formValidate.protocolNumber" placeholde />
               </FormItem>
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="授权资质" prop="sqzz" class="con-right">
-                <Select v-model="formValidate.empower_province.id" placeholder="请选择" clearable filterable style="width:174px;">
+                <Select
+                  v-model="formValidate.empower_province.id"
+                  placeholder="请选择"
+                  clearable
+                  filterable
+                  style="width:174px;"
+                >
                   <Option
                     v-for="(item,index) in provinces"
                     :value="item.id"
@@ -238,12 +244,12 @@
         </footer>
         <FormItem class="form_but">
           <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
-          <Button type="ghost" @click="handleCancel('formValidate')" style="margin-left: 20px">取消</Button>
+          <Button type="ghost" @click="gohandleCancel('formValidate')" style="margin-left: 20px">取消</Button>
         </FormItem>
       </Form>
     </Layout>
     <!-- 添加联系人 -->
-    <Modal v-model="addlxrmodal" @on-ok="saveContact()" @on-cancel="cancel">
+    <Modal v-model="addlxrmodal" class="aa">
       <p style="margin:10px  0 20px 0;font-size:16px">添加联系人</p>
       <Form ref="formAddlxr" :model="formAddlxr" :rules="ruleAddlxr" :label-width="120">
         <FormItem label="姓名" prop="contact_name">
@@ -268,11 +274,10 @@
           <Input class="col-n" v-model="formAddlxr.email" placeholder />
         </FormItem>
 
-        <!-- <FormItem>
-          <Button type="primary" @click="saveContact()">确认并添加</Button>
-          <Button type="info" style="margin-left: 8px">保存并继续添加</Button>
-          <Button type="ghost" style="margin-left: 8px">取消</Button>
-        </FormItem>-->
+        <FormItem class="for">
+          <Button type="primary" @click="saveContact('formAddlxr')">确认</Button>
+          <Button type="ghost" style="margin-left:15px" @click="cancel">取消</Button>
+        </FormItem>
       </Form>
     </Modal>
     <!-- 添加开票信息 -->
@@ -305,7 +310,7 @@
           </Col>
           <Col span="12">
             <FormItem label="电话" prop="phone">
-              <Input v-model="formAddkpxx.phone" placeholder @on-keyup="inputChange"/>
+              <Input v-model="formAddkpxx.phone" placeholder @on-keyup="inputChange" />
             </FormItem>
           </Col>
         </Row>
@@ -317,7 +322,7 @@
           </Col>
           <Col span="12">
             <FormItem label="银行账号" prop="bank_account">
-              <Input v-model="formAddkpxx.bank_account" placeholder @on-keyup="inputChange"/>
+              <Input v-model="formAddkpxx.bank_account" placeholder @on-keyup="inputChange" />
             </FormItem>
           </Col>
         </Row>
@@ -754,7 +759,7 @@ export default {
           {
             required: true,
             message: "请输入税号",
-            trigger: "blur",
+            trigger: "blur"
             // validator: validateNum
           }
         ],
@@ -783,7 +788,7 @@ export default {
           {
             required: true,
             message: "请输入银行账号",
-            trigger: "blur",
+            trigger: "blur"
             // validator: validateNum
           }
         ],
@@ -838,8 +843,11 @@ export default {
   },
   methods: {
     inputChange() {
-      this.formAddkpxx.bank_account = this.formAddkpxx.bank_account.replace(/[^\d]/g, '')
-      this.formAddkpxx.phone = this.formAddkpxx.phone.replace(/[^\d]/g, '')
+      this.formAddkpxx.bank_account = this.formAddkpxx.bank_account.replace(
+        /[^\d]/g,
+        ""
+      );
+      this.formAddkpxx.phone = this.formAddkpxx.phone.replace(/[^\d]/g, "");
     },
     handleSubmit(name) {
       this.$refs[name].validate(valid => {
@@ -850,6 +858,9 @@ export default {
           this.$Message.error("请将信息补充完整后再提交");
         }
       });
+    },
+    gohandleCancel(){
+      this.$router.go(-1);
     },
     editCustomer() {
       let request = {
@@ -919,6 +930,8 @@ export default {
             this.$Message.success("客户信息更新成功！");
             this.$router.push("/customermanage/customermanage");
           }
+        }).catch((e)=>{
+
         });
       }
     },
@@ -1019,7 +1032,7 @@ export default {
       this.saveTicket();
     },
     cancel() {
-      // this.$Message.info("Clicked cancel");
+      this.addlxrmodal = false;
     },
     getCitys() {
       let request = {
@@ -1145,7 +1158,14 @@ export default {
       };
       this.addlxrmodal = true;
     },
-    saveContact() {
+    saveContact(name) {
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          this.$Message.success("Success!");
+        } else {
+          this.$Message.error("Fail!");
+        }
+      });
       let request1 = {
         typeid: 25008,
         data: [
@@ -1424,15 +1444,15 @@ export default {
   },
   computed: {
     data() {
-      return JSON.parse(localStorage.getItem('customInfo'))||{};
+      return JSON.parse(localStorage.getItem("customInfo")) || {};
     },
     provinces() {
-      return JSON.parse(localStorage.getItem('provinces'))||{};
+      return JSON.parse(localStorage.getItem("provinces")) || {};
     },
     isNewCreate() {
       return (
-        Object.keys(JSON.parse(localStorage.getItem('customInfo'))||{}).length === 0 &&
-        this.customer_id === ""
+        Object.keys(JSON.parse(localStorage.getItem("customInfo")) || {})
+          .length === 0 && this.customer_id === ""
       );
     },
     isCustom() {
@@ -1446,15 +1466,15 @@ export default {
     "formValidate.province.id": function() {
       // this.formValidate.province.id = (this.provinces.find(p => p.name === this.formValidate.province.name)||{}).id;
       this.getCitys();
-      if(this.formValidate.province.id == ''){
-        this.formValidate.city.id =''
+      if (this.formValidate.province.id == "") {
+        this.formValidate.city.id = "";
       }
     },
     "formValidate.empower_province.id": function() {
       // this.formValidate.empower_province.id = (this.provinces.find(p => p.name === this.formValidate.empower_province.name)||{}).id;
       this.getEmpowerCitys();
-      if(this.empower_province.id == ''){
-        this.empower_city.id = ''
+      if (this.formValidate.empower_province.id == "") {
+        this.formValidate.empower_city.id = "";
       }
     },
     // 'formValidate.level.index':function(){
@@ -1481,4 +1501,5 @@ export default {
 
 <style>
 @import "./customer.css";
+
 </style>
