@@ -264,6 +264,8 @@ const app = {
                                 };
                                 if (_this.$route.path !== '/home') {
                                     _this.$router.push({path: '/home', query: {notice: item}});
+                                } else {
+                                    _this.dbgzTableClick({row: item});
                                 }
                             },
                             onClick: function () {
