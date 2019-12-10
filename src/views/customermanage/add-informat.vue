@@ -1,6 +1,6 @@
 <template>
   <div class="addinformat">
-    <Layout class="layout">
+    <Layout class="layout" style="min-height:700px;">
       <p class="div_p">开票信息</p>
       <Form
         ref="formAddinformat"
@@ -195,7 +195,8 @@ export default {
       });
     },
     handleCancel(name) {
-      this.$Message.error("已取消");
+      // this.$Message.error("已取消");
+      this.$router.go(-1);
     },
     editClick(){
       this.$router.push({ path: "/customermanage/new" });

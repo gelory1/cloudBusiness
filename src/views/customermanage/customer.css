@@ -267,3 +267,14 @@ width:100px;
 .order .ivu-layout-header,.customer .ivu-layout-header{
     line-height:75px
 }
+.aa .ivu-modal-footer {
+    display: none;
+  }
+.for{
+    width:140px;
+    margin:20px auto;
+    margin-top:50px;
+}
+.for .ivu-form-item-content{
+    margin-left:0px!important;
+ }
