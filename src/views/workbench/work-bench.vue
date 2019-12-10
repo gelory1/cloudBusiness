@@ -168,7 +168,7 @@
             <Option :value="item.id" v-for="(item,index) in companys" :key="index">{{item.name}}</Option>
           </Select>
           <Select v-model="newgzForm.fzr" placeholder="请选择(默认不选为认领模式)"  clearable filterable style="width:190px;">
-            <Option :value="item.id" v-for="(item,index) in fzr" :key="index">{{item.name}}</Option>
+            <Option :value="item.id" v-for="(item,index) in fzr" :key="item.id">{{item.name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="要求完成时间" prop="wcsj">

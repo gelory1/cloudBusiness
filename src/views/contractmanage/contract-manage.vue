@@ -68,7 +68,7 @@
                         </Select>
                       </Col>
                       <Col span="12">
-                        <Select v-model="filterItem.city" clearable filterable :disabled="dis">
+                        <Select v-model="filterItem.city" clearable filterable :disabled="disabled">
                           <Option
                             :value="item.id"
                             v-for="(item,index) in citys"
@@ -712,12 +712,12 @@ export default {
       });
     },
     getCitys() {
-      if (this.filterItem.province.id === "") this.filterItem.province.id = 0;
+      if (this.filterItem.province === "") this.filterItem.province = 0;
       let request = {
         typeid: 27003,
         data: [
           {
-            province: this.filterItem.province.id
+            province: this.filterItem.province
           }
         ]
       };

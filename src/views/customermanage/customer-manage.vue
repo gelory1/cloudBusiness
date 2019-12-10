@@ -52,7 +52,7 @@
                         </Select>
                       </Col>
                       <Col span="12">
-                        <Select v-model="filterItem.city" clearable filterable>
+                        <Select v-model="filterItem.city" clearable filterable  :disabled="disabled">
                           <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
                         </Select>
                       </Col>
@@ -215,7 +215,7 @@ export default {
                         localStorage.setItem('customInfo',JSON.stringify(params.row));
                         this.$router.push({ path: "/customermanage/edit" });
                       } else if (value == "删除") {
-                        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                        this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
                           confirmButtonText: '确定',
                           cancelButtonText: '取消',
                           type: 'warning'
@@ -346,7 +346,8 @@ export default {
       citys:[],
       natures,
       empowerCitys:[],
-      filterStatus:false
+      filterStatus:false,
+      disabled:true,
     };
   },
   methods: {
@@ -545,6 +546,9 @@ export default {
       if(nv !==0&&nv!=='') this.getCitys(nv,false);
       if(this.filterItem.province == ''){
         this.filterItem.city = ''
+        this.disabled = true
+      }else{
+        this.disabled = false
       }
     },
   }
