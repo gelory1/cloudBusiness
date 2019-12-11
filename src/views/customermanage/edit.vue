@@ -386,6 +386,10 @@
 import api from "@/api/axios";
 const natures = [
   {
+    value: "所有客户",
+    index: 0
+  },
+  {
     value: "直销客户",
     index: 1
   },
