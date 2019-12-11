@@ -910,7 +910,7 @@ export default {
             h('span', '待办工作'),
             h('Badge', {
               props: {
-                  count: this.gz_data.length
+                  count: this.inputVal === ''?this.$store.state.app.workBenchData.length:this.gz_data.length
               }
             })
         ])
@@ -1003,7 +1003,9 @@ export default {
             });
         }
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
-        
+        if(this.tabName === 'name3'){
+          this.getWorkbench();
+        }
       })
     },
     refuseSure(){
@@ -1038,8 +1040,8 @@ export default {
       }
       this.loading = true;
       if(this.tabName === 'name1')  this.gz_data = [];
-      if(this.tabName === 'name2')  this.fq_data = [];
-      if(this.tabName === 'name3')  this.yb_data = [];
+      if(this.tabName === 'name3')  this.fq_data = [];
+      if(this.tabName === 'name2')  this.yb_data = [];
       if(this.tabName === 'name1'&&this.$store.state.app.workBenchData.length>0&&this.inputVal === ''){
         this.parse(this.$store.state.app.workBenchData,false);
         return;
@@ -1053,6 +1055,9 @@ export default {
       })
     },
     parse(data,status){
+      if(this.tabName === 'name1')  this.gz_data = [];
+      if(this.tabName === 'name3')  this.fq_data = [];
+      if(this.tabName === 'name2')  this.yb_data = [];
       data.forEach((d,i) => {
           let item = {};
           switch (d.workBenchType) {
@@ -1279,6 +1284,9 @@ export default {
                 };
                 this.$http.UPDATEWORKBENCH(request).then(res =>{
                   this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+                  if(this.tabName === 'name3'){
+                    this.getWorkbench();
+                  }
                 })
               }
             }
@@ -1319,6 +1327,9 @@ export default {
       this.$http.SETCONTRACT(request).then(response => {
         this.hkhzmodal = false;
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+        if(this.tabName === 'name3'){
+          this.getWorkbench();
+        }
         this.$Message.success('成功！');
       },error => {
         if(error.data.code !== 0){
@@ -1384,9 +1395,15 @@ export default {
       }
       this.$http.UPDATEWORKBENCH(request).then(response => {
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+        if(this.tabName === 'name3'){
+          this.getWorkbench();
+        }
       },error => {
         if(error.data.code === 0){
           this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+          if(this.tabName === 'name3'){
+            this.getWorkbench();
+          }
           this.$Message.success('成功！');
         }
       })
@@ -1467,6 +1484,9 @@ export default {
         this.newgzmodal = false;
         this.$Message.success('新增成功！');
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+        if(this.tabName === 'name3'){
+          this.getWorkbench();
+        }
       })
     },
     getDate(value){
@@ -1507,6 +1527,9 @@ export default {
         this.sfdz = '';
         this.radioClick(this.sfdz);
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+        if(this.tabName === 'name3'){
+          this.getWorkbench();
+        }
         this.dkqrmodal = false;
         this.$Message.success('操作成功！');
       },error => {
@@ -1514,6 +1537,9 @@ export default {
           this.sfdz = '';
           this.radioClick(this.sfdz);
           this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+          if(this.tabName === 'name3'){
+            this.getWorkbench();
+          }
           this.dkqrmodal = false;
           this.$Message.success('操作成功！');
         }
@@ -1823,7 +1849,7 @@ export default {
       return customList;
     },
     buttonDisabled(){
-      return this.tabName !== 'name1'&&this.fq_data[this.dataIndex].zt !== 1;
+      return this.tabName !== 'name1'&&(this.fq_data[this.dataIndex]||{}).zt !== 1;
     }
   }
 };
