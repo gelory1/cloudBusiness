@@ -1212,6 +1212,7 @@ export default {
         return '';
     },
     dbgzTableClick(params){
+      this.$store.commit('setNotifyData', {status: false, data: []});
       if(params.row.data.workBenchType === 3){
           this.zfmodal = true;
         }else if(params.row.data.workBenchType === 10){
