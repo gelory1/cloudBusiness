@@ -373,7 +373,7 @@ export default {
                 props: {
                   size: "small",
                   value: params.row.sbsl,
-                  min: 1,
+                  min: 0,
                   max: params.row.sbsl
                 },
                 on: {
@@ -696,7 +696,7 @@ export default {
       if(name === '全部'){
         this.outcksb_data1 = JSON.parse(JSON.stringify(this.orderDataCache));
       }else{
-        this.outcksb_data1 = this.outcksb_data1.filter(o => o.customer_name === name||o.orderNo === '汇总');
+        this.outcksb_data1 = this.outcksb_data1.filter(o => o.khmc === name||o.ddbh === '汇总');
       }
       // for(let key in this.$refs['cktable'].objData){
       //   if(name === this.$refs['cktable'].objData[key].ddbh){
@@ -817,10 +817,11 @@ export default {
       let customList = ['全部'];
       if(this.outcksb_data1&&this.outcksb_data1.length>0){
         this.outcksb_data1.forEach(o => {
-          if(o.orderNo === '汇总') return;
-          o.customer_name = o.customer_name||'--';
-          if(customList.indexOf(o.customer_name) === -1){
-            customList.push(o.customer_name);
+          if(o.ddbh !== '汇总'){
+            let customer_name = o.khmc||'--';
+            if(customList.indexOf(customer_name) === -1){
+              customList.push(customer_name);
+            }
           }
         })
       }
