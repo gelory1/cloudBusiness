@@ -69,11 +69,11 @@
                   <FormItem label="建档日期">
                     <Row>
                       <Col span="11">
-                        <DatePicker placement="bottom" type="date" v-model="filterItem.startTime"></DatePicker>
+                        <DatePicker placement="bottom" type="date" v-model="filterItem.startTime" format="yyyy-MM-dd"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker placement="bottom" type="date" v-model="filterItem.endTime"></DatePicker>
+                        <DatePicker placement="bottom" type="date" v-model="filterItem.endTime" format="yyyy-MM-dd"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
@@ -533,7 +533,7 @@ export default {
   mounted() {
     this.getCustomList(1);
     this.getProvinces();
-    this.getManagecompanys();  
+    this.getManagecompanys();   
   },
   watch:{
     'filterItem.empower_province':function(nv){
