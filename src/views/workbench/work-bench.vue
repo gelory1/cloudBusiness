@@ -1646,12 +1646,27 @@ export default {
       this.$http.XLREPORT(request).then(res => {
 
       })
+    },
+    getReportDetail(){
+      let request = {
+        typeid: 29001,
+        data: [
+          {
+            account_id: this.$store.state.user.accountId,
+            report_id: [1,2,3]
+          }
+        ]
+      };
+      this.$http.XLREPORT(request).then(res => {
+
+      })
     }
   },
   mounted() {
     this.getWorkbench();
     this.getManagecompanys();
     this.getReportList();
+    this.getReportDetail();
   },
   watch:{
     tabName(){
