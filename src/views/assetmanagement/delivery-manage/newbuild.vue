@@ -481,7 +481,6 @@ export default {
   },
   methods: {
     handleSubmit(name,status) {
-      debugger;
       let list = [];
       let s = false;
       this.outcksb_data1.forEach(o => {

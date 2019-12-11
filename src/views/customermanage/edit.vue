@@ -1093,7 +1093,7 @@ export default {
         ((data || {}).data || {}).customer_abbreviation || "";
       this.formValidate.nature = JSON.parse(
         JSON.stringify(
-          this.natures.find(n => n.value === data.nature) || this.natures[0]
+          this.natures.find(n => n.value === data.nature) || {}
         )
       );
       this.formValidate.industry = JSON.parse(
