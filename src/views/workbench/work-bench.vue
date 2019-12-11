@@ -607,6 +607,7 @@ export default {
                     },
                     on: {
                         click: () => {
+                            this.dataIndex = params.index;
                             this.dbgzTableClick(params);
                           }
                       }
@@ -951,6 +952,7 @@ export default {
         report_name:'',
         report_value: [],
       },
+      dataIndex: 0
     };
   },
   methods: {
@@ -1262,10 +1264,13 @@ export default {
             workBenchId: params.row.data.workbenchId
           }
         }else if(params.row.data.workBenchType === 1){
-          this.$alert(`您有一个合同待审批，合同号为 ${ (params.row.data.workBenchContentObj||{}).contractNo }`, '审批提醒', {
+          this.$alert(`您有一个合同待审批，合同号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||'' }`, '审批提醒', {
             confirmButtonText: '确定',
             callback: action => {
               if(action === 'confirm'){
+                if(this.tabName !== 'name1'){
+                  return;
+                }
                 let request = {
                   typeid: 28008,
                   data: [
@@ -1820,7 +1825,7 @@ export default {
       return customList;
     },
     buttonDisabled(){
-      return this.tabName !== 'name1';
+      return this.tabName !== 'name1'&&this.fq_data[this.dataIndex].zt !== 1;
     }
   }
 };
