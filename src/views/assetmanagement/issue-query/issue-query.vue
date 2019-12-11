@@ -1002,7 +1002,10 @@ export default {
             keyword: this.inputVal === "" ? undefined : this.inputVal,
             page_num: p,
             page_size: 10,
-            allocation_type: this.tabName === "name1" ? 1 : 0
+            allocation_type: this.tabName === "name1" ? 1 : 0,
+            allocation_no:this.cusfilterItem.djbh ===''? undefined:this.cusfilterItem.djbh,
+            order_no :this.cusfilterItem.ddbh ===''? undefined:this.cusfilterItem.ddbh,
+            agent_name:this.cusfilterItem.khmc===''? undefined:this.cusfilterItem.khmc,
           }
         ]
       };
@@ -1136,7 +1139,37 @@ export default {
       this.hasloadout = true;
     },
     handleSubmitgl(name) {
-      
+      let status = true;
+      for(let key in this.cusfilterItem){
+        if(this.cusfilterItem[key] !== ''&&this.cusfilterItem[key] !== 0){
+          status = false;
+        }
+      }
+      if(status){
+        this.filterStatus = false;
+        $(".cor").css({ color: "#000000" });
+        this.glShow = false;
+        if(this.tabName === 'name1'){
+          this.getProductList(1);
+        }else{
+          this.getProductList(1);
+        }
+        return;
+      }
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          this.filterStatus = true;
+          this.glShow = false;
+          if(this.tabName === 'name1'){
+            this.getProductList(1);
+          }else{
+            this.getProductList(1);
+          }
+          this.$Message.success("查询成功！");
+        } else {
+          this.$Message.error("查询失败，请重试!");
+        }
+      });
     },
     handleReset(name) {
       this.filterStatus = false;

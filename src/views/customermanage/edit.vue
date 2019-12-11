@@ -1168,6 +1168,7 @@ export default {
     saveContact(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
+          this.addlxrmodal = false
           this.$Message.success("Success!");
         } else {
           this.$Message.error("Fail!");

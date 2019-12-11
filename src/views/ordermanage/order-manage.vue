@@ -615,8 +615,8 @@ export default {
       this.getOrderDetail(o);
     },
     getOrderList(p){
+      debugger;
       this.order_data[this.selectedTab.index] = [];
-      console.log(this.selectedTab);
       this.loading = true;
       const param = {
         typeid: 24001,
@@ -639,6 +639,8 @@ export default {
         ],
       };
       api.XLORDER(param).then((res)=>{
+        // alert(this.order_data[item.index].salesType)
+        // console.log(res)
         let index = this.selectedTab.index||0;
         this.sum = res.data.result.data[0].sum;
         res.data.result.data[0].orderlist.forEach(data => {
@@ -900,7 +902,7 @@ export default {
     },
     orderDetailOpen(){
       this.deviceTabName = 'name1';
-    }
+    },
   }
 };
 </script>

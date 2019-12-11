@@ -70,7 +70,7 @@
             style="display:flex;justify-content:space-between;margin:0 0px 10px 10px;"
           >
             <Button @click="addDeviceClick">添加设备</Button>
-            <Input placeholder="请输入内容" style="width: 200px" v-model="inputVal" icon="ios-search" />
+            
           </div>
           <Table
             ref="selection"
@@ -98,6 +98,7 @@
     <!-- 添加设备 -->
     <Modal v-model="addsbmodal" width="800" @on-ok="ok">
       <p style="font-size:18px;">添加设备</p>
+      <Input placeholder="请输入内容" style="width: 200px;float:right;padding-top:15px;margin-right:10px;" v-model="inputVal" icon="ios-search" @on-enter="getAddset" @on-click="getAddset"/>
       <p class="sb_p">
         选择需要备货的
         <span>设备类型</span>添加到
@@ -443,6 +444,9 @@ export default {
     },
     addDeviceClick() {
       this.addsbmodal = true;
+      // this.addDevices(1);
+    },
+    getAddset(){
       this.addDevices(1);
     },
     addDevices(p) {
@@ -553,6 +557,9 @@ export default {
       //     this.$Message.error("请填写完整的信息！");
       //   }
       // });
+      //  if(this.formValidate.store.index == ''){
+      //       this.$Message.success("Success!");
+      //   }
       if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
         for (let key in this.deviceStore) {
           let index = this.formValidate.devices_list.findIndex(
@@ -562,6 +569,8 @@ export default {
             this.formValidate.devices_list[index] = this.deviceStore[key];
           }
         }
+      }else{
+            this.$Message.error("无添加设备或发货数量为0");
       }
       let productList = [];
       this.formValidate.devices_list.forEach(data => {

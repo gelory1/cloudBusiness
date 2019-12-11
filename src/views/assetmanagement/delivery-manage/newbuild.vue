@@ -481,6 +481,7 @@ export default {
   },
   methods: {
     handleSubmit(name,status) {
+      debugger;
       let list = [];
       let s = false;
       this.outcksb_data1.forEach(o => {
@@ -502,7 +503,8 @@ export default {
       if(s) return; //校验失败跳出
       this.$refs[name].validate(valid => {
         if (valid) {
-          let request = {
+          if(this.outcksb_data.length > 0){
+            let request = {
             "typeid": 23016,
             "data": [
               {
@@ -541,6 +543,9 @@ export default {
               }
             }
           })
+          }else{
+            this.$Message.info("请添加设备")
+          }
         } else {
           this.$Message.error("请按规定填写表格！");
         }

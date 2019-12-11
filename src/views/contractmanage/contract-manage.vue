@@ -459,7 +459,7 @@ export default {
         },
         {
           title: "销售负责人",
-          key: "saleManName",
+          key: "saleName",
           align: "center"
         },
         {
@@ -470,7 +470,7 @@ export default {
       ],
       contract_data: [
         {
-          saleManName: "热尔"
+          saleName: "热尔"
         }
       ],
       filterItem: {
@@ -667,7 +667,8 @@ export default {
       this.contract_data = [];
       this.loading = true;
       this.$http.XLCONTRACT(request).then(
-        response => {
+        response => {   
+          console.log(response)
           let { data } = response.data.result;
           this.sum = data.sum;
           data.contractList.forEach(con => {
@@ -685,7 +686,7 @@ export default {
               this.contractContentMap[con.contractContent];
             item.city = (con.customerProvince_cn||'--') + " " + (con.customerCity_cn||'--');
             item.saleType = this.salesTypeMap[con.saleType];
-            item.saleManName = con.saleManName;
+            item.saleName = con.saleManName;
             item.manageCompany = con.manageCompanyName;
             item.data = con;
             this.contract_data.push(item);

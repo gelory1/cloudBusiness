@@ -506,7 +506,7 @@ export default {
         },
         {
           title: '序号',
-          width: 60,
+          width: 70,
           align: "center",
           key:'index'
         },
