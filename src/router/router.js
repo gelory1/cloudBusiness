@@ -45,7 +45,7 @@ export const locking = {
 // 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
 // 客户管理
 export const otherRouter = {
-    path: '/',
+    path: '/customermanage/customerManage',
     name: 'otherRouter',
     redirect: '/customermanage',
     component: Main,
@@ -59,7 +59,7 @@ export const otherRouter = {
 };
 // 合同管理
 export const otherRouter1 = {
-    path: '/',
+    path: '/contractmanage/contractManage',
     name: 'otherRouter1',
     redirect: '/contractmanage',
     component: Main,
@@ -71,7 +71,7 @@ export const otherRouter1 = {
 };
 // 订单管理
 export const otherRouterOrder = {
-    path: '/',
+    path: '/ordermanage/orderManage',
     name: 'otherRouterOrder',
     redirect: '/ordermanage',
     component: Main,

@@ -165,7 +165,7 @@
           </div>
           <div>
             <span class="jbleft">收货地址：</span>
-            <span style="color:#8D8D8D">{{(selectedOrder.data||{}).address_id}}</span>
+            <span style="color:#8D8D8D">{{(selectedOrder.data||{}).address_name}}</span>
           </div>
         </div>
       </div>

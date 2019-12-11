@@ -272,7 +272,7 @@ export default {
               props: {
                 size: "small",
                 value: params.row.num,
-                min:1
+                min:0
               },
               on: {
                 "on-change": a => {
@@ -535,16 +535,22 @@ export default {
         data = data.concat(this.addData[key]);
       }
       data.forEach(d => {
-        this.formValidate.devices_list.push({
-          productCode: d.product_code,
-          productName: d.product_name,
-          spec: d.product_models,
-          unit: d.product_unit,
-          num: d.num,
-          price: d.product_price,
-          tax: "17%",
-          totalPrice: d.product_price * d.num
-        });
+        if(!this.formValidate.devices_list.find(item => item.productCode === d.product_code)){
+          this.formValidate.devices_list.push({
+            productCode: d.product_code,
+            productName: d.product_name,
+            spec: d.product_models,
+            unit: d.product_unit,
+            num: d.num,
+            price: d.product_price,
+            tax: "17%",
+            totalPrice: d.product_price * d.num
+          });
+        }else{
+          let obj = this.formValidate.devices_list.find(item => item.productCode === d.product_code);
+          obj.num += d.num;
+          obj.totalPrice = d.product_price * obj.num;
+        }
       });
     },
     onSubmit(name) {
@@ -750,7 +756,7 @@ export default {
             });
           });
         }
-        let selectAddress = adresses.find(a => a.status === 1);
+        let selectAddress = adresses.find(a => a.status === 1)||adresses[0];
         this.$set(this.formValidate.adress, "index", selectAddress.index);
         this.$set(this.formValidate.adress, "value", selectAddress.value);
       }

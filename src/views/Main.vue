@@ -139,6 +139,7 @@ export default {
       this.messageCount = messageCount.toString();
       this.checkTag(this.$route.name);
       this.$store.commit("setMessageCount", 3);
+      if(Cookies.get('user')) this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
       setInterval(() => {
         if(Cookies.get('user')) this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
       },10000*12)

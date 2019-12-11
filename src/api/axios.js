@@ -110,6 +110,10 @@ const workflow = {
     // 工作台新增
     SETWORKBENCH (params) {
         return axios.post('/public/api/xlworkbench/set', params);
+    },
+    // 报表查询
+    XLREPORT (params) {
+        return axios.post('/public/api/xlreport/query', params);
     }
 
 };

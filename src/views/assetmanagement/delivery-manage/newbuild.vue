@@ -523,22 +523,16 @@ export default {
           this.$http.SETXLASSETS(request).then(response => {
             if(status === 'save'){
               this.$Message.success("保存成功!");
-              this.$router.go(-1);
             }else{
               this.$Message.success("提交成功!");
-              this.$router.go(-1);
-              console.log(1111);
               this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
-              console.log(22222);
             }
           },error => {
             if(error.data.code === 0){
               if(status === 'save'){
                 this.$Message.success("保存成功!");
-                this.$router.go(-1);
               }else{
                 this.$Message.success("提交成功!");
-                this.$router.go(-1);
                 this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
               }
             }
