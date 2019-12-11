@@ -51,7 +51,11 @@ const app = {
         dontCache: ['text-editor', 'artical-publish'], // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
         provinces: [],
         workBenchData: [],
-        showNotice: false
+        showNotice: false,
+        notifyData: {
+            status: false,
+            data: {}
+        }
     },
     mutations: {
         setTagsList (state, list) {
@@ -217,6 +221,9 @@ const app = {
         setWorkBenchData (state, data) {
             state.showNotice = true;
             state.workBenchData = data;
+        },
+        setNotifyData (state, data) {
+            state.notifyData = data;
         }
     },
     actions: {
@@ -232,6 +239,7 @@ const app = {
                 ]
             };
             let _this = payload.this;
+            context.commit('setNotifyData', {status: false, data: []});
             axios.XLWORKBENCH(request).then(response => {
                 let { data } = response.data.result;
                 let updateStatus = false;
@@ -268,7 +276,7 @@ const app = {
                                 if (_this.$route.path !== '/home') {
                                     _this.$router.push({path: '/home', query: {notice: item}});
                                 } else {
-                                    _this.dbgzTableClick({row: item});
+                                    context.commit('setNotifyData', {status: true, data: {row: item}});
                                 }
                             },
                             onClick: function () {

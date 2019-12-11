@@ -1639,7 +1639,7 @@ export default {
         typeid: 29001,
         data: [
           {
-            account_id: this.$store.state.user.accountId
+            account_id: 1111//this.$store.state.user.accountId
           }
         ]
       };
@@ -1667,6 +1667,9 @@ export default {
     this.getManagecompanys();
     this.getReportList();
     this.getReportDetail();
+    this.$on('dbgzTableClick',(data) => {
+      this.dbgzTableClick(data);
+    })
   },
   watch:{
     tabName(){
@@ -1695,6 +1698,9 @@ export default {
     },
     '$store.state.app.workBenchData'(){
       this.getWorkbench();
+    },
+    '$store.state.app.notifyData.status'(nv){
+      if(nv) this.dbgzTableClick(this.$store.state.app.notifyData.data);
     }
   },
   computed:{
