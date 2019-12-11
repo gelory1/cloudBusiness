@@ -271,7 +271,7 @@ export default {
               props: {
                 size: "small",
                 value: params.row.num,
-                min:1
+                min:0
               },
               on: {
                 "on-change": a => {
@@ -747,7 +747,7 @@ export default {
             });
           });
         }
-        let selectAddress = adresses.find(a => a.status === 1);
+        let selectAddress = adresses.find(a => a.status === 1)||adresses[0];
         this.$set(this.formValidate.adress, "index", selectAddress.index);
         this.$set(this.formValidate.adress, "value", selectAddress.value);
       }
