@@ -9,23 +9,35 @@ var Highcharts = require("highcharts");
 require("highcharts/modules/exporting")(Highcharts);
 export default {
   name: "highcharts-ring",
+  props: ['reportData'],
   data() {
     return {};
   },
-  mothods: {},
-  mounted() {
+  methods: {
+    update(){
+      let series = [];
+      this.reportData.report_value.forEach(item => {
+        series.push(
+          {
+            name:item.name,
+            y:item.value,
+            selected: item.name === '已发货'?true:false,
+            sliced: item.name === '已发货'?true:false,
+          }
+        )
+      });
     var chart = Highcharts.chart(
       "container",
       {
         chart: {
-          spacing: [40, 0, 40, 0]
+          // spacing: [40, 0, 40, 0]
         },
         title: {
           floating: true,
-          text: "圆心显示的标题"
+          text: this.reportData.report_name
         },
         tooltip: {
-          pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>"
+          pointFormat: "{series.name}: <b>{point.percentage:.2f}%</b>"
         },
         plotOptions: {
           pie: {
@@ -33,7 +45,7 @@ export default {
             cursor: "pointer",
             dataLabels: {
               enabled: true,
-              format: "<b>{point.name}</b>: {point.percentage:.1f} %",
+              format: "<b>{point.name}</b>: {point.y:.0f}",
               style: {
                 color:
                   (Highcharts.theme && Highcharts.theme.contrastTextColor) ||
@@ -46,7 +58,7 @@ export default {
                   // 鼠标滑过时动态更新标题
                   // 标题更新函数，API 地址：https://api.hcharts.cn/highcharts#Chart.setTitle
                   chart.setTitle({
-                    text: e.target.name + "\t" + e.target.y + " %"
+                    text: e.target.name + "\t" + (e.target.percentage).toFixed(2) + " %"
                   });
                 }
                 //,
@@ -63,21 +75,8 @@ export default {
           {
             type: "pie",
             innerSize: "80%",
-            name: "市场份额",
-            data: [
-              { name: "Firefox", y: 45.0, url: "http://bbs.hcharts.cn" },
-              ["IE", 26.8],
-              {
-                name: "Chrome",
-                y: 12.8,
-                sliced: true,
-                selected: true,
-                url: "http://www.hcharts.cn"
-              },
-              ["Safari", 8.5],
-              ["Opera", 6.2],
-              ["其他", 0.7]
-            ]
+            name: "订单占比",
+            data: series
           }
         ]
       },
@@ -92,9 +91,21 @@ export default {
         });
       }
     );
+    }
+  },
+  mounted() {
+    this.update();
+  },
+  watch:{
+    'reportData.report_id'() {
+      this.update();
+    }
   }
 };
 </script>
 
 <style>
+text.highcharts-credits{
+  display: none
+}
 </style>

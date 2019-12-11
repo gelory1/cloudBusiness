@@ -33,35 +33,32 @@
           <Input class="gz_input" icon="ios-search" v-model="inputVal" placeholder="请输入内容" style="margin-top:6px" @on-enter="getWorkbench" @on-click="getWorkbench"/>
         </div>
         <div class="gz_right right">
-          <div class="left gz_rig bor">
-            <Select v-model="bhlmodel" size="small" clearable filterable style="width:100px">
-                <Option value="by">本月备货量</Option>
-                <Option value="sgy">上个月备货量</Option>
+          <div class="left gz_rig bor" v-show="reportData[1]">
+            <Select v-model="bhlmodel" size="small" clearable filterable @on-change="selectReport(1,$event)">
+                <Option :value="item.report_id" v-for="item in reportData[1]" :key="item.report_id">{{item.report_name}}</Option>
             </Select>
-            <p class="bh_p"><big>3000</big><i> 台</i><span>&#x3000;+<b>10.5%</b></span></p>
+            <p class="bh_p"><big>{{selectReportData.report_value[0]}}</big><i> {{selectReportData.report_value[1]}}</i><span>&#x3000;<b>{{selectReportData.report_value[2]}}</b></span></p>
           </div>
-          <div class="right gz_rig bor">
+          <!-- <div class="right gz_rig bor">
             <Select v-model="kclmodel" size="small" clearable filterable style="width:100px">
                 <Option value="bd">本地库存量</Option>
                 <Option value="ck">仓库库存量</Option>
             </Select>
             <p class="bh_p"><big>3000</big><i> 台</i></p>
-          </div>
+          </div> -->
           <div style="clear: both;">
           </div>
-          <div class="gz_div bor" style="height:330px">
-            <Select v-model="zzmodel" size="small" clearable filterable style="width:150px">
-                <Option value="sy">上月订单追踪</Option>
-                <Option value="sgy">近3个月订单追踪</Option>
+          <div class="gz_div bor" style="height:330px" v-show="reportData[2]">
+            <Select v-model="zzmodel" size="small" clearable filterable style="width:150px"  @on-change="selectReport(2,$event)">
+                <Option :value="item.report_id" v-for="item in reportData[2]" :key="item.report_id">{{item.report_name}}</Option>
             </Select>
-            <highchartsRing></highchartsRing>
+            <highchartsRing :reportData="selectReportData2"></highchartsRing>
           </div>
-          <div class="gz_div bor" style="height:330px">
-            <Select v-model="yxmodel" size="small" clearable filterable style="width:150px">
-                <Option value="ndyx">年度有效用户</Option>
-                <Option value="ndyx1">.....</Option>
+          <div class="gz_div bor" style="height:330px" v-show="reportData[3]">
+            <Select v-model="yxmodel" size="small" clearable filterable style="width:150px" @on-change="selectReport(3,$event)">
+                <Option :value="item.report_id" v-for="item in reportData[3]" :key="item.report_id">{{item.report_name}}</Option>
             </Select>
-            <highchartsLine></highchartsLine>
+            <highchartsLine :reportData="selectReportData3"></highchartsLine>
           </div>
         </div>
       </div>
@@ -877,10 +874,10 @@ export default {
       disabled:true,
       indexStyle:"",
       indexStyle1:"",
-      bhlmodel:"by",
+      bhlmodel:"",
       kclmodel:"bd",
-      zzmodel:"sy",
-      yxmodel:"ndyx",
+      zzmodel:"",
+      yxmodel:"",
       newsShow:true,
       title:"支付提醒",
       content:"ZHHB-FW20190918002合同已签署完毕，请尽快支付。",
@@ -928,7 +925,30 @@ export default {
         orderList: []
       },
       selectedCustom: '全部',
-      orderDataCache: []
+      orderDataCache: [],
+      reportData:{},
+      selectReportData:{
+        report_display:0,
+        report_id:0,
+        report_name:'',
+        report_value: [
+          '',
+          '',
+          '',
+        ],
+      },
+      selectReportData2:{
+        report_display:0,
+        report_id:0,
+        report_name:'',
+        report_value: [],
+      },
+      selectReportData3:{
+        report_display:0,
+        report_id:0,
+        report_name:'',
+        report_value: [],
+      },
     };
   },
   methods: {
@@ -1645,29 +1665,65 @@ export default {
         ]
       };
       this.$http.XLREPORT(request).then(res => {
-
+        let ids = [];
+        res.data.result.data.forEach(data => {
+          data.report.forEach(d => {
+            if(ids.indexOf(d) === -1){
+              ids.push(d.report_id);
+            }
+          })
+        })
+        this.getReportDetail(ids);
       })
     },
-    getReportDetail(){
+    getReportDetail(ids){
       let request = {
-        typeid: 29001,
+        typeid: 29002,
         data: [
           {
             account_id: this.$store.state.user.accountId,
-            report_id: [1,2,3]
+            report_id: ids
           }
         ]
       };
       this.$http.XLREPORT(request).then(res => {
-
+        let { data } = res.data.result;
+        data.forEach(d => {
+          if(!this.reportData[d.report_display]){
+            this.reportData[d.report_display] = [];
+          }
+          this.reportData[d.report_display].push(d);
+        })
+        this.bhlmodel = this.reportData[1][0].report_id;
+        this.selectReport(1,this.bhlmodel);
+        this.zzmodel = this.reportData[2][0].report_id;
+        this.selectReport(2,this.zzmodel);
+        this.yxmodel = this.reportData[3][0].report_id;
+        this.selectReport(3,this.yxmodel);
       })
+    },
+    selectReport(index,val){
+      
+      let obj = this.reportData[index].find(r => r.report_id === val);
+      let data = index === 1?this.selectReportData:index === 2?this.selectReportData2:this.selectReportData3;
+      for(let key in obj){
+        if(typeof(obj[key]) === 'object'&&index === 1){
+          data[key][0] = obj[key][0];
+          data[key][1] = obj[key][1];
+          data[key][2] = obj[key][2];
+        }else if(typeof(obj[key]) === 'object'){
+          data[key] = JSON.parse(JSON.stringify(obj[key]));
+        }else{
+          data[key] = obj[key];
+        }
+      }
+      // this.selectReportData = this.reportData[1].find(r => r.report_id === val);
     }
   },
   mounted() {
     this.getWorkbench();
     this.getManagecompanys();
     this.getReportList();
-    this.getReportDetail();
     this.$on('dbgzTableClick',(data) => {
       this.dbgzTableClick(data);
     })
