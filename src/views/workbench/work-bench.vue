@@ -1026,7 +1026,7 @@ export default {
           this.checkedData = [item]; //暂时只能一条一条支付
           this.checkIndex = this.checkedData.length;
         }
-        this.parse(this.$store.state.app.workBenchData,false);
+        this.parse(this.$store.state.app.workBenchData,1);
         this.noticeStatus = false;
         return;
       }
@@ -1041,42 +1041,38 @@ export default {
           ]
       }
       this.loading = true;
-      if(this.tabName === 'name1')  this.gz_data = [];
-      if(this.tabName === 'name3')  this.fq_data = [];
-      if(this.tabName === 'name2')  this.yb_data = [];
-      if(this.tabName === 'name1'&&this.$store.state.app.workBenchData.length>0&&this.inputVal === ''){
-        this.parse(this.$store.state.app.workBenchData,false);
+      if(request.data[0].workBenchStatus === 1&&this.$store.state.app.workBenchData.length>0&&this.inputVal === ''){
+        this.parse(this.$store.state.app.workBenchData,request.data[0].workBenchStatus);
         return;
       }
-      if(this.tabName === 'name1') this.$notify.closeAll();
       this.$http.XLWORKBENCH(request).then(response => {
         let { data } = response.data.result;
-        this.parse(data,true);
+        this.parse(data,request.data[0].workBenchStatus);
       },error=>{
         this.loading = false;
       })
     },
     parse(data,status){
-      if(this.tabName === 'name1')  this.gz_data = [];
-      if(this.tabName === 'name3')  this.fq_data = [];
-      if(this.tabName === 'name2')  this.yb_data = [];
+      if(status === 1)  this.gz_data = [];
+      if(status === 2)  this.fq_data = [];
+      if(status === 3)  this.yb_data = [];
       data.forEach((d,i) => {
           let item = {};
           switch (d.workBenchType) {
             case 1:
-              item.gznr = this.tabName === 'name1'?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，您有一个待审批的工作`;
+              item.gznr = status === 1?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，您有一个待审批的工作`;
               break;
             case 10:
-              item.gznr = this.tabName === 'name1'?`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
+              item.gznr = status === 1?`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 4:
-              item.gznr = this.tabName === 'name1'?`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
+              item.gznr = status === 1?`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 3:
-              item.gznr = this.tabName === 'name1'?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
+              item.gznr = status === 1?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
               break;
             case 12:
-              item.gznr = this.tabName === 'name1'?`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`:`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。`;
+              item.gznr = status === 1?`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`:`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。`;
               break;
           }
           item.type = this.typeMap[d.workBenchType];
@@ -1087,99 +1083,18 @@ export default {
           item.zt = d.workBenchStatus;
           item.index = i+1;
           item.data = d;
-          if(this.tabName === 'name1'){
+          if(status === 1){
             this.gz_data.push(item);
-          }else if(this.tabName === 'name3'){
+          }else if(status === 3){
             this.fq_data.push(item);
           }else{
             this.yb_data.push(item);
           }
         });
-        if(this.gz_data&&this.gz_data.length>0&&this.inputVal === ''&&this.tabName === 'name1'){
+        if(this.gz_data&&this.gz_data.length>0&&this.inputVal === ''&&status === 1){
           this.$store.commit('setWorkBenchData',data);
         }
-        if(status) this.showNotice();
         this.loading = false;
-    },
-    showNotice(){
-      if(this.gz_data&&this.gz_data.length > 0){
-        
-          this.gz_data.forEach((d,i) => {
-            var _this = this;
-            let message = '';
-            switch (d.data.workBenchType) {
-              case 1:
-                message = `审批提醒，您有一个待审批的工作，点击直接处理`;
-                break;
-              case 10:
-                message = `回款待核准，金额：${d.data.workBenchContentObj.payAmount}(付款方：${d.data.workBenchContentObj.payUnitName})，点击直接处理`;
-                break;
-              case 4:
-                message = `到账待确认，金额：${d.data.workBenchContentObj.payAmount}(付款方：${d.data.workBenchContentObj.payUnitName})，点击直接处理`;
-                break;
-              case 3:
-                message = `${d.data.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
-                break;
-              case 12:
-                message = `发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`;
-              break;
-            }
-            // if(this.gz_data.length >= 6){
-            //   this.$notify({
-            //     title: this.typeMap[d.data.workBenchType],
-            //     message: message,
-            //     offset: 100,
-            //     duration: 60000,
-            //     openData: () => {
-            //       this.$notify.close();
-            //       let item = {
-            //         data:d.data
-            //       }
-            //       if(this.$route.path !== '/home'){
-            //         this.$router.push({path:'/home',query:{notice:item}});
-            //       }
-            //       this.dbgzTableClick({row:item});
-            //       if(item.data.workBenchType === 3){
-            //         // this.gzselClick([item]);
-            //         this.checkedData = [item]; //暂时只能一条一条支付
-            //         this.checkIndex = this.checkedData.length;
-            //       }
-            //     },
-            //     onClick:function() {
-            //       this.close();
-            //       this.openData();
-            //     }
-            //   });
-            // }else{
-            //   setTimeout(() => {
-            //     this.$notify({
-            //       title:this.typeMap[d.data.workBenchType],
-            //       message:message,
-            //       offset: 100,
-            //       duration: 60000,
-            //       openData: () => {
-            //         let item = {
-            //           data:d.data
-            //         }
-            //         if(this.$route.path !== '/home'){
-            //           this.$router.push({path:'/home',query:{notice:item}});
-            //         }
-            //         this.dbgzTableClick({row:item});
-            //         if(item.data.workBenchType === 3){
-            //           // this.gzselClick([item]);
-            //           this.checkedData = [item]; //暂时只能一条一条支付
-            //           this.checkIndex = this.checkedData.length;
-            //         }
-            //       },
-            //       onClick:function() {
-            //         this.close();
-            //         this.openData();
-            //       }
-            //     })
-            //   }, 0);
-            // }
-          })
-      }
     },
     getRebackAppr(p){
       let request = {
