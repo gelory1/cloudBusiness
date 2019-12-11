@@ -1015,9 +1015,9 @@ export default {
           ]
       }
       this.loading = true;
-      this.gz_data = [];
-      this.fq_data = [];
-      this.yb_data = [];
+      if(this.tabName === 'name1')  this.gz_data = [];
+      if(this.tabName === 'name2')  this.fq_data = [];
+      if(this.tabName === 'name3')  this.yb_data = [];
       if(this.tabName === 'name1'&&this.$store.state.app.workBenchData.length>0&&this.inputVal === ''){
         this.parse(this.$store.state.app.workBenchData,false);
         return;
@@ -1066,7 +1066,7 @@ export default {
             this.yb_data.push(item);
           }
         });
-        if(this.gz_data&&this.gz_data.length>0&&this.inputVal === ''){
+        if(this.gz_data&&this.gz_data.length>0&&this.inputVal === ''&&this.tabName === 'name1'){
           this.$store.commit('setWorkBenchData',data);
         }
         if(status) this.showNotice();
@@ -1275,6 +1275,8 @@ export default {
           return;
         }
       }
+      let newDate = new Date(this.workBenchData.workBenchContentObj.payTime);
+      let date = newDate.getFullYear() + '-' + (Number(newDate.getMonth())+1) + '-' + newDate.getDay();
       let request = {
         "typeid": 26004,
         "data": [
@@ -1282,7 +1284,7 @@ export default {
             "account_id": this.$store.state.user.accountId,
             "contractNo": this.hz1_data[this.indexStyle].htbh,
             "paybackAmount": (parseFloat(this.workBenchData.workBenchContentObj.payAmount)||0).toFixed(2),
-            "paybackTime": this.workBenchData.workBenchContentObj.payTime,
+            "paybackTime": date,
             "workbenchId": this.workBenchData.workbenchId,
             "paymentId": this.hz2_data[this.indexStyle1]
           }
@@ -1292,6 +1294,10 @@ export default {
         this.hkhzmodal = false;
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
         this.$Message.success('成功！');
+      },error => {
+        if(error.data.code !== 0){
+          this.$Message.error('核入失败，请稍后重试，或联系管理员！');
+        }
       })
     },
     newgzClick() {
@@ -1498,8 +1504,10 @@ export default {
       this.file2Xce(file).then(tabJson => {
         if (tabJson && tabJson.length > 0) {
           tabJson[0].sheet.forEach((d) => {
+            let newDate = new Date(d.到款时间);
+            let date = newDate.getFullYear() + '-' + (Number(newDate.getMonth())+1) + '-' + newDate.getDay();
             this.addStore.push({
-              dksj:d.到款时间,
+              dksj:date,
               je:d.金额,
               fkf:d.付款方,
             })
@@ -1625,11 +1633,25 @@ export default {
       }
       this.$refs['cktable'].objData[0]._isHighlight = true;
       this.currentRow = this.orderData[0];
+    },
+    getReportList(){
+      let request = {
+        typeid: 29001,
+        data: [
+          {
+            account_id: this.$store.state.user.accountId
+          }
+        ]
+      };
+      this.$http.XLREPORT(request).then(res => {
+
+      })
     }
   },
   mounted() {
     this.getWorkbench();
     this.getManagecompanys();
+    this.getReportList();
   },
   watch:{
     tabName(){

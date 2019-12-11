@@ -531,16 +531,22 @@ export default {
         data = data.concat(this.addData[key]);
       }
       data.forEach(d => {
-        this.formValidate.devices_list.push({
-          productCode: d.product_code,
-          productName: d.product_name,
-          spec: d.product_models,
-          unit: d.product_unit,
-          num: d.num,
-          price: d.product_price,
-          tax: "17%",
-          totalPrice: d.product_price * d.num
-        });
+        if(!this.formValidate.devices_list.find(item => item.productCode === d.product_code)){
+          this.formValidate.devices_list.push({
+            productCode: d.product_code,
+            productName: d.product_name,
+            spec: d.product_models,
+            unit: d.product_unit,
+            num: d.num,
+            price: d.product_price,
+            tax: "17%",
+            totalPrice: d.product_price * d.num
+          });
+        }else{
+          let obj = this.formValidate.devices_list.find(item => item.productCode === d.product_code);
+          obj.num += d.num;
+          obj.totalPrice = d.product_price * obj.num;
+        }
       });
     },
     onSubmit(name) {
