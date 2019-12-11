@@ -39,13 +39,13 @@
             </Select>
             <p class="bh_p"><big>{{selectReportData.report_value[0]}}</big><i> {{selectReportData.report_value[1]}}</i><span>&#x3000;<b>{{selectReportData.report_value[2]}}</b></span></p>
           </div>
-          <!-- <div class="right gz_rig bor">
-            <Select v-model="kclmodel" size="small" clearable filterable style="width:100px">
+          <div class="right gz_rig bor">
+            <!-- <Select v-model="kclmodel" size="small" clearable filterable style="width:100px">
                 <Option value="bd">本地库存量</Option>
                 <Option value="ck">仓库库存量</Option>
             </Select>
-            <p class="bh_p"><big>3000</big><i> 台</i></p>
-          </div> -->
+            <p class="bh_p"><big>3000</big><i> 台</i></p> -->
+          </div>
           <div style="clear: both;">
           </div>
           <div class="gz_div bor" style="height:330px" v-show="reportData[2]">
@@ -55,10 +55,12 @@
             <highchartsRing :reportData="selectReportData2"></highchartsRing>
           </div>
           <div class="gz_div bor" style="height:330px" v-show="reportData[3]">
+            <div style="margin-bottom:20px;">
             <Select v-model="yxmodel" size="small" clearable filterable style="width:150px" @on-change="selectReport(3,$event)">
                 <Option :value="item.report_id" v-for="item in reportData[3]" :key="item.report_id">{{item.report_name}}</Option>
             </Select>
-            <highchartsLine :reportData="selectReportData3"></highchartsLine>
+            </div>
+            <highchartsLine :reportData="selectReportData3" style="width:100%;"></highchartsLine>
           </div>
         </div>
       </div>

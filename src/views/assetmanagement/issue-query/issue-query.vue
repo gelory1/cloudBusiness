@@ -186,7 +186,7 @@
           </div>
           <div>
             <span class="jbleft">收货地址：</span>
-            <span class="jbright wid">{{djxx.adress}}</span>
+            <span class="jbright wid">{{djxx.address}}</span>
           </div>
         </div>
         <div style="clear:both;padding-top:10px;">
@@ -284,10 +284,6 @@
           <div>
             <span class="jbleft">审核时间：</span>
             <span class="jbright wid">{{djxx.shsj}}</span>
-          </div>
-          <div>
-            <span class="jbleft">收货地址：</span>
-            <span class="jbright wid">{{djxx.adress}}</span>
           </div>
         </div>
         <div style="clear:both;padding-top:10px;">
@@ -484,7 +480,7 @@ export default {
                         shsj: params.row.data.auditor_time,
                         zt: params.row.zt,
                         allocation_id: params.row.data.allocation_id,
-                        adress: params.row.data.adress,
+                        adress: params.row.data.delivery_address,
                       };
                       this.selectedWhid = params.row.data.wh_id;
                       this.indevice_data1 = [];

@@ -886,7 +886,18 @@ export default {
   },
   mounted() {
     this.selectClick(0);
-    this.tableHeight = document.body.scrollHeight-300
+    this.tableHeight = document.body.scrollHeight-300;
+    
+    $(document).mouseup(function (e) {
+    var _con1 = $('.more')
+    var _con = $('.gl');
+    if (!_con.is(e.target) && _con.has(e.target).length === 0) {
+        $('.gl').hide()
+    };
+    if (!_con1.is(e.target) && _con1.has(e.target).length === 0) {
+        $('.more').hide()
+    };
+    })
   },
   computed: {
     scrollHeight(){

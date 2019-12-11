@@ -337,7 +337,8 @@ const businessMap = {
 };
 const saleMap = {
   0: '直销',
-  1: '渠道'
+  1: '渠道',
+  2: '其他'
 };
 const statusMap = {
   0:'审批中',1: '待支付',2:'已下单',3:'已发货',4:'已到货',5:'被驳回'
@@ -436,11 +437,11 @@ const salesTypes = [
   },
   {
     val:'直销',
-    index:2
+    index:0
   },
   {
     val:'其他',
-    index:3
+    index:2
   },
 ]
 
@@ -615,7 +616,6 @@ export default {
       this.getOrderDetail(o);
     },
     getOrderList(p){
-      debugger;
       this.order_data[this.selectedTab.index] = [];
       this.loading = true;
       const param = {
