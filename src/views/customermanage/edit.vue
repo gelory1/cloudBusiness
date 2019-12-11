@@ -21,8 +21,9 @@
             </Col>
           </Row>
           <Row>
-            <Col span="6">
-              <FormItem label="客户性质" prop="nature" :label-width="90">
+            <Col span="6"  style="position:relative">
+            <span style="color:red;position:absolute;left:20px;top:8px;">*</span>
+              <FormItem label="客户性质" prop="nature" :label-width="90">  
                 <Select v-model="formValidate.nature.index" placeholder clearable filterable>
                   <Option
                     v-for="(item,index) in natures"
@@ -484,6 +485,7 @@ export default {
     const validatePhone = (rule, value, callback) => {
       if (this.formAddlxr.phone !== "" || this.formAddkpxx.phone) {
         var expression = /^1(3|4|5|7|8)\d{9}$/;
+        // var zj = /^(\d{3,4}-)\d{7,8}/;
         if (expression.test(value) == false) {
           callback(new Error("请输入正确的电话号码"));
         }
@@ -592,7 +594,7 @@ export default {
             message: "请输入协议编号",
             trigger: "blur"
           }
-        ]
+        ],
       },
       addlxr_columns: [
         {

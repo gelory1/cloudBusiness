@@ -116,6 +116,7 @@
                           placement="bottom"
                           placeholder="结束日期"
                           v-model="filterItem.signEndtime"
+                          @on-change="changeTime"
                         ></DatePicker>
                       </Col>
                     </Row>
@@ -485,7 +486,7 @@ export default {
         signStarttime: "",
         signEndtime: "",
         dueStarttime: "",
-        dueEndtime: "",
+        dueEndtime: ""
       },
       khmch: [
         {
@@ -504,7 +505,7 @@ export default {
       tooptipShow: false,
       glShow: false,
       moreShow: false,
-      disabled:true,
+      disabled: true,
       butZT: "XXX",
       selectedStatus: contractStatus[0],
       sum: 0,
@@ -522,6 +523,15 @@ export default {
     };
   },
   methods: {
+    changeTime(){
+      if (
+        new Date(this.filterItem.signStarttime).getTime() <
+        new Date(this.filterItem.signEndtime).getTime()
+      ) {
+        this.$message.error("结束时间不能小于开始时间");
+        return false;
+      }
+    },
     contractClick(side) {
       if (side === "inside") {
         this.tooptipShow = !this.tooptipShow;
@@ -535,10 +545,10 @@ export default {
       this.pageNum = 1;
       this.getContracts(1);
     },
-    openDetail(data){
-      this.$store.commit('selectedContract',JSON.parse(JSON.stringify(data)));
-      localStorage.setItem('contractInfo',JSON.stringify(data));
-      this.$router.push({ path: "/contractmanage/detail"});
+    openDetail(data) {
+      this.$store.commit("selectedContract", JSON.parse(JSON.stringify(data)));
+      localStorage.setItem("contractInfo", JSON.stringify(data));
+      this.$router.push({ path: "/contractmanage/detail" });
     },
     handleSubmitht(name) {
       let status = true;
@@ -667,8 +677,8 @@ export default {
       this.contract_data = [];
       this.loading = true;
       this.$http.XLCONTRACT(request).then(
-        response => {   
-          console.log(response)
+        response => {
+          console.log(response);
           let { data } = response.data.result;
           this.sum = data.sum;
           data.contractList.forEach(con => {
@@ -681,10 +691,13 @@ export default {
             item.archiveTime = con.archiveTime;
             item.dueTime = con.dueTime;
             item.customerName =
-              (con.customerName||'') +
+              (con.customerName || "") +
               "-" +
               this.contractContentMap[con.contractContent];
-            item.city = (con.customerProvince_cn||'--') + " " + (con.customerCity_cn||'--');
+            item.city =
+              (con.customerProvince_cn || "--") +
+              " " +
+              (con.customerCity_cn || "--");
             item.saleType = this.salesTypeMap[con.saleType];
             item.saleName = con.saleManName;
             item.manageCompany = con.manageCompanyName;
@@ -745,11 +758,11 @@ export default {
   watch: {
     "filterItem.province": function(nv) {
       if (nv !== 0 && nv !== "") this.getCitys();
-      if(this.filterItem.province == ''){
-        this.filterItem.city = ''
-        this.disabled = true
-      }else{
-        this.disabled = false
+      if (this.filterItem.province == "") {
+        this.filterItem.city = "";
+        this.disabled = true;
+      } else {
+        this.disabled = false;
       }
     }
   }
