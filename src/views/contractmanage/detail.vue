@@ -635,7 +635,7 @@ export default {
           ) {
             this.data.data.paybackList.forEach((b, i) => {
               allAmount += Number(b.paybackAmount);
-              if (allAmount >= backAmount && payIndex === "") {
+              if (allAmount > backAmount && payIndex === "") {
                 payIndex = i;
                 computeAmountStart =
                   allAmount - backAmount - item.paymentAmount > 0

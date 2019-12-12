@@ -1708,7 +1708,15 @@ export default {
       this.getWorkbench();
     },
     '$store.state.app.notifyData.status'(nv){
-      if(nv) this.dbgzTableClick(this.$store.state.app.notifyData.data);
+      if(nv) {
+        let item = ((this.$store.state.app.notifyData||{}).data||{}).row||{};
+        if(item.data.workBenchType === 3&&this.checkedData.length === 0){
+          // this.gzselClick([item]);
+          this.checkedData = [item]; //暂时只能一条一条支付
+          this.checkIndex = this.checkedData.length;
+        }
+        this.dbgzTableClick(this.$store.state.app.notifyData.data);
+      }
     }
   },
   computed:{
