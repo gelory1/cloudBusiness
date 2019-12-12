@@ -151,11 +151,11 @@
         <div style="line-height:40px;width:50%;float:right">
           <div>
             <span class="jbleft">合同编号：</span>
-            <span class="jbright">{{selectedOrder.contractNo}}</span>
+            <span class="jbright">{{selectedOrder.contractNO}}</span>
           </div>
           <div>
             <span class="jbleft">合同主体：</span>
-            <span class="jbright">{{subjectName[(selectedOrder.data||{}).contract_subject]}}</span>
+            <span class="jbright">{{subjectName[selectedOrder.contract_subject]}}</span>
           </div>
           <div>
             <span class="jbleft">设备数量：</span>
@@ -175,10 +175,10 @@
           <TabPane label="全部" name="name1">
             <Table :columns="device_columns" :data="device_data" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
           </TabPane>
-          <TabPane :label="`已到货（${(selectedOrder.data||{}).issued_count}）`" name="name2">
+          <TabPane :label="`已到货（${(selectedOrder.data||{}).issued_count||0}）`" name="name2">
             <Table :columns="device_columns" :data="device_data1" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
           </TabPane>
-          <TabPane :label="`待发货（${selectedOrder.count - (selectedOrder.data||{}).issued_count}）`" name='name3'>
+          <TabPane :label="`待发货（${selectedOrder.count - (selectedOrder.data||{}).issued_count||0}）`" name='name3'>
             <Table :columns="device_columns" :data="device_data2" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
           </TabPane>
         </Tabs>
@@ -651,6 +651,7 @@ export default {
           item.salesType = this.saleMap[data.sale_type];
           item.customName = data.customer_name;
           item.contractNO = data.contract_no;
+          item.contract_subject = data.contract_subject;
           item.count = data.product_count;
           item.status = this.statusMap[data.order_status];
           item.cellClassName = {
@@ -707,6 +708,7 @@ export default {
         this.selectedOrder.salesType = this.saleMap[data.sale_type];
         this.selectedOrder.customName = data.customer_name;
         this.selectedOrder.contractNO = data.contract_no;
+        this.selectedOrder.contract_subject = data.contract_subject;
         this.selectedOrder.count = data.product_count;
         this.selectedOrder.status = this.statusMap[data.order_status];
         this.selectedOrder.cellClassName = {

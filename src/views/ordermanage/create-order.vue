@@ -50,7 +50,7 @@
           <Col span="16">
             <FormItem label="收货地址" prop="adress" :label-width="90">
               <Select v-model="formValidate.adress.index" placeholder filterable clearable>
-                <Option v-for="(item) in adresses" :value="item.index" :key="item.index">
+                <Option v-for="(item) in adresses" :value="(item||{}).index" :key="(item||{}).index">
                   <span
                     v-if="item.status === 1"
                     :style="{color: formValidate.adress.index === item.index?'white':'#3896f5'}"

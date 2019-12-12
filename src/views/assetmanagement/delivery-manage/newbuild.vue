@@ -22,7 +22,7 @@
           <Col span="7">
             <FormItem label="批次要求" prop="pcyq">
               <Select v-model="formValidate.pcyq" placeholder clearable filterable>
-                <Option value="one">one</Option>
+                <Option :value="item" v-for="item in times" :key="item">{{item}}</Option>
               </Select>
             </FormItem>
           </Col>
@@ -30,7 +30,7 @@
           <Col span="6">
             <FormItem prop="pcyq1" :label-width="1">
               <Select v-model="formValidate.pcyq1" placeholder clearable filterable>
-                <Option value="one">one</Option>
+                <Option :value="item" v-for="item in times" :key="item">{{item}}</Option>
               </Select>
             </FormItem>
           </Col>
@@ -477,6 +477,7 @@ export default {
       addAllData: [],
       selectionData:{},
       customShow:false,
+      times: []
     };
   },
   methods: {
@@ -509,8 +510,8 @@ export default {
               {
                 "shipments_time": this.formValidate.fhsj,
                 "shipments_describe": this.formValidate.desc,
-                // "shipments_start_batch": "",
-                // "shipments_end_batch": "",
+                "shipments_start_batch": this.formValidate.pcyq,
+                "shipments_end_batch": this.formValidate.pcyq1,
                 "shipments_creator": this.$store.state.user.accountId,
                 "product_list": list,
                 'shipments_status':status === 'save'?0:1,
@@ -721,6 +722,8 @@ export default {
         let { data } = response.data.result;
         this.formValidate.fhsj = data[0].shipments_time;
         this.formValidate.desc = data[0].shipments_describe;
+        this.formValidate.pcyq = data[0].shipments_start_batch;
+        this.formValidate.pcyq1 = data[0].shipments_end_batch;
         data[0].product_list.forEach(p =>{
           let item = {};
           item.ddbh = p.order_no;
@@ -743,13 +746,24 @@ export default {
         })
         
       })
+    },
+    getTimes(){
+      let request = {
+        typeid:27011
+      };
+      this.times = [];
+      this.$http.XLSELECT(request).then(response => {
+        this.times = response.data.result.data[0].patchList;
+        if(this.isEdit){
+          this.editInit();
+        }
+      })
     }
   },
   mounted(){
-    if(this.isEdit){
-      this.editInit();
-    }
+    
     this.getOrderList(1);
+    this.getTimes();
   },
   computed:{
     outcksb_data(){
