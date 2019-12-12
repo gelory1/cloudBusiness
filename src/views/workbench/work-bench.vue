@@ -692,7 +692,6 @@ export default {
                           this.addStore[params.index].je = value;
                         },
                         //  'on-keyup':()=>{
-                        //    debugger
                         //   //  alert(this.newgzForm.add_data.je)
                         //    alert(value)
                         //    this.addStore[params.index].je = this.addStore[params.index].je.replace(/[^\d]/g, '')

@@ -55,7 +55,6 @@ util.getRouterObjByName = function (routers, name) {
     if (!name || !routers || !routers.length) {
         return null;
     }
-    // debugger;
     let routerObj = null;
     for (let item of routers) {
         if (item.name === name) {
