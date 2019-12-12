@@ -775,13 +775,13 @@ export default {
               d.product_list.forEach(p => {
                 if(data.find(o => o.product_code === p.product_code)){
                   let index = data.findIndex(o => o.product_code === p.product_code);
-                  data[index].product_quantity += (p.product_quantity - p.issued_count)||p.quantity_shipped;
+                  data[index].product_quantity += (p.product_quantity - p.issued_count)||p.quantity_shipped||0;
                   (data[index].ids||[]).push(d.data.order_id);
                 }else{
                   let item = JSON.parse(JSON.stringify(p))||{};
                   item.ids = [];
                   item.ids.push(d.data.order_id);
-                  item.product_quantity = (item.product_quantity - item.issued_count)||p.quantity_shipped;
+                  item.product_quantity = (item.product_quantity - item.issued_count)||p.quantity_shipped||0;
                   data.push(item);
                 }
               })
@@ -791,7 +791,7 @@ export default {
         }else{
           data = JSON.parse(JSON.stringify((this.outcksb_data1.find( d => d.ddbh === this.currentRow.ddbh)||{}).product_list||[]));
           data.forEach(d => {
-            d.product_quantity = (d.product_quantity - d.issued_count)||d.quantity_shipped;
+            d.product_quantity = (d.product_quantity - d.issued_count)||d.quantity_shipped||0;
           })
         }
       }
@@ -814,7 +814,7 @@ export default {
         this.outcksb_data1.forEach(o => {
           if(o.ddbh!=='汇总'&&o.product_list){
             o.product_list.forEach(p => {
-              num += (p.product_quantity - p.issued_count)||p.quantity_shipped;
+              num += (p.product_quantity - p.issued_count)||p.quantity_shipped||0;
             })
           }
         })
