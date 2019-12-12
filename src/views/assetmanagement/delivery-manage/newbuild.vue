@@ -7,7 +7,12 @@
           <Input :value="$store.state.user.accountName" placeholder disabled style="width:325px;" />
         </FormItem>
         <FormItem label="要求发货时间" prop="fhsj">
-          <DatePicker type="date" placeholder v-model="formValidate.fhsj" style="width:300px;margin-right:10px"></DatePicker>之前
+          <DatePicker
+            type="date"
+            placeholder
+            v-model="formValidate.fhsj"
+            style="width:300px;margin-right:10px"
+          ></DatePicker>之前
         </FormItem>
         <FormItem label="方案描述" prop="desc">
           <Input
@@ -72,20 +77,34 @@
                 </p>-->
                 <!--  <p style="margin-left:10px;border-bottom:0.7px solid #e4e7ed">共<span>{{count}}</span>家客户（可筛选查看）</p> -->
                 <div style="display:flex">
-                  <div style="flex:1;" >
-                    <Dropdown trigger="click" placement="top" transfer @on-click="changeOrder" v-show="customShow">
-                        {{selectedCustom === '全部'?`共${customList.length-1}家客户（可筛选查看）`:selectedCustom}}
-                    <Icon type="arrow-down-b"></Icon>
-                    <DropdownMenu slot="list">
-                      <DropdownItem v-for="item in customList" :value="item" v-model="selectedCustom" :key="item" :name="item">{{item}}</DropdownItem>
+                  <div style="flex:1;">
+                    <Dropdown
+                      trigger="click"
+                      placement="bottom"
+                      transfer
+                      @on-click="changeOrder"
+                      v-show="customShow"
+                    >
+                      {{selectedCustom === '全部'?`共${customList.length-1}家客户（可筛选查看）`:selectedCustom}}
+                      <Icon type="arrow-down-b"></Icon>
+                      <DropdownMenu slot="list">
+                        <DropdownItem
+                          v-for="item in customList"
+                          :value="item"
+                          v-model="selectedCustom"
+                          :key="item"
+                          :name="item"
+                        >{{item}}</DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
                   </div>
                   <div style="margin:0px 40px;">
-                    订单数<span>{{outcksb_data1.length - 1}}</span>个
+                    订单数
+                    <span>{{outcksb_data1.length - 1}}</span>个
                   </div>
                   <div style="margin:0px 40px;">
-                    设备数<span>{{toatalQuantity}}</span>台
+                    设备数
+                    <span>{{toatalQuantity}}</span>台
                   </div>
                 </div>
                 <Table
@@ -99,7 +118,7 @@
             </div>
           </div>
         </content>
-        <FormItem  class="form_b">
+        <FormItem class="form_b">
           <Button type="primary" @click="handleSubmit('formValidate','save')">保存</Button>
           <Button type="primary" @click="handleSubmit('formValidate')" style="margin-left: 20px">提交</Button>
           <Button type="ghost" style="margin-left: 20px" @click="cancleSubmit()">取消</Button>
@@ -107,14 +126,33 @@
       </Form>
     </Layout>
     <!-- 调整弹框 -->
-    <Modal v-model="tzmodal" width="900" class="hz1" @on-cancel="changeCountCancel" :mask-closable="false" :closable="false">
+    <Modal
+      v-model="tzmodal"
+      width="900"
+      class="hz1"
+      @on-cancel="changeCountCancel"
+      :mask-closable="false"
+      :closable="false"
+    >
       <p class="tz_p">调整发货</p>
       <p class="tz_p1">
         对涉及型号为
         <span style="color:#4a9af5">{{changeRowData.currentData.product_code}}</span>的订单进行发货调整
       </p>
-      <Input icon="ios-search" placeholder="请输入内容" class="right tz_in" v-model="changeCountInput" @on-enter="changeCount(changeRowData.currentData)" @on-click="changeCount(changeRowData.currentData)"/>
-      <Table :columns="tz_columns" :data="tz_data" :row-class-name="rowClassName" style="clear:both;margin-left:10px;"></Table>
+      <Input
+        icon="ios-search"
+        placeholder="请输入内容"
+        class="right tz_in"
+        v-model="changeCountInput"
+        @on-enter="changeCount(changeRowData.currentData)"
+        @on-click="changeCount(changeRowData.currentData)"
+      />
+      <Table
+        :columns="tz_columns"
+        :data="tz_data"
+        :row-class-name="rowClassName"
+        style="clear:both;margin-left:10px;"
+      ></Table>
       <div class="tz_i">
         <p class="left" style="color:#e6a23c">
           <Icon type="information-circled" class="tz_ic"></Icon>调整订单中指定规格型号的发货数量直至发货设备总数量变为
@@ -123,7 +161,9 @@
         <p class="tz_ic1 right">
           <span>
             发货设备数
-            <b :style="{color:(changeRowData.currentData.product_quantity -changeRowData.currentData.repertory>0)? 'red':'#6fd000'}">{{changeRowData.currentData.product_quantity}}</b>台
+            <b
+              :style="{color:(changeRowData.currentData.product_quantity -changeRowData.currentData.repertory>0)? 'red':'#6fd000'}"
+            >{{changeRowData.currentData.product_quantity}}</b>台
           </span>
           <br />
           <span>
@@ -141,8 +181,20 @@
         <span style="color:#4a9af5">已下单</span>或
         <span style="color:#4a9af5">部分到货</span>的订单到发货方案中
       </p>
-      <Input icon="ios-search" placeholder="请输入内容" class="right tz_in" v-model="addOrderInput" @on-enter="getOrderList(1)" @on-click="getOrderList(1)"/>
-      <Table :columns="dd_columns" :data="dd_data" @on-selection-change="changeSelect" style="clear:both;margin-left:10px;"></Table>
+      <Input
+        icon="ios-search"
+        placeholder="请输入内容"
+        class="right tz_in"
+        v-model="addOrderInput"
+        @on-enter="getOrderList(1)"
+        @on-click="getOrderList(1)"
+      />
+      <Table
+        :columns="dd_columns"
+        :data="dd_data"
+        @on-selection-change="changeSelect"
+        style="clear:both;margin-left:10px;"
+      ></Table>
       <Page
         :current.sync="pageNum"
         :total="sum"
@@ -160,16 +212,16 @@
 import silderInput from "../../public-components/silder-input.vue";
 
 const levelMap = {
-  1: 'A级', 
-  2: 'B级',
-  3: 'C级',
-  4: 'D级',
-  5: 'E级',
-}
+  1: "A级",
+  2: "B级",
+  3: "C级",
+  4: "D级",
+  5: "E级"
+};
 const orderMap = {
-  0: '合同订单', 
-  1: '备货订单'
-}
+  0: "合同订单",
+  1: "备货订单"
+};
 export default {
   name: "newbuild",
   components: {
@@ -184,26 +236,26 @@ export default {
         pcyq: "",
         pcyq1: ""
       },
-      pageNum:1,
-      sum:0,
+      pageNum: 1,
+      sum: 0,
       levelMap,
       orderMap,
-      currentRow:{},
+      currentRow: {},
       changeRowData: {
         data: {},
         currentData: {}
       },
       changeOkData: {},
-      selectOrder:'汇总',
-      addOrderInput: '',
-      changeCountInput: '',
-      selectedCustom: '全部',
+      selectOrder: "汇总",
+      addOrderInput: "",
+      changeCountInput: "",
+      selectedCustom: "全部",
       orderDataCache: {},
       cksb_columns1: [
         {
           title: "订单编号",
           key: "ddbh",
-          align:"left",
+          align: "left",
           render: (h, params) => {
             return h("div", [
               h("Icon", {
@@ -241,12 +293,14 @@ export default {
                   },
                   on: {
                     click: () => {
-                      if(params.row.ddbh === '汇总') return;
+                      if (params.row.ddbh === "汇总") return;
                       var _self = this;
                       _self.remove(params.index);
                     }
                   }
-                },params.row.ddbh !== '汇总'?"X":'')
+                },
+                params.row.ddbh !== "汇总" ? "X" : ""
+              )
             ]);
           }
         }
@@ -270,7 +324,20 @@ export default {
         {
           title: "计量单位",
           key: "product_unit",
-          align: "center"
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "text",
+                  }
+                },
+                "台"
+              )
+            ]);
+          }
         },
         {
           title: "数量",
@@ -278,16 +345,29 @@ export default {
           align: "center",
           render: (h, params) => {
             return h("div", [
-              h('span', {
-                style:{
-                  color: (params.row.product_quantity - params.row.repertory>0)?'red':'#495060'
-                }
-              },(params.row.product_quantity)),
-              h('span', {
-                style:{
-                  color: 'red'
-                }
-              },(params.row.product_quantity - params.row.repertory>0)?`（库存：${params.row.repertory}）`:''),
+              h(
+                "span",
+                {
+                  style: {
+                    color:
+                      params.row.product_quantity - params.row.repertory > 0
+                        ? "red"
+                        : "#495060"
+                  }
+                },
+                params.row.product_quantity
+              ),
+              h(
+                "span",
+                {
+                  style: {
+                    color: "red"
+                  }
+                },
+                params.row.product_quantity - params.row.repertory > 0
+                  ? `（库存：${params.row.repertory}）`
+                  : ""
+              )
             ]);
           }
         },
@@ -319,7 +399,7 @@ export default {
       ],
       outcksb_data1: [
         {
-          ddbh: '汇总',
+          ddbh: "汇总"
         }
       ],
       tz_columns: [
@@ -367,36 +447,54 @@ export default {
           width: 150,
           sortable: true,
           render: (h, params) => {
-            return h(
-              "InputNumber",
-              {
-                props: {
-                  size: "small",
-                  value: params.row.sbsl,
-                  min: 0,
-                  max: params.row.sbsl
-                },
-                on: {
-                    'on-change': a => {
-                        let product_code = params.row.data.product_list[0].product_code;
-                        let order_id = params.row.data.order_id;
-                        let index = this.outcksb_data1.findIndex(d1 => d1.ddbh === params.row.ddbh);
-                        let index2 = ((this.outcksb_data1[index]||{}).product_list||[]).findIndex(d => d.product_code === product_code);
-                        this.changeOkData[params.index] = {
-                          data: params.row
-                        };
-                        if(index2 !== -1){
-                          let num = this.outcksb_data1[index].product_list[index2].issued_count;
-                          if(!this.isEdit) this.$set(this.outcksb_data1[index].product_list[index2],'product_quantity',a + num);
-                          if(this.isEdit) this.$set(this.outcksb_data1[index].product_list[index2],'quantity_shipped',a);
-                          if(!this.changeRowData.data[product_code]) this.changeRowData.data[product_code] = {};
-                          this.changeRowData.data[product_code][order_id] = a;
-                          this.changeRowData.currentData = this.outcksb_data.find(c => c.product_code === this.changeRowData.currentData.product_code);
-                        }
-                    }
+            return h("InputNumber", {
+              props: {
+                size: "small",
+                value: params.row.sbsl,
+                min: 0,
+                max: params.row.sbsl
+              },
+              on: {
+                "on-change": a => {
+                  let product_code =
+                    params.row.data.product_list[0].product_code;
+                  let order_id = params.row.data.order_id;
+                  let index = this.outcksb_data1.findIndex(
+                    d1 => d1.ddbh === params.row.ddbh
+                  );
+                  let index2 = (
+                    (this.outcksb_data1[index] || {}).product_list || []
+                  ).findIndex(d => d.product_code === product_code);
+                  this.changeOkData[params.index] = {
+                    data: params.row
+                  };
+                  if (index2 !== -1) {
+                    let num = this.outcksb_data1[index].product_list[index2]
+                      .issued_count;
+                    if (!this.isEdit)
+                      this.$set(
+                        this.outcksb_data1[index].product_list[index2],
+                        "product_quantity",
+                        a + num
+                      );
+                    if (this.isEdit)
+                      this.$set(
+                        this.outcksb_data1[index].product_list[index2],
+                        "quantity_shipped",
+                        a
+                      );
+                    if (!this.changeRowData.data[product_code])
+                      this.changeRowData.data[product_code] = {};
+                    this.changeRowData.data[product_code][order_id] = a;
+                    this.changeRowData.currentData = this.outcksb_data.find(
+                      c =>
+                        c.product_code ===
+                        this.changeRowData.currentData.product_code
+                    );
+                  }
                 }
               }
-            );
+            });
           }
         }
       ],
@@ -442,19 +540,26 @@ export default {
           sortable: true,
           render: (h, params) => {
             return h("div", [
-              h('span', {
-                style:{
-                  color: 'red'
-                }
-              },params.row.data.issued_count>0?'(剩余待发)':''),
-              h('span', {
-              },(params.row.data.product_quantity - params.row.data.issued_count))
+              h(
+                "span",
+                {
+                  style: {
+                    color: "red"
+                  }
+                },
+                params.row.data.issued_count > 0 ? "(剩余待发)" : ""
+              ),
+              h(
+                "span",
+                {},
+                params.row.data.product_quantity - params.row.data.issued_count
+              )
             ]);
           }
         }
       ],
       dd_data: [],
-      indexStyle:"",
+      indexStyle: "",
       ruleValidate: {
         fhsj: [
           {
@@ -475,103 +580,119 @@ export default {
       tzmodal: false,
       ddmodal: false,
       addAllData: [],
-      selectionData:{},
-      customShow:false,
+      selectionData: {},
+      customShow: false,
       times: []
     };
   },
   methods: {
-    handleSubmit(name,status) {
+    handleSubmit(name, status) {
       let list = [];
       let s = false;
       this.outcksb_data1.forEach(o => {
-        if(o.ddbh!=='汇总'&&o.product_list){
+        if (o.ddbh !== "汇总" && o.product_list) {
           o.product_list.forEach(p => {
-            if(p.product_quantity > p.repertory){
-              this.$Message.error(`请依据库存量调整该产品 ${p.product_code}的发货数量！`);
+            if (p.product_quantity > p.repertory) {
+              this.$Message.error(
+                `请依据库存量调整该产品 ${p.product_code}的发货数量！`
+              );
               s = true;
               return;
             }
             list.push({
               order_id: o.data.order_id,
               product_code: p.product_code,
-              quantity_shipped: (p.product_quantity - p.issued_count)||p.quantity_shipped,
-            })
-          })
+              quantity_shipped:
+                p.product_quantity - p.issued_count || p.quantity_shipped || 0
+            });
+          });
         }
-      })
-      if(s) return; //校验失败跳出
+      });
+      if (s) return; //校验失败跳出
       this.$refs[name].validate(valid => {
         if (valid) {
-          if(this.outcksb_data.length > 0){
+          if (this.outcksb_data.length > 0) {
             let request = {
-            "typeid": 23016,
-            "data": [
-              {
-                "shipments_time": this.formValidate.fhsj,
-                "shipments_describe": this.formValidate.desc,
-                "shipments_start_batch": this.formValidate.pcyq,
-                "shipments_end_batch": this.formValidate.pcyq1,
-                "shipments_creator": this.$store.state.user.accountId,
-                "product_list": list,
-                'shipments_status':status === 'save'?0:1,
-                'shipments_id':this.isEdit?this.$route.query.data.shipments_id:undefined,
-                'shipments_no':this.isEdit?this.$route.query.data.shipments_no:undefined
-              }     
-            ]
-          }
-          this.$http.SETXLASSETS(request).then(response => {
-            if(status === 'save'){
-              this.$Message.success("保存成功!");
-            }else{
-              this.$Message.success("提交成功!");
-              this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
-            }
-          },error => {
-            if(error.data.code === 0){
-              if(status === 'save'){
-                this.$Message.success("保存成功!");
-              }else{
-                this.$Message.success("提交成功!");
-                this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+              typeid: 23016,
+              data: [
+                {
+                  shipments_time: this.formValidate.fhsj,
+                  shipments_describe: this.formValidate.desc,
+                  shipments_start_batch: this.formValidate.pcyq,
+                  shipments_end_batch: this.formValidate.pcyq1,
+                  shipments_creator: this.$store.state.user.accountId,
+                  product_list: list,
+                  shipments_status: status === "save" ? 0 : 1,
+                  shipments_id: this.isEdit
+                    ? this.$route.query.data.shipments_id
+                    : undefined,
+                  shipments_no: this.isEdit
+                    ? this.$route.query.data.shipments_no
+                    : undefined
+                }
+              ]
+            };
+            this.$http.SETXLASSETS(request).then(
+              response => {
+                if (status === "save") {
+                  this.$Message.success("保存成功!");
+                } else {
+                  this.$Message.success("提交成功!");
+                  this.$store.dispatch("getworkBench", {
+                    accountId: this.$store.state.user.accountId,
+                    this: this
+                  });
+                }
+              },
+              error => {
+                if (error.data.code === 0) {
+                  if (status === "save") {
+                    this.$Message.success("保存成功!");
+                  } else {
+                    this.$Message.success("提交成功!");
+                    this.$store.dispatch("getworkBench", {
+                      accountId: this.$store.state.user.accountId,
+                      this: this
+                    });
+                  }
+                }
               }
-            }
-          })
-          }else{
-            this.$Message.info("请添加设备")
+            );
+          } else {
+            this.$Message.info("请添加设备");
           }
         } else {
           this.$Message.error("请按规定填写表格！");
         }
       });
     },
-    cancleSubmit(){
+    cancleSubmit() {
       this.$router.push({
-        path:'/assetmanage/delivery-manage'
-      })
+        path: "/assetmanage/delivery-manage"
+      });
     },
     ckbhClick() {},
-    rowClassName (row, index) {
-        // if (index === this.indexStyle) {
-        //     return 'demo-table-info-row';
-        //     this.tz_data[index]._checked = true
-        // } 
-        // this.tz_data[index]._checked = false
-        // return '';
+    rowClassName(row, index) {
+      // if (index === this.indexStyle) {
+      //     return 'demo-table-info-row';
+      //     this.tz_data[index]._checked = true
+      // }
+      // this.tz_data[index]._checked = false
+      // return '';
     },
-    remove (index) {
+    remove(index) {
       this.outcksb_data1.splice(index, 1);
     },
-    getOrderList(p){
+    getOrderList(p) {
       let request = {
-        "typeid": 23017,
-        "data": [
+        typeid: 23017,
+        data: [
           {
-            "account_id": this.$store.state.user.accountId,
-            "page_num": p,
-            "page_size": 10,
-            "product_code":"",
-            "keyword": this.addOrderInput
+            account_id: this.$store.state.user.accountId,
+            page_num: p,
+            page_size: 10,
+            product_code: "",
+            keyword: this.addOrderInput
           }
         ]
       };
@@ -591,66 +712,79 @@ export default {
           item.khdj = this.levelMap[d.customer_level];
           item.sbsl = d.quantity;
           item.product_list = d.product_list;
-          if((this.selectionData[p]||[]).find(d => d.ddbh === item.ddbh)){
+          if ((this.selectionData[p] || []).find(d => d.ddbh === item.ddbh)) {
             item._checked = true;
           }
-          if((this.selectionData.edit||[]).find(d => d.ddbh === item.ddbh)){
+          if ((this.selectionData.edit || []).find(d => d.ddbh === item.ddbh)) {
             item._checked = true;
-            if(!this.selectionData[p]) {
+            if (!this.selectionData[p]) {
               this.selectionData[p] = [];
             }
-            this.selectionData[p].push((this.selectionData.edit||[]).find(d => d.ddbh === item.ddbh));
-            let index = this.selectionData.edit.findIndex(d => d.ddbh === item.ddbh);
+            this.selectionData[p].push(
+              (this.selectionData.edit || []).find(d => d.ddbh === item.ddbh)
+            );
+            let index = this.selectionData.edit.findIndex(
+              d => d.ddbh === item.ddbh
+            );
             this.selectionData.edit[index] = {};
           }
           this.dd_data.push(item);
-        })
-      })
+        });
+      });
     },
-    changeSelect(data){
+    changeSelect(data) {
       // this.selectionData[this.pageNum] = data;
       let arr = [];
       data.forEach(d => {
-        if(!(this.selectionData[this.pageNum]||[]).find(s => s.ddbh === d.ddbh)){
-          if(!this.selectionData[this.pageNum]) this.selectionData[this.pageNum] = [];
+        if (
+          !(this.selectionData[this.pageNum] || []).find(s => s.ddbh === d.ddbh)
+        ) {
+          if (!this.selectionData[this.pageNum])
+            this.selectionData[this.pageNum] = [];
           arr.push(d);
-        }else{
-          arr.push((this.selectionData[this.pageNum]||[]).find(s => s.ddbh === d.ddbh));
+        } else {
+          arr.push(
+            (this.selectionData[this.pageNum] || []).find(
+              s => s.ddbh === d.ddbh
+            )
+          );
         }
-      })
-      this.$set(this.selectionData,this.pageNum + '',arr);
+      });
+      this.$set(this.selectionData, this.pageNum + "", arr);
     },
-    ok(){
-      let data = [{
-        ddbh:'汇总'
-      }]
-      for(let key in this.selectionData){
+    ok() {
+      let data = [
+        {
+          ddbh: "汇总"
+        }
+      ];
+      for (let key in this.selectionData) {
         this.selectionData[key].forEach(s => {
-          if(s.ddbh) data.push(s);
-        })
+          if (s.ddbh) data.push(s);
+        });
       }
       this.outcksb_data1 = data;
       this.$nextTick(() => {
-        this.$refs['cktable'].objData[0]._isHighlight = true;
+        this.$refs["cktable"].objData[0]._isHighlight = true;
         this.changeRow(this.outcksb_data1[0]);
-      })
+      });
     },
-    changeRow(data){
-      this.customShow=true
+    changeRow(data) {
+      this.customShow = true;
       this.currentRow = JSON.parse(JSON.stringify(data));
     },
-    changeCount(data){
+    changeCount(data) {
       let { product_code, product_quantity, issued_count } = data;
       this.tzmodal = true;
       this.changeRowData.currentData = data;
       let request = {
-        "typeid": 23017,
-        "data": [
+        typeid: 23017,
+        data: [
           {
-            "account_id": this.$store.state.user.accountId,
-            "order_list": data.ids,
-            "product_code":product_code,
-            "keyword": this.changeCountInput
+            account_id: this.$store.state.user.accountId,
+            order_list: data.ids,
+            product_code: product_code,
+            keyword: this.changeCountInput
           }
         ]
       };
@@ -666,38 +800,55 @@ export default {
           item.xdsj = d.order_time;
           item.khmc = d.customer_name;
           item.khdj = this.levelMap[d.customer_level];
-          if(this.changeRowData.data[product_code]&&this.changeRowData.data[product_code][d.order_id]){
+          if (
+            this.changeRowData.data[product_code] &&
+            this.changeRowData.data[product_code][d.order_id]
+          ) {
             item.sbsl = this.changeRowData.data[product_code][d.order_id];
-          }else{
-            item.sbsl = d.product_list[0].product_quantity - d.product_list[0].issued_count;
+          } else {
+            item.sbsl =
+              d.product_list[0].product_quantity -
+              d.product_list[0].issued_count;
           }
           item.ggxh = this.changeRowData.currentData.product_models;
-          this.changeRowData.currentData.repertory = d.product_list[0].repertory;
+          this.changeRowData.currentData.repertory =
+            d.product_list[0].repertory;
           this.tz_data.push(item);
-        })
-      })
+        });
+      });
     },
-    changeCountCancel(){
-      for(let key in this.changeOkData){
+    changeCountCancel() {
+      for (let key in this.changeOkData) {
         let params = this.changeOkData[key].data;
         let product_code = params.data.product_list[0].product_code;
         let order_id = params.data.order_id;
         let index = this.outcksb_data1.findIndex(d1 => d1.ddbh === params.ddbh);
-        let index2 = ((this.outcksb_data1[index]||{}).product_list||[]).findIndex(d => d.product_code === product_code);
-        if(index2 !== -1){
-          this.$set(this.outcksb_data1[index].product_list[index2],'product_quantity',params.sbsl + params.data.product_list[0].issued_count);
-          (this.changeRowData.data[product_code]||{})[order_id] = params.sbsl;// params.data.product_list[0].product_quantity - params.data.product_list[0].issued_count;
-          this.changeRowData.currentData = this.outcksb_data.find(c => c.product_code === this.changeRowData.currentData.product_code);
+        let index2 = (
+          (this.outcksb_data1[index] || {}).product_list || []
+        ).findIndex(d => d.product_code === product_code);
+        if (index2 !== -1) {
+          this.$set(
+            this.outcksb_data1[index].product_list[index2],
+            "product_quantity",
+            params.sbsl + params.data.product_list[0].issued_count
+          );
+          (this.changeRowData.data[product_code] || {})[order_id] = params.sbsl; // params.data.product_list[0].product_quantity - params.data.product_list[0].issued_count;
+          this.changeRowData.currentData = this.outcksb_data.find(
+            c => c.product_code === this.changeRowData.currentData.product_code
+          );
         }
       }
     },
-    changeOrder(name){
+    changeOrder(name) {
       this.selectedCustom = name;
-      if(Object.keys(this.orderDataCache).length === 0) this.orderDataCache = JSON.parse(JSON.stringify(this.outcksb_data1));
-      if(name === '全部'){
+      if (Object.keys(this.orderDataCache).length === 0)
+        this.orderDataCache = JSON.parse(JSON.stringify(this.outcksb_data1));
+      if (name === "全部") {
         this.outcksb_data1 = JSON.parse(JSON.stringify(this.orderDataCache));
-      }else{
-        this.outcksb_data1 = this.outcksb_data1.filter(o => o.khmc === name||o.ddbh === '汇总');
+      } else {
+        this.outcksb_data1 = this.outcksb_data1.filter(
+          o => o.khmc === name || o.ddbh === "汇总"
+        );
       }
       // for(let key in this.$refs['cktable'].objData){
       //   if(name === this.$refs['cktable'].objData[key].ddbh){
@@ -708,14 +859,14 @@ export default {
       //   }
       // }
     },
-    editInit(){
+    editInit() {
       let request = {
-        "typeid": 23020,
-        "data": [
-            {
-              "account_id": this.$store.state.user.accountId,
-              "shipments_id": (this.$route.query||{}).shipments_id
-            }
+        typeid: 23020,
+        data: [
+          {
+            account_id: this.$store.state.user.accountId,
+            shipments_id: (this.$route.query || {}).shipments_id
+          }
         ]
       };
       this.$http.PostXLASSETS(request).then(response => {
@@ -724,133 +875,151 @@ export default {
         this.formValidate.desc = data[0].shipments_describe;
         this.formValidate.pcyq = data[0].shipments_start_batch;
         this.formValidate.pcyq1 = data[0].shipments_end_batch;
-        data[0].product_list.forEach(p =>{
+        data[0].product_list.forEach(p => {
           let item = {};
           item.ddbh = p.order_no;
-          if(this.outcksb_data1.find(o => o.ddbh === p.order_no)){
+          if (this.outcksb_data1.find(o => o.ddbh === p.order_no)) {
             let obj = this.outcksb_data1.find(o => o.ddbh === p.order_no);
             obj.product_list.push(p);
-          }else{
+          } else {
             item.data = JSON.parse(JSON.stringify(data[0]));
             item.data.order_id = p.order_id;
             item.product_list = [];
             item.product_list.push(p);
             this.outcksb_data1.push(item);
-            if(!this.selectionData.edit) this.selectionData.edit = [];
+            if (!this.selectionData.edit) this.selectionData.edit = [];
             this.selectionData.edit.push(item);
           }
-          if(!this.changeRowData.data[p.product_code]) this.changeRowData.data[p.product_code] = {};
-          this.changeRowData.data[p.product_code][p.order_id] = p.quantity_shipped;
-          this.$refs['cktable'].objData[0]._isHighlight = true;
+          if (!this.changeRowData.data[p.product_code])
+            this.changeRowData.data[p.product_code] = {};
+          this.changeRowData.data[p.product_code][p.order_id] =
+            p.quantity_shipped;
+          this.$refs["cktable"].objData[0]._isHighlight = true;
           this.changeRow(this.outcksb_data1[0]);
-        })
-        
-      })
+        });
+      });
     },
-    getTimes(){
+    getTimes() {
       let request = {
-        typeid:27011
+        typeid: 27011
       };
       this.times = [];
       this.$http.XLSELECT(request).then(response => {
         this.times = response.data.result.data[0].patchList;
-        if(this.isEdit){
+        if (this.isEdit) {
           this.editInit();
         }
-      })
+      });
     }
   },
-  mounted(){
-    
+  mounted() {
     this.getOrderList(1);
     this.getTimes();
   },
-  computed:{
-    outcksb_data(){
+  computed: {
+    outcksb_data() {
       let data = [];
-      if(this.outcksb_data1&&this.outcksb_data1.length>0&&this.currentRow&&this.currentRow.ddbh){
-        if(this.currentRow.ddbh === '汇总'){
+      if (
+        this.outcksb_data1 &&
+        this.outcksb_data1.length > 0 &&
+        this.currentRow &&
+        this.currentRow.ddbh
+      ) {
+        if (this.currentRow.ddbh === "汇总") {
           this.outcksb_data1.forEach(d => {
-            if(d.product_list&&d.product_list.length>0){
+            if (d.product_list && d.product_list.length > 0) {
               d.product_list.forEach(p => {
-                if(data.find(o => o.product_code === p.product_code)){
-                  let index = data.findIndex(o => o.product_code === p.product_code);
-                  data[index].product_quantity += (p.product_quantity - p.issued_count)||p.quantity_shipped||0;
-                  (data[index].ids||[]).push(d.data.order_id);
-                }else{
-                  let item = JSON.parse(JSON.stringify(p))||{};
+                if (data.find(o => o.product_code === p.product_code)) {
+                  let index = data.findIndex(
+                    o => o.product_code === p.product_code
+                  );
+                  data[index].product_quantity +=
+                    p.product_quantity - p.issued_count || p.quantity_shipped || 0;
+                  (data[index].ids || []).push(d.data.order_id);
+                } else {
+                  let item = JSON.parse(JSON.stringify(p)) || {};
                   item.ids = [];
                   item.ids.push(d.data.order_id);
-                  item.product_quantity = (item.product_quantity - item.issued_count)||p.quantity_shipped||0;
+                  item.product_quantity =
+                    item.product_quantity - item.issued_count ||
+                    p.quantity_shipped || 0;
                   data.push(item);
                 }
-              })
+              });
             }
           });
           this.addAllData = data;
-        }else{
-          data = JSON.parse(JSON.stringify((this.outcksb_data1.find( d => d.ddbh === this.currentRow.ddbh)||{}).product_list||[]));
+        } else {
+          data = JSON.parse(
+            JSON.stringify(
+              (
+                this.outcksb_data1.find(d => d.ddbh === this.currentRow.ddbh) ||
+                {}
+              ).product_list || []
+            )
+          );
           data.forEach(d => {
-            d.product_quantity = (d.product_quantity - d.issued_count)||d.quantity_shipped||0;
-          })
+            d.product_quantity =
+              d.product_quantity - d.issued_count || d.quantity_shipped || 0;
+          });
         }
       }
       return data;
     },
-    outdevice_columns(){
+    outdevice_columns() {
       let columns = this.cksb_columns;
-      if(this.currentRow&&this.currentRow.ddbh){
-        if(this.currentRow.ddbh !== '汇总'){
-          columns = columns.filter(c => c.key!== 'action');
-        }else{
+      if (this.currentRow && this.currentRow.ddbh) {
+        if (this.currentRow.ddbh !== "汇总") {
+          columns = columns.filter(c => c.key !== "action");
+        } else {
           columns = this.cksb_columns;
         }
       }
       return columns;
     },
-    toatalQuantity(){
+    toatalQuantity() {
       let num = 0;
-      if(this.outcksb_data1&&this.outcksb_data1.length>0){
+      if (this.outcksb_data1 && this.outcksb_data1.length > 0) {
         this.outcksb_data1.forEach(o => {
-          if(o.ddbh!=='汇总'&&o.product_list){
+          if (o.ddbh !== "汇总" && o.product_list) {
             o.product_list.forEach(p => {
-              num += (p.product_quantity - p.issued_count)||p.quantity_shipped||0;
-            })
+              num += p.product_quantity - p.issued_count || p.quantity_shipped || 0;
+            });
           }
-        })
+        });
       }
       return num;
     },
-    isEdit(){
+    isEdit() {
       return !!this.$route.query.data;
     },
-    editData(){
+    editData() {
       return this.$route.query.data;
     },
-    customList(){
-      let customList = ['全部'];
-      if(this.outcksb_data1&&this.outcksb_data1.length>0){
+    customList() {
+      let customList = ["全部"];
+      if (this.outcksb_data1 && this.outcksb_data1.length > 0) {
         this.outcksb_data1.forEach(o => {
-          if(o.ddbh !== '汇总'){
-            let customer_name = o.khmc||'--';
-            if(customList.indexOf(customer_name) === -1){
+          if (o.ddbh !== "汇总") {
+            let customer_name = o.khmc || "--";
+            if (customList.indexOf(customer_name) === -1) {
               customList.push(customer_name);
             }
           }
-        })
+        });
       }
       return customList;
     }
   },
-  watch:{
-    ddmodal(nv){
-      if(!nv){
+  watch: {
+    ddmodal(nv) {
+      if (!nv) {
         this.pageNum = 1;
-        this.addOrderInput = '';
+        this.addOrderInput = "";
         this.getOrderList(1);
       }
     },
-    tzmodal(){
+    tzmodal() {
       this.changeOkData = {};
     }
   }
@@ -865,12 +1034,12 @@ export default {
   background-color: transparent;
   border-color: transparent;
 }
-.hz1 .ivu-table .demo-table-info-row td{
-        /* background-color: #2db7f5; */
-        color: #60A9F4;
+.hz1 .ivu-table .demo-table-info-row td {
+  /* background-color: #2db7f5; */
+  color: #60a9f4;
 }
-.del .ivu-table-cell{
-  padding-left:8px;
-  padding-right:0px;
+.del .ivu-table-cell {
+  padding-left: 8px;
+  padding-right: 0px;
 }
 </style>
