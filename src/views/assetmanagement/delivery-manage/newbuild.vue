@@ -604,7 +604,7 @@ export default {
               order_id: o.data.order_id,
               product_code: p.product_code,
               quantity_shipped:
-                p.product_quantity - p.issued_count || p.quantity_shipped
+                p.product_quantity - p.issued_count || p.quantity_shipped || 0
             });
           });
         }
@@ -935,7 +935,7 @@ export default {
                     o => o.product_code === p.product_code
                   );
                   data[index].product_quantity +=
-                    p.product_quantity - p.issued_count || p.quantity_shipped;
+                    p.product_quantity - p.issued_count || p.quantity_shipped || 0;
                   (data[index].ids || []).push(d.data.order_id);
                 } else {
                   let item = JSON.parse(JSON.stringify(p)) || {};
@@ -943,7 +943,7 @@ export default {
                   item.ids.push(d.data.order_id);
                   item.product_quantity =
                     item.product_quantity - item.issued_count ||
-                    p.quantity_shipped;
+                    p.quantity_shipped || 0;
                   data.push(item);
                 }
               });
@@ -961,14 +961,13 @@ export default {
           );
           data.forEach(d => {
             d.product_quantity =
-              d.product_quantity - d.issued_count || d.quantity_shipped;
+              d.product_quantity - d.issued_count || d.quantity_shipped || 0;
           });
         }
       }
       return data;
     },
     outdevice_columns() {
-      debugger;
       let columns = this.cksb_columns;
       if (this.currentRow && this.currentRow.ddbh) {
         if (this.currentRow.ddbh !== "汇总") {
@@ -985,7 +984,7 @@ export default {
         this.outcksb_data1.forEach(o => {
           if (o.ddbh !== "汇总" && o.product_list) {
             o.product_list.forEach(p => {
-              num += p.product_quantity - p.issued_count || p.quantity_shipped;
+              num += p.product_quantity - p.issued_count || p.quantity_shipped || 0;
             });
           }
         });
