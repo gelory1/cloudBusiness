@@ -654,7 +654,7 @@ export default {
             {
               time:log.devicelog_ts,
               content:this.mapType[log.devicelog_type],
-              name: log.account_id
+              name: log.account_name||'仓库管理员'
             }
           )
         })

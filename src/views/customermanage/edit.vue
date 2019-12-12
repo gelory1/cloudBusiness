@@ -480,9 +480,10 @@ export default {
     // 校验电话号码
     const validatePhone = (rule, value, callback) => {
       if (this.formAddlxr.phone !== "" || this.formAddkpxx.phone) {
-        var expression = /^1(3|4|5|7|8)\d{9}$/;
+        var mPhone = /^1(3|4|5|7|8)\d{9}$/;
+        var phone= /^(0[0-9]{2,3}(\-)?)([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$/;
         // var zj = /^(\d{3,4}-)\d{7,8}/;
-        if (expression.test(value) == false) {
+        if (mPhone.test(value) == false&&phone.test(value) === false) {
           callback(new Error("请输入正确的电话号码"));
         }
       } else {
@@ -490,21 +491,21 @@ export default {
       }
       callback();
     };
-    // 纯数字正则
-    // const validateNum = (rule, value, callback) => {
-    //   if (
-    //     this.formAddkpxx.dutyparagraph !== "" ||
-    //     this.formAddkpxx.bank_account !== ""
-    //   ) {
-    //     var expression = /^[0-9]*$/;
-    //     if (expression.test(value) == false) {
-    //       callback(new Error("该字段为数字"));
-    //     }
-    //   } else {
-    //     callback(new Error("该字段不能为空"));
-    //   }
-    //   callback();
-    // };
+    //税号正则
+    const dutyparagraph = (rule, value, callback) => {
+      if (
+        this.formAddkpxx.dutyparagraph !== "" ||
+        this.formAddkpxx.bank_account !== ""
+      ) {
+        var expression = /^[A-Z0-9]{15}$|^[A-Z0-9]{17}$|^[A-Z0-9]{18}$|^[A-Z0-9]{20}$/;
+        if (expression.test(value) == false) {
+          callback(new Error("请出入正确的税号！"));
+        }
+      } else {
+        callback(new Error("该字段不能为空"));
+      }
+      callback();
+    };
     return {
       formValidate: {
         name: "",
@@ -775,9 +776,9 @@ export default {
         dutyparagraph: [
           {
             required: true,
-            message: "请输入税号",
-            trigger: "blur"
-            // validator: validateNum
+            message: "请输入正确的税号(15 17 18 20位字母或数字)",
+            trigger: "blur",
+            validator: dutyparagraph
           }
         ],
         ticket_address: [
@@ -1257,6 +1258,7 @@ export default {
           } else {
             api.SETCUSTOMER(request2).then(response => {
               if (response.data.code === 0) {
+                this.formAddlxr.contact_id = (((response.data.result.data||{}).contractIdList||[])[0]||'');
                 this.formValidate.contacts_list.push(this.formAddlxr);
                 this.addlxrmodal = false;
               this.$Message.success("添加成功!");
@@ -1378,13 +1380,6 @@ export default {
           (d, i) => i !== index
         );
         this.newLocalData.contact.data.contactList = this.newLocalData.contact.data.contactList.filter(
-          (d, i) => i !== index
-        );
-        this.$Message.error("已删除！");
-        return;
-      }
-      if(this.formValidate.contacts_list[index].contact_id === ''){
-        this.formValidate.contacts_list = this.formValidate.contacts_list.filter(
           (d, i) => i !== index
         );
         this.$Message.error("已删除！");

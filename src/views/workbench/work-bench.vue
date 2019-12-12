@@ -257,7 +257,7 @@
           </p>
           <p>
             <span>交易时间：</span>
-            <i>{{ensurePayBack.transactionTime}}</i>
+            <i>{{ensurePayBack.payTime}}</i>
           </p>
           <p>
             <span>付款凭证：</span>
@@ -896,7 +896,7 @@ export default {
         contractNo: "",
         lastWorkbenchId: "",
         payAmount: "",
-        transactionTime: "",
+        payTime: "",
         payUnitName: "",
         paymentPeriod: "",
         receiveSide: "",
@@ -1050,12 +1050,15 @@ export default {
         this.parse(data,request.data[0].workBenchStatus);
       },error=>{
         this.loading = false;
+        if(error.data.code === 0&&error.data.result === ''){
+          this.parse([],request.data[0].workBenchStatus);
+        }
       })
     },
     parse(data,status){
       if(status === 1)  this.gz_data = [];
-      if(status === 2)  this.fq_data = [];
-      if(status === 3)  this.yb_data = [];
+      if(status === 3)  this.fq_data = [];
+      if(status === 2)  this.yb_data = [];
       data.forEach((d,i) => {
           let item = {};
           switch (d.workBenchType) {
@@ -1174,7 +1177,7 @@ export default {
             contractNo: params.row.data.workBenchContentObj.contractNo,
             lastWorkbenchId: params.row.data.workBenchContentObj.lastWorkbenchId,
             payAmount: params.row.data.workBenchContentObj.payAmount,
-            transactionTime: params.row.data.workBenchContentObj.transactionTime,
+            payTime: params.row.data.workBenchContentObj.payTime,
             payUnitName: params.row.data.workBenchContentObj.payUnitName,
             paymentPeriod: params.row.data.workBenchContentObj.paymentPeriod,
             receiveSide: params.row.data.workBenchContentObj.receiveSide,

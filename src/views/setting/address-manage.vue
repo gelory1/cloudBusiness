@@ -177,7 +177,7 @@ export default {
     },
     getWhs(){
       let request = {
-        typeid: 23001,
+        typeid: 23026,
         data: [
           {
             account_id: this.$store.state.user.accountId,
@@ -245,7 +245,16 @@ export default {
       }else if(name === 'default'){
         this.setDefault();
       }else if(name === 'delete'){
-        this.delete();
+        let _this = this;
+        this.$confirm('此操作将永久删除该地址, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          _this.delete();
+        }).catch(()=>{
+          _this.$Message.error('已取消删除！');
+        });
       }
     },
     edit(){
@@ -292,6 +301,8 @@ export default {
         if(error.data.code === 0){
           this.$Message.success("删除成功!");
           this.getAddresses();
+        }else{
+          if(error.data.message) this.$Message.error(error.data.message);
         }
       })
     },

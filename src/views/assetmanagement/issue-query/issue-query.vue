@@ -372,7 +372,7 @@ export default {
           align: "center",
           render: (h, params) => {
             let texts = "";
-            if (params.row.ddbh !== null && params.row.ggxh !== undefined) {
+            if (params.row.ddbh !== null && params.row.ddbh !== undefined) {
               if (params.row.ddbh.length > 25) {
                 texts = params.row.ddbh.substring(0, 25) + "...";
               } else {
@@ -533,7 +533,7 @@ export default {
           align: "center",
           render: (h, params) => {
             let texts = "";
-            if (params.row.ddbh !== null && params.row.ggxh !== undefined) {
+            if (params.row.ddbh !== null && params.row.ddbh !== undefined) {
               if (params.row.ddbh.length > 25) {
                 texts = params.row.ddbh.substring(0, 25) + "...";
               } else {
@@ -690,7 +690,7 @@ export default {
           align: "center",
           render: (h, params) => {
             let texts = "";
-            if (params.row.chmc !== null && params.row.ggxh !== undefined) {
+            if (params.row.chmc !== null && params.row.chmc !== undefined) {
               if (params.row.chmc.length > 20) {
                 texts = params.row.chmc.substring(0, 20) + "...";
               } else {
