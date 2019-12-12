@@ -387,10 +387,6 @@
 import api from "@/api/axios";
 const natures = [
   {
-    value: "所有客户",
-    index: 0
-  },
-  {
     value: "直销客户",
     index: 1
   },
@@ -542,13 +538,25 @@ export default {
         level: [
           {
             required: true,
-            message: "请选择客户等级"
+            message: "请选择客户等级",
+            type: "object",
+            trigger: "change"
+          }
+        ],
+        nature: [
+          {
+            required: true,
+            message: "请选择客户性质",
+            type: "object",
+            trigger: "change"
           }
         ],
         industry: [
           {
             required: true,
-            message: "请选择客户行业"
+            message: "请选择客户行业",
+            type: "object",
+            trigger: "change"
             // trigger: "blur"
           }
         ],
@@ -1174,91 +1182,93 @@ export default {
     saveContact(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
-          this.addlxrmodal = false
-          this.$Message.success("Success!");
+          let request1 = {
+            typeid: 25008,
+            data: [
+              {
+                customerNo: ((this.data || {}).data || {}).customer_no,
+                contactId: this.formAddlxr.contact_id,
+                contactName: this.formAddlxr.contact_name,
+                sex: this.formAddlxr.sex === "男" ? 0 : 1,
+                positionName: this.formAddlxr.position_name,
+                phone: this.formAddlxr.phone,
+                vcharnumber: this.formAddlxr.vchar_number,
+                eMail: this.formAddlxr.email
+              }
+            ]
+          };
+          let request2 = {
+            typeid: 25004,
+            data: {
+              customerNo: ((this.data || {}).data || {}).customer_no,
+              contactList: [
+                {
+                  contactName: this.formAddlxr.contact_name,
+                  sex: this.formAddlxr.sex === "男" ? 0 : 1,
+                  positionName: this.formAddlxr.position_name,
+                  phone: this.formAddlxr.phone,
+                  vcharNumber: this.formAddlxr.vchar_number,
+                  eMail: this.formAddlxr.email
+                }
+              ]
+            }
+          };
+          if (this.isNewCreate) {
+            if (this.contactStatus === "edit") {
+              for (let key in this.formValidate.contacts_list[this.contactIndex]) {
+                this.$set(
+                  this.formValidate.contacts_list[this.contactIndex],
+                  key,
+                  this.formAddlxr[key]
+                );
+              }
+              this.newLocalData.contact.data.contactList[
+                this.contactIndex
+              ] = JSON.parse(JSON.stringify(request2.data.contactList[0]));
+            } else {
+              this.formValidate.contacts_list.push(this.formAddlxr);
+              if (!this.newLocalData.contact) {
+                this.newLocalData.contact = request2;
+              } else {
+                this.newLocalData.contact.data.contactList.push(
+                  request2.data.contactList[0]
+                );
+              }
+            }
+            this.addlxrmodal = false;
+            this.$Message.success("添加成功!");
+            return;
+          }
+          if (this.contactStatus === "edit") {
+            api.UPDATECUSTOMER(request1).then(response => {
+              if (response.data.code === 0) {
+                let index = this.formValidate.contacts_list.findIndex(
+                  data => data.contact_id === this.formAddlxr.contact_id
+                );
+                for (let key in this.formValidate.contacts_list[index]) {
+                  this.$set(
+                    this.formValidate.contacts_list[index],
+                    key,
+                    this.formAddlxr[key]
+                  );
+                }
+                this.addlxrmodal = false;
+              }
+            });
+          } else {
+            api.SETCUSTOMER(request2).then(response => {
+              if (response.data.code === 0) {
+                this.formValidate.contacts_list.push(this.formAddlxr);
+                this.addlxrmodal = false;
+              this.$Message.success("添加成功!");
+              }
+            });
+          }
         } else {
-          this.$Message.error("Fail!");
+          this.$Message.error("请填写正确的信息！");
         }
       });
-      let request1 = {
-        typeid: 25008,
-        data: [
-          {
-            customerNo: ((this.data || {}).data || {}).customer_no,
-            contactId: this.formAddlxr.contact_id,
-            contactName: this.formAddlxr.contact_name,
-            sex: this.formAddlxr.sex === "男" ? 0 : 1,
-            positionName: this.formAddlxr.position_name,
-            phone: this.formAddlxr.phone,
-            vcharnumber: this.formAddlxr.vchar_number,
-            eMail: this.formAddlxr.email
-          }
-        ]
-      };
-      let request2 = {
-        typeid: 25004,
-        data: {
-          customerNo: ((this.data || {}).data || {}).customer_no,
-          contactList: [
-            {
-              contactName: this.formAddlxr.contact_name,
-              sex: this.formAddlxr.sex === "男" ? 0 : 1,
-              positionName: this.formAddlxr.position_name,
-              phone: this.formAddlxr.phone,
-              vcharNumber: this.formAddlxr.vchar_number,
-              eMail: this.formAddlxr.email
-            }
-          ]
-        }
-      };
-      if (this.isNewCreate) {
-        if (this.contactStatus === "edit") {
-          for (let key in this.formValidate.contacts_list[this.contactIndex]) {
-            this.$set(
-              this.formValidate.contacts_list[this.contactIndex],
-              key,
-              this.formAddlxr[key]
-            );
-          }
-          this.newLocalData.contact.data.contactList[
-            this.contactIndex
-          ] = JSON.parse(JSON.stringify(request2.data.contactList[0]));
-        } else {
-          this.formValidate.contacts_list.push(this.formAddlxr);
-          if (!this.newLocalData.contact) {
-            this.newLocalData.contact = request2;
-          } else {
-            this.newLocalData.contact.data.contactList.push(
-              request2.data.contactList[0]
-            );
-          }
-        }
-        return;
-      }
-      if (this.contactStatus === "edit") {
-        api.UPDATECUSTOMER(request1).then(response => {
-          if (response.data.code === 0) {
-            let index = this.formValidate.contacts_list.findIndex(
-              data => data.contact_id === this.formAddlxr.contact_id
-            );
-            for (let key in this.formValidate.contacts_list[index]) {
-              this.$set(
-                this.formValidate.contacts_list[index],
-                key,
-                this.formAddlxr[key]
-              );
-            }
-            this.addlxrmodal = false;
-          }
-        });
-      } else {
-        api.SETCUSTOMER(request2).then(response => {
-          if (response.data.code === 0) {
-            this.formValidate.contacts_list.push(this.formAddlxr);
-            this.addlxrmodal = false;
-          }
-        });
-      }
+      
     },
     newTicket() {
       this.ticketStatus = "new";
@@ -1371,6 +1381,14 @@ export default {
         this.newLocalData.contact.data.contactList = this.newLocalData.contact.data.contactList.filter(
           (d, i) => i !== index
         );
+        this.$Message.error("已删除！");
+        return;
+      }
+      if(this.formValidate.contacts_list[index].contact_id === ''){
+        this.formValidate.contacts_list = this.formValidate.contacts_list.filter(
+          (d, i) => i !== index
+        );
+        this.$Message.error("已删除！");
         return;
       }
       api.DELETECUSTOMER(request).then(response => {
