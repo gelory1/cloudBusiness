@@ -186,7 +186,7 @@
           </div>
           <div>
             <span class="jbleft">收货地址：</span>
-            <span class="jbright wid">{{djxx.address}}</span>
+            <span class="wid" style="color: #8d8d8d">{{djxx.address}}</span>
           </div>
         </div>
         <div style="clear:both;padding-top:10px;">
@@ -480,7 +480,7 @@ export default {
                         shsj: params.row.data.auditor_time,
                         zt: params.row.zt,
                         allocation_id: params.row.data.allocation_id,
-                        adress: params.row.data.delivery_address,
+                        address: params.row.data.delivery_address,
                       };
                       this.selectedWhid = params.row.data.wh_id;
                       this.indevice_data1 = [];
