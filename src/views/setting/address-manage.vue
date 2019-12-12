@@ -26,6 +26,7 @@
             <span class="ad_span" v-if="item.isDefault">默认</span>
           </p>
           <p>{{item.address}}</p>
+          <p style="padding-top:20px;color:#3896f5">创建人：<span>{{item.creador}}</span></p>
         </el-card>
       </div>
       <div class="add_adress">
@@ -168,6 +169,7 @@ export default {
             isDefault:d.address_status === 1?true:false,
             wh_id:d.wh_id,
             address_id:d.address_id,
+            creador:d.user_name
           })
         });
         
@@ -284,8 +286,8 @@ export default {
         ]
       };
       this.$http.DELXLASSETS(request).then(response =>{
-        this.$Message.success("删除成功!");
-        this.getAddresses();
+          this.$Message.success("删除成功!");
+          this.getAddresses();
       },error => {
         if(error.data.code === 0){
           this.$Message.success("删除成功!");

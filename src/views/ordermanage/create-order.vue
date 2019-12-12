@@ -70,7 +70,6 @@
             style="display:flex;justify-content:space-between;margin:0 0px 10px 10px;"
           >
             <Button @click="addDeviceClick">添加设备</Button>
-            
           </div>
           <Table
             ref="selection"
@@ -91,14 +90,21 @@
         </div>
         <FormItem style="width:300px;margin:200px auto;margin-bottom:20px;">
           <Button type="primary" @click="onSubmit('formValidate')">提交</Button>
-          <Button type="ghost" style="margin-left: 18px"  @click="onCancel">取消</Button>
+          <Button type="ghost" style="margin-left: 18px" @click="onCancel">取消</Button>
         </FormItem>
       </Form>
     </Layout>
     <!-- 添加设备 -->
     <Modal v-model="addsbmodal" width="800" @on-ok="ok">
       <p style="font-size:18px;">添加设备</p>
-      <Input placeholder="请输入内容" style="width: 200px;float:right;padding-top:15px;margin-right:10px;" v-model="inputVal" icon="ios-search" @on-enter="getAddset" @on-click="getAddset"/>
+      <Input
+        placeholder="请输入内容"
+        style="width: 200px;float:right;padding-top:15px;margin-right:10px;"
+        v-model="inputVal"
+        icon="ios-search"
+        @on-enter="getAddset"
+        @on-click="getAddset"
+      />
       <p class="sb_p">
         选择需要备货的
         <span>设备类型</span>添加到
@@ -272,7 +278,7 @@ export default {
               props: {
                 size: "small",
                 value: params.row.num,
-                min:0
+                min: 0
               },
               on: {
                 "on-change": a => {
@@ -446,7 +452,7 @@ export default {
       this.addsbmodal = true;
       // this.addDevices(1);
     },
-    getAddset(){
+    getAddset() {
       this.addDevices(1);
     },
     addDevices(p) {
@@ -535,7 +541,11 @@ export default {
         data = data.concat(this.addData[key]);
       }
       data.forEach(d => {
-        if(!this.formValidate.devices_list.find(item => item.productCode === d.product_code)){
+        if (
+          !this.formValidate.devices_list.find(
+            item => item.productCode === d.product_code
+          )
+        ) {
           this.formValidate.devices_list.push({
             productCode: d.product_code,
             productName: d.product_name,
@@ -546,37 +556,31 @@ export default {
             tax: "17%",
             totalPrice: d.product_price * d.num
           });
-        }else{
-          let obj = this.formValidate.devices_list.find(item => item.productCode === d.product_code);
+        } else {
+          let obj = this.formValidate.devices_list.find(
+            item => item.productCode === d.product_code
+          );
           obj.num += d.num;
           obj.totalPrice = d.product_price * obj.num;
         }
       });
     },
     onSubmit(name) {
-      // this.$refs[name].validate(valid => {
-      //   if (valid) {
-      //     if(this.formValidate.store.index != ''){
-      //       this.$Message.success("Success!");
-      //     }
-      //   } else {
-      //     this.$Message.error("请填写完整的信息！");
-      //   }
-      // });
-      //  if(this.formValidate.store.index == ''){
-      //       this.$Message.success("Success!");
-      //   }
-      if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
-        for (let key in this.deviceStore) {
-          let index = this.formValidate.devices_list.findIndex(
-            d => d.productCode === this.deviceStore[key].productCode
-          );
-          if (index >= 0) {
-            this.formValidate.devices_list[index] = this.deviceStore[key];
+      if (this.formValidate.store.index != "") {
+        if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
+          for (let key in this.deviceStore) {
+            let index = this.formValidate.devices_list.findIndex(
+              d => d.productCode === this.deviceStore[key].productCode
+            );
+            if (index >= 0) {
+              this.formValidate.devices_list[index] = this.deviceStore[key];
+            }
           }
+        } else {
+          this.$Message.error("无添加设备或发货数量为0");
         }
-      }else{
-            this.$Message.error("无添加设备或发货数量为0");
+      } else {
+        this.$Message.error("请填写完整的信息！");
       }
       let productList = [];
       this.formValidate.devices_list.forEach(data => {
@@ -756,7 +760,7 @@ export default {
             });
           });
         }
-        let selectAddress = adresses.find(a => a.status === 1)||adresses[0];
+        let selectAddress = adresses.find(a => a.status === 1) || adresses[0];
         this.$set(this.formValidate.adress, "index", selectAddress.index);
         this.$set(this.formValidate.adress, "value", selectAddress.value);
       }

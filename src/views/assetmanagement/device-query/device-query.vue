@@ -698,6 +698,14 @@ export default {
       this.$http.PostXLASSETS(request).then((response)=>{
         this.jbxx_data = [];
         let res = response.data.result.data;
+        // alert("9090")
+        // console.log(res)
+        // if(response.data.result == ''){
+        //   alert("1")
+        //   this.zkSum = 1
+        // }else{
+        //   this.zkSum = res[0].sum;
+        // } 
         this.zkSum = res[0].sum;
         res[0].productlist.forEach(data => {
           let jbxx_item = {};

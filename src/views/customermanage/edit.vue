@@ -869,8 +869,7 @@ export default {
     handleSubmit(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
-          // this.$Message.success("Success!");
-          if(this.formValidate.level.index == '' || this.formValidate.province.id == '' || this.formValidate.city.id == ''){
+          if(this.formValidate.level.index == '' || this.formValidate.province.id == '' || this.formValidate.city.id == '' || this.formValidate.nature.index == '' || this.formValidate.industry.index == ''){
             this.$Message.error("请将信息补充完整后再提交");
           }else{
             this.editCustomer();
