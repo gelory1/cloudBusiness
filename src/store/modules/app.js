@@ -286,7 +286,7 @@ const app = {
                         });
                     }
                 });
-                if (updateStatus || data.length < context.state.workBenchData.length) context.commit('setWorkBenchData', data);
+                if (updateStatus || data.length < context.state.workBenchData.length || !context.state.showNotice) context.commit('setWorkBenchData', data);
             });
         }
     }

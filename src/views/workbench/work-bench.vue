@@ -1050,12 +1050,15 @@ export default {
         this.parse(data,request.data[0].workBenchStatus);
       },error=>{
         this.loading = false;
+        if(error.data.code === 0&&error.data.result === ''){
+          this.parse([],request.data[0].workBenchStatus);
+        }
       })
     },
     parse(data,status){
       if(status === 1)  this.gz_data = [];
-      if(status === 2)  this.fq_data = [];
-      if(status === 3)  this.yb_data = [];
+      if(status === 3)  this.fq_data = [];
+      if(status === 2)  this.yb_data = [];
       data.forEach((d,i) => {
           let item = {};
           switch (d.workBenchType) {
