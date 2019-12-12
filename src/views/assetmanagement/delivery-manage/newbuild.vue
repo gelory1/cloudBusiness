@@ -456,6 +456,7 @@ export default {
               },
               on: {
                 "on-change": a => {
+                  debugger
                   let product_code =
                     params.row.data.product_list[0].product_code;
                   let order_id = params.row.data.order_id;
