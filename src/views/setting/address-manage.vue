@@ -175,7 +175,7 @@ export default {
     },
     getWhs(){
       let request = {
-        typeid: 23001,
+        typeid: 23026,
         data: [
           {
             account_id: this.$store.state.user.accountId,
