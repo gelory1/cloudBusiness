@@ -27,7 +27,7 @@
             />
             <span class="f_gl">
               <span @click="glhtztClick" class="cor">
-                <Icon type="ios-list" />
+                <Icon type="ios-flask-outline"></Icon>
                 <span>过滤</span>
               </span>
               <!-- 过滤 -->
@@ -152,7 +152,7 @@
             <span style="padding:0 5px">|</span>
             <span class="f-more">
               <span @click="morehtztClick" class="cor1">
-                <Icon type="ios-list" />
+                <Icon type="navicon-round"></Icon>
                 <span>更多</span>
               </span>
               <!-- 更多 -->

@@ -40,11 +40,11 @@
             <p class="bh_p"><big>{{selectReportData.report_value[0]}}</big><i> {{selectReportData.report_value[1]}}</i><span>&#x3000;<b>{{selectReportData.report_value[2]}}</b></span></p>
           </div>
           <div class="right gz_rig bor">
-            <!-- <Select v-model="kclmodel" size="small" clearable filterable style="width:100px">
+            <Select v-model="kclmodel" size="small" clearable filterable style="width:100px">
                 <Option value="bd">本地库存量</Option>
                 <Option value="ck">仓库库存量</Option>
             </Select>
-            <p class="bh_p"><big>3000</big><i> 台</i></p> -->
+            <p class="bh_p"><big>3000</big><i> 台</i></p>
           </div>
           <div style="clear: both;">
           </div>

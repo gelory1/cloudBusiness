@@ -1,12 +1,12 @@
 <template>
-  <div class="delivery">
+  <div class="delivery" @click="tooltipClick('outside')">
     <Layout>
       <Menu width="auto" size="small" style="padding-top:30px;">
         <div class="fh_but">
           <Button type="ghost">发货方案查询</Button>
         </div>
         <Header :style="{background: '#fff',minWidth:'400px'}">
-          <div style="float:right;">
+          <div style="float:right;" @click.stop="tooltipClick('inside')">
             <Input
               icon="ios-search"
               placeholder="请输入内容"
@@ -16,20 +16,27 @@
               style="width: 200px;margin-right:20px;"
             />
             <span class="f_gl">
-              <span class="cor">
+              <span class="cor" @click="glkhClick">
                 <Icon type="ios-flask-outline"></Icon>
                 <span>过滤</span>
               </span>
 
               <!-- 过滤页面... -->
+              <div v-show="glShow" class="gl">
+                <p class="gl_p">过滤条件</p>
+                <span @click="closeglClick" class="gl_p1">X</span>
+              </div> 
             </span>
             <span style="padding:0 5px">|</span>
             <span class="f-more">
-              <span class="cor1">
+              <span class="cor1" @click="moreClick">
                 <Icon type="navicon-round"></Icon>
                 <span>更多</span>
               </span>
               <!-- 更多页面... -->
+              <div v-show="moreShow" class="more">
+                <p>敬请期待......</p>
+              </div>
             </span>
           </div>
           <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" @click="addClick">新建发货方案</Button>
@@ -103,6 +110,9 @@ export default {
       sum:0,
       pageNum:1,
       loading: false,
+      glShow: false,
+      moreShow: false,
+      filterStatus: false,
       fh_columns: [
         {
           type: "selection",
@@ -176,6 +186,13 @@ export default {
     };
   },
   methods: {
+    tooltipClick(side) {
+      if (side === "inside") {
+        this.tooptipShow = !this.tooptipShow;
+      } else if (side === "outside") {
+        if (this.tooptipShow) this.tooptipShow = false;
+      }
+    },
     editClick(item) {
       if(item.data.shipments_status === 0||item.data.shipments_status === 3){
         item.shipments_id = item.data.shipments_id;
@@ -234,6 +251,28 @@ export default {
     changeTab(){
       this.pageNum = 1;
       this.getDeliveryList(1);
+    },
+    glkhClick() {
+      this.glShow = !this.glShow;
+      this.moreShow = false;
+      if (this.glShow || this.filterStatus) {
+        $(".cor").css({ color: "#4a9af5" });
+        $(".cor1").css({ color: "#000000" });
+      } else {
+        $(".cor").css({ color: "#000000" });
+      }
+    },
+    moreClick() {
+      this.moreShow = !this.moreShow;
+      this.glShow = false;
+      if (this.moreShow) {
+        $(".cor1").css({ color: "#4a9af5" });
+        $(".cor").css({ color: "#000000" });
+      }
+    },
+    closeglClick() {
+      this.glShow = false;
+      if (!this.filterStatus) $(".cor").css({ color: "#000000" });
     }
   },
   mounted() {

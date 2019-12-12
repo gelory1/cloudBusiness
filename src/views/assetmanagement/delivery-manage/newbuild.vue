@@ -784,6 +784,7 @@ export default {
       return data;
     },
     outdevice_columns(){
+      debugger
       let columns = this.cksb_columns;
       if(this.currentRow&&this.currentRow.ddbh){
         if(this.currentRow.ddbh !== '汇总'){

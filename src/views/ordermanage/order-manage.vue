@@ -2,7 +2,7 @@
   <div class="order" @click="selectedDown('outside')">
     <Layout>
       <Menu width="auto" size="small" style="padding-top:30px;">
-        <div class="tip" style="float:left;margin-top:20px">
+        <div class="tip" style="float:left;margin-top:10px">
           <p class="tooltip" @click.stop="selectedDown('inside')">
             {{selectedType.type ==='全部'?'所有订单类型':selectedType.type}}
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
@@ -16,7 +16,7 @@
             <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="search" @on-click="search" style="width: 200px;margin-right:20px;" />
             <span class="f_gl">
               <span @click="glkhClick" class="cor">
-                <Icon type="ios-list" />
+                <Icon type="ios-flask-outline"></Icon>
                 <span>过滤</span>
               </span>
               <!--  -->
@@ -58,7 +58,7 @@
             <span style="padding:0 5px">|</span>
             <span class="f-more">
               <span @click="moreClick" class="cor1">
-                <Icon type="ios-list" />
+                <Icon type="navicon-round"></Icon>
                 <span>更多</span>
               </span>
               <!-- 更多 -->
