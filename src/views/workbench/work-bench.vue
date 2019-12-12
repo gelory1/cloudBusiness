@@ -94,7 +94,8 @@
         </p>
         <p>
           <span class="marl">收款方：</span>
-          <span>{{zf.skf}}</span>
+          <span>新联电子</span>
+          <!-- <span>{{zf.skf}}</span> -->
           <span class="zf_sk">
             应付
             <b>{{zf.yf}}</b>元
