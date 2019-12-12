@@ -2,7 +2,7 @@
   <div>
     <Layout class="cpxh">
       <Content
-        :style="{background: '#ffffff', minHeight: '800px'}"
+        :style="{background: '#fff', minHeight: scrollHeight}"
         style="padding-left:20px;flex: 0 0 150px;"
       >
         <Menu width="auto" size="small">
@@ -144,7 +144,6 @@ export default {
             return h("div", [
               h(silderInput, {
                 props: {
-                  size: "small"
                   // job_id: params.row.id
                 },
                 on: {}
@@ -176,7 +175,14 @@ export default {
     gorelation() {
       this.qglmodal = true;
     }
-  }
+  },
+  computed: {
+    scrollHeight(){
+      let h = 0;
+       h=(document.body.scrollHeight-120)+'px'
+      return h;
+    },   
+  },
 };
 </script>
 

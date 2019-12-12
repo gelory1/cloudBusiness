@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "init": "webpack --progress --config build/webpack.dev.config.js",
-    "dev": "webpack-dev-server --content-base ./ --open --inline --hot --compress --config build/webpack.dev.config.js",
+    "dev": "webpack-dev-server --content-base ./ --open --inline --hot --compress --config build/webpack.dev.config.js --port 8068",
     "build": "webpack --progress --hide-modules --config build/webpack.prod.config.js",
     "lint": "eslint --fix --ext .js,.vue src",
     "test": "npm run lint"
@@ -24,6 +24,7 @@
     "cropperjs": "^1.2.2",
     "echarts": "^3.8.5",
     "element-ui": "^2.12.0",
+    "highcharts": "^7.2.1",
     "html2canvas": "^0.5.0-beta4",
     "iview": "^2.8.0",
     "iview-area": "^1.5.16",
@@ -37,7 +38,7 @@
     "vue-router": "^3.0.1",
     "vue-virtual-scroller": "^0.10.6",
     "vuex": "^3.0.1",
-    "xlsx": "^0.11.17"
+    "xlsx": "^0.11.19"
   },
   "devDependencies": {
     "autoprefixer-loader": "^3.2.0",

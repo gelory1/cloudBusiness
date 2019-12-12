@@ -5,7 +5,7 @@
   <div class="main" :class="{'main-hide-text': shrink}">
     <div
       class="sidebar-menu-con"
-      :style="{width: shrink?'60px':'200px', overflow: shrink ? 'visible' : 'auto'}"
+      :style="{width: shrink?'60px':'250px', overflow: shrink ? 'visible' : 'auto'}"
     >
       <scroll-bar ref="scrollBar">
         <shrinkable-menu
@@ -35,7 +35,7 @@
                 </div>
             </div>
     </div>-->
-    <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'200px'}">
+    <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'250px'}">
       <div style="height:70px;background:#528DFF;">
         <div class="header-avator-con">
           <div class="user-dropdown-menu-con">
@@ -60,7 +60,7 @@
       </div>
     </div>
     <!-- 右侧内容页 -->
-    <div class="single-page-con" :style="{left: shrink?'60px':'200px'}">
+    <div class="single-page-con" :style="{left: shrink?'60px':'250px'}">
       <div class="single-page">
         <keep-alive :include="cachePage">
           <router-view></router-view>
@@ -80,6 +80,7 @@ import themeSwitch from "./main-components/theme-switch/theme-switch.vue";
 import Cookies from "js-cookie";
 import util from "@/libs/util.js";
 import scrollBar from "@/views/my-components/scroll-bar/vue-scroller-bars";
+import axios from "../api/axios"
 
 export default {
   components: {
@@ -133,11 +134,39 @@ export default {
       if (pathArr.length >= 2) {
         this.$store.commit("addOpenSubmenu", pathArr[1].name);
       }
-      this.userName = Cookies.get("user");
+      this.userName = this.$store.state.user.accountName;
       let messageCount = 3;
       this.messageCount = messageCount.toString();
       this.checkTag(this.$route.name);
       this.$store.commit("setMessageCount", 3);
+      if(Cookies.get('user')) this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+      setInterval(() => {
+        if(Cookies.get('user')) this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+      },10000*12)
+      
+      // var websocaket =null;
+		 	// if('WebSocket' in window){
+			// 	 websocaket = new WebSocket("ws://localhost:8080/WebSockt/WebSocketTest");//用于创建 WebSocket 对象。WebSocketTest对应的是java类的注解值
+		 	// }
+		 	// else {
+			// 	alert("当前浏览器不支持");
+			// }
+      // //连接发生错误的时候回调方法；
+      // websocaket.onerror=function(){
+      //                 alert("连接错误");
+      // }
+      // //连接成功时建立回调方法；
+      // websocaket.onopen=function(){
+      //     alert("连接成功");
+      // }
+      // //收到消息的回调方法
+      // websocaket.onmessage=function(msg){
+      //   setdivInnerHTML(msg.data);
+      // }
+      // //连接关闭的回调方法
+      // websocaket.onclose=function(){
+      //   alert("关闭成功");
+      // }
     },
     toggleClick() {
       this.shrink = !this.shrink;
@@ -155,6 +184,8 @@ export default {
         this.$router.push({
           name: "login"
         });
+        this.$store.commit('setWorkBenchData',[]);
+        this.$notify.closeAll();
       }
     },
     checkTag(name) {
@@ -207,8 +238,14 @@ export default {
     openedSubmenuArr() {
       setTimeout(() => {
         this.scrollBarResize();
-      }, 300);
-    }
+      }, 250);
+    },
+  },
+  beforeMount(){
+    let accountId = Number(localStorage.accountId);
+    let accountName = localStorage.accountName;
+    this.$store.commit('setAccountId',accountId);
+    this.$store.commit('setAccountName',accountName);
   },
   mounted() {
     this.init();
@@ -226,5 +263,8 @@ export default {
 <style>
 .ivu-avatar, .ivu-avatar>*{
     display:none;
+}
+.main .layout-text{
+  font-size:16px;
 }
 </style>

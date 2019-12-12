@@ -1,8 +1,22 @@
-import {otherRouter,otherRouter1, appRouter} from '@/router/router';
+import {otherRouter, otherRouter1, otherRouterOrder, assetRouter, appRouter} from '@/router/router';
 import Util from '@/libs/util';
 import Cookies from 'js-cookie';
 import Vue from 'vue';
+import axios from '@/api/axios';
 
+const typeMap = {
+    1: ' 审批提醒',
+    2: ' 签署提醒',
+    3: '支付提醒',
+    4: '（财务）到款确认',
+    5: '下单提醒',
+    6: '发货提醒',
+    7: '收货提醒',
+    8: '上线审批',
+    9: '上线通知',
+    10: '回款核准',
+    11: '开票提醒'
+};
 const app = {
     state: {
         cachePage: [],
@@ -28,12 +42,20 @@ const app = {
         routers: [
             otherRouter,
             otherRouter1,
+            otherRouterOrder,
+            assetRouter,
             ...appRouter
         ],
-        tagsList: [...otherRouter.children,...otherRouter1.children],
+        tagsList: [...otherRouter.children, ...otherRouter1.children, ...assetRouter.children, ...otherRouterOrder.children],
         messageCount: 0,
         dontCache: ['text-editor', 'artical-publish'], // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
-        provinces: []
+        provinces: [],
+        workBenchData: [],
+        showNotice: false,
+        notifyData: {
+            status: false,
+            data: {}
+        }
     },
     mutations: {
         setTagsList (state, list) {
@@ -193,8 +215,79 @@ const app = {
             state.pageOpenedList.push(tagObj);
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         },
-        getProvinces(state,data){
+        getProvinces (state, data) {
             state.provinces = data;
+        },
+        setWorkBenchData (state, data) {
+            state.showNotice = true;
+            state.workBenchData = data;
+        },
+        setNotifyData (state, data) {
+            state.notifyData = data;
+        }
+    },
+    actions: {
+        getworkBench (context, payload) {
+            let request = {
+                'typeid': 28001,
+                'data': [
+                    {
+                        'workBenchStatus': 1,
+                        'accountId': payload.accountId,
+                        'keyword': ''
+                    }
+                ]
+            };
+            let _this = payload.this;
+            context.commit('setNotifyData', {status: false, data: []});
+            axios.XLWORKBENCH(request).then(response => {
+                let { data } = response.data.result;
+                let updateStatus = false;
+                data.forEach(d => {
+                    if (!context.state.workBenchData.find(w => d.workbenchId === w.workbenchId) && context.state.showNotice) {
+                        updateStatus = true;
+                        let message = '';
+                        switch (d.workBenchType) {
+                            case 1:
+                                message = '审批提醒，您有一个待审批的工作，点击直接处理';
+                                break;
+                            case 10:
+                                message = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
+                                break;
+                            case 4:
+                                message = `到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
+                                break;
+                            case 3:
+                                message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
+                                break;
+                            case 12:
+                                message = '发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里';
+                                break;
+                        };
+                        _this.$notify({
+                            title: typeMap[d.workBenchType],
+                            message: message,
+                            duration: 60000,
+                            offset: 100,
+                            openData: () => {
+                                let item = {
+                                    data: d
+                                };
+                                if (_this.$route.path !== '/home') {
+                                    _this.$router.push({path: '/home', query: {notice: item}});
+                                } else {
+                                    context.commit('setNotifyData', {status: true, data: {row: item}});
+                                }
+                            },
+                            onClick: function () {
+                                this.close();
+                                this.openData();
+                            }
+                        });
+                    }
+                });
+                if (updateStatus || data.length < context.state.workBenchData.length || !context.state.showNotice) context.commit('setWorkBenchData', data);
+            });
         }
     }
 };

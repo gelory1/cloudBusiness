@@ -81,53 +81,47 @@ util.setCurrentPath = function (vm, name) {
     let title = '';
     let isOtherRouter = false;
     let otherRouter = '';
+    let routerMap = {
+        'otherRouter': '0',
+        'otherRouter1': '1',
+        'otherRouterOrder': '2',
+        'assetRouter': '3'
+    };
     vm.$store.state.app.routers.forEach(item => {
         if (item.children.length === 1) {
             if (item.children[0].name === name) {
                 title = util.handleTitle(vm, item);
-                if (item.name === 'otherRouter'||item.name === 'otherRouter1') {
+                if (routerMap[item.name]) {
                     isOtherRouter = true;
-                    otherRouter = item.name === 'otherRouter'?'0':'1';
+                    otherRouter = routerMap[item.name];
                 }
             }
         } else {
             item.children.forEach(child => {
                 if (child.name === name) {
                     title = util.handleTitle(vm, child);
-                    if (item.name === 'otherRouter'||item.name === 'otherRouter1') {
+                    if (routerMap[item.name]) {
                         isOtherRouter = true;
-                        otherRouter = item.name === 'otherRouter'?'0':'1';
+                        otherRouter = routerMap[item.name];
                     }
                 }
             });
         }
     });
-    
-    let currentPathArr = [];
-    if (name === 'home_index') {
-        currentPathArr = [
+    let currentPathMap = {
+        '0': [
             {
-                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'home_index')),
-                path: '',
-                name: 'home_index'
-            }
-        ];
-    } else if ((name.indexOf('_index') >= 0 || isOtherRouter) && name !== 'home_index') {
-        
-        currentPathArr = otherRouter === '0'?[
-            {
-                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'home_index')),
-                path: '/home',
-                name: 'home_index'
+                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'customermanage_index')),
+                path: '/customermanage',
+                name: 'customermanage_index'
             },
-
-
             {
                 title: title,
                 path: '',
                 name: name
             }
-        ]:[
+        ],
+        '1': [
             {
                 title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'contractmanage_index')),
                 path: '/contractmanage',
@@ -138,7 +132,43 @@ util.setCurrentPath = function (vm, name) {
                 path: '',
                 name: name
             }
+        ],
+        '2': [
+            {
+                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'ordermanage_index')),
+                path: '/ordermanage',
+                name: 'ordermanage_index'
+            },
+            {
+                title: title,
+                path: '',
+                name: name
+            }
+        ],
+        '3': [
+            {
+                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'delivery-manage_index')),
+                path: '/delivery-manage',
+                name: 'delivery-manage_index'
+            },
+            {
+                title: title,
+                path: '',
+                name: name
+            }
+        ]
+    };
+    let currentPathArr = [];
+    if (name === 'home_index') {
+        currentPathArr = [
+            {
+                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'home_index')),
+                path: '',
+                name: 'home_index'
+            }
         ];
+    } else if ((name.indexOf('_index') >= 0 || isOtherRouter) && name !== 'home_index') {
+        currentPathArr = currentPathMap[otherRouter];
     } else {
         let currentPathObj = vm.$store.state.app.routers.filter(item => {
             if (item.children.length <= 1) {
@@ -181,7 +211,6 @@ util.setCurrentPath = function (vm, name) {
             let childObj = currentPathObj.children.filter((child) => {
                 return child.name === name;
             })[0];
-            console.log(childObj);
             currentPathArr = [
                 {
                     title: '首页',
@@ -285,6 +314,36 @@ util.checkUpdate = function (vm) {
     //         });
     //     }
     // });
+};
+util.NumberToChinese = function (n) {
+    var fraction = ['角', '分'];
+    var digit = [
+        '零', '壹', '贰', '叁', '肆',
+        '伍', '陆', '柒', '捌', '玖'
+    ];
+    var unit = [
+        ['元', '万', '亿'],
+        ['', '拾', '佰', '仟']
+    ];
+    var head = n < 0 ? '欠' : '';
+    n = Math.abs(n);
+    var s = '';
+    for (let i = 0; i < fraction.length; i++) {
+        s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+    }
+    s = s || '整';
+    n = Math.floor(n);
+    for (let i = 0; i < unit[0].length && n > 0; i++) {
+        var p = '';
+        for (var j = 0; j < unit[1].length && n > 0; j++) {
+            p = digit[n % 10] + unit[1][j] + p;
+            n = Math.floor(n / 10);
+        }
+        s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s;
+    }
+    return head + s.replace(/(零.)*零元/, '元')
+        .replace(/(零.)+/g, '零')
+        .replace(/^整$/, '零元整');
 };
 
 export default util;

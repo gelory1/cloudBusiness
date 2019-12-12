@@ -2,7 +2,7 @@
   <div class="customer" @click="customerClick('outside')">
     <Layout>
       <Menu width="auto" size="small" style="padding-top:30px;">
-        <div class="tip" style="float:left">
+        <div class="tip" style="float:left;margin-top:10px;">
           <p class="tooltip" @click.stop="customerClick('inside')">
             {{selectedCustomType.type}}
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
@@ -13,10 +13,10 @@
         </div>
         <Header :style="{background: '#fff',minWidth:'400px'}">
           <div style="float:right;">
-            <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="getCustomList(1)" style="width: 200px;margin-right:20px;" />
+            <Input icon="ios-search" placeholder="请输入内容" v-model="inputVal" @on-enter="search" @on-click="search" style="width: 200px;margin-right:20px;" />
             <span class="f_gl">
               <span @click="glkhClick" class="cor">
-                <Icon type="ios-list" />
+                <Icon type="ios-flask-outline"></Icon>
                 <span>过滤</span>
               </span>
 
@@ -26,28 +26,40 @@
                 <span @click="closeglClick" class="gl_p1">X</span>
                 <Form ref="filterItem" :model="filterItem" :label-width="80">
                   <FormItem label="客户等级" prop="khdj">
-                    <Select v-model="filterItem.nature" clearable>
+                    <Select v-model="filterItem.nature" clearable filterable>
                       <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="授权资质" prop="sqzz">
-                    <Select v-model="filterItem.empower_province" clearable>
-                      <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
-                    </Select>
-                    <Select v-model="filterItem.empower_city" clearable>
-                      <Option :value="item.id" v-for="(item,index) in empowerCitys" :key="index">{{item.name}}</Option>
-                    </Select>
+                    <Row>
+                      <Col span="12">
+                        <Select v-model="filterItem.empower_province" clearable filterable>
+                          <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
+                        </Select>
+                      </Col>
+                      <Col span="12">
+                        <Select v-model="filterItem.empower_city" clearable filterable>
+                          <Option :value="item.id" v-for="(item,index) in empowerCitys" :key="index">{{item.name}}</Option>
+                        </Select>
+                      </Col>
+                    </Row>
                   </FormItem>
                   <FormItem label="省份/城市" prop="city">
-                    <Select v-model="filterItem.province" clearable>
-                      <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
-                    </Select>
-                    <Select v-model="filterItem.city" clearable>
-                      <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
-                    </Select>
+                    <Row>
+                      <Col span="12">
+                        <Select v-model="filterItem.province" clearable filterable>
+                          <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
+                        </Select>
+                      </Col>
+                      <Col span="12">
+                        <Select v-model="filterItem.city" clearable filterable  :disabled="disabled">
+                          <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
+                        </Select>
+                      </Col>
+                    </Row>
                   </FormItem>
                   <FormItem label="运营公司" prop="yygs">
-                    <Select v-model="filterItem.manageCompany" clearable>
+                    <Select v-model="filterItem.manageCompany" clearable filterable>
                       <Option :value="item.id" v-for="(item,index) in companys" :key="index">{{item.name}}</Option>
                     </Select>
                   </FormItem>
@@ -57,11 +69,11 @@
                   <FormItem label="建档日期">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" v-model="filterItem.startTime"></DatePicker>
+                        <DatePicker placement="bottom" type="date" v-model="filterItem.startTime" format="yyyy-MM-dd"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" v-model="filterItem.endTime"></DatePicker>
+                        <DatePicker placement="bottom" type="date" v-model="filterItem.endTime" format="yyyy-MM-dd"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
@@ -75,7 +87,7 @@
             <span style="padding:0 5px">|</span>
             <span class="f-more">
               <span @click="moreClick" class="cor1">
-                <Icon type="ios-list" />
+                <Icon type="navicon-round"></Icon>
                 <span>更多</span>
               </span>
               <!-- 更多 -->
@@ -86,10 +98,10 @@
               </div>
             </span>
           </div>
-          <Button type="ghost" icon="ios-plus-empty" class="addBut" @click="addClick">添加客户</Button>
+          <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" @click="addClick">添加客户</Button>
         </Header>
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '500px'}" style="padding-left:20px">
+      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
         <Table
           @on-selection-change="selectChange"
           style="position:relative;"
@@ -97,6 +109,7 @@
           :data="customList_data"
           size="small"
           :loading="loading"
+          class="ww"
         ></Table>
         <Page
           :current.sync="pageNum"
@@ -121,7 +134,7 @@ const customerTypes= [
   },
   {
     no:1,
-    type: "客户"
+    type: "直销客户"
   },
   {
     no:2,
@@ -129,7 +142,7 @@ const customerTypes= [
   },
   {
     no:3,
-    type: "其他"
+    type: "伙伴客户"
   }
 ]
 const natures = ['A级', 'B级','C级','D级','E级',]
@@ -162,13 +175,32 @@ export default {
         },
         {
           title: "客户名称",
-          key: "name"
+          key: "name",
+          align:"center",
+           render: (h, params) => {
+              return h('div', [
+                  h('a', {
+                      class:"iconShow",
+                      style:{
+                      },
+                      on: {
+                          click: () => {
+                                this.$store.commit('selectedCustom',params.row);
+                                localStorage.setItem('customInfo',JSON.stringify(params.row));
+                                this.$router.push({ path: "/customermanage/see" });
+                            }
+                        }
+                  },params.row.name)
+              ]);
+          }
         },
         {
           title: " ",
-          width: 50,
+          width: "50",
+          align:"center",
           render: (h, params) => {
             return h('Dropdown',{
+                class:'iconShow',
                 props:{
                     trigger:"click"
                 },
@@ -176,22 +208,39 @@ export default {
                    'on-click':(value)=>{
                        if (value == "查看") {
                         this.$store.commit('selectedCustom',params.row);
+                        localStorage.setItem('customInfo',JSON.stringify(params.row));
                         this.$router.push({ path: "/customermanage/see" });
                       } else if (value == "编辑") {
                         this.$store.commit('selectedCustom',params.row);
+                        localStorage.setItem('customInfo',JSON.stringify(params.row));
                         this.$router.push({ path: "/customermanage/edit" });
                       } else if (value == "删除") {
-                        let request = {
-                          "typeid": 25010,
-                          "data": [
+                        this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
+                          confirmButtonText: '确定',
+                          cancelButtonText: '取消',
+                          type: 'warning'
+                        }).then(() => {
+                          let request = {
+                            "typeid": 25010,
+                            "data": [
                               {
-                                  "customerNo": params.row.data.customer_no
+                                "customerNo": params.row.data.customer_no
                               }
-                          ]
-                        }
-                        this.$http.DELETECUSTOMER(request).then(response =>{
-                          this.getCustomList(1);
-                        })
+                            ]
+                          }
+                          this.$http.DELETECUSTOMER(request).then(response =>{
+                            this.getCustomList(this.pageNum);
+                          })
+                          this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                          });
+                        }).catch(() => {
+                          this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                          });          
+                        });
                       }
                    }
                 }
@@ -199,10 +248,11 @@ export default {
                 h('a',[
                     h('span',''),
                     h('Icon',{
+                        class:"iconshow",
                         props: {
                             type: 'android-more-vertical',
                             size:'18'
-                        }
+                        },
                     })
                 ]),
                 h('DropdownMenu',{
@@ -221,27 +271,33 @@ export default {
         },
         {
           title: "客户性质",
-          key: "nature"
+          key: "nature",
+          align:"center"
         },
         {
           title: "客户等级",
-          key: "level"
+          key: "level",
+          align:"center"
         },
         {
           title: "省份/城市",
-          key: "city"
+          key: "city",
+          align:"center"
         },
         {
           title: "建档时间",
-          key: "time"
+          key: "time",
+          align:"center"
         },
         {
           title: "销售人员",
-          key: "salesman"
+          key: "salesman",
+          align:"center"
         },
         {
           title: "运营公司",
-          key: "company"
+          key: "company",
+          align:"center"
         }
       ],
       customList_data: [],
@@ -290,7 +346,8 @@ export default {
       citys:[],
       natures,
       empowerCitys:[],
-      filterStatus:false
+      filterStatus:false,
+      disabled:true,
     };
   },
   methods: {
@@ -308,16 +365,23 @@ export default {
       this.getCustomList(1);
     },
     getCustomList(p){
+      let startTime = '',endTime = '';
+      if(this.filterItem.startTime&&this.filterItem.startTime !== ''){
+        startTime = this.filterItem.startTime.getFullYear() + '-' + (this.filterItem.startTime.getMonth()+1) + '-' + (this.filterItem.startTime.getDate())+ ' 00:00:00';
+      }
+      if(this.filterItem.endTime&&this.filterItem.endTime !== ''){
+        endTime = this.filterItem.endTime.getFullYear() + '-' + (this.filterItem.endTime.getMonth()+1) + '-' + (this.filterItem.endTime.getDate()) +' 23:59:59';
+      }
       let request = {
         typeid: 25001,
         data: [
           {
-            account_id: 1009,
+            account_id: this.$store.state.user.accountId,
             page_num:p,
             page_size:10,
             customer_name:'',
-            create_starttime:this.filterItem.startTime,
-            create_endtime:this.filterItem.endTime,
+            create_starttime:startTime,
+            create_endtime:endTime,
             customer_level:this.filterItem.nature === ''?0:this.filterItem.nature,
             customer_nature:this.selectedCustomType.no,
             province:this.filterItem.province === ''?0:this.filterItem.province,
@@ -338,7 +402,7 @@ export default {
           res.customerList.forEach(data => {
             let item = {};
             item.name = data.customer_name;
-            item.nature = this.customerTypes.find(t => t.no === data.customer_nature).type ;
+            item.nature = data.customer_nature === 0?'':this.customerTypes.find(t => t.no === data.customer_nature).type;
             item.level = levelMap[data.customer_level];
             item.city = (data.province_cn||'') + ' ' + (data.city_cn||'');
             item.time = data.create_date;
@@ -373,10 +437,8 @@ export default {
       this.glShow = false;
       if (this.moreShow) {
         $(".cor1").css({ color: "#4a9af5" });
-        // $(".cor").css({ color: "#000000" });
-      } else {
-        $(".cor1").css({ color: "#000000" });
-      }
+        $(".cor").css({ color: "#000000" });
+      } 
     },
     handleSubmitgl(name) {
       let status = true;
@@ -397,7 +459,7 @@ export default {
           this.filterStatus = true;
           this.glShow = false;
           this.getCustomList(1);
-          this.$Message.success("Success!");
+          // this.$Message.success("Success!");
         } else {
           this.$Message.error("Fail!");
         }
@@ -422,7 +484,8 @@ export default {
     },
     addClick(){
       this.$store.commit('selectedCustom',{});
-      this.$router.push({ path: "/customermanage/edit" });
+      localStorage.setItem('customInfo',JSON.stringify({}));
+      this.$router.push({ path: "/customermanage/new" });
     },
     getProvinces(){
       let request = {
@@ -432,6 +495,7 @@ export default {
         let res = response.data.result.data;
         this.provinces = res;
         this.$store.commit('getProvinces',res);
+        localStorage.setItem('provinces',JSON.stringify(res));
       });
     },
     getManagecompanys(){
@@ -460,19 +524,32 @@ export default {
           this.citys = res;
         }
       });
-    }
+    },
+    search(){
+      this.pageNum = 1;
+      this.getCustomList(1);
+    },
   },
   mounted() {
     this.getCustomList(1);
     this.getProvinces();
-    this.getManagecompanys();
+    this.getManagecompanys();   
   },
   watch:{
     'filterItem.empower_province':function(nv){
       if(nv !==0&&nv!=='') this.getCitys(nv,true);
+      if(this.filterItem.empower_province == ''){
+        this.filterItem.empower_city = ''
+      }
     },
     'filterItem.province':function(nv){
       if(nv !==0&&nv!=='') this.getCitys(nv,false);
+      if(this.filterItem.province == ''){
+        this.filterItem.city = ''
+        this.disabled = true
+      }else{
+        this.disabled = false
+      }
     },
   }
 };
@@ -481,4 +558,13 @@ export default {
 <style>
 @import "../assetmanagement/assetmanage.css";
 @import "./customer.css";
+.iconshow{
+  display: none;
+}
+.ivu-table-row:hover .iconshow{
+  display: inline-block;
+}
+.aa .ivu-modal-footer {
+  display: none;
+}
 </style>

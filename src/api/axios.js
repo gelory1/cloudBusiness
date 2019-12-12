@@ -1,6 +1,4 @@
-import Vue from 'vue';
 import axios from 'axios';
-Vue.prototype.$http = axios;
 // 微服务接口
 // let wfwUrl = 'http:// dbengine:9080/api/dbengine/sql';
 // // 新联机房-内网接口
@@ -21,127 +19,105 @@ axios.defaults.headers.post['user'] = 'x';
 axios.defaults.headers.post['key'] = 'x';
 
 // 请求拦截器
-axios.interceptors.request.use(    
+axios.interceptors.request.use(
     config => {
-        // 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了
-        // 即使本地存在token，也有可能token是过期的，所以在响应拦截器中要对返回状态进行判断
-        // const token = store.state.token;        
-        // token && (config.headers.Authorization = token);
-        return config;    
-    },    
-    error => {        
-        return Promise.error(error);    
-    })
+        return config;
+    },
+    error => {
+        return Promise.error(error);
+    });
 
 // 响应拦截器
-axios.interceptors.response.use(    
-    response => {        
-        if (response.status === 200 && response.data.code === 0 && response.data.result && response.data.result !==""||response.data.password) {            
-            return Promise.resolve(response);        
-        } else {            
+axios.interceptors.response.use(
+    response => {
+        if ((response.status === 200 && response.data.code === 0 && response.data.result && response.data.result !== '') || response.data.password) {
+            return Promise.resolve(response);
+        } else {
             console.warn(response.data.message);
-            return Promise.reject(response);        
-        }    
-    },
-    // 服务器状态码不是200的情况    
-    // error => {        
-    //     if (error.response.status) {            
-    //         switch (error.response.status) {                
-    //             // 401: 未登录                
-    //             // 未登录则跳转登录页面，并携带当前页面的路径                
-    //             // 在登录成功后返回当前页面，这一步需要在登录页操作。                
-    //             case 401:                    
-    //                 router.replace({                        
-    //                     path: '/login',                        
-    //                     query: { redirect: router.currentRoute.fullPath } 
-    //                 });
-    //                 break;
-    //             // 403 token过期                
-    //             // 登录过期对用户进行提示                
-    //             // 清除本地token和清空vuex中token对象                
-    //             // 跳转登录页面                
-    //             case 403:                     
-    //                 Toast({                        
-    //                     message: '登录过期，请重新登录',                        
-    //                     duration: 1000,                        
-    //                     forbidClick: true                    
-    //                 });                    
-    //                 // 清除token                    
-    //                 localStorage.removeItem('token');                    
-    //                 store.commit('loginSuccess', null);                    
-    //                 // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
-    //                 setTimeout(() => {                        
-    //                     router.replace({                            
-    //                         path: '/login',                            
-    //                         query: { 
-    //                             redirect: router.currentRoute.fullPath 
-    //                         }                        
-    //                     });                    
-    //                 }, 1000);                    
-    //                 break; 
-    //             // 404请求不存在                
-    //             case 404:                    
-    //                 Toast({                        
-    //                     message: '网络请求不存在',                        
-    //                     duration: 1500,                        
-    //                     forbidClick: true                    
-    //                 });                    
-    //             break;                
-    //             // 其他错误，直接抛出错误提示                
-    //             default:                    
-    //                 Toast({                        
-    //                     message: error.response.data.message,                        
-    //                     duration: 1500,                        
-    //                     forbidClick: true                    
-    //                 });            
-    //         }            
-    //         return Promise.reject(error.response);        
-    //     }       
-    // }
-);
+            // if (response.data && response.data.code !== 0 && response.data.message) {
+            //     this.$Message.error(response.data.message);
+            // }
+            return Promise.reject(response);
+        }
+    });
 
 const workflow = {
     // 登陆
     GetLOGIN (params) {
-        return axios.post('/public/api/xlselect/login',params);
+        return axios.post('/public/api/xlselect/login', params);
     },
     // 设备资产查询
     PostXLASSETS (params) {
-        return axios.post('/public/api/xlassets/query',params);
+        return axios.post('/public/api/xlassets/query', params);
+    },
+    // 新增发货
+    SETXLASSETS (params) {
+        return axios.post('/public/api/xlassets/set', params);
+    },
+    // 删除发货
+    DELXLASSETS (params) {
+        return axios.post('/public/api/xlassets/delete', params);
+    },
+    // 编辑发货
+    UPDATEXLASSETS (params) {
+        return axios.post('/public/api/xlassets/update', params);
     },
     // 订单查询
     XLORDER (params) {
-        return axios.post('/public/api/xlorder/query',params);
+        return axios.post('/public/api/xlorder/query', params);
+    },
+    // 订单查询
+    SETORDER (params) {
+        return axios.post('/public/api/xlorder/set', params);
     },
     // 客户查询
     XLCUSTOMER (params) {
-        return axios.post('/public/api/xlcustomer/query',params);
+        return axios.post('/public/api/xlcustomer/query', params);
     },
     // 客户新增
     SETCUSTOMER (params) {
-        return axios.post('/public/api/xlcustomer/set',params);
+        return axios.post('/public/api/xlcustomer/set', params);
     },
     // 客户编辑
     UPDATECUSTOMER (params) {
-        return axios.post('/public/api/xlcustomer/update',params);
+        return axios.post('/public/api/xlcustomer/update', params);
     },
     // 客户删除
     DELETECUSTOMER (params) {
-        return axios.post('/public/api/xlcustomer/delete',params);
+        return axios.post('/public/api/xlcustomer/delete', params);
     },
     // 合同查询
     XLCONTRACT (params) {
-        return axios.post('/public/api/xlcontract/query',params);
+        return axios.post('/public/api/xlcontract/query', params);
     },
     // 合同编辑
     UPDATECONTRACT (params) {
-        return axios.post('/public/api/xlcontract/update',params);
+        return axios.post('/public/api/xlcontract/update', params);
+    },
+    // 回款合入
+    SETCONTRACT (params) {
+        return axios.post('/public/api/xlcontract/set', params);
     },
     // 城市查询 客户查询
     XLSELECT (params) {
-        return axios.post('/public/api/xlselect/query',params);
+        return axios.post('/public/api/xlselect/query', params);
+    },
+    // 工作台查询
+    XLWORKBENCH (params) {
+        return axios.post('/public/api/xlworkbench/query', params);
+    },
+    // 工作台更新
+    UPDATEWORKBENCH (params) {
+        return axios.post('/public/api/xlworkbench/update', params);
+    },
+    // 工作台新增
+    SETWORKBENCH (params) {
+        return axios.post('/public/api/xlworkbench/set', params);
+    },
+    // 报表查询
+    XLREPORT (params) {
+        return axios.post('/public/api/xlreport/query', params);
     }
-    
 
 };
 export default workflow;

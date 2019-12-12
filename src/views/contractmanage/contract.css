@@ -12,7 +12,7 @@
     vertical-align: top;
     margin-left:5px;
 }
-.ht_img section .cor{
+.ht_img section .cor_s{
     color:#797979;
 }
 .select_h{
@@ -48,10 +48,13 @@
     cursor: pointer;
 }
 .zq_div2{
-    height:100px;
+    /* height:100px; */
     border:1px solid #b3b2b2;
     border-top:none;
     clear: both;
+}
+.zq_div2 .payList{
+    border-bottom: 1px solid #b3b2b2;
 }
 .zq_div2 section{
     height:50px;
@@ -101,7 +104,8 @@
 }
 .fj_add{
     color:#2d8cf0;
-    float:right
+    float:right;
+    cursor: pointer;
 }
 .kc_p{
     margin:20px 0 15px 15px;

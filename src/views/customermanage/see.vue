@@ -1,36 +1,43 @@
 <template>
   <div class="see">
-    <Layout class="layout">
-      <div class="header_top" @click="goBack">
-        <Icon type="ios-arrow-left"></Icon>
-        <span>返回</span>
+    <Layout class="layout" style="color:black;font-size:15px">
+      <div class="header_top">
+        <Icon type="ios-arrow-left"  @click="goBack"></Icon>
+        <span  @click="goBack">返回</span>
+        <Button type="primary" size="large" style="float:right;width:80px;" @click="$router.push('/customermanage/edit')">编辑</Button>
       </div>
+      
       <header class="header_mid">
         <h2>{{data.name}}</h2>
+        <p v-show="((data||{}).data||{}).customer_no.length===0" style="color:#000000;">暂无编号</p>
         <p>{{((data||{}).data||{}).customer_no}}</p>
         <div class="header_div">
           <div>
             <span class="icon">
               <Icon type="person-stalker"></Icon>
             </span>
+            <span v-show="!data.nature||data.nature.length===0" style="color:#000000;">暂无</span>
             <span>{{data.nature}}</span>
           </div>
           <div>
             <span class="icon">
               <Icon type="ribbon-a"></Icon>
             </span>
+            <span v-show="!data.level||data.level.length===0" style="color:#000000;">暂无</span>
             <span>{{data.level}}</span>
           </div>
           <div>
             <span class="icon">
-              <Icon type="ios-location-outline"></Icon>
+              <Icon type="android-pin"></Icon>
             </span>
+            <span v-show="!data.level||data.city.length===0" style="color:#000000;">暂无</span>
             <span>{{data.city}}</span>
           </div>
           <div>
             <span class="icon">
-              <Icon type="ios-person-outline"></Icon>
+              <Icon type="android-person"></Icon>
             </span>
+            <span v-show="!data.salesman||data.salesman.length===0" style="color:#000000;">暂无</span>
             <span>{{data.salesman}}</span>
           </div>
         </div>
@@ -42,47 +49,60 @@
             <div class="select">
               <section>
                 <p>客户简称：</p>
+                <p v-show="!((data||{}).data||{}).customer_abbreviation||((data||{}).data||{}).customer_abbreviation.length===0" style="color:#000000;">暂无</p>
                 <p>{{((data||{}).data||{}).customer_abbreviation}}</p>
               </section>
               <section>
                 <p>客户性质：</p>
+                <p v-show="!data.nature||data.nature.length===0" style="color:#000000;">暂无</p>
                 <p>{{data.nature}}</p>
               </section>
               <section>
                 <p>客户等级：</p>
+                <p v-show="!data.level||data.level.length===0" style="color:#000000;">暂无</p>
                 <p>{{data.level}}</p>
               </section>
               <section>
                 <p>省份/城市：</p>
+                <p v-show="!data.city||data.city.length===0" style="color:#000000;">暂无</p>
                 <p>{{data.city}}</p>
               </section>
             </div>
             <div class="select">
               <section>
                 <p>行业：</p>
+                <p v-show="!industryMap[((data||{}).data||{}).industry]||industryMap[((data||{}).data||{}).industry].length===0" style="color:#000000;">暂无</p>
                 <p>{{industryMap[((data||{}).data||{}).industry]}}</p>
               </section>
               <section>
                 <p>注册资金：</p>
+                <p v-show="!((data||{}).data||{}).registered_capital||((data||{}).data||{}).registered_capital.length===0" style="color:#000000;">暂无</p>
                 <p>{{((data||{}).data||{}).registered_capital}}</p>
               </section>
               <section>
                 <p>法定代表人：</p>
+                <p v-show="!((data||{}).data||{}).charge_person||((data||{}).data||{}).charge_person.length===0" style="color:#000000;">暂无</p>
                 <p>{{((data||{}).data||{}).charge_person}}</p>
               </section>
               <section>
                 <p>授权资质：</p>
+                <p v-show="!empower_city||empower_city.length===0" style="color:#000000;">暂无</p>
                 <p>{{empower_city}}</p>
               </section>
             </div>
-            <div class="select1">
-              <section>
+            <div class="select1" style="clear:both">
+              <section style="width:40.5%;">
                 <p>通讯地址：</p>
+                <p v-show="!((data||{}).data||{}).mail_address||((data||{}).data||{}).mail_address.length===0" style="color:#000000;">暂无</p>
                 <p>{{((data||{}).data||{}).mail_address}}</p>
               </section>
-              <section style="width:25%">
+              <section style="width:20%">
+                <p>协议编号：</p>
+                <p>{{((data||{}).data||{}).protocolNumber}}</p>
+              </section>
+              <section style="width:20%;">
                 <p>
-                  保证金:
+                  保证金：
                   <span class="eye" @click="eyeClick">
                     <Icon type="eye"></Icon>
                   </span>
@@ -92,14 +112,20 @@
               </section>
             </div>
             <div class="select2">
-              <section>
+              <section style="width:40.5%;float:left">
                 <p class="sele2">关联平台账户：</p>
+                <p v-show="(((data||{}).data||{}).platformuser_list||[]).length===0" style="color:#000000;margin-top:5px">暂无</p>
                 <span class="bg_p" v-for="(item,index) in ((data||{}).data||{}).platformuser_list" :key="index" style="margin:0 5px">({{item.platform_id}}){{item.platform_name}}</span>
+              </section>
+              <section style="width:40%;float:left">
+                <p class="sele2">收货地址：</p>
+                <span class="">8888888{{}}</span>
               </section>
             </div>
           </content>
-          <footer>
-            <p class="header_p">开票信息</p>
+          <footer style="clear:both;padding-top:10px;">
+            <p class="header_p" style="border-bottom:1px solid #d2d2d2;">开票信息</p>
+            <p v-show="(((data||{}).data||{}).ticket_list||[]).length===0" style="color:#8d8d8d;text-align:center;margin-top:40px;">暂无开票信息</p>
             <div class="kpxx" v-for="(item,index) in ((data||{}).data||{}).ticket_list" :key="index">
               <div class="kpxx_head">
                 <p>{{item.ticket_customer}}</p>
@@ -112,7 +138,7 @@
                 >
                   <span>收起</span>
                   <span>
-                    <Icon type="ios-arrow-down"></Icon>
+                    <Icon type="ios-arrow-up"></Icon>
                   </span>
                 </p>
                 <p
@@ -123,7 +149,7 @@
                 >
                   <span>展开</span>
                   <span>
-                    <Icon type="ios-arrow-up"></Icon>
+                    <Icon type="ios-arrow-down"></Icon>
                   </span>
                 </p>
               </div>
@@ -171,11 +197,13 @@
           </footer>
         </div>
         <div class="lxr_right" style="minHeight:820px">
+          <div style="padding:10px;border-bottom:1px solid black;">联系人</div>
+          <p v-show="(((data||{}).data||{}).contacts_list||[]).length===0" style="color:#8d8d8d;text-align:center;margin-top:20px;">暂无联系人</p>
           <div class="lxr"   v-for="(item,index) in ((data||{}).data||{}).contacts_list" :key="index">
             <p class="lxr_icon">
               <Icon type="ios-person" />
             </p>
-            <div class="lxr_xq">
+            <div class="lxr_xq" style="height:35px;">
               <p>
                 <span>{{item.contact_name}}</span>
                 <span class="lxr_cor">{{item.position_name}}</span>
@@ -207,43 +235,8 @@ export default {
   name: "see",
   data() {
     return {
-      khda: {
-        mc: "海天酱油海天酱油",
-        bh: "CDFF3333",
-        khxz: "合作",
-        jb: "AAAA",
-        dz: "南京",
-        fr: "张三"
-      },
-      jbxx: {
-        hy: "批发",
-        zczj: "6666666666万",
-        fr: "郭嘉",
-        sqzz: "郑州",
-        txdz: "南京",
-        bzj: "5000000万"
-      },
-      kpxx: {
-        sh: "3241424324",
-        dh: "23443242424",
-        khyh: "中国银行",
-        yhzh: "2341222312432424",
-        kpdz: "南京雨花台",
-        yjdz: "南京江宁",
-        yjr: "司马懿",
-        yjdh: "21657890987"
-      },
-      lxr:[{
-          xm:"郭嘉",
-          zc:"军师",
-          dh:"123243546546"
-      },{
-          xm:"郭嘉kkk",
-          zc:"军师",
-          dh:"123243546546"
-      }],
-      eye1Show: true,
-      eyeShow: false,
+      eye1Show: false,
+      eyeShow: true,
       kpxxShow: false,
       citys: [],
       industryMap:industryMap
@@ -266,7 +259,7 @@ export default {
         typeid: 27003,
         data: [
           {
-            province:this.$store.state.user.customerInfo.data.empower_province
+            province:(this.data.data||{}).empower_province
           }
         ]
       };
@@ -281,12 +274,15 @@ export default {
   },
   computed: {
     data(){
-      return this.$store.state.user.customerInfo;
+      if(Object.keys(this.$store.state.user.customerInfo).length>0){
+        return this.$store.state.user.customerInfo;
+      }
+      return JSON.parse(localStorage.getItem('customInfo'))||{};
     },
     empower_city(){
       let province = this.$store.state.app.provinces.find(c => c.id === ((this.data||{}).data||{}).empower_province)||{};
       let city = this.citys.find(c => c.id === ((this.data||{}).data||{}).empower_city)||{};
-      return province.name + ' ' + city.name;
+      return (province.name||'') + ' ' + (city.name||'');
     }
   }
 };

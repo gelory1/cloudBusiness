@@ -1,0 +1,144 @@
+.layout{
+    padding:10px 20px;
+    background-color: #fff;
+    font-size:14px;
+}
+.left{
+    float:left;
+}
+.right{
+    float:right;
+}
+.chang_h{
+    margin:30px 50px;
+}
+.icon{
+    transform:rotate(180deg);
+    margin-right:5px;
+}
+.red{
+    color:red;
+}
+.gray{
+    color:#8d8d8d;
+}
+.head_img{
+    width:100px;
+    height:100px;
+    border-radius: 50%;
+    border:1px solid #8d8d8d;
+    margin:50px 0;
+}
+.sc_but{
+    margin-bottom:50px;
+}
+.sc_but button:nth-of-type(2){
+    color:#c4c1c1;
+    margin-left:20px;
+}
+.formTop{
+    margin-top:30px;
+}
+.ad_p{
+    font-size:16px;
+    margin:20px;
+}
+.ad_div{
+    width: 40%;
+    margin:0 20px 20px 20px;
+    float:left;
+    border:1px solid #e6e4e4;
+    border-radius: 4px;;
+    padding:20px;
+}
+.ad_span{
+    border:1px solid #3896f5;
+    color:#3896f5;
+    border-radius: 3px;
+    margin-left:30px;
+    padding:2px;
+    font-size:10px;
+}
+.icon{
+    /* float: right; */
+    /* display:none; */
+    cursor: pointer;
+}
+.p_span1{
+    margin:15px 20px 5px 0;
+}
+.add_adress{
+    width:40%;
+    height:130px;
+    background: rgba(252, 252, 249, 0.842);
+    border:1px solid #e6e4e4;
+    text-align: center;
+    margin-left:20px;
+    border-radius: 3px;
+    line-height: 130px;;
+
+}
+/* 成员管理 */
+.re_p{
+    margin:15px;
+    font-size:14px;
+    padding:0 0 5px 5px;
+    border-bottom:1px solid #dad7d7;
+}
+.cy_div{
+    margin:20px 0 20px 100px;
+    position: relative;
+    width:600px;
+    /* margin:0 auto; */
+}
+.cy_div img{
+    width:50px;
+    height:50px;
+    border-radius: 50%;
+    border:1px solid pink;
+    margin-right:5px;
+}
+.li{
+    display: inline-block;
+}
+.widrig{
+    width:100px;
+    text-align:right;
+}
+.yh_mess{
+    vertical-align: top;
+    margin-top:5px;
+    
+}
+.use{
+    position: absolute;
+    left:330px;
+    top:5px;
+    font-size:16px;
+}
+.cy_eait{
+    margin:50px 0 30px 150px;
+}
+.cy_eait .ivu-btn-ghost{
+    color:#409eff;
+    border:1px solid #b3d8ff;
+    background: #ecf5ff;
+}
+.yh_sec{
+    line-height: 40px;
+    margin:30px 0;
+}
+.cy_name{
+    font-size:14px;
+    color:#000000
+}
+.cy_icon{
+    color:red;
+    font-size:18px;
+    margin-left:5px;
+}
+.cy_icon1{
+    color:#409eff;
+    font-size:18px;
+    margin-left:5px;
+}

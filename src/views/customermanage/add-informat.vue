@@ -1,6 +1,6 @@
 <template>
   <div class="addinformat">
-    <Layout class="layout">
+    <Layout class="layout" style="min-height:700px;">
       <p class="div_p">开票信息</p>
       <Form
         ref="formAddinformat"
@@ -11,7 +11,7 @@
         <Row>
           <Col span="12">
             <FormItem label="客户档案" prop="khda">
-              <Select v-model="selectedCustom">
+              <Select v-model="selectedCustom" clearable filterable>
                 <Option v-for="item in customerList" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
             </FormItem>
@@ -161,8 +161,6 @@ export default {
   },
   methods: {
     handleSubmit(name) {
-
-      
       this.$refs[name].validate(valid => {
         if (valid) {
           let request2 = {
@@ -186,8 +184,10 @@ export default {
           this.$http.SETCUSTOMER(request2).then(response => {
             if(response.data.code === 0){
               this.$Message.success("添加成功!");
-              this.$router.push({ path: "/home" });
+              this.$router.push('/customermanage/customermanage');
             }
+          },error => {
+            this.$Message.error('请按规则填写!');
           })
         } else {
           this.$Message.error("请按规则填写!");
@@ -195,10 +195,11 @@ export default {
       });
     },
     handleCancel(name) {
-      this.$Message.error("已取消");
+      // this.$Message.error("已取消");
+      this.$router.go(-1);
     },
     editClick(){
-      this.$router.push({ path: "/customermanage/edit" });
+      this.$router.push({ path: "/customermanage/new" });
     },
     getAllCustom(){
       let requst = {

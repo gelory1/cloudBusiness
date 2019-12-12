@@ -70,14 +70,18 @@ export default {
           // alert(JSON.stringify(response.data.code))
           if (valid) {
             if (response.data.code == 0) {
+              Cookies.set("user", this.form.userName);
+              Cookies.set("password", this.form.password);
+              localStorage.setItem('accountId',response.data.accountId);
+              localStorage.setItem('accountName',response.data.accountName);
+              this.$store.commit('setAccountId',response.data.accountId);
+              this.$store.commit('setAccountName',response.data.accountName);
               this.$router.push({
                 name: "home_index"
               });
             } else {
               this.$Message.error("用户名或密码不正确");
             }
-            Cookies.set("user", this.form.userName);
-            Cookies.set("password", this.form.password);
           }
         });
       });
