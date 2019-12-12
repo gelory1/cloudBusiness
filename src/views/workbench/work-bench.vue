@@ -257,7 +257,7 @@
           </p>
           <p>
             <span>交易时间：</span>
-            <i>{{ensurePayBack.transactionTime}}</i>
+            <i>{{ensurePayBack.payTime}}</i>
           </p>
           <p>
             <span>付款凭证：</span>
@@ -896,7 +896,7 @@ export default {
         contractNo: "",
         lastWorkbenchId: "",
         payAmount: "",
-        transactionTime: "",
+        payTime: "",
         payUnitName: "",
         paymentPeriod: "",
         receiveSide: "",
@@ -1177,7 +1177,7 @@ export default {
             contractNo: params.row.data.workBenchContentObj.contractNo,
             lastWorkbenchId: params.row.data.workBenchContentObj.lastWorkbenchId,
             payAmount: params.row.data.workBenchContentObj.payAmount,
-            transactionTime: params.row.data.workBenchContentObj.transactionTime,
+            payTime: params.row.data.workBenchContentObj.payTime,
             payUnitName: params.row.data.workBenchContentObj.payUnitName,
             paymentPeriod: params.row.data.workBenchContentObj.paymentPeriod,
             receiveSide: params.row.data.workBenchContentObj.receiveSide,
