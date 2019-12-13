@@ -264,9 +264,9 @@ width:100px;
     border:1px solid #b3d8ff;
     background: #ecf5ff;
 }
-.order .ivu-layout-header,.customer .ivu-layout-header{
+/* .order .ivu-layout-header,.customer .ivu-layout-header{
     line-height:75px
-}
+} */
 .aa .ivu-modal-footer {
     display: none;
   }

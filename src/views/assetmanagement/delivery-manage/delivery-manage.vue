@@ -2,8 +2,16 @@
   <div class="delivery" @click="tooltipClick('outside')">
     <Layout>
       <Menu width="auto" size="small" style="padding-top:30px;">
+        <Button
+          type="primary"
+          size="large"
+          icon="ios-plus-empty"
+          class="addBut"
+          @click="addClick"
+        >新建发货方案</Button>
+        <div style="padding-top:5px;box-shadow: 0px 0px 5px #dddddd;margin-top:25px;"></div>
         <div class="fh_but">
-          <Button type="ghost">发货方案查询</Button>
+          <Button type="ghost" style="margin-top:5px;">发货方案查询</Button>
         </div>
         <Header :style="{background: '#fff',minWidth:'400px'}">
           <div style="float:right;" @click.stop="tooltipClick('inside')">
@@ -25,7 +33,83 @@
               <div v-show="glShow" class="gl">
                 <p class="gl_p">过滤条件</p>
                 <span @click="closeglClick" class="gl_p1">X</span>
-              </div> 
+                <Form ref="filterItem" :model="filterItem" :label-width="100">
+                  <FormItem label="客户名称" prop="customerName">
+                    <Input type="text" v-model="filterItem.customerName" />
+                  </FormItem>
+                  <FormItem label="发起时间段">
+                    <Row>
+                      <Col span="11">
+                        <DatePicker
+                          type="date"
+                          placement="bottom"
+                          placeholder="开始日期"
+                          v-model="filterItem.startTime"
+                          :options="startOption"
+                        ></DatePicker>
+                      </Col>
+                      <Col span="2" style="text-align: center">-</Col>
+                      <Col span="11">
+                        <DatePicker
+                          type="date"
+                          placement="bottom"
+                          placeholder="结束日期"
+                          v-model="filterItem.endTime"
+                          :options="endOption"
+                        ></DatePicker>
+                      </Col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="订单数量级">
+                    <Row>
+                      <Col span="11">
+                      <InputNumber :min="0" v-model="filterItem.orderstart" style="width:140px"></InputNumber>
+                      </Col>
+                      <Col span="2" style="text-align: center">至</Col>
+                      <Col span="11">
+                      <InputNumber :min="0" v-model="filterItem.orderend" style="width:140px"></InputNumber>
+                      </Col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="设备数量级" prop>
+                    <Row>
+                      <Col span="11">
+                        <InputNumber :min="0" v-model="filterItem.setstart" style="width:140px"></InputNumber>
+                      </Col>
+                      <Col span="2" style="text-align: center">至</Col>
+                      <Col span="11">
+                        <InputNumber :min="0" v-model="filterItem.setend" style="width:140px"></InputNumber>
+                      </Col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="金额范围" prop>
+                    <Row>
+                      <Col span="11">
+                      <InputNumber :min="0" v-model="filterItem.moneystart" style="width:140px"></InputNumber>
+                      </Col>
+                      <Col span="2" style="text-align: center">至</Col>
+                      <Col span="11">
+                        <InputNumber :min="0" v-model="filterItem.moneyend" style="width:140px"></InputNumber>
+                      </Col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="完成度">
+                    <Row>
+                      <Col span="11">
+                        <Input type="text" v-model="filterItem.prostart" />
+                      </Col>
+                      <Col span="2" style="text-align: center">至</Col>
+                      <Col span="11">
+                        <Input type="text" v-model="filterItem.proend" />
+                      </Col>
+                    </Row>
+                  </FormItem>
+                  <FormItem>
+                    <Button @click="handleResetht('filterItem')" style="margin-left: 8px">重置</Button>
+                    <Button type="primary" @click="handleSubmitht('filterItem')">确定</Button>
+                  </FormItem>
+                </Form>
+              </div>
             </span>
             <span style="padding:0 5px">|</span>
             <span class="f-more">
@@ -39,12 +123,13 @@
               </div>
             </span>
           </div>
-          <div style="width:100%;border:1px solid red">
-          <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" @click="addClick">新建发货方案</Button>
-          </div>
+          <div></div>
         </Header>
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px;margin-top:-10px;">
+      <Content
+        :style="{background: '#fff', minHeight: '800px'}"
+        style="padding-left:20px;margin-top:-10px;"
+      >
         <Tabs ref="tab" v-model="tabName" @on-change="changeTab">
           <TabPane
             v-for="(item,index) in fhStatus"
@@ -109,12 +194,41 @@ export default {
     return {
       fhStatus,
       inputVal: "",
-      sum:0,
-      pageNum:1,
+      sum: 0,
+      pageNum: 1,
       loading: false,
       glShow: false,
       moreShow: false,
       filterStatus: false,
+      filterItem: {
+        customerName: "",
+        startTime: "",
+        endTime: "",
+        orderstart: 0,
+        orderend: 0,
+        setstart: 0,
+        setend: 0,
+        moneystart: 0,
+        moneyend: 0,
+        prostart: "",
+        proend:""
+      },
+      startOption: {
+        disabledDate: time => {
+          if (this.filterItem.endTime) {
+            return time.getTime() > new Date(this.filterItem.endTime).getTime();
+          }
+        }
+      },
+      endOption: {
+        disabledDate: time => {
+          if (this.filterItem.startTime) {
+            return (
+              time.getTime() < new Date(this.filterItem.startTime).getTime()
+            );
+          }
+        }
+      },
       fh_columns: [
         {
           type: "selection",
@@ -133,7 +247,7 @@ export default {
                   props: {},
                   on: {
                     click: () => {
-                      let data = {...params.row};
+                      let data = { ...params.row };
                       data.shipments_id = data.data.shipments_id;
                       this.$router.push({
                         name: "delivery_detail",
@@ -196,14 +310,17 @@ export default {
       }
     },
     editClick(item) {
-      if(item.data.shipments_status === 0||item.data.shipments_status === 3){
+      if (
+        item.data.shipments_status === 0 ||
+        item.data.shipments_status === 3
+      ) {
         item.shipments_id = item.data.shipments_id;
         this.$router.push({
           name: "delivery_detail2",
           query: item
         });
-      }else{
-        this.$Message.error('当前状态不支持编辑！');
+      } else {
+        this.$Message.error("当前状态不支持编辑！");
       }
     },
     addClick() {
@@ -212,45 +329,51 @@ export default {
       });
     },
     getDeliveryList(p) {
-      let index = this.fhStatus.find(f => f.name === this.tabName).index -1;
+      let index = this.fhStatus.find(f => f.name === this.tabName).index - 1;
       let request = {
-        "typeid": 23019,
-        "data": [
-            {
-              "account_id": this.$store.state.user.accountId,
-              "page_num": p,
-              "page_size": 10,
-              "keyword": this.inputVal,
-              "shipments_status": index === -1?undefined:index
-            }
+        typeid: 23019,
+        data: [
+          {
+            account_id: this.$store.state.user.accountId,
+            page_num: p,
+            page_size: 10,
+            keyword: this.inputVal,
+            shipments_status: index === -1 ? undefined : index
+          }
         ]
       };
       this.fh_data = [];
       this.loading = true;
-      this.$http.PostXLASSETS(request).then(response => {
-        this.loading = false;
-        this.fh_data = [];
-        let { data } = response.data.result;
-        this.sum = data[0].sum;
-        data[0].shipments_list.forEach(s => {
-          this.fh_data.push({
-            fabh: s.shipments_no,
-            fqr: s.user_name,
-            fqsj: s.shipments_creation_time,
-            fqms: s.shipments_describe,
-            ddsl: s.order_quantity,
-            sbsl: s.product_sum,
-            jexj: s.total_money,
-            zt: (this.fhStatus.find(f => f.index === s.shipments_status+1)||{}).type,
-            data:s
-          })
-        });
-      },error => {
-        this.loading = false;
-        this.fh_data = [];
-      })
+      this.$http.PostXLASSETS(request).then(
+        response => {
+          this.loading = false;
+          this.fh_data = [];
+          let { data } = response.data.result;
+          this.sum = data[0].sum;
+          data[0].shipments_list.forEach(s => {
+            this.fh_data.push({
+              fabh: s.shipments_no,
+              fqr: s.user_name,
+              fqsj: s.shipments_creation_time,
+              fqms: s.shipments_describe,
+              ddsl: s.order_quantity,
+              sbsl: s.product_sum,
+              jexj: s.total_money,
+              zt: (
+                this.fhStatus.find(f => f.index === s.shipments_status + 1) ||
+                {}
+              ).type,
+              data: s
+            });
+          });
+        },
+        error => {
+          this.loading = false;
+          this.fh_data = [];
+        }
+      );
     },
-    changeTab(){
+    changeTab() {
       this.pageNum = 1;
       this.getDeliveryList(1);
     },
@@ -280,8 +403,8 @@ export default {
   mounted() {
     this.getDeliveryList(1);
   },
-  watch:{
-    tabName(){
+  watch: {
+    tabName() {
       this.changeTab();
     }
   }
@@ -290,7 +413,4 @@ export default {
 
 <style>
 @import "../assetmanage.css";
-.ivu-layout-header{
-    line-height:80px
-}
 </style>

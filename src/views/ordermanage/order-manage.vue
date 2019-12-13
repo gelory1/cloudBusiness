@@ -2,7 +2,9 @@
   <div class="order" @click="selectedDown('outside')">
     <Layout>
       <Menu width="auto" size="small" style="padding-top:30px;">
-        <div class="tip" style="float:left;margin-top:10px">
+        <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" style="position:absolute;right:10px;top:10px;" @click="addOrder">申请备货</Button>  
+        <div style="padding-top:5px;box-shadow: 0px 0px 5px #dddddd;margin-top:25px;"></div>   
+        <div class="tip" style="float:left;margin-top:-5px;">
           <p class="tooltip" @click.stop="selectedDown('inside')">
             {{selectedType.type ==='全部'?'所有订单类型':selectedType.type}}
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
@@ -67,7 +69,6 @@
               </div>
             </span>
           </div>  
-          <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" style="position:absolute;right:10px;top:10px;" @click="addOrder">申请备货</Button>     
         </Header>
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px;margin-top:-10px;">
@@ -928,5 +929,9 @@ export default {
 @import "../customermanage/customer.css";
 .button0{
   color: blue;
+}
+.ivu-layout-header{
+ line-height: 50px;
+ height: 50px
 }
 </style>
