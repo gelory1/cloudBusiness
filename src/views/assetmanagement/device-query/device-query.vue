@@ -97,6 +97,7 @@
                         <DatePicker
                           placement="left"
                           type="date"
+                          :options="startOption"
                           placeholder="Select date"
                           v-model="filterItem.kssj"
                         ></DatePicker>
@@ -106,6 +107,7 @@
                         <DatePicker
                           placement="left"
                           type="date"
+                          :options="endOption"
                           placeholder="Select date"
                           v-model="filterItem.jssj"
                         ></DatePicker>
@@ -657,6 +659,20 @@ export default {
         zt: "",
         kssj: "",
         jssj: ""
+      },
+      startOption:{
+        disabledDate:time =>{
+          if(this.filterItem.jssj){
+            return time.getTime() > new Date(this.filterItem.jssj).getTime()
+          }
+        }
+      },
+      endOption:{
+        disabledDate:time =>{
+          if(this.filterItem.kssj){
+            return time.getTime() < new Date(this.filterItem.kssj).getTime()
+          }
+        }
       },
       glShow: false,
       moreShow: false,

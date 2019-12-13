@@ -40,11 +40,11 @@
                   <FormItem label="下单日期">
                     <Row>
                       <Col span="11">
-                        <DatePicker type="date" placement="top" placeholder="开始日期" v-model="filterItem.startTime"></DatePicker>
+                        <DatePicker type="date" :options="startOption" placement="top" placeholder="开始日期" v-model="filterItem.startTime"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker type="date" placement="top" placeholder="结束日期" v-model="filterItem.endTime"></DatePicker>
+                        <DatePicker type="date" :options="endOption" placement="top" placeholder="结束日期" v-model="filterItem.endTime"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
@@ -374,6 +374,20 @@ export default {
         saleName:"",
         startTime:"",
         endTime:""
+      },
+      startOption:{
+        disabledDate:time =>{
+          if(this.filterItem.endTime){
+            return time.getTime() > new Date(this.filterItem.endTime).getTime()
+          }
+        }
+      },
+      endOption:{
+        disabledDate:time =>{
+          if(this.filterItem.startTime){
+            return time.getTime() < new Date(this.filterItem.startTime).getTime()
+          }
+        }
       },
       device_data: [],
       deviceList_columns,
