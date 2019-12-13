@@ -350,10 +350,14 @@
         </div>
       </footer>
     </Modal>
+    <Modal v-model="orderDetailOpen" width="1000">
+        <orderDetail :orderNO="selectedOrder"></orderDetail>
+      </Modal>
   </div>
 </template>
 
 <script>
+import orderDetail from '../ordermanage/order-detail';
 const subjectName = {
   1: "电能云",
   2: "智慧能源",
@@ -377,6 +381,9 @@ const contractContentMap = {
 };
 export default {
   name: "detail",
+  components:{
+    orderDetail
+  },
   data() {
     return {
       subjectName,
@@ -481,7 +488,9 @@ export default {
       zkShow: true,
       showObj: {},
       checkbox: [],
-      contractContentMap
+      contractContentMap,
+      orderDetailOpen: false,
+      selectedOrder: ''
     };
   },
   methods: {
@@ -518,10 +527,8 @@ export default {
       this.$set(this.showObj, index, !this.showObj[index]);
     },
     goOrderDetail() {
-      this.$router.push({
-        path: "/ordermanage/orderManage",
-        query: { orderNo: this.data.data.orderNo }
-      });
+      this.selectedOrder = this.data.data.orderNo;
+      this.orderDetailOpen = true;
     },
     getkcmx() {
       let request = {
