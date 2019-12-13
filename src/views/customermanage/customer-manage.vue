@@ -69,11 +69,11 @@
                   <FormItem label="建档日期">
                     <Row>
                       <Col span="11">
-                        <DatePicker placement="bottom" type="date" v-model="filterItem.startTime" format="yyyy-MM-dd"></DatePicker>
+                        <DatePicker placement="bottom" type="date" :options="startOption"  v-model="filterItem.startTime" format="yyyy-MM-dd"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker placement="bottom" type="date" v-model="filterItem.endTime" format="yyyy-MM-dd"></DatePicker>
+                        <DatePicker placement="bottom" type="date" :options="endOption" v-model="filterItem.endTime" format="yyyy-MM-dd"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
@@ -322,6 +322,20 @@ export default {
         province: 0,
         startTime:'',
         endTime:''
+      },
+      startOption:{
+        disabledDate:time =>{
+          if(this.filterItem.endTime){
+            return time.getTime() > new Date(this.filterItem.endTime).getTime()
+          }
+        }
+      },
+      endOption:{
+        disabledDate:time =>{
+          if(this.filterItem.startTime){
+            return time.getTime() < new Date(this.filterItem.startTime).getTime()
+          }
+        }
       },
       khdjg: [
         {

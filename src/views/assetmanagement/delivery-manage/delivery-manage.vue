@@ -39,7 +39,9 @@
               </div>
             </span>
           </div>
+          <div style="width:100%;border:1px solid red">
           <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" @click="addClick">新建发货方案</Button>
+          </div>
         </Header>
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px;margin-top:-10px;">

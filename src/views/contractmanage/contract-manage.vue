@@ -107,6 +107,7 @@
                           placement="bottom"
                           placeholder="开始日期"
                           v-model="filterItem.signStarttime"
+                          :options="startOption"
                         ></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
@@ -116,6 +117,7 @@
                           placement="bottom"
                           placeholder="结束日期"
                           v-model="filterItem.signEndtime"
+                          :options="endOption"
                           @on-change="changeTime"
                         ></DatePicker>
                       </Col>
@@ -126,6 +128,7 @@
                       <Col span="11">
                         <DatePicker
                           type="date"
+                          :options="startOption1"
                           placement="bottom"
                           placeholder="开始日期"
                           v-model="filterItem.dueStarttime"
@@ -136,6 +139,7 @@
                         <DatePicker
                           type="date"
                           placement="bottom"
+                          :options="endOption1"
                           placeholder="结束日期"
                           v-model="filterItem.dueEndtime"
                         ></DatePicker>
@@ -487,6 +491,34 @@ export default {
         signEndtime: "",
         dueStarttime: "",
         dueEndtime: ""
+      },
+      startOption:{
+        disabledDate:time =>{
+          if(this.filterItem.signEndtime){
+            return time.getTime() > new Date(this.filterItem.signEndtime).getTime()
+          }
+        }
+      },
+      endOption:{
+        disabledDate:time =>{
+          if(this.filterItem.signStarttime){
+            return time.getTime() < new Date(this.filterItem.signStarttime).getTime()
+          }
+        }
+      },
+      startOption1:{
+        disabledDate:time =>{
+          if(this.filterItem.dueEndtime){
+            return time.getTime() > new Date(this.filterItem.dueEndtime).getTime()
+          }
+        }
+      },
+      endOption1:{
+        disabledDate:time =>{
+          if(this.filterItem.dueStarttime){
+            return time.getTime() < new Date(this.filterItem.dueStarttime).getTime()
+          }
+        }
       },
       khmch: [
         {
