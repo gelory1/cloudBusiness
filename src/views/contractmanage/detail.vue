@@ -6,7 +6,7 @@
           <Icon type="ios-arrow-left"></Icon>
           <span>返回</span>
         </div>
-        <Button type="ghost" size="small" style="float:right;width:80px;" @click="bjbuttClick">编辑</Button>
+        <Button type="ghost" size="small" style="float:right;width:80px;" @click="bjbuttClick" :disabled="data.data.contractStatus >= 5">编辑</Button>
       </div>
       <header class="header_mid" style="border:none">
         <h2 style="position:relative">
