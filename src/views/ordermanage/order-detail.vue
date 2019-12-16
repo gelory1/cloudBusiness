@@ -281,13 +281,12 @@ export default {
                 this.selectedOrder.contractNO = data.contract_no;
                 this.selectedOrder.contract_subject = data.contract_subject;
                 this.selectedOrder.count = data.product_count;
-                this.selectedOrder.status = this.statusMap[data.order_status];
+                this.selectedOrder.status = data.order_type === 0?this.statusMap[data.order_status+2]:this.statusMap[data.order_status];
                 this.selectedOrder.cellClassName = {
                     status:`button${data.order_status}`
                 };
                 this.selectedOrder.data = data;
                 this.device_data = [];
-                this.selectedOrder.status = this.statusMap[data.order_status];
                 data.product_list.forEach((p,i) => {
                     let item = {};
                     item.index = i+1;
