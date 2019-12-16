@@ -435,6 +435,7 @@ export default {
     getOrderList(p){
       this.order_data[this.selectedTab.index] = [];
       this.loading = true;
+      this.sum = 0;
       const param = {
         typeid: 24001,
         data: [
@@ -470,7 +471,7 @@ export default {
           item.contractNO = data.contract_no;
           item.contract_subject = data.contract_subject;
           item.count = data.product_count;
-          item.status = this.statusMap[data.order_status];
+          item.status = data.order_type === 0?this.statusMap[data.order_status+2]:this.statusMap[data.order_status];
           item.cellClassName = {
             status:`button${data.order_status}`
           };
