@@ -452,7 +452,7 @@ export default {
                 size: "small",
                 value: params.row.sbsl,
                 min: 0,
-                max: params.row.sbsl
+                max: params.row.max||params.row.sbsl
               },
               on: {
                 "on-change": a => {
@@ -806,9 +806,10 @@ export default {
           item.xdsj = d.order_time;
           item.khmc = d.customer_name;
           item.khdj = this.levelMap[d.customer_level];
+          item.max = d.product_quantity - d.issued_count;
           if (
             this.changeRowData.data[product_code] &&
-            this.changeRowData.data[product_code][d.order_id]
+            this.changeRowData.data[product_code][d.order_id] !== undefined
           ) {
             item.sbsl = this.changeRowData.data[product_code][d.order_id];
           } else {
