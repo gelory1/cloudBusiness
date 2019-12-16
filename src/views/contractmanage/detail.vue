@@ -590,7 +590,6 @@ export default {
         });
       });
     },
-<<<<<<< HEAD
     radioClick(val){
      if(val == "ordinary"){
        $(".ord").css({"color":"#4a9af5"})
@@ -600,8 +599,6 @@ export default {
        $(".ord").css({"color":"#000000"})
      }
     },
-    
-=======
     getfiles(){
       let request = {
         typeid: 26009,
@@ -623,7 +620,6 @@ export default {
         });
       });
     }
->>>>>>> 9941748938f76584b0562f54de9679c8e5fd756d
   },
   beforeCreate() {
     if (

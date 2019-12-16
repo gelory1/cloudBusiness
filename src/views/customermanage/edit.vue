@@ -1170,7 +1170,6 @@ export default {
       this.citys = [];
       // this.formValidate.city = {};
       api.XLSELECT(request).then(response => {
-        alert(JSON.stringify(response))
         let res = response.data.result.data;
         this.citys = res;
         this.formValidate.city = JSON.parse(
