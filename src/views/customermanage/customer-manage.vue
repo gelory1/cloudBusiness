@@ -79,6 +79,17 @@
                       </Col>
                     </Row>
                   </FormItem>
+                  <FormItem label="授权期限">
+                    <Row>
+                      <Col span="11">
+                        <DatePicker placement="bottom" type="date" :options="startOption1"  v-model="filterItem.sqstartTime" format="yyyy-MM-dd"></DatePicker>
+                      </Col>
+                      <Col span="2" style="text-align: center">-</Col>
+                      <Col span="11">
+                        <DatePicker placement="bottom" type="date" :options="endOption1" v-model="filterItem.sqendTime" format="yyyy-MM-dd"></DatePicker>
+                      </Col>
+                    </Row>
+                  </FormItem>
                   <FormItem>
                     <Button @click="handleReset('filterItem')" style="margin-left: 8px">重置</Button>
                     <Button type="primary" @click="handleSubmitgl('filterItem')">确定</Button>
@@ -322,7 +333,9 @@ export default {
         empower_city: 0,
         province: 0,
         startTime:'',
-        endTime:''
+        endTime:'',
+        sqstartTime:"",
+        sqendTime:""
       },
       startOption:{
         disabledDate:time =>{
@@ -335,6 +348,20 @@ export default {
         disabledDate:time =>{
           if(this.filterItem.startTime){
             return time.getTime() < new Date(this.filterItem.startTime).getTime()
+          }
+        }
+      },
+       startOption1:{
+        disabledDate:time =>{
+          if(this.filterItem.sqendTime){
+            return time.getTime() > new Date(this.filterItem.sqendTime).getTime()
+          }
+        }
+      },
+      endOption1:{
+        disabledDate:time =>{
+          if(this.filterItem.sqstartTime){
+            return time.getTime() < new Date(this.filterItem.sqstartTime).getTime()
           }
         }
       },
@@ -522,6 +549,7 @@ export default {
       })
     },
     getCitys(province,isEmpower){
+      debugger
       let request = {
         typeid: 27003,
         data: [

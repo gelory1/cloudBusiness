@@ -344,6 +344,13 @@
   border:1px solid #e1f3d8;
   background: #f0f9ec;
 }
+.fa_b1{
+  font-size:18px;
+  color:#409eff;
+  border:1px solid #b3d8ff;
+  background: #ecf5ff;
+  margin-left:20px;
+}
 .fa_co{
   clear:both;
   border-top:1px solid #d2d2d2;

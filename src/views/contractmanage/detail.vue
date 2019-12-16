@@ -277,6 +277,15 @@
     <Modal v-model="fpmodal" width="800">
       <footer style="font-size:14px">
         <p class="header_p head">开票信息</p>
+        <p class="header_p1">请选择发票类型：</p>
+        <RadioGroup v-model="ticketType" style="margin:0px 0px 30px 20px;"  @on-change="radioClick"> 
+          <Radio label="ordinary">
+            <span class="ord">普通发票</span>
+          </Radio>
+          <Radio label="increment">
+            <span class="inc">增值税专票</span>
+          </Radio>
+        </RadioGroup>
         <p class="header_p1">请选择需要执行的开票信息：</p>
         <div v-if="kpxxLength">未查询到开票信息</div>
         <div class="kpxx" v-for="(kpxx,index) in kpxx" :key="index" style="margin-bottom:20px;">
@@ -348,6 +357,19 @@
             <div style="clear:both"></div>
           </div>
         </div>
+        <span>发票金额（元）：</span>
+        <Dropdown style="display:inline-block" class="cc">
+        <Button>
+            money
+            <Icon type="arrow-down-b" style="float:right"></Icon>
+        </Button>
+        <DropdownMenu slot="list">
+            <DropdownItem>
+               <Checkbox v-model="single"></Checkbox><span>账期1</span></span>&#x3000;&#x3000;&#x3000;
+               <span>实付：<span>10000</span></span>
+            </DropdownItem>   
+        </DropdownMenu>
+    </Dropdown>
       </footer>
     </Modal>
     <Modal v-model="orderDetailOpen" width="1000">
@@ -386,6 +408,8 @@ export default {
   },
   data() {
     return {
+      single:false,
+      ticketType:"",
       subjectName,
       zq: {
         time: "54654-56464",
@@ -408,17 +432,17 @@ export default {
         {
           title: "更新时间",
           key: "updateTime",
-          align: "center",
+          align: "center"
         },
         {
           title: "更新者",
           key: "accountName",
-          align: "center",
+          align: "center"
         },
         {
           title: "更新内容",
           key: "updateContent",
-          align: "center",
+          align: "center"
         }
       ],
       kcmx_columns: [
@@ -468,7 +492,7 @@ export default {
       htzje: "32324324",
       syks: "43242",
       kcmxmodal: false,
-      fpmodal: false,
+      fpmodal: true,
       cjdwsl: "78",
       zqShow: true,
       sqShow: false,
@@ -545,7 +569,7 @@ export default {
         typeid: 26009,
         data: [
           {
-            customerNo: this.data.data.customerNo||''
+            customerNo: this.data.data.customerNo || ""
           }
         ]
       };
@@ -565,6 +589,15 @@ export default {
           this.kpxx.push(item);
         });
       });
+    },
+    radioClick(val){
+     if(val == "ordinary"){
+       $(".ord").css({"color":"#4a9af5"})
+       $(".inc").css({"color":"#000000"})
+     }else{
+       $(".inc").css({"color":"#4a9af5"})
+       $(".ord").css({"color":"#000000"})
+     }
     },
     getfiles(){
       let request = {
@@ -592,7 +625,10 @@ export default {
     }
   },
   beforeCreate() {
-    if (Object.keys(JSON.parse(localStorage.getItem('contractInfo'))||{}).length === 0)
+    if (
+      Object.keys(JSON.parse(localStorage.getItem("contractInfo")) || {})
+        .length === 0
+    )
       this.$router.push({ path: "/contractmanage/contractmanage" });
   },
   mounted() {
@@ -607,10 +643,10 @@ export default {
   },
   computed: {
     data() {
-      if(Object.keys(this.$store.state.user.contractInfo).length>0){
+      if (Object.keys(this.$store.state.user.contractInfo).length > 0) {
         return this.$store.state.user.contractInfo;
       }
-      return JSON.parse(localStorage.getItem('contractInfo'))||{};
+      return JSON.parse(localStorage.getItem("contractInfo")) || {};
     },
     kcmxSum() {
       let sum = 0;
@@ -646,7 +682,8 @@ export default {
           let computeAmountStart = "";
           let computeAmountEnd = "";
           for (let i = 1; i <= index; i++) {
-            backAmount += this.data.data.paymentList[index -1].paymentAmount || 0;
+            backAmount +=
+              this.data.data.paymentList[index - 1].paymentAmount || 0;
           }
           if (
             this.data.data.paybackList &&
@@ -667,8 +704,12 @@ export default {
               ) {
                 payEndIndex = i;
                 computeAmountEnd =
-                  Number(b.paybackAmount)  - item.paymentAmount + (allAmount - Number(b.paybackAmount) - backAmount) > 0
-                    ? item.paymentAmount - (allAmount - Number(b.paybackAmount) - backAmount)
+                  Number(b.paybackAmount) -
+                    item.paymentAmount +
+                    (allAmount - Number(b.paybackAmount) - backAmount) >
+                  0
+                    ? item.paymentAmount -
+                      (allAmount - Number(b.paybackAmount) - backAmount)
                     : Number(b.paybackAmount);
               }
             });
@@ -683,17 +724,22 @@ export default {
                 ? allAmount - backAmount
                 : 0;
           }
-          if(payIndex === ''){
+          if (payIndex === "") {
             item.paybackList = [];
-          }else{
-            item.paybackList = JSON.parse(JSON.stringify((this.data.data.paybackList || []).filter(
-              (a, i) => i >= payIndex && i <= payEndIndex
-            )));
+          } else {
+            item.paybackList = JSON.parse(
+              JSON.stringify(
+                (this.data.data.paybackList || []).filter(
+                  (a, i) => i >= payIndex && i <= payEndIndex
+                )
+              )
+            );
           }
-          (item.paybackList[0]||{}).paybackAmount = computeAmountStart;
-          if(item.paybackList.length >1&&computeAmountEnd!=='') (item.paybackList[
-            item.paybackList.length - 1
-          ]||{}).paybackAmount = computeAmountEnd;
+          (item.paybackList[0] || {}).paybackAmount = computeAmountStart;
+          if (item.paybackList.length > 1 && computeAmountEnd !== "")
+            (
+              item.paybackList[item.paybackList.length - 1] || {}
+            ).paybackAmount = computeAmountEnd;
           //计算发票信息
           let allTicketAmount = 0;
           if (
@@ -769,4 +815,10 @@ export default {
 @import "../assetmanagement/assetmanage.css";
 @import "../customermanage/customer.css";
 @import "./contract.css";
+.cc .ivu-btn{
+  background: white;
+  color:orange;
+  width:200px;
+  text-align:left
+}
 </style>

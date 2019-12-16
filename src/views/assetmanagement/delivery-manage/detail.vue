@@ -6,6 +6,7 @@
         <span>返回</span>
       </div>
       <header class="fa_mid">
+        <Button v-if="$route.query.zt == '草稿'" type="ghost" class="right fa_b1" @click="editClick">编辑</Button>
         <Button type="ghost" class="right fa_b">{{$route.query.zt}}</Button>
         <h2>发货方案详情</h2>
 
@@ -158,6 +159,12 @@ export default {
     };
   },
   methods: {
+    editClick(){
+      this.$router.push({
+          name: "delivery_detail2",
+          query: this.detailData
+        });
+    },
     changeRow(data) {
       this.currentRow = JSON.parse(JSON.stringify(data));
     },

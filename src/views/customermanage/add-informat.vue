@@ -34,6 +34,8 @@
             </FormItem>
           </Col>
         </Row>
+         <hr style="width:100%;border:1px dashed #e4e7ed;margin-bottom:25px;">
+        <p style="color:#8d8d8d;margin:10px 0 30px 50px"><Icon type="information-circled"></Icon><span> 专用发票必须填写以下信息才为有效凭证</span></p>
         <Row>
           <Col span="12">
             <FormItem label="开票地址" prop="kpdz">
@@ -112,48 +114,48 @@ export default {
             trigger: "blur"
           }
         ],
-        kpdz: [
-          {
-            required: true,
-            message: "请填写开票地址",
-            trigger: "blur"
-          }
-        ],
-        dh: [
-          {
-            required: true,
-            message: "请填写电话",
-            trigger: "blur"
-          }
-        ],
-        khh: [
-          {
-            required: true,
-            message: "请填写开户行",
-            trigger: "blur"
-          }
-        ],
-        yhzh: [
-          {
-            required: true,
-            message: "请填写银行账号",
-            trigger: "blur"
-          }
-        ],
-        yjdz: [
-          {
-            required: true,
-            message: "请填写邮寄地址",
-            trigger: "blur"
-          }
-        ],
-        rjdh: [
-          {
-            required: true,
-            message: "请填写联系人及电话",
-            trigger: "blur"
-          }
-        ],
+        // kpdz: [
+        //   {
+        //     required: true,
+        //     message: "请填写开票地址",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // dh: [
+        //   {
+        //     required: true,
+        //     message: "请填写电话",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // khh: [
+        //   {
+        //     required: true,
+        //     message: "请填写开户行",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // yhzh: [
+        //   {
+        //     required: true,
+        //     message: "请填写银行账号",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // yjdz: [
+        //   {
+        //     required: true,
+        //     message: "请填写邮寄地址",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // rjdh: [
+        //   {
+        //     required: true,
+        //     message: "请填写联系人及电话",
+        //     trigger: "blur"
+        //   }
+        // ],
       },
       customerList:[],
       selectedCustom:''
