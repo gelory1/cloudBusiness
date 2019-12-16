@@ -158,7 +158,7 @@
                 <!-- <Select v-model="formValidate.salesman" clearable filterable>
                       <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
                   </Select> -->
-                <Input v-model="formValidate.salesman" placeholder="Enter your name" readonly />
+                <Input v-model="formValidate.salesman" readonly />
               </FormItem>
             </Col>
           </Row>
