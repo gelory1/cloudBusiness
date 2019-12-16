@@ -100,9 +100,6 @@
   .menu .ivu-icon-ios-arrow-down:before {
     display: none;
   }
-  .ivu-layout-header {
-    padding: 0px 10px 0 0;
-  }
   .ivu-layout-sider-children {
     border-right: 1px solid #dddddd;
   }
@@ -237,6 +234,7 @@
   }
   .ivu-icon-clipboard:before{
     color:#4a9af5;
+    color:#d4d3d3
   }
   /* 客户管理 */
   .customer{
@@ -244,7 +242,7 @@
   }
   .addBut{
     position: absolute;
-    top:10px;
+    top:8px;
     right:10px;
     z-index:999
 
