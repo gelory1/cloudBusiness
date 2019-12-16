@@ -398,7 +398,7 @@ export default {
               "contractNo": this.data.data.contractNo,
               "signUserCount": this.formValidate.signUserAmount,
               "saleManName": "李四",
-              "platFormList": this.data.data.platformuserList
+              // "platFormList": this.data.data.platformuserList
             }
         ]
       };
@@ -406,6 +406,7 @@ export default {
         let data = JSON.parse(JSON.stringify(this.data));
         data.data.signUserAmount = this.formValidate.signUserAmount;
         this.$store.commit('selectedContract',data);
+        this.$Message.success('编辑成功！');
         this.$router.push({ path: "/contractmanage/detail"});
       })
     },

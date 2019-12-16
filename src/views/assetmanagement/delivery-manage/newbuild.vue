@@ -643,6 +643,9 @@ export default {
                     this: this
                   });
                 }
+                this.$router.push({
+                  path: "/assetmanage/delivery-manage"
+                });
               },
               error => {
                 if (error.data.code === 0) {
@@ -655,6 +658,9 @@ export default {
                       this: this
                     });
                   }
+                  this.$router.push({
+                    path: "/assetmanage/delivery-manage"
+                  });
                 }
               }
             );

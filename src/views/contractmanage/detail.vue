@@ -234,9 +234,9 @@
             </p>
           </TabPane>
           <TabPane label="附件" name="name4">
-            <p class="con-left">共 {{fjIndex}} 个附件</p>
+            <p class="con-left">共 {{fj.length||0}} 个附件</p>
             <p class="fj_add">
-              <Upload action="//10.0.17.213:31380/posts/">
+              <Upload action="/posts" :data="postData" show-upload-list>
                 <Icon type="plus"></Icon>添加附件
               </Upload>
             </p>
@@ -372,10 +372,14 @@
     </Dropdown>
       </footer>
     </Modal>
+    <Modal v-model="orderDetailOpen" width="1000">
+        <orderDetail :orderNO="selectedOrder"></orderDetail>
+      </Modal>
   </div>
 </template>
 
 <script>
+import orderDetail from '../ordermanage/order-detail';
 const subjectName = {
   1: "电能云",
   2: "智慧能源",
@@ -399,6 +403,9 @@ const contractContentMap = {
 };
 export default {
   name: "detail",
+  components:{
+    orderDetail
+  },
   data() {
     return {
       single:false,
@@ -414,20 +421,7 @@ export default {
         qrsj: "342-44",
         zfje: "342"
       },
-      fj: [
-        {
-          wjm: "文件名fj.wjm",
-          size: "3242",
-          where: "dsfs",
-          time: "2342-89"
-        },
-        {
-          wjm: "文件名fj.wjm",
-          size: "3242",
-          where: "dsfs",
-          time: "2342-89"
-        }
-      ],
+      fj: [],
       update_columns: [
         {
           title: "序号",
@@ -505,7 +499,9 @@ export default {
       zkShow: true,
       showObj: {},
       checkbox: [],
-      contractContentMap
+      contractContentMap,
+      orderDetailOpen: false,
+      selectedOrder: ''
     };
   },
   methods: {
@@ -542,10 +538,8 @@ export default {
       this.$set(this.showObj, index, !this.showObj[index]);
     },
     goOrderDetail() {
-      this.$router.push({
-        path: "/ordermanage/orderManage",
-        query: { orderNo: this.data.data.orderNo }
-      });
+      this.selectedOrder = this.data.data.orderNo;
+      this.orderDetailOpen = true;
     },
     getkcmx() {
       let request = {
@@ -596,6 +590,7 @@ export default {
         });
       });
     },
+<<<<<<< HEAD
     radioClick(val){
      if(val == "ordinary"){
        $(".ord").css({"color":"#4a9af5"})
@@ -606,6 +601,29 @@ export default {
      }
     },
     
+=======
+    getfiles(){
+      let request = {
+        typeid: 26009,
+        data: [
+          {
+            customerNo: this.data.data.customerNo||''
+          }
+        ]
+      };
+      this.fj = [];
+      this.$http.XLCONTRACT(request).then(response => {
+        response.data.result.data.customerTicketList.forEach(data => {
+          let item = {};
+          item.wjm = data.customerName;
+          item.size = data.phone;
+          item.where = data.dutyParagraph;
+          item.time = data.bankName;
+          this.fj.push(item);
+        });
+      });
+    }
+>>>>>>> 9941748938f76584b0562f54de9679c8e5fd756d
   },
   beforeCreate() {
     if (
@@ -617,6 +635,7 @@ export default {
   mounted() {
     this.getkcmx();
     this.getTicket();
+    // this.getfiles();
   },
   watch: {
     fpmodal(nv) {
@@ -781,6 +800,13 @@ export default {
     },
     kpxxLength() {
       return this.kpxx.length === 0;
+    },
+    postData(){
+      let post = {};
+      if(this.data&&this.data.data&&this.data.data.contractNo){
+        post.contractNo = this.data.data.contractNo;
+      }
+      return post;
     }
   }
 };

@@ -182,8 +182,13 @@
               <FormItem label="销售负责人" prop="salesman" :label-width="90">
                 <!-- <Select v-model="formValidate.salesman" clearable filterable>
                       <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
+<<<<<<< HEAD
                 </Select>-->
                 <Input v-model="formValidate.salesman" placeholder="Enter your name" readonly />
+=======
+                  </Select> -->
+                <Input v-model="formValidate.salesman" readonly />
+>>>>>>> 9941748938f76584b0562f54de9679c8e5fd756d
               </FormItem>
             </Col>
             <Col span="12" v-if="isFriend">
