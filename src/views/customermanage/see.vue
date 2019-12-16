@@ -2,11 +2,16 @@
   <div class="see">
     <Layout class="layout" style="color:black;font-size:15px">
       <div class="header_top">
-        <Icon type="ios-arrow-left"  @click="goBack"></Icon>
-        <span  @click="goBack">返回</span>
-        <Button type="primary" size="large" style="float:right;width:80px;" @click="$router.push('/customermanage/edit')">编辑</Button>
+        <Icon type="ios-arrow-left" @click="goBack"></Icon>
+        <span @click="goBack">返回</span>
+        <Button
+          type="primary"
+          size="large"
+          style="float:right;width:80px;"
+          @click="$router.push('/customermanage/edit')"
+        >编辑</Button>
       </div>
-      
+
       <header class="header_mid">
         <h2>{{data.name}}</h2>
         <p v-show="((data||{}).data||{}).customer_no.length===0" style="color:#000000;">暂无编号</p>
@@ -49,7 +54,10 @@
             <div class="select">
               <section>
                 <p>客户简称：</p>
-                <p v-show="!((data||{}).data||{}).customer_abbreviation||((data||{}).data||{}).customer_abbreviation.length===0" style="color:#000000;">暂无</p>
+                <p
+                  v-show="!((data||{}).data||{}).customer_abbreviation||((data||{}).data||{}).customer_abbreviation.length===0"
+                  style="color:#000000;"
+                >暂无</p>
                 <p>{{((data||{}).data||{}).customer_abbreviation}}</p>
               </section>
               <section>
@@ -71,17 +79,26 @@
             <div class="select">
               <section>
                 <p>行业：</p>
-                <p v-show="!industryMap[((data||{}).data||{}).industry]||industryMap[((data||{}).data||{}).industry].length===0" style="color:#000000;">暂无</p>
+                <p
+                  v-show="!industryMap[((data||{}).data||{}).industry]||industryMap[((data||{}).data||{}).industry].length===0"
+                  style="color:#000000;"
+                >暂无</p>
                 <p>{{industryMap[((data||{}).data||{}).industry]}}</p>
               </section>
               <section>
                 <p>注册资金：</p>
-                <p v-show="!((data||{}).data||{}).registered_capital||((data||{}).data||{}).registered_capital.length===0" style="color:#000000;">暂无</p>
+                <p
+                  v-show="!((data||{}).data||{}).registered_capital||((data||{}).data||{}).registered_capital.length===0"
+                  style="color:#000000;"
+                >暂无</p>
                 <p>{{((data||{}).data||{}).registered_capital}}</p>
               </section>
               <section>
                 <p>法定代表人：</p>
-                <p v-show="!((data||{}).data||{}).charge_person||((data||{}).data||{}).charge_person.length===0" style="color:#000000;">暂无</p>
+                <p
+                  v-show="!((data||{}).data||{}).charge_person||((data||{}).data||{}).charge_person.length===0"
+                  style="color:#000000;"
+                >暂无</p>
                 <p>{{((data||{}).data||{}).charge_person}}</p>
               </section>
               <section>
@@ -93,7 +110,10 @@
             <div class="select1" style="clear:both">
               <section style="width:40.5%;">
                 <p>通讯地址：</p>
-                <p v-show="!((data||{}).data||{}).mail_address||((data||{}).data||{}).mail_address.length===0" style="color:#000000;">暂无</p>
+                <p
+                  v-show="!((data||{}).data||{}).mail_address||((data||{}).data||{}).mail_address.length===0"
+                  style="color:#000000;"
+                >暂无</p>
                 <p>{{((data||{}).data||{}).mail_address}}</p>
               </section>
               <section style="width:20%">
@@ -114,19 +134,54 @@
             <div class="select2">
               <section style="width:40.5%;float:left">
                 <p class="sele2">关联平台账户：</p>
-                <p v-show="(((data||{}).data||{}).platformuser_list||[]).length===0" style="color:#000000;margin-top:5px">暂无</p>
-                <span class="bg_p" v-for="(item,index) in ((data||{}).data||{}).platformuser_list" :key="index" style="margin:0 5px">({{item.platform_id}}){{item.platform_name}}</span>
+                <p
+                  v-show="(((data||{}).data||{}).platformuser_list||[]).length===0"
+                  style="color:#000000;margin-top:5px"
+                >暂无</p>
+                <span
+                  class="bg_p"
+                  v-for="(item,index) in ((data||{}).data||{}).platformuser_list"
+                  :key="index"
+                  style="margin:0 5px"
+                >({{item.platform_id}}){{item.platform_name}}</span>
               </section>
               <section style="width:40%;float:left">
                 <p class="sele2">收货地址：</p>
-                <span class="">8888888{{}}</span>
+                <span class>8888888{{}}</span>
+              </section>
+            </div>
+            <div class="select2">
+              <section style="width:90%;float:left;margin-top:30px;">
+                <p class="sele2">合作协议（附件）：</p>
+                <div>
+                  <div :key="index" class="fj1">
+                    <section class="fj_img1">
+                      <img src alt />
+                    </section>
+                    <section class="fj_sec1">
+                      <p>item.wjm</p>
+                      <p class="fj_p1">
+                        <span>item.size</span> 来自
+                        <span>item.where</span> |
+                        <span>item.time</span>
+                      </p>
+                    </section>
+                  </div>
+                </div>
               </section>
             </div>
           </content>
           <footer style="clear:both;padding-top:10px;">
             <p class="header_p" style="border-bottom:1px solid #d2d2d2;">开票信息</p>
-            <p v-show="(((data||{}).data||{}).ticket_list||[]).length===0" style="color:#8d8d8d;text-align:center;margin-top:40px;">暂无开票信息</p>
-            <div class="kpxx" v-for="(item,index) in ((data||{}).data||{}).ticket_list" :key="index">
+            <p
+              v-show="(((data||{}).data||{}).ticket_list||[]).length===0"
+              style="color:#8d8d8d;text-align:center;margin-top:40px;"
+            >暂无开票信息</p>
+            <div
+              class="kpxx"
+              v-for="(item,index) in ((data||{}).data||{}).ticket_list"
+              :key="index"
+            >
               <div class="kpxx_head">
                 <p>{{item.ticket_customer}}</p>
                 <p>{{item.dutyparagraph}}</p>
@@ -198,8 +253,11 @@
         </div>
         <div class="lxr_right" style="minHeight:820px">
           <div style="padding:10px;border-bottom:1px solid black;">联系人</div>
-          <p v-show="(((data||{}).data||{}).contacts_list||[]).length===0" style="color:#8d8d8d;text-align:center;margin-top:20px;">暂无联系人</p>
-          <div class="lxr"   v-for="(item,index) in ((data||{}).data||{}).contacts_list" :key="index">
+          <p
+            v-show="(((data||{}).data||{}).contacts_list||[]).length===0"
+            style="color:#8d8d8d;text-align:center;margin-top:20px;"
+          >暂无联系人</p>
+          <div class="lxr" v-for="(item,index) in ((data||{}).data||{}).contacts_list" :key="index">
             <p class="lxr_icon">
               <Icon type="ios-person" />
             </p>
@@ -220,17 +278,17 @@
 <script>
 import api from "@/api/axios";
 const industryMap = {
-    1: '公共事业及管理组织',
-    2: '工业',
-    3: '商业住宿餐饮',
-    4: '金融房地产及居民服务',
-    5: '运输仓储邮政',
-    6: '信息计算机和软件',
-    7: '农林牧渔水利',
-    8: '建筑业',
-    9: '军工保密',
-    10: '其他'
-  };
+  1: "公共事业及管理组织",
+  2: "工业",
+  3: "商业住宿餐饮",
+  4: "金融房地产及居民服务",
+  5: "运输仓储邮政",
+  6: "信息计算机和软件",
+  7: "农林牧渔水利",
+  8: "建筑业",
+  9: "军工保密",
+  10: "其他"
+};
 export default {
   name: "see",
   data() {
@@ -239,7 +297,7 @@ export default {
       eyeShow: true,
       kpxxShow: false,
       citys: [],
-      industryMap:industryMap
+      industryMap: industryMap
     };
   },
   methods: {
@@ -254,12 +312,12 @@ export default {
       var _self = this;
       _self.$router.go(-1);
     },
-    getCity(){
+    getCity() {
       let request = {
         typeid: 27003,
         data: [
           {
-            province:(this.data.data||{}).empower_province
+            province: (this.data.data || {}).empower_province
           }
         ]
       };
@@ -273,16 +331,22 @@ export default {
     this.getCity();
   },
   computed: {
-    data(){
-      if(Object.keys(this.$store.state.user.customerInfo).length>0){
+    data() {
+      if (Object.keys(this.$store.state.user.customerInfo).length > 0) {
         return this.$store.state.user.customerInfo;
       }
-      return JSON.parse(localStorage.getItem('customInfo'))||{};
+      return JSON.parse(localStorage.getItem("customInfo")) || {};
     },
-    empower_city(){
-      let province = this.$store.state.app.provinces.find(c => c.id === ((this.data||{}).data||{}).empower_province)||{};
-      let city = this.citys.find(c => c.id === ((this.data||{}).data||{}).empower_city)||{};
-      return (province.name||'') + ' ' + (city.name||'');
+    empower_city() {
+      let province =
+        this.$store.state.app.provinces.find(
+          c => c.id === ((this.data || {}).data || {}).empower_province
+        ) || {};
+      let city =
+        this.citys.find(
+          c => c.id === ((this.data || {}).data || {}).empower_city
+        ) || {};
+      return (province.name || "") + " " + (city.name || "");
     }
   }
 };
@@ -290,4 +354,5 @@ export default {
 
 <style>
 @import "./customer.css";
+@import "../contractmanage/contract.css";
 </style>

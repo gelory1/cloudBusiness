@@ -107,6 +107,30 @@
     float:right;
     cursor: pointer;
 }
+.fj1{
+    height:50px;
+    /* border-bottom:0.6px solid #e4e7ed; */
+    padding-top:10px;
+}
+.fj1 section{
+    display:inline-block;
+}
+.fj_img1{
+    width:30px;
+    height:30px;
+    border:1px solid #e4e7ed;
+    vertical-align:top;
+}
+.fj_sec1{
+    margin-top:-5px;
+    margin-left:10px;
+}
+.fj_p1{
+    color:#8d8d8d;
+    /* margin-top:5px */
+    line-height:10px;;
+}
+
 .kc_p{
     margin:20px 0 15px 15px;
     font-size:14px;

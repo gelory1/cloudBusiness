@@ -21,9 +21,9 @@
             </Col>
           </Row>
           <Row>
-            <Col span="6"  style="position:relative">
-            <span style="color:red;position:absolute;left:20px;top:8px;">*</span>
-              <FormItem label="客户性质" prop="nature" :label-width="90">  
+            <Col span="6" style="position:relative">
+              <span style="color:red;position:absolute;left:20px;top:8px;">*</span>
+              <FormItem label="客户性质" prop="nature" :label-width="90">
                 <Select v-model="formValidate.nature.index" placeholder clearable filterable>
                   <Option
                     v-for="(item,index) in natures"
@@ -46,10 +46,11 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <Select
+                <el-cascader :options="options2" multiple :show-all-levels="false" size="small" style="width:350px;"></el-cascader>
+                <!-- <Select
                   v-model="formValidate.province.id"
                   placeholder="请选择"
-                  style="width:174px;"
+                  style="width:115px;"
                   clearable
                   filterable
                 >
@@ -64,10 +65,19 @@
                   placeholder="请选择"
                   clearable
                   filterable
-                  style="width:173px;"
+                  style="width:114px;"
                 >
                   <Option v-for="(item,index) in citys" :value="item.id" :key="index">{{item.name}}</Option>
                 </Select>
+                <Select
+                  v-model="formValidate.county"
+                  placeholder="请选择"
+                  clearable
+                  filterable
+                  style="width:114px;"
+                >
+                  <Option v-for="(item,index) in citys" :value="item" :key="index">{{item.name}}</Option>
+                </Select> -->
               </FormItem>
             </Col>
           </Row>
@@ -122,13 +132,15 @@
               </FormItem>
             </Col>
             <Col span="12" v-if="isFriend">
-              <FormItem label="授权资质" prop="sqzz" class="con-right">
-                <Select
+              <FormItem label="授权资质" prop="sqzz" class="con-right" v-model="formValidate.empower_province.id">
+                <el-cascader :options="options1" multiple :show-all-levels="false" :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;"></el-cascader>
+                <!-- <Select
                   v-model="formValidate.empower_province.id"
+                  multiple
                   placeholder="请选择"
                   clearable
                   filterable
-                  style="width:174px;"
+                  style="width:115px;"
                 >
                   <Option
                     v-for="(item,index) in provinces"
@@ -141,7 +153,7 @@
                   placeholder="请选择"
                   clearable
                   filterable
-                  style="width:173px;"
+                  style="width:114px;"
                 >
                   <Option
                     v-for="(item,index) in empower_citys"
@@ -149,6 +161,19 @@
                     :key="index"
                   >{{item.name}}</Option>
                 </Select>
+                <Select
+                  v-model="formValidate.provinces_county"
+                  placeholder="请选择"
+                  clearable
+                  filterable
+                  style="width:114px;"
+                >
+                  <Option
+                    v-for="(item,index) in provinces_county"
+                    :value="item"
+                    :key="index"
+                  >{{item.name}}</Option>
+                </Select> -->
               </FormItem>
             </Col>
           </Row>
@@ -157,9 +182,43 @@
               <FormItem label="销售负责人" prop="salesman" :label-width="90">
                 <!-- <Select v-model="formValidate.salesman" clearable filterable>
                       <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
-                  </Select> -->
+                </Select>-->
                 <Input v-model="formValidate.salesman" placeholder="Enter your name" readonly />
               </FormItem>
+            </Col>
+            <Col span="12" v-if="isFriend">
+              <FormItem label="授权期限" prop="sqTime" class="con-right">
+                <Row>
+                  <Col span="11">
+                    <DatePicker
+                      placement="bottom"
+                      type="date"
+                      :options="startOption1"
+                      v-model="formValidate.sqstartTime"
+                      format="yyyy-MM-dd"
+                    ></DatePicker>
+                  </Col>
+                  <Col span="2" style="text-align: center">-</Col>
+                  <Col span="11">
+                    <DatePicker
+                      placement="bottom"
+                      type="date"
+                      :options="endOption1"
+                      v-model="formValidate.sqendTime"
+                      style="width:155px"
+                      format="yyyy-MM-dd"
+                    ></DatePicker>
+                  </Col>
+                </Row>
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style="font-size:12px;color:#495060;margin-left:-10px;float:left;">合作协议（附件）</p>
+              <Upload action="//jsonplaceholder.typicode.com/posts/" style="display:inline;">
+                <Button type="text" icon="plus" style="color:#4a9af5;margin:-5px 0 0 -10px;;">添加附件</Button>
+              </Upload>
             </Col>
           </Row>
         </div>
@@ -306,6 +365,8 @@
             </FormItem>
           </Col>
         </Row>
+        <hr style="width:105%;border:1px dashed #e4e7ed;margin-bottom:25px;">
+        <p style="color:#8d8d8d;margin:-10px 0 10px 40px"><Icon type="information-circled"></Icon><span> 专用发票必须填写以下信息才为有效凭证</span></p>
         <Row>
           <Col span="12">
             <FormItem label="开票地址" prop="ticket_address">
@@ -481,9 +542,9 @@ export default {
     const validatePhone = (rule, value, callback) => {
       if (this.formAddlxr.phone !== "" || this.formAddkpxx.phone) {
         var mPhone = /^1(3|4|5|7|8)\d{9}$/;
-        var phone= /^(0[0-9]{2,3}(\-)?)([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$/;
+        var phone = /^(0[0-9]{2,3}(\-)?)([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$/;
         // var zj = /^(\d{3,4}-)\d{7,8}/;
-        if (mPhone.test(value) == false&&phone.test(value) === false) {
+        if (mPhone.test(value) == false && phone.test(value) === false) {
           callback(new Error("请输入正确的电话号码"));
         }
       } else {
@@ -507,6 +568,8 @@ export default {
       callback();
     };
     return {
+      options1:[],
+      options2:[],
       formValidate: {
         name: "",
         customer_abbreviation: "",
@@ -526,9 +589,36 @@ export default {
         city: {},
         empower_province: "",
         empower_city: "",
-        protocolNumber: ""
+        protocolNumber: "",
+        sqstartTime: "",
+        sqendTime: ""
+      },
+      startOption1: {
+        disabledDate: time => {
+          if (this.formValidate.sqendTime) {
+            return (
+              time.getTime() > new Date(this.formValidate.sqendTime).getTime()
+            );
+          }
+        }
+      },
+      endOption1: {
+        disabledDate: time => {
+          if (this.formValidate.sqstartTime) {
+            return (
+              time.getTime() < new Date(this.formValidate.sqstartTime).getTime()
+            );
+          }
+        }
       },
       ruleValidate: {
+        sqTime: [
+          {
+            required: true,
+            message: "请选择授权期限",
+            trigger: "blur"
+          }
+        ],
         name: [
           {
             required: true,
@@ -603,7 +693,7 @@ export default {
             message: "请输入协议编号",
             trigger: "blur"
           }
-        ],
+        ]
       },
       addlxr_columns: [
         {
@@ -781,49 +871,49 @@ export default {
             validator: dutyparagraph
           }
         ],
-        ticket_address: [
-          {
-            required: true,
-            message: "请输入开票地址",
-            trigger: "blur"
-          }
-        ],
-        phone: [
-          {
-            required: true,
-            trigger: "blur",
-            validator: validatePhone
-          }
-        ],
-        bank_name: [
-          {
-            required: true,
-            message: "请输入开户行",
-            trigger: "blur"
-          }
-        ],
-        bank_account: [
-          {
-            required: true,
-            message: "请输入银行账号",
-            trigger: "blur"
-            // validator: validateNum
-          }
-        ],
-        post_info: [
-          {
-            required: true,
-            message: "请输入邮寄地址",
-            trigger: "blur"
-          }
-        ],
-        ticket_contacts: [
-          {
-            required: true,
-            message: "请输入联系人及电话",
-            trigger: "blur"
-          }
-        ]
+        // ticket_address: [
+        //   {
+        //     required: true,
+        //     message: "请输入开票地址",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // phone: [
+        //   {
+        //     required: true,
+        //     trigger: "blur",
+        //     validator: validatePhone
+        //   }
+        // ],
+        // bank_name: [
+        //   {
+        //     required: true,
+        //     message: "请输入开户行",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // bank_account: [
+        //   {
+        //     required: true,
+        //     message: "请输入银行账号",
+        //     trigger: "blur"
+        //     // validator: validateNum
+        //   }
+        // ],
+        // post_info: [
+        //   {
+        //     required: true,
+        //     message: "请输入邮寄地址",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // ticket_contacts: [
+        //   {
+        //     required: true,
+        //     message: "请输入联系人及电话",
+        //     trigger: "blur"
+        //   }
+        // ]
       },
       khdjj: [],
       cityj: [],
@@ -856,7 +946,8 @@ export default {
       ticketStatus: "new",
       contactStatus: "new",
       customer_id: "",
-      newLocalData: {}
+      newLocalData: {},
+      provinces_county: []
     };
   },
   methods: {
@@ -870,17 +961,23 @@ export default {
     handleSubmit(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
-          if(this.formValidate.level.index == '' || this.formValidate.province.id == '' || this.formValidate.city.id == '' || this.formValidate.nature.index == '' || this.formValidate.industry.index == ''){
+          if (
+            this.formValidate.level.index == "" ||
+            this.formValidate.province.id == "" ||
+            this.formValidate.city.id == "" ||
+            this.formValidate.nature.index == "" ||
+            this.formValidate.industry.index == ""
+          ) {
             this.$Message.error("请将信息补充完整后再提交");
-          }else{
+          } else {
             this.editCustomer();
-          }      
+          }
         } else {
           this.$Message.error("请将信息补充完整后再提交");
         }
       });
     },
-    gohandleCancel(){
+    gohandleCancel() {
       this.$router.go(-1);
     },
     editCustomer() {
@@ -946,14 +1043,15 @@ export default {
           }
         });
       } else {
-        api.UPDATECUSTOMER(request).then(response => {
-          if (response.data.code === 0) {
-            this.$Message.success("客户信息更新成功！");
-            this.$router.push("/customermanage/customermanage");
-          }
-        }).catch((e)=>{
-
-        });
+        api
+          .UPDATECUSTOMER(request)
+          .then(response => {
+            if (response.data.code === 0) {
+              this.$Message.success("客户信息更新成功！");
+              this.$router.push("/customermanage/customermanage");
+            }
+          })
+          .catch(e => {});
       }
     },
     saveTicket() {
@@ -1067,6 +1165,7 @@ export default {
       this.citys = [];
       // this.formValidate.city = {};
       api.XLSELECT(request).then(response => {
+        alert(JSON.stringify(response))
         let res = response.data.result.data;
         this.citys = res;
         this.formValidate.city = JSON.parse(
@@ -1089,6 +1188,7 @@ export default {
       this.empower_citys = [];
       // this.formValidate.empower_city = {};
       api.XLSELECT(request).then(response => {
+        console.log(JSON.stringify(response.data))
         let res = response.data.result.data;
         this.empower_citys = res;
         this.formValidate.empower_city = JSON.parse(
@@ -1106,9 +1206,7 @@ export default {
       this.formValidate.customer_abbreviation =
         ((data || {}).data || {}).customer_abbreviation || "";
       this.formValidate.nature = JSON.parse(
-        JSON.stringify(
-          this.natures.find(n => n.value === data.nature) || {}
-        )
+        JSON.stringify(this.natures.find(n => n.value === data.nature) || {})
       );
       this.formValidate.industry = JSON.parse(
         JSON.stringify(
@@ -1215,7 +1313,9 @@ export default {
           };
           if (this.isNewCreate) {
             if (this.contactStatus === "edit") {
-              for (let key in this.formValidate.contacts_list[this.contactIndex]) {
+              for (let key in this.formValidate.contacts_list[
+                this.contactIndex
+              ]) {
                 this.$set(
                   this.formValidate.contacts_list[this.contactIndex],
                   key,
@@ -1258,10 +1358,12 @@ export default {
           } else {
             api.SETCUSTOMER(request2).then(response => {
               if (response.data.code === 0) {
-                this.formAddlxr.contact_id = (((response.data.result.data||{}).contractIdList||[])[0]||'');
+                this.formAddlxr.contact_id =
+                  ((response.data.result.data || {}).contractIdList || [])[0] ||
+                  "";
                 this.formValidate.contacts_list.push(this.formAddlxr);
                 this.addlxrmodal = false;
-              this.$Message.success("添加成功!");
+                this.$Message.success("添加成功!");
               }
             });
           }
@@ -1269,7 +1371,6 @@ export default {
           this.$Message.error("请填写正确的信息！");
         }
       });
-      
     },
     newTicket() {
       this.ticketStatus = "new";
@@ -1402,6 +1503,7 @@ export default {
       this.plat.list = [];
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
+        this.res = res;
         res.forEach(data => {
           if (!this.plat.list.find(d => d.platform_id === data.platId))
             this.plat.list.push({
@@ -1467,6 +1569,10 @@ export default {
   },
   mounted() {
     this.init();
+    this.getCitys()
+    this.options1 = this.provinces;
+  
+
   },
   computed: {
     data() {
@@ -1527,5 +1633,4 @@ export default {
 
 <style>
 @import "./customer.css";
-
 </style>
