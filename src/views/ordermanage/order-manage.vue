@@ -437,7 +437,7 @@ export default {
       this.loading = true;
       this.sum = 0;
       const param = {
-        typeid: 24001,
+        typeid: 24007,
         data: [
           {
             account_id: this.$store.state.user.accountId,
@@ -457,20 +457,18 @@ export default {
         ],
       };
       api.XLORDER(param).then((res)=>{
-        // alert(this.order_data[item.index].salesType)
-        // console.log(res)
+        this.loading = false;
         let index = this.selectedTab.index||0;
         this.sum = res.data.result.data[0].sum;
-        res.data.result.data[0].orderlist.forEach(data => {
+        res.data.result.data[0].orderList.forEach(data => {
           let item = {};
           item.orderNO = data.order_no;
           item.type = this.businessMap[data.order_type];
           item.time = data.order_time;
           item.salesType = this.saleMap[data.sale_type];
-          item.customName = data.customer_name;
+          item.customName = data.agent_name;
           item.contractNO = data.contract_no;
-          item.contract_subject = data.contract_subject;
-          item.count = data.product_count;
+          item.count = data.quantity;
           item.status = data.order_type === 0?this.statusMap[data.order_status+2]:this.statusMap[data.order_status];
           item.cellClassName = {
             status:`button${data.order_status}`
@@ -479,7 +477,6 @@ export default {
           this.order_data[index].push(item);
         });
         // this.selectedOrder = this.order_data[0];
-        this.loading = false;
       },error => {
         this.loading = false;
       })

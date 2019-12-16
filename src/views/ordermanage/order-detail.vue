@@ -72,12 +72,12 @@
             <div>
                 <span class="jbleft">设备数量：</span>
                 <span style="color:#8D8D8D">{{selectedOrder.count}}
-                <span>（<small style="color:green">本次交货：{{(selectedOrder.data||{}).issued_count}}</small>，<small style="color:red">剩余待发：{{selectedOrder.count - (selectedOrder.data||{}).issued_count}}</small>）</span>
+                <span>（<small style="color:green">本次交货：{{selectedOrder.issued_count}}</small>，<small style="color:red">剩余待发：{{selectedOrder.count - selectedOrder.issued_count}}</small>）</span>
                 </span>
             </div>
             <div>
                 <span class="jbleft">收货地址：</span>
-                <span style="color:#8D8D8D">{{(selectedOrder.data||{}).address_name}}</span>
+                <span style="color:#8D8D8D">{{selectedOrder.address_detail}}</span>
             </div>
             </div>
         </div>
@@ -87,10 +87,10 @@
             <TabPane label="全部" name="name1">
                 <Table :columns="device_columns" :data="device_data" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
-            <TabPane :label="`已到货（${(selectedOrder.data||{}).issued_count||0}）`" name="name2">
+            <TabPane :label="`已到货（${selectedOrder.issued_count||0}）`" name="name2">
                 <Table :columns="device_columns" :data="device_data1" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
-            <TabPane :label="`待发货（${selectedOrder.count - (selectedOrder.data||{}).issued_count||0}）`" name='name3'>
+            <TabPane :label="`待发货（${selectedOrder.count - selectedOrder.issued_count||0}）`" name='name3'>
                 <Table :columns="device_columns" :data="device_data2" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
         </Tabs>
@@ -260,44 +260,47 @@ export default {
     methods:{
         getDetail(){
             const param = {
-                typeid: 24001,
+                typeid: 24008,
                 data: [
                 {
-                    account_id: this.$store.state.user.accountId,
                     order_no: this.orderNO,
-                    order_type: [0,1],
-                    page_num: 1,
-                    page_size: 10
                 }],
             };
             this.$http.XLORDER(param).then((res)=>{
-                let data = res.data.result.data[0].orderlist[0]||{};
+                let data = res.data.result.data[0]||{};
                 this.selectedOrder = {};
                 this.selectedOrder.orderNO = data.order_no;
                 this.selectedOrder.type = this.businessMap[data.order_type];
                 this.selectedOrder.time = data.order_time;
                 this.selectedOrder.salesType = this.saleMap[data.sale_type];
-                this.selectedOrder.customName = data.customer_name;
+                this.selectedOrder.customName = data.agent_name;
                 this.selectedOrder.contractNO = data.contract_no;
                 this.selectedOrder.contract_subject = data.contract_subject;
-                this.selectedOrder.count = data.product_count;
+                this.selectedOrder.address_detail = data.address_detail;
                 this.selectedOrder.status = data.order_type === 0?this.statusMap[data.order_status+2]:this.statusMap[data.order_status];
                 this.selectedOrder.cellClassName = {
                     status:`button${data.order_status}`
                 };
                 this.selectedOrder.data = data;
                 this.device_data = [];
-                data.product_list.forEach((p,i) => {
+                let allNum = 0;
+                let num = 0;
+                data.productList.forEach((p,i) => {
+                    allNum += p.product_quantity;
+                    num += p.issued_count;
                     let item = {};
                     item.index = i+1;
                     item.name = p.product_name;
                     item.no = p.product_code;
                     item.spec = p.product_models;
-                    item.count = p.device_count;
+                    item.count = p.product_quantity;
+                    item.issued_count = p.issued_count;
                     item.unit = p.product_unit;
                     item.data = p;
                     this.device_data.push(item);
                 });
+                this.selectedOrder.count = allNum;
+                this.selectedOrder.issued_count = num;
             })
         }
     },
@@ -331,9 +334,9 @@ export default {
         device_data1(){
             let data = [];
             if(this.device_data&&this.device_data.length>0){
-                data = this.device_data.filter(d => d.data.issued_count !== 0);
+                data = this.device_data.filter(d => d.issued_count !== 0);
                 data.forEach(d => {
-                    d.count = d.data.issued_count;
+                    d.count = d.issued_count;
                 })
             }
             return data;
@@ -341,9 +344,9 @@ export default {
         device_data2(){
             let data = [];
             if(this.device_data&&this.device_data.length>0){
-                data = this.device_data.filter(d => d.data.device_count - d.data.issued_count !== 0);
+                data = this.device_data.filter(d => d.count - d.issued_count !== 0);
                 data.forEach(d => {
-                    d.count = d.data.device_count - d.data.issued_count;
+                    d.count = d.count - d.issued_count;
                 })
             }
             return data;
