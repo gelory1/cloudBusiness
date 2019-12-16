@@ -129,7 +129,7 @@
             <Row>
                 <Col span="7">
                   <FormItem label="项目经理" prop="xmjl" :label-width="90">
-                    <Input v-model="data.data.projectManager" placeholder disabled></Input>
+                    <Input v-model="formValidate.projectManager" placeholder></Input>
                   </FormItem>
                 </Col>
                 <Col span="7">
@@ -332,7 +332,8 @@ export default {
       formValidate: {
         city:0,
         province:0,
-        signUserAmount:0
+        signUserAmount:0,
+        projectManager: ''
       },
       fj: [
         {
@@ -397,7 +398,8 @@ export default {
               "account_id":this.$store.state.user.accountId,
               "contractNo": this.data.data.contractNo,
               "signUserCount": this.formValidate.signUserAmount,
-              "saleManName": "李四",
+              // "saleManName": "李四",
+              "saleManName": this.formValidate.projectManager,
               // "platFormList": this.data.data.platformuserList
             }
         ]
@@ -405,6 +407,7 @@ export default {
       this.$http.UPDATECONTRACT(request).then(response => {
         let data = JSON.parse(JSON.stringify(this.data));
         data.data.signUserAmount = this.formValidate.signUserAmount;
+        data.data.projectManager = this.formValidate.projectManager;
         this.$store.commit('selectedContract',data);
         this.$Message.success('编辑成功！');
         this.$router.push({ path: "/contractmanage/detail"});
@@ -422,6 +425,7 @@ export default {
     this.formValidate.province = this.data.data.customerProvince;
     this.formValidate.city = this.data.data.customerCity;
     this.formValidate.platList = JSON.parse(JSON.stringify(this.data.data.platformuserList));
+    this.formValidate.projectManager = this.data.data.projectManager;
   },
   computed: {
     data(){

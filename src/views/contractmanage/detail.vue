@@ -236,7 +236,7 @@
           <TabPane label="附件" name="name4">
             <p class="con-left">共 {{fj.length||0}} 个附件</p>
             <p class="fj_add">
-              <Upload action="/posts" :data="postData" show-upload-list>
+              <Upload action="/public/api/xlcontract/uploadFile" :data="postData" show-upload-list @on-success="getfiles" @on-error="$Message.error('上传失败，请重试！')" @on-preview="goFileDetail">
                 <Icon type="plus"></Icon>添加附件
               </Upload>
             </p>
@@ -568,7 +568,7 @@ export default {
     },
     getfiles(){
       let request = {
-        typeid: 26009,
+        typeid: 26015,
         data: [
           {
             customerNo: this.data.data.customerNo||''
@@ -577,15 +577,18 @@ export default {
       };
       this.fj = [];
       this.$http.XLCONTRACT(request).then(response => {
-        response.data.result.data.customerTicketList.forEach(data => {
+        response.data.result.data.fileList.forEach(data => {
           let item = {};
-          item.wjm = data.customerName;
-          item.size = data.phone;
-          item.where = data.dutyParagraph;
-          item.time = data.bankName;
+          // item.wjm = data.customerName;
+          // item.size = data.phone;
+          // item.where = data.dutyParagraph;
+          // item.time = data.bankName;
           this.fj.push(item);
         });
       });
+    },
+    goFileDetail(file){
+      console.log(file.response);
     }
   },
   beforeCreate() {
@@ -595,7 +598,7 @@ export default {
   mounted() {
     this.getkcmx();
     this.getTicket();
-    // this.getfiles();
+    this.getfiles();
   },
   watch: {
     fpmodal(nv) {
