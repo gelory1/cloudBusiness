@@ -20,7 +20,17 @@
         <hr
           style="border:0.6px solid #DDDDDD;width:90%;margin:0 auto;margin-top:20px;margin-bottom:5px;"
         />
-        <div :style="{height:scrollHeight,overflow:'auto'}">
+        <AutoComplete
+          v-model="completeValue"
+          @on-select="goMenu"
+          clearable
+          transfer
+          placeholder="搜索仓库"
+          @keyup.enter.native="searchMenu"
+          :style="{width:180 + 'px',marginLeft:10+'px',marginBottom: 5+'px'}">
+          <Option v-for="item in completeData" :value="item.wh_name" :key="item.wh_id">{{ item.wh_name }}</Option>
+        </AutoComplete>
+        <div :style="{height:scrollHeight,overflow:'auto'}" ref="menuContainer">
           <Menu
             width="auto"
             class="menu"
@@ -692,7 +702,8 @@ export default {
       pageName1: 1,
       pageName2: 1,
       filterStatus: false,
-      tableHeight: ""
+      tableHeight: "",
+      completeValue: ''
     };
   },
   methods: {
@@ -1001,6 +1012,22 @@ export default {
     },
     changeRow(row) {
       this.inputVal = row.chbm;
+    },
+    goMenu(menu){
+      let whId = (this.menudata.find(m => m.wh_name === menu)||{}).wh_id||'';
+      this.$refs['menu'].currentActiveName = this.menudata.findIndex(m => m.wh_id === whId)||0;
+      this.completeValue = '';
+      this.$nextTick(() => {
+        this.ck_current_index = this.menudata.findIndex(m => m.wh_id === whId)||0;
+        let scroll = this.$refs['menu'].$children[0].$children[this.ck_current_index + 2].$el.offsetTop - 200
+        this.$refs['menu'].updateActiveName();
+        this.$refs['menu'].updateActiveName();
+        this.$refs['menuContainer'].scrollTo(0,scroll);
+        this.getProductList(1);
+      })
+    },
+    searchMenu(){
+      if(this.completeData.length>0) this.goMenu(this.completeData[0].wh_name);
     }
   },
   mounted() {
@@ -1013,6 +1040,13 @@ export default {
       // h = (window.screen.height-330)+'px'
       h = document.body.scrollHeight - 185 + "px";
       return h;
+    },
+    completeData(){
+      let data = [];
+      if(this.menudata && this.menudata.length>0 && this.completeValue !== ''){
+        data = JSON.parse(JSON.stringify(this.menudata)).filter(i => i.wh_name.indexOf(this.completeValue) !== -1);
+      }
+      return data;
     }
   },
   watch: {
