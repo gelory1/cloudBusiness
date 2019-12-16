@@ -234,9 +234,9 @@
             </p>
           </TabPane>
           <TabPane label="附件" name="name4">
-            <p class="con-left">共 {{fjIndex}} 个附件</p>
+            <p class="con-left">共 {{fj.length||0}} 个附件</p>
             <p class="fj_add">
-              <Upload action="//10.0.17.213:31380/posts/">
+              <Upload action="/posts" :data="postData" show-upload-list>
                 <Icon type="plus"></Icon>添加附件
               </Upload>
             </p>
@@ -397,20 +397,7 @@ export default {
         qrsj: "342-44",
         zfje: "342"
       },
-      fj: [
-        {
-          wjm: "文件名fj.wjm",
-          size: "3242",
-          where: "dsfs",
-          time: "2342-89"
-        },
-        {
-          wjm: "文件名fj.wjm",
-          size: "3242",
-          where: "dsfs",
-          time: "2342-89"
-        }
-      ],
+      fj: [],
       update_columns: [
         {
           title: "序号",
@@ -578,6 +565,27 @@ export default {
           this.kpxx.push(item);
         });
       });
+    },
+    getfiles(){
+      let request = {
+        typeid: 26009,
+        data: [
+          {
+            customerNo: this.data.data.customerNo||''
+          }
+        ]
+      };
+      this.fj = [];
+      this.$http.XLCONTRACT(request).then(response => {
+        response.data.result.data.customerTicketList.forEach(data => {
+          let item = {};
+          item.wjm = data.customerName;
+          item.size = data.phone;
+          item.where = data.dutyParagraph;
+          item.time = data.bankName;
+          this.fj.push(item);
+        });
+      });
     }
   },
   beforeCreate() {
@@ -587,6 +595,7 @@ export default {
   mounted() {
     this.getkcmx();
     this.getTicket();
+    // this.getfiles();
   },
   watch: {
     fpmodal(nv) {
@@ -741,6 +750,13 @@ export default {
     },
     kpxxLength() {
       return this.kpxx.length === 0;
+    },
+    postData(){
+      let post = {};
+      if(this.data&&this.data.data&&this.data.data.contractNo){
+        post.contractNo = this.data.data.contractNo;
+      }
+      return post;
     }
   }
 };
