@@ -525,8 +525,7 @@ export default {
         {
           title: "下单时间",
           key: "xdsj",
-          align: "center",
-          sortable: true
+          align: "center"
         },
         {
           title: "客户名称",
@@ -536,15 +535,13 @@ export default {
         {
           title: "客户等级",
           key: "khdj",
-          align: "center",
-          sortable: true
+          align: "center"
         },
         {
           title: "设备数量",
           key: "sbsl",
           align: "center",
           width: 150,
-          sortable: true,
           render: (h, params) => {
             return h("div", [
               h(
