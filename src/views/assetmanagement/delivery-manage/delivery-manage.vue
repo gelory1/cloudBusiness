@@ -1,7 +1,7 @@
 <template>
   <div class="delivery" @click="tooltipClick('outside')">
     <Layout>
-      <Menu width="auto" size="small">
+      <Menu width="auto" size="small" style="height:70px;">
         <div class="fh_but">
           <Button type="ghost" style="margin-top:15px;margin-left:5px;">发货方案查询</Button>
         </div>
@@ -122,11 +122,12 @@
           icon="ios-plus-empty"
           class="addBut1"
           @click="addClick"
+          style="margin-top:5px;"
         >新建发货方案</Button>
       </Menu>
       <Content
         :style="{background: '#fff', minHeight: '800px'}"
-        style="padding-left:20px;margin-top:-30px;"
+        style="padding-left:20px;margin-top:-10px;"
       >
         <Tabs ref="tab" v-model="tabName" @on-change="changeTab">
           <TabPane
@@ -412,8 +413,4 @@ export default {
 
 <style>
 @import "../assetmanage.css";
-.delivery .ivu-menu-light{
-  position:relative;
-  z-index: 0
-}
 </style>
