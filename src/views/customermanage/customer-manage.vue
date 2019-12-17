@@ -1,10 +1,8 @@
 <template>
   <div class="customer" @click="customerClick('outside')">
     <Layout>
-      <Menu width="auto" size="small" style="padding-top:30px;">
-        <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" @click="addClick">添加客户</Button>
-        <div style="padding-top:5px;box-shadow: 0px 0px 5px #dddddd;margin-top:25px;"></div>
-        <div class="tip" style="float:left;margin-top:-2px;">
+      <Menu width="auto" size="small">
+        <div class="tip" style="float:left;margin-top:5px;">
           <p class="tooltip" @click.stop="customerClick('inside')">
             {{selectedCustomType.type}}
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
@@ -112,6 +110,7 @@
             </span>
           </div>
         </Header>
+        <Button type="primary" icon="ios-plus-empty" class="addBut1" @click="addClick" style="margin-bottom:5px;">添加客户</Button>
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
         <Table
@@ -128,6 +127,7 @@
           :total="customSum"
           size="small"
           show-elevator
+          show-total
           style="text-align:center;margin-top:20px;"
           @on-change="getCustomList"
         ></Page>

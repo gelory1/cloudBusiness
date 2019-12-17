@@ -206,6 +206,7 @@
         :page-size="10"
         @on-change="getOrderList"
         size="small"
+        show-total
         show-elevator
         style="text-align:center;margin:20px 0;"
       ></Page>

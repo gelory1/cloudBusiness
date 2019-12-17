@@ -121,6 +121,7 @@
         :current.sync="pageNum"
         :total="sum"
         :page-size="10"
+        show-total
         size="small"
         @on-change="addDevices"
         show-elevator

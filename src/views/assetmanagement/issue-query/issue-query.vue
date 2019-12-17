@@ -27,8 +27,13 @@
           transfer
           placeholder="搜索仓库"
           @keyup.enter.native="searchMenu"
-          :style="{width:180 + 'px',marginLeft:10+'px',marginBottom: 5+'px'}">
-          <Option v-for="item in completeData" :value="item.wh_name" :key="item.wh_id">{{ item.wh_name }}</Option>
+          :style="{width:180 + 'px',marginLeft:10+'px',marginBottom: 5+'px'}"
+        >
+          <Option
+            v-for="item in completeData"
+            :value="item.wh_name"
+            :key="item.wh_id"
+          >{{ item.wh_name }}</Option>
         </AutoComplete>
         <div :style="{height:scrollHeight,overflow:'auto'}" ref="menuContainer">
           <Menu
@@ -78,11 +83,55 @@
                   <FormItem label="单据编号" prop="djbh">
                     <Input type="text" v-model="cusfilterItem.djbh" />
                   </FormItem>
-                  <FormItem label="订单编号" prop="ddbh">
+                  <!-- <FormItem label="订单编号" prop="ddbh">
                     <Input type="text" v-model="cusfilterItem.ddbh" />
-                  </FormItem>
+                  </FormItem>-->
                   <FormItem label="客户名称" prop="khmc">
                     <Input type="text" v-model="cusfilterItem.khmc" />
+                  </FormItem>
+                  <FormItem label="出库类别" prop="cklb" v-if="this.tabName == 'name2'">
+                    <Input type="text" v-model="cusfilterItem.cklb" />
+                  </FormItem>
+                  <FormItem label="入库类别" prop="rklb" v-if="this.tabName == 'name1'">
+                    <Input type="text" v-model="cusfilterItem.cklb" />
+                  </FormItem>
+                  <FormItem label="规格型号" prop="ggxh">
+                    <Input type="text" v-model="cusfilterItem.ggxh" />
+                  </FormItem>
+                  <FormItem label="合同编号" prop="htbh">
+                    <Input type="text" v-model="cusfilterItem.htbh" />
+                  </FormItem>
+                  <FormItem label="状态" prop="zt">
+                    <Select v-model="cusfilterItem.zt" clearable filterable>
+                      <Option
+                        :value="item.index"
+                        v-for="(item,index) in status"
+                        :key="index"
+                      >{{item.val}}</Option>
+                    </Select>
+                  </FormItem>
+                  <FormItem label="发起时间段">
+                    <Row>
+                      <Col span="11">
+                        <DatePicker
+                          type="date"
+                          placeholder="开始日期"
+                          v-model="cusfilterItem.startTime"
+                          placement="bottom-end"
+                          :options="startOption"
+                        ></DatePicker>
+                      </Col>
+                      <Col span="2" style="text-align: center">-</Col>
+                      <Col span="11">
+                        <DatePicker
+                          type="date"
+                          placeholder="结束日期"
+                          v-model="cusfilterItem.endTime"
+                           placement="bottom-end"
+                          :options="endOption"
+                        ></DatePicker>
+                      </Col>
+                    </Row>
                   </FormItem>
                   <FormItem>
                     <Button @click="handleReset('cusfilterItem')" style="margin-left: 8px">重置</Button>
@@ -123,6 +172,7 @@
                 :page-size="10"
                 @on-change="getProductList"
                 size="small"
+                show-total
                 show-elevator
                 style="text-align:center;margin:20px 0;"
               ></Page>
@@ -141,6 +191,7 @@
                 :page-size="10"
                 @on-change="getProductList"
                 size="small"
+                show-total
                 show-elevator
                 style="text-align:center;margin:20px 0;"
               ></Page>
@@ -239,6 +290,7 @@
               :page-size="10"
               @on-change="getDevicesList"
               size="small"
+              show-total
               show-elevator
               style="text-align:center;margin-top:20px;"
             ></Page>
@@ -349,6 +401,48 @@
 
 <script>
 import sblbTale from "../../public-components/sblb_table.vue";
+const status = [
+  {
+    val: "销售出库",
+    index: -1
+  },
+  {
+    val: "出库中（针对仓库）",
+    index: 0
+  },
+  {
+    val: "待收货",
+    index: 1
+  },
+  {
+    val: "入库；已收货",
+    index: 10
+  },
+  {
+    val: "领用",
+    index: 20
+  },
+  {
+    val: "拆除",
+    index: 30
+  },
+  {
+    val: "安装",
+    index: 40
+  },
+  {
+    val: "丢失",
+    index: 50
+  },
+  {
+    val: "上线",
+    index: 60
+  },
+  {
+    val: "退货",
+    index: 70
+  }
+];
 export default {
   name: "deviceQuery",
   components: {
@@ -356,6 +450,7 @@ export default {
   },
   data() {
     return {
+      status,
       zkSum: 1,
       crkSum: 1,
       sblbSum: 1,
@@ -490,7 +585,7 @@ export default {
                         shsj: params.row.data.auditor_time,
                         zt: params.row.zt,
                         allocation_id: params.row.data.allocation_id,
-                        address: params.row.data.delivery_address,
+                        address: params.row.data.delivery_address
                       };
                       this.selectedWhid = params.row.data.wh_id;
                       this.indevice_data1 = [];
@@ -650,7 +745,7 @@ export default {
                         shr: params.row.data.auditor_name,
                         shsj: params.row.data.auditor_time,
                         zt: params.row.zt,
-                        allocation_id: params.row.data.allocation_id,
+                        allocation_id: params.row.data.allocation_id
                         // adress: params.row.data.adress,
                       };
                       this.outdevice_data1 = [];
@@ -804,7 +899,7 @@ export default {
         sbsl: "",
         shr: "",
         shsj: "2019-9-00",
-        adress:""
+        adress: ""
       },
       cpxhpz: [
         {
@@ -913,8 +1008,33 @@ export default {
       },
       cusfilterItem: {
         djbh: "",
-        ddbh: "",
-        khmc: ""
+        // ddbh: "",
+        khmc: "",
+        cklb: "",
+        rklb:"",
+        ggxh: "",
+        htbh: "",
+        zt: "",
+        startTime: "",
+        endTime: ""
+      },
+      startOption: {
+        disabledDate: time => {
+          if (this.cusfilterItem.endTime) {
+            return (
+              time.getTime() > new Date(this.cusfilterItem.endTime).getTime()
+            );
+          }
+        }
+      },
+      endOption: {
+        disabledDate: time => {
+          if (this.cusfilterItem.startTime) {
+            return (
+              time.getTime() < new Date(this.cusfilterItem.startTime).getTime()
+            );
+          }
+        }
       },
       inPageNum: 1,
       outPageNum: 1,
@@ -923,7 +1043,7 @@ export default {
       tabDeviceName2: "name1",
       tabDeviceName1: "name1",
       filterStatus: false,
-      completeValue: ''
+      completeValue: ""
     };
   },
   methods: {
@@ -1010,9 +1130,18 @@ export default {
             page_num: p,
             page_size: 10,
             allocation_type: this.tabName === "name1" ? 1 : 0,
-            allocation_no:this.cusfilterItem.djbh ===''? undefined:this.cusfilterItem.djbh,
-            order_no :this.cusfilterItem.ddbh ===''? undefined:this.cusfilterItem.ddbh,
-            agent_name:this.cusfilterItem.khmc===''? undefined:this.cusfilterItem.khmc,
+            allocation_no:
+              this.cusfilterItem.djbh === ""
+                ? undefined
+                : this.cusfilterItem.djbh,
+            order_no:
+              this.cusfilterItem.ddbh === ""
+                ? undefined
+                : this.cusfilterItem.ddbh,
+            agent_name:
+              this.cusfilterItem.khmc === ""
+                ? undefined
+                : this.cusfilterItem.khmc
           }
         ]
       };
@@ -1072,7 +1201,7 @@ export default {
         data: [
           {
             order_no: order_id,
-            allocation_id: this.djxx.allocation_id,
+            allocation_id: this.djxx.allocation_id
           }
         ]
       };
@@ -1081,20 +1210,20 @@ export default {
       } else {
         this.outdevice_data = [];
       }
-      this.$http.PostXLASSETS(param).then((res)=>{
-        if(this.tabName === 'name1'){
-          this.indevice_data=[];
-        }else{
-          this.outdevice_data=[];
+      this.$http.PostXLASSETS(param).then(res => {
+        if (this.tabName === "name1") {
+          this.indevice_data = [];
+        } else {
+          this.outdevice_data = [];
         }
-        res.data.result.data.forEach((data)=>{
+        res.data.result.data.forEach(data => {
           let item = {};
           item.chbm = data.product_code;
-            item.chmc = data.product_name;
-            item.ggxh = data.product_models;
-            item.jldw = data.product_unit;
-            item.sl = data.quantity_shipped;
-          if(this.tabName === 'name1'){
+          item.chmc = data.product_name;
+          item.ggxh = data.product_models;
+          item.jldw = data.product_unit;
+          item.sl = data.quantity_shipped;
+          if (this.tabName === "name1") {
             this.indevice_data.push(item);
           } else {
             this.outdevice_data.push(item);
@@ -1109,7 +1238,7 @@ export default {
           {
             allocation_id: this.djxx.allocation_id,
             page_num: p,
-            page_size: 10,
+            page_size: 10
           }
         ]
       };
@@ -1133,7 +1262,10 @@ export default {
       });
     },
     search(val) {
-      let index = this.cpxhpz[this.cktype_current_index].id === undefined ?0:(this.cpxhpz[this.cktype_current_index].id+1);
+      let index =
+        this.cpxhpz[this.cktype_current_index].id === undefined
+          ? 0
+          : this.cpxhpz[this.cktype_current_index].id + 1;
       this.getMenuList(index);
       if (this.$refs["menu"].currentActiveName !== -1)
         this.$refs["menu"].currentActiveName = -1;
@@ -1148,18 +1280,18 @@ export default {
     },
     handleSubmitgl(name) {
       let status = true;
-      for(let key in this.cusfilterItem){
-        if(this.cusfilterItem[key] !== ''&&this.cusfilterItem[key] !== 0){
+      for (let key in this.cusfilterItem) {
+        if (this.cusfilterItem[key] !== "" && this.cusfilterItem[key] !== 0) {
           status = false;
         }
       }
-      if(status){
+      if (status) {
         this.filterStatus = false;
         $(".cor").css({ color: "#000000" });
         this.glShow = false;
-        if(this.tabName === 'name1'){
+        if (this.tabName === "name1") {
           this.getProductList(1);
-        }else{
+        } else {
           this.getProductList(1);
         }
         return;
@@ -1168,9 +1300,9 @@ export default {
         if (valid) {
           this.filterStatus = true;
           this.glShow = false;
-          if(this.tabName === 'name1'){
+          if (this.tabName === "name1") {
             this.getProductList(1);
-          }else{
+          } else {
             this.getProductList(1);
           }
           this.$Message.success("查询成功！");
@@ -1207,21 +1339,27 @@ export default {
       this.glShow = false;
       if (!this.filterStatus) $(".cor").css({ color: "#000000" });
     },
-    goMenu(menu){
-      let whId = (this.menudata.find(m => m.wh_name === menu)||{}).wh_id||'';
-      this.$refs['menu'].currentActiveName = this.menudata.findIndex(m => m.wh_id === whId)||0;
-      this.completeValue = '';
+    goMenu(menu) {
+      let whId =
+        (this.menudata.find(m => m.wh_name === menu) || {}).wh_id || "";
+      this.$refs["menu"].currentActiveName =
+        this.menudata.findIndex(m => m.wh_id === whId) || 0;
+      this.completeValue = "";
       this.$nextTick(() => {
-        this.ck_current_index = this.menudata.findIndex(m => m.wh_id === whId)||0;
-        let scroll = this.$refs['menu'].$children[0].$children[this.ck_current_index + 2].$el.offsetTop - 200
-        this.$refs['menu'].updateActiveName();
-        this.$refs['menu'].updateActiveName();
-        this.$refs['menuContainer'].scrollTo(0,scroll);
+        this.ck_current_index =
+          this.menudata.findIndex(m => m.wh_id === whId) || 0;
+        let scroll =
+          this.$refs["menu"].$children[0].$children[this.ck_current_index + 2]
+            .$el.offsetTop - 200;
+        this.$refs["menu"].updateActiveName();
+        this.$refs["menu"].updateActiveName();
+        this.$refs["menuContainer"].scrollTo(0, scroll);
         this.getProductList(1);
-      })
+      });
     },
-    searchMenu(){
-      if(this.completeData.length>0) this.goMenu(this.completeData[0].wh_name);
+    searchMenu() {
+      if (this.completeData.length > 0)
+        this.goMenu(this.completeData[0].wh_name);
     }
   },
   mounted() {
@@ -1235,10 +1373,16 @@ export default {
       h = document.body.scrollHeight - 185 + "px";
       return h;
     },
-    completeData(){
+    completeData() {
       let data = [];
-      if(this.menudata && this.menudata.length>0 && this.completeValue !== ''){
-        data = JSON.parse(JSON.stringify(this.menudata)).filter(i => i.wh_name.indexOf(this.completeValue) !== -1);
+      if (
+        this.menudata &&
+        this.menudata.length > 0 &&
+        this.completeValue !== ""
+      ) {
+        data = JSON.parse(JSON.stringify(this.menudata)).filter(
+          i => i.wh_name.indexOf(this.completeValue) !== -1
+        );
       }
       return data;
     }
@@ -1263,7 +1407,7 @@ export default {
   overflow: auto;
   /* overflow-x: hidden; */
 }
-.ivu-select-dropdown.ivu-select-dropdown-transfer.ivu-auto-complete{
-  max-height: 400px
+.ivu-select-dropdown.ivu-select-dropdown-transfer.ivu-auto-complete {
+  max-height: 400px;
 }
 </style>

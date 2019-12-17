@@ -5,7 +5,7 @@
       :total="40"
       size="small"
       show-elevator
-      
+      show-total
       style="text-align:center;margin-top:20px;"
     ></Page>
   </div>

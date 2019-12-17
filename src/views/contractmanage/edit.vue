@@ -100,7 +100,7 @@
                 </Col>
                 <Col span="7">
                   <FormItem label="签约用户数" prop="qyyhs" class="con-right">
-                    <Slider class="col-m" v-model="formValidate.signUserAmount" show-input></Slider>
+                    <Slider class="col-m" max="100000000000" v-model="formValidate.signUserAmount" show-input></Slider>
                   </FormItem>
                 </Col>
                 <Col span="8">

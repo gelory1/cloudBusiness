@@ -1,11 +1,9 @@
 <template>
   <div class="order" @click="selectedDown('outside')">
     <Layout>
-      <Menu width="auto" size="small" style="padding-top:30px;">
-        <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" style="position:absolute;right:10px;top:10px;" @click="addOrder">申请备货</Button>  
-        <div style="padding-top:5px;box-shadow: 0px 0px 5px #dddddd;margin-top:25px;"></div>   
+      <Menu width="auto" size="small" style="height:60px;">
         <div class="tip" style="float:left;margin-top:-5px;">
-          <p class="tooltip" @click.stop="selectedDown('inside')">
+          <p class="tooltip" @click.stop="selectedDown('inside')" style="margin-top:20px;margin-left:20px;">
             {{selectedType.type ==='全部'?'所有订单类型':selectedType.type}}
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
           </p>
@@ -70,8 +68,9 @@
             </span>
           </div>  
         </Header>
+        <Button type="primary" icon="ios-plus-empty" class="addBut1" style="margin-top:5px;" @click="addOrder">申请备货</Button>  
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px;margin-top:-10px;">
+      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px;margin-top:0px;">
         <Tabs ref="tab" v-model="tabName">
           <TabPane v-for="item in orderStatus" :label="item.type" :name="item.name" :key="item.name">
             <Table :columns="order_columns" :data="order_data[item.index]" size="small" @on-row-click="openOrder" :loading="loading"></Table>
@@ -80,6 +79,7 @@
               :total="sum"
               :page-size="10"
               size="small"
+              show-total
               @on-change="getOrderList"
               show-elevator
               style="text-align:center;margin-top:20px;margin-bottom:200px"
@@ -603,4 +603,8 @@ export default {
  line-height: 50px;
  height: 50px
 }
+/* .order .ivu-menu-light{
+  position:relative;
+  z-index: 0
+} */
 </style>

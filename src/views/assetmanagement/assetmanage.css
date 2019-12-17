@@ -245,8 +245,16 @@
     top:8px;
     right:10px;
     z-index:999
-
   }
+  .addBut1{
+    float:right;
+    margin-right:10px;
+  }
+ /* .ivu-btn-ghost{ 
+    color:#409eff;
+    border:1px solid #b3d8ff;
+    background: #ecf5ff;
+} */
   .issue .ivu-table-row-highlight td{
     background-color: #2d8cf0;
     color: white;

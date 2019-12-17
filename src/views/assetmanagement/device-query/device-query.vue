@@ -167,6 +167,7 @@
                 :page-size="10"
                 @on-change="getProductList"
                 size="small"
+                show-total
                 show-elevator
                 style="text-align:center;margin:20px 0;"
               ></Page>
@@ -187,6 +188,7 @@
                 @on-change="getCrkList"
                 size="small"
                 show-elevator
+                show-total
                 style="text-align:center;margin:20px 0;"
               ></Page>
             </TabPane>
