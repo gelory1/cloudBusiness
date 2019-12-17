@@ -112,7 +112,7 @@
                 <Row>
                 <Col span="7">
                   <FormItem label="销售人员" prop="xsry" :label-width="90">
-                    <Input class="col-a" v-model="data.saleManName" placeholder disabled></Input>
+                    <Input class="col-a" v-model="data.saleName" placeholder disabled></Input>
                   </FormItem>
                 </Col>
                 <Col span="7">

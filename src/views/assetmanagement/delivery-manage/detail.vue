@@ -201,6 +201,8 @@ export default {
         this.detailData.des = data[0].shipments_describe;
         this.detailData.shipments_start_batch = data[0].shipments_start_batch;
         this.detailData.shipments_end_batch = data[0].shipments_end_batch;
+        this.detailData.shipments_id = request.data[0].shipments_id;
+        this.detailData.data = data[0];
         data[0].product_list.forEach(p => {
           if(!this.detailData.orderList.find(o => o.order_id === p.order_id)){
             this.detailData.orderList.push({
