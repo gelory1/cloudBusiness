@@ -85,7 +85,7 @@
                       </Col>
                     </Row>
                   </FormItem>
-                  <FormItem label="完成度">
+                  <!-- <FormItem label="完成度">
                     <Row>
                       <Col span="11">
                         <Input type="text" v-model="filterItem.prostart" />
@@ -95,7 +95,7 @@
                         <Input type="text" v-model="filterItem.proend" />
                       </Col>
                     </Row>
-                  </FormItem>
+                  </FormItem> -->
                   <FormItem>
                     <Button @click="handleResetht('filterItem')" style="margin-left: 8px">重置</Button>
                     <Button type="primary" @click="handleSubmitht('filterItem')">确定</Button>
@@ -297,10 +297,42 @@ export default {
         }
       ],
       fh_data: [],
-      tabName: "name1"
+      tabName: "name1",
+      filterStatus: false,
     };
   },
   methods: {
+    handleSubmitht(name){
+      let status = true;
+      for(let key in this.filterItem){
+        if(this.filterItem[key] !== ''&&this.filterItem[key] !== 0){
+          status = false;
+        }
+      }
+      if(status){
+        this.filterStatus = false;
+        $(".cor").css({ color: "#000000" });
+        this.glShow = false;
+        this.getDeliveryList(1);
+        return;
+      }
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          this.filterStatus = true;
+          this.glShow = false;
+          this.getDeliveryList(1);
+          this.$Message.success("Success!");
+        } else {
+          this.$Message.error("Fail!");
+        }
+      });
+    },
+    handleResetht(){
+      this.filterStatus = false;
+      for (let key in this.filterItem) {
+        this.filterItem[key] = "";
+      }
+    },
     tooltipClick(side) {
       if (side === "inside") {
         this.tooptipShow = !this.tooptipShow;
@@ -337,7 +369,16 @@ export default {
             page_num: p,
             page_size: 10,
             keyword: this.inputVal,
-            shipments_status: index === -1 ? undefined : index
+            shipments_status: index === -1 ? undefined : index,
+            agent_name:this.filterItem.customerName === "" ? undefined : this.filterItem.customerName,
+            shipments_start_time:this.filterItem.startTime === "" ? undefined : this.filterItem.startTime,
+            shipments_end_time:this.filterItem.endTime === "" ? undefined : this.filterItem.endTime,
+            order_count_start:this.filterItem.orderstart === "" ? undefined : this.filterItem.orderstart,
+            order_count_end:this.filterItem.orderend === "" ? undefined : this.filterItem.orderend,
+            product_count_start:this.filterItem.setstart === "" ? undefined : this.filterItem.setstart,
+            product_count_end:this.filterItem.setend === "" ? undefined : this.filterItem.setend,
+            money_start:this.filterItem.moneystart === "" ? undefined : this.filterItem.moneystart,
+            money_end:this.filterItem.moneyend === "" ? undefined : this.filterItem.moneyend,
           }
         ]
       };

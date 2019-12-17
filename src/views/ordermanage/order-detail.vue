@@ -81,6 +81,26 @@
             </div>
             </div>
         </div>
+        <div style="margin-left:40px;">
+              <section style="width:90%;float:left;">
+                <p style="color:#8d8d8d;margin-top:10px;">备货申请协议（附件）：</p>
+                <div>
+                  <div :key="index" class="fj1">
+                    <section class="fj_img1">
+                      <img src alt />
+                    </section>
+                    <section class="fj_sec1" style="margin-top:0px">
+                      <p>item.wjm</p>
+                      <p class="fj_p1">
+                        <span>item.size</span> 来自
+                        <span>item.where</span> |
+                        <span>item.time</span>
+                      </p>
+                    </section>
+                  </div>
+                </div>
+              </section>
+            </div>
         <div style="clear:both;overflow: hidden;">
         <p class="djtitle">设备清单</p>
         <Tabs v-model="deviceTabName">

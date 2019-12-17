@@ -46,38 +46,7 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <el-cascader :options="options2" multiple :show-all-levels="false" size="small" style="width:350px;"></el-cascader>
-                <!-- <Select
-                  v-model="formValidate.province.id"
-                  placeholder="请选择"
-                  style="width:115px;"
-                  clearable
-                  filterable
-                >
-                  <Option
-                    v-for="(item,index) in provinces"
-                    :value="item.id"
-                    :key="index"
-                  >{{item.name}}</Option>
-                </Select>
-                <Select
-                  v-model="formValidate.city.id"
-                  placeholder="请选择"
-                  clearable
-                  filterable
-                  style="width:114px;"
-                >
-                  <Option v-for="(item,index) in citys" :value="item.id" :key="index">{{item.name}}</Option>
-                </Select>
-                <Select
-                  v-model="formValidate.county"
-                  placeholder="请选择"
-                  clearable
-                  filterable
-                  style="width:114px;"
-                >
-                  <Option v-for="(item,index) in citys" :value="item" :key="index">{{item.name}}</Option>
-                </Select> -->
+                <el-cascader :options="options2" multiple :show-all-levels="false" @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;" ></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -133,47 +102,7 @@
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="授权资质" prop="sqzz" class="con-right" v-model="formValidate.empower_province.id">
-                <el-cascader :options="options1" multiple :show-all-levels="false" :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;"></el-cascader>
-                <!-- <Select
-                  v-model="formValidate.empower_province.id"
-                  multiple
-                  placeholder="请选择"
-                  clearable
-                  filterable
-                  style="width:115px;"
-                >
-                  <Option
-                    v-for="(item,index) in provinces"
-                    :value="item.id"
-                    :key="index"
-                  >{{item.name}}</Option>
-                </Select>
-                <Select
-                  v-model="formValidate.empower_city.id"
-                  placeholder="请选择"
-                  clearable
-                  filterable
-                  style="width:114px;"
-                >
-                  <Option
-                    v-for="(item,index) in empower_citys"
-                    :value="item.id"
-                    :key="index"
-                  >{{item.name}}</Option>
-                </Select>
-                <Select
-                  v-model="formValidate.provinces_county"
-                  placeholder="请选择"
-                  clearable
-                  filterable
-                  style="width:114px;"
-                >
-                  <Option
-                    v-for="(item,index) in provinces_county"
-                    :value="item"
-                    :key="index"
-                  >{{item.name}}</Option>
-                </Select> -->
+                <el-cascader :options="options1" multiple="true" @expand-change="handleChangeSq" show-all-levels :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -946,11 +875,21 @@ export default {
       ticketStatus: "new",
       contactStatus: "new",
       customer_id: "",
+      dd:"",
+      sqCascader:"",
       newLocalData: {},
       provinces_county: []
     };
   },
   methods: {
+    handleChange(value) {
+      this.dd = value[0];
+      this.getCitys()
+    },
+    handleChangeSq(value){
+      this.sqCascader = value[0];
+      this.getCitys()
+    },
     inputChange() {
       this.formAddkpxx.bank_account = this.formAddkpxx.bank_account.replace(
         /[^\d]/g,
@@ -1158,12 +1097,11 @@ export default {
         typeid: 27003,
         data: [
           {
-            province: this.formValidate.province.id
+            province: this.dd
           }
         ]
       };
       this.citys = [];
-      // this.formValidate.city = {};
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
         this.citys = res;
@@ -1173,6 +1111,48 @@ export default {
               res[0]
           )
         );
+        if(this.options2.length === 0){
+          this.provinces.forEach(p => {
+            let item = {
+              id:p.id,
+              name:p.name,
+              children:[],
+            }
+            this.options2.push(item);
+          })
+        }
+        if(this.options2.find(p => p.id === this.dd)){
+          this.$set(this.options2.find(p => p.id === this.dd),'children',res);
+        }
+        
+      });
+    },
+    getPower() {
+      let request = {
+        typeid: 27003,
+        data: [
+          {
+            province: this.sqCascader
+          }
+        ]
+      };
+      this.citys = [];
+      api.XLSELECT(request).then(response => {
+        let res = response.data.result.data;
+        if(this.options1.length === 0){
+          this.provinces.forEach(p => {
+            let item = {
+              id:p.id,
+              name:p.name,
+              children:[],
+            }
+            this.options1.push(item);
+          })
+        }
+        if(this.options1.find(p => p.id === this.sqCascader)){
+          this.$set(this.options1.find(p => p.id === this.sqCascader),'children',res);
+        }
+        
       });
     },
     getEmpowerCitys() {
@@ -1569,9 +1549,7 @@ export default {
   mounted() {
     this.init();
     this.getCitys()
-    this.options1 = this.provinces;
-  
-
+    this.getPower()
   },
   computed: {
     data() {
@@ -1594,6 +1572,12 @@ export default {
     }
   },
   watch: {
+    "dd":function(){
+       this.getCitys();
+    },
+    "sqCascader":function(){
+      this.getPower()
+    },
     "formValidate.province.id": function() {
       // this.formValidate.province.id = (this.provinces.find(p => p.name === this.formValidate.province.name)||{}).id;
       this.getCitys();
