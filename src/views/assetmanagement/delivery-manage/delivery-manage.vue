@@ -122,12 +122,11 @@
           icon="ios-plus-empty"
           class="addBut1"
           @click="addClick"
-          style="margin-top:5px;"
         >新建发货方案</Button>
       </Menu>
       <Content
         :style="{background: '#fff', minHeight: '800px'}"
-        style="padding-left:20px;margin-top:-10px;"
+        style="padding-left:20px;margin-top:00px;"
       >
         <Tabs ref="tab" v-model="tabName" @on-change="changeTab">
           <TabPane
