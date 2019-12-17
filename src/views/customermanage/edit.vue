@@ -179,11 +179,11 @@
           </Row>
           <Row>
             <Col span="12">
-              <FormItem label="销售负责人" prop="salesman" :label-width="90">
+              <FormItem label="销售人员" prop="salesman" :label-width="90">
                 <!-- <Select v-model="formValidate.salesman" clearable filterable>
                       <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
                 </Select>-->
-                <Input v-model="formValidate.salesman" readonly />
+                <Input v-model="formValidate.salesman" />
               </FormItem>
             </Col>
             <Col span="12" v-if="isFriend">
