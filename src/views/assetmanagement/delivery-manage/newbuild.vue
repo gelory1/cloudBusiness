@@ -15,13 +15,16 @@
           ></DatePicker>之前
         </FormItem>
         <FormItem label="方案描述" prop="desc">
-          <Input
-            v-model="formValidate.desc"
+          <el-input
             type="textarea"
+            placeholder="请输入文字对方案进行描述"
+            v-model="formValidate.desc"
             :autosize="{minRows: 2,maxRows: 5}"
-            placeholder="Enter something..."
+            maxlength="1000"
+            show-word-limit
             style="width:500px;"
-          />
+          >
+          </el-input>
         </FormItem>
         <Row>
           <Col span="7">
@@ -148,10 +151,12 @@
         @on-click="changeCount(changeRowData.currentData)"
       />
       <Table
+        ref="table"
         :columns="tz_columns"
         :data="tz_data"
         :row-class-name="rowClassName"
         style="clear:both;margin-left:10px;"
+        @on-selection-change="changeCheck"
       ></Table>
       <div class="tz_i">
         <p class="left" style="color:#e6a23c">
@@ -452,7 +457,8 @@ export default {
                 size: "small",
                 value: params.row.sbsl,
                 min: 0,
-                max: params.row.max||params.row.sbsl
+                max: params.row.max||params.row.sbsl,
+                // disabled: params.row._checked === false
               },
               on: {
                 "on-change": a => {
@@ -612,11 +618,13 @@ export default {
       this.$refs[name].validate(valid => {
         if (valid) {
           if (this.outcksb_data.length > 0) {
+            let date = new Date(this.formValidate.fhsj);
+            let time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' 00:00:00';
             let request = {
               typeid: 23016,
               data: [
                 {
-                  shipments_time: this.formValidate.fhsj,
+                  shipments_time: time,
                   shipments_describe: this.formValidate.desc,
                   shipments_start_batch: this.formValidate.pcyq,
                   shipments_end_batch: this.formValidate.pcyq1,
@@ -661,6 +669,8 @@ export default {
                   this.$router.push({
                     path: "/assetmanage/delivery-manage"
                   });
+                }else if(error.data.message){
+                  this.$Message.error(error.data.message + ',请稍后重试！');
                 }
               }
             );
@@ -687,7 +697,15 @@ export default {
       // return '';
     },
     remove(index) {
+      for(let key in this.selectionData){
+        this.selectionData[key] = this.selectionData[key].filter(s => s.ddbh !== this.outcksb_data1[index].ddbh);
+        this.getOrderList(1);
+      }
       this.outcksb_data1.splice(index, 1);
+      this.$nextTick(() => {
+        this.$refs["cktable"].objData[0]._isHighlight = true;
+        this.changeRow(this.outcksb_data1[0]);
+      })
     },
     getOrderList(p) {
       let request = {
@@ -807,6 +825,7 @@ export default {
           item.khmc = d.customer_name;
           item.khdj = this.levelMap[d.customer_level];
           item.max = d.product_quantity - d.issued_count;
+          item._checked = false;
           if (
             this.changeRowData.data[product_code] &&
             this.changeRowData.data[product_code][d.order_id] !== undefined
@@ -917,6 +936,20 @@ export default {
           this.editInit();
         }
       });
+    },
+    changeCheck(selection){
+      this.tz_data.forEach(t => {
+        if(selection.find(s =>s.ddbh === t.ddbh)&&t._checked === false){
+          t._checked = true;
+        }else if(!selection.find(s =>s.ddbh === t.ddbh)&&t._checked === true){
+          t._checked = false;
+          this.changeCountCancel();
+        }
+        let product_code = t.data.product_list[0].product_code;
+        if(((this.changeRowData.data||{})[product_code]||{})[t.data.order_id]){
+          t.sbsl = ((this.changeRowData.data||{})[product_code]||{})[t.data.order_id];
+        }
+      })
     }
   },
   mounted() {
