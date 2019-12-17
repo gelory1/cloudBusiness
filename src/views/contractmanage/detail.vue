@@ -183,7 +183,7 @@
                     <span>
                       <Icon type="ios-calendar-outline"></Icon>
                     </span>
-                    <span>{{item.paymentTime}}-{{item.dueTime}}</span>
+                    <span>{{item.paymentTime}}<span style="margin:0 15px;">-</span>{{item.dueTime}}</span>
                   </p>
                 </section>
                 <section class="zq_c zq_se" style="color:#797979;">
