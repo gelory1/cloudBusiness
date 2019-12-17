@@ -195,9 +195,9 @@ export default {
         ];
         let { data } = response.data.result;
         this.detailData.schemeNo = data[0].shipments_no;
-        this.detailData.time = data[0].shipments_time;
+        this.detailData.time = data[0].shipments_creationtime;
         this.detailData.manageMan = data[0].user_name;
-        this.detailData.deliveryTime = data[0].shipments_creationtime;
+        this.detailData.deliveryTime = data[0].shipments_time;
         this.detailData.des = data[0].shipments_describe;
         this.detailData.shipments_start_batch = data[0].shipments_start_batch;
         this.detailData.shipments_end_batch = data[0].shipments_end_batch;

@@ -263,7 +263,7 @@
       </content>
     </Layout>
     <!-- 查看勘察明细弹框 -->
-    <Modal v-model="kcmxmodal" width="800">
+    <Modal v-model="kcmxmodal" width="800" class="close_unable">
       <p style="margin:5px 0 10px 0;font-size:18px">勘察明细</p>
       <p style="font-size:16px;margin:20px 5px;">设备清单</p>
       <Table :columns="kcmx_columns" :data="kcmx_data"></Table>
@@ -850,5 +850,8 @@ export default {
   color:orange;
   width:200px;
   text-align:left
+}
+.close_unable .ivu-modal-footer{
+  display: none;
 }
 </style>

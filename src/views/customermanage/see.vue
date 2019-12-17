@@ -154,7 +154,7 @@
               <section style="width:90%;float:left;margin-top:30px;">
                 <p class="sele2">合作协议（附件）：</p>
                 <div>
-                  <div :key="index" class="fj1">
+                  <div class="fj1">
                     <section class="fj_img1">
                       <img src alt />
                     </section>

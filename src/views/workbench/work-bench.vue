@@ -989,13 +989,14 @@ export default {
           this.$http.SETXLASSETS(request).then(response => {
           },error => {
               if(error.data.code === 0){
-                let {allocationList} = error.data;
+                let {allocationList,billTime} = error.data;
                 let request = {
                 "typeid": 23007,
                 "data": [
                     {
                         "account_id": this.$store.state.user.accountId,
-                        "allocation_id": allocationList
+                        allocationList,
+                        billTime
                     }
                   ]
                 };

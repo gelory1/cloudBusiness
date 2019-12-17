@@ -405,12 +405,26 @@ export default {
         ]
       };
       this.$http.UPDATECONTRACT(request).then(response => {
-        let data = JSON.parse(JSON.stringify(this.data));
-        data.data.signUserAmount = this.formValidate.signUserAmount;
-        data.data.projectManager = this.formValidate.projectManager;
-        this.$store.commit('selectedContract',data);
-        this.$Message.success('编辑成功！');
-        this.$router.push({ path: "/contractmanage/detail"});
+        //更新记录
+        let req = {
+          typeid: 26017,
+          data: [
+            {
+              "contractNo": this.data.data.contractNo,
+            }
+          ]
+        }
+        this.$http.XLCONTRACT(req).then(response => {
+          let data = JSON.parse(JSON.stringify(this.data));
+          data.data.signUserAmount = this.formValidate.signUserAmount;
+          data.data.projectManager = this.formValidate.projectManager;
+          data.data.updateList = response.data.result.data.updateList;
+          this.$store.commit('selectedContract',data);
+          localStorage.setItem("contractInfo", JSON.stringify(data));
+          this.$Message.success('编辑成功！');
+          this.$router.push({ path: "/contractmanage/detail"});
+        })
+        
       })
     },
     handleCancel(){
