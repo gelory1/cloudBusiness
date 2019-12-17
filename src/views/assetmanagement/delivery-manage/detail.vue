@@ -25,7 +25,7 @@
           </p>
           <p>
             <span class="gray">期望发货时间：</span>
-            {{detailData.deliveryTime}} 之前
+            {{detailData.deliveryTime.split(' ')[0]}} 之前
           </p>
         </div>
         <div class="fa_div1">
