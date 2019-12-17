@@ -493,11 +493,13 @@ export default {
                     if (!this.changeRowData.data[product_code])
                       this.changeRowData.data[product_code] = {};
                     this.changeRowData.data[product_code][order_id] = a;
+                    let {repertory} = this.changeRowData.currentData;
                     this.changeRowData.currentData = this.outcksb_data.find(
                       c =>
                         c.product_code ===
                         this.changeRowData.currentData.product_code
                     );
+                    this.changeRowData.currentData.repertory = repertory;
                   }
                 }
               }
