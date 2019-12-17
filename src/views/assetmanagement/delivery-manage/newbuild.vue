@@ -459,7 +459,7 @@ export default {
                 value: params.row.sbsl,
                 min: 0,
                 max: params.row.max||params.row.sbsl,
-                // disabled: params.row._checked === false
+                disabled: params.row._checked === false
               },
               on: {
                 "on-change": a => {
@@ -838,7 +838,7 @@ export default {
               d.product_list[0].issued_count;
           }
           item.ggxh = this.changeRowData.currentData.product_models;
-          this.changeRowData.currentData.repertory =
+          if(d.product_list[0].repertory !== undefined) this.changeRowData.currentData.repertory =
             d.product_list[0].repertory;
           this.tz_data.push(item);
         });
@@ -939,16 +939,15 @@ export default {
       });
     },
     changeCheck(selection){
-      this.tz_data.forEach(t => {
+      this.tz_data.forEach((t,i) => {
+        let {product_code} = this.changeRowData.currentData;
+        if((this.changeRowData.data[product_code]||{})[t.data.order_id] !== undefined){
+          t.sbsl = (this.changeRowData.data[product_code]||{})[t.data.order_id];
+        }
         if(selection.find(s =>s.ddbh === t.ddbh)&&t._checked === false){
           t._checked = true;
         }else if(!selection.find(s =>s.ddbh === t.ddbh)&&t._checked === true){
           t._checked = false;
-          this.changeCountCancel();
-        }
-        let product_code = t.data.product_list[0].product_code;
-        if(((this.changeRowData.data||{})[product_code]||{})[t.data.order_id]){
-          t.sbsl = ((this.changeRowData.data||{})[product_code]||{})[t.data.order_id];
         }
       })
     }
