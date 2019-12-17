@@ -181,6 +181,7 @@
           :total="sum"
           :current.sync="pageNum"
           :page-size="10"
+          show-total
           @on-change="getContracts"
           size="small"
           show-elevator
