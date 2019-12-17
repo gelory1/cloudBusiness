@@ -137,7 +137,7 @@
       <p class="tz_p">调整发货</p>
       <p class="tz_p1">
         对涉及型号为
-        <span style="color:#4a9af5">{{changeRowData.currentData.product_code}}</span>的订单进行发货调整
+        <span style="color:#4a9af5">{{changeRowData.currentData.product_models}}</span>的订单进行发货调整
       </p>
       <Input
         icon="ios-search"

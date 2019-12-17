@@ -463,11 +463,11 @@ export default {
           key: "saleType",
           align: "center"
         },
-        {
-          title: "销售负责人",
-          key: "saleName",
-          align: "center"
-        },
+        // {
+        //   title: "销售负责人",
+        //   key: "saleName",
+        //   align: "center"
+        // },
         {
           title: "运营公司",
           key: "manageCompany",

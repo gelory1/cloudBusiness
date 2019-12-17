@@ -242,9 +242,9 @@ const businessMap = {
   1: '备货订单'
 };
 const saleMap = {
-  0: '直销',
-  1: '渠道',
-  2: '其他'
+  1: '直销',
+  2: '渠道',
+  3: '其他'
 };
 const statusMap = {
   0:'审批中',1: '待支付',2:'已下单',3:'已发货',4:'已到货',5:'被驳回'
@@ -328,11 +328,11 @@ const salesTypes = [
   },
   {
     val:'直销',
-    index:0
+    index:2
   },
   {
     val:'其他',
-    index:2
+    index:3
   },
 ]
 

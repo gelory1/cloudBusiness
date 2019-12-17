@@ -152,7 +152,7 @@ export const appRouter = [
             { path: 'device-query', title: '设备资产查询', name: 'device-query', icon: 'pull-request', component: () => import('@/views/assetmanagement/device-query/device-query.vue') },
             { path: 'issue-query', title: '出/入库单查询', name: 'issue-query', icon: 'arrow-swap', component: () => import('@/views/assetmanagement/issue-query/issue-query.vue') },
             { path: 'delivery-manage', title: '发货管理', name: 'delivery-manage', icon: 'plane', component: () => import('@/views/assetmanagement/delivery-manage/delivery-manage.vue')},
-            { path: 'model-config', title: '产品型号配置', name: 'model-config', icon: 'gear-a', component: () => import('@/views/assetmanagement/model-config/model-config.vue')},
+            // { path: 'model-config', title: '产品型号配置', name: 'model-config', icon: 'gear-a', component: () => import('@/views/assetmanagement/model-config/model-config.vue')},
         ]
     },
     // 报表
@@ -174,9 +174,9 @@ export const appRouter = [
         title: '设置',
         component: Main,
         children: [
-            { path: 'personSetting', title: '个人设置', name: 'person-setting', icon: 'ios-person-outline', component: () => import('@/views/setting/person-setting.vue') },
+            // { path: 'personSetting', title: '个人设置', name: 'person-setting', icon: 'ios-person-outline', component: () => import('@/views/setting/person-setting.vue') },
             { path: 'addressManage', title: '收货地址管理', name: 'address-manage', icon: 'ios-navigate-outline', component: () => import('@/views/setting/address-manage.vue') },
-            { path: 'memberManage', title: '成员管理', name: 'member-manage', icon: 'ios-people', component: () => import('@/views/setting/member-manage.vue') }
+            // { path: 'memberManage', title: '成员管理', name: 'member-manage', icon: 'ios-people', component: () => import('@/views/setting/member-manage.vue') }
         ]
     },
     // {
