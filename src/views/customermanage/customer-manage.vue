@@ -104,8 +104,8 @@
               <!-- 更多 -->
               <div v-show="moreShow" class="more">
                 <p @click="addkpClick">新增开票信息</p>
-                <p>导出所选结果</p>
-                <p>导出全部客户</p>
+                <p @click="exportSelect">导出所选结果</p>
+                <p @click="exportAll">导出全部客户</p>
               </div>
             </span>
           </div>
@@ -114,6 +114,7 @@
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
         <Table
+          ref="table"
           @on-selection-change="selectChange"
           style="position:relative;"
           :columns="customList_columns"
@@ -523,6 +524,13 @@ export default {
     },
     selectChange(item){
       this.selectedItems = item;
+      this.customList_data.forEach(c=> {
+        if(this.selectedItems.find(s => s.data.customer_no === c.data.customer_no)){
+          c._checked = true;
+        }else{
+          c._checked = false;
+        }
+      })
     },
     addClick(){
       this.$store.commit('selectedCustom',{});
@@ -572,6 +580,15 @@ export default {
       this.pageNum = 1;
       this.getCustomList(1);
     },
+    exportSelect(){
+      this.$refs['table'].exportCsv({
+        filename: '客户信息列表',
+        data: this.customList_data.filter(data => data._checked === true)
+      })
+    },
+    exportAll(){
+      this.$Message.error('暂不支持！');
+    }
   },
   mounted() {
     this.getCustomList(1);
