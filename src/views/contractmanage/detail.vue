@@ -499,7 +499,7 @@ export default {
       htzje: "32324324",
       syks: "43242",
       kcmxmodal: false,
-      fpmodal: true,
+      fpmodal: false,
       cjdwsl: "78",
       sqShow: false,
       zkShow: true,

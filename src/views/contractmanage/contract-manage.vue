@@ -118,7 +118,6 @@
                           placeholder="结束日期"
                           v-model="filterItem.signEndtime"
                           :options="endOption"
-                          @on-change="changeTime"
                         ></DatePicker>
                       </Col>
                     </Row>
@@ -556,15 +555,6 @@ export default {
     };
   },
   methods: {
-    changeTime(){
-      if (
-        new Date(this.filterItem.signStarttime).getTime() <
-        new Date(this.filterItem.signEndtime).getTime()
-      ) {
-        this.$message.error("结束时间不能小于开始时间");
-        return false;
-      }
-    },
     contractClick(side) {
       if (side === "inside") {
         this.tooptipShow = !this.tooptipShow;

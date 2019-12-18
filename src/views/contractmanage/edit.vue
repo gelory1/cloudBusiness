@@ -129,7 +129,7 @@
             <Row>
                 <Col span="7">
                   <FormItem label="项目经理" prop="xmjl" :label-width="90">
-                    <Input v-model="formValidate.projectManager" placeholder></Input>
+                    <Input v-model="formValidate.projectManager"  :maxlength="10"  placeholder="请输入10字以内的姓名"></Input>
                   </FormItem>
                 </Col>
                 <Col span="7">
@@ -400,6 +400,7 @@ export default {
           ]
         }
         this.$http.XLCONTRACT(req).then(response => {
+          debugger
           let data = JSON.parse(JSON.stringify(this.data));
           data.data.signUserAmount = this.formValidate.signUserAmount;
           data.data.projectManager = this.formValidate.projectManager;
@@ -408,6 +409,11 @@ export default {
           localStorage.setItem("contractInfo", JSON.stringify(data));
           this.$Message.success('编辑成功！');
           this.$router.push({ path: "/contractmanage/detail"});
+          for(var i = 0;i<data.data.updateList.length;i++){
+            if(data.data.updateList[i].updateContent == ''){
+            data.data.updateList[i].updateContent = "本次未修改"
+          }
+          }
         })
         
       })
@@ -459,7 +465,6 @@ export default {
     }
   },
   watch:{
-    
   }
 };
 </script>

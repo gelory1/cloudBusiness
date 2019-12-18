@@ -242,8 +242,8 @@ const businessMap = {
   1: '备货订单'
 };
 const saleMap = {
-  1: '直销',
-  2: '渠道',
+  2: '直销',
+  1: '渠道',
   3: '其他'
 };
 const statusMap = {
