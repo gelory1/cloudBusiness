@@ -147,3 +147,25 @@
     margin:-10px 0 20px 10px;
     font-size:16px;
 }
+.acc_div{
+    display:inline-block;
+    vertical-align:text-top;
+}
+.acc_sec{
+    border:1px solid #e4e7ed;
+    width:250px;
+    border-radius:2px;
+    padding:5px;
+    cursor:pointer;
+    
+}
+.acc_sec span{
+    color:orange
+}
+.acc_div1{
+    border:1px solid #e4e7ed;
+    padding:10px;
+    width:250px;
+    border-radius:2px;
+    margin-top:5px;
+}
