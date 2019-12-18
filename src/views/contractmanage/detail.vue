@@ -358,18 +358,15 @@
           </div>
         </div>
         <span>发票金额（元）：</span>
-        <Dropdown style="display:inline-block" class="cc">
-        <Button>
-            money
-            <Icon type="arrow-down-b" style="float:right"></Icon>
-        </Button>
-        <DropdownMenu slot="list">
-            <DropdownItem>
-               <Checkbox v-model="single"></Checkbox><span>账期1</span></span>&#x3000;&#x3000;&#x3000;
-               <span>实付：<span>10000</span></span>
-            </DropdownItem>   
-        </DropdownMenu>
-    </Dropdown>
+    <div class="acc_div">
+      <section class="acc_sec" @click="accountClick"><span>10000</span><Icon type="chevron-down" v-if="this.selectAccountShow == false" style="float:right;padding:3px;"></Icon><Icon v-if="this.selectAccountShow == true" type="chevron-up" style="float:right;padding:3px;"></Icon></section>
+      <div  class="acc_div1" v-show="selectAccountShow">
+      <section v-for="item in account" style="margin-bottom:5px;">
+        <Checkbox v-model="item.single"></Checkbox><span>{{item.zq}}</span></span>&#x3000;&#x3000;&#x3000;
+               <span>实付：<span>{{item.money}}</span></span>
+      </section>
+      </div>
+    </div>
       </footer>
     </Modal>
     <Modal v-model="orderDetailOpen" width="1000">
@@ -408,6 +405,16 @@ export default {
   },
   data() {
     return {
+      account:[{
+        zq:"账期1",
+        money:"123",
+        single:false
+      },
+      {
+        zq:"账期2",
+        money:"6663",
+        single:false
+      }],
       single:false,
       ticketType:"",
       subjectName,
@@ -500,12 +507,16 @@ export default {
       checkbox: [],
       contractContentMap,
       orderDetailOpen: false,
-      selectedOrder: ''
+      selectedOrder: '',
+      selectAccountShow:false
     };
   },
   methods: {
     goback() {
       this.$router.go(-1);
+    },
+    accountClick(){
+      this.selectAccountShow = !this.selectAccountShow
     },
     shrinkClick(index) {
       this.kpxx[index].zt = !this.kpxx[index].zt;

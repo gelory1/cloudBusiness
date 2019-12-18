@@ -46,7 +46,7 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <el-cascader :options="options2" multiple :show-all-levels="false" @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;" ></el-cascader>
+                <el-cascader clearable :options="options2"  clearable @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small" style="width:350px;" ></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -102,7 +102,7 @@
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="授权资质" prop="sqzz" class="con-right" v-model="formValidate.empower_province.id">
-                <el-cascader :options="options1" multiple="true" @expand-change="handleChangeSq" show-all-levels :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;"></el-cascader>
+                <el-cascader clearable :options="options1" @expand-change="handleChangeSq" show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -888,7 +888,7 @@ export default {
     },
     handleChangeSq(value){
       this.sqCascader = value[0];
-      this.getCitys()
+      this.getPower()
     },
     inputChange() {
       this.formAddkpxx.bank_account = this.formAddkpxx.bank_account.replace(
