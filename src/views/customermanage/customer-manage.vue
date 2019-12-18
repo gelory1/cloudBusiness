@@ -585,8 +585,10 @@ export default {
         filename: '客户信息列表',
         data: this.customList_data.filter(data => data._checked === true)
       })
+      this.moreClick();
     },
     exportAll(){
+      this.moreClick();
       this.$Message.error('暂不支持！');
     }
   },
