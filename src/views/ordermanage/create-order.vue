@@ -578,10 +578,12 @@ export default {
             }
           }
         } else {
-          this.$Message.error("无添加设备或发货数量为0");
+          // this.$Message.error("无添加设备或发货数量为0");
+          // return;
         }
       } else {
         this.$Message.error("请填写完整的信息！");
+        return;
       }
       let productList = [];
       this.formValidate.devices_list.forEach(data => {
@@ -742,7 +744,8 @@ export default {
         this.formValidate.customer.index &&
         this.formValidate.customer.index !== "" &&
         this.formValidate.store.index &&
-        this.formValidate.store.index !== ""
+        this.formValidate.store.index !== ""&&
+        this.formValidate.adress
       ) {
         let cusomer =
           this.cahceData.find(
@@ -762,8 +765,8 @@ export default {
           });
         }
         let selectAddress = adresses.find(a => a.status === 1) || adresses[0];
-        this.$set(this.formValidate.adress, "index", selectAddress.index);
-        this.$set(this.formValidate.adress, "value", selectAddress.value);
+        this.$set(this.formValidate.adress, "index", (selectAddress||{}).index||'');
+        this.$set(this.formValidate.adress, "value", (selectAddress||{}).value||'');
       }
       return adresses;
     },
