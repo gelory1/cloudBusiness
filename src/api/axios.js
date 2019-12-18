@@ -94,6 +94,10 @@ const workflow = {
     UPDATECONTRACT (params) {
         return axios.post('/public/api/xlcontract/update', params);
     },
+    // 合同删除
+    DELETECONTRACT (params) {
+        return axios.post('/public/api/xlcontract/delete', params);
+    },
     // 回款合入
     SETCONTRACT (params) {
         return axios.post('/public/api/xlcontract/set', params);

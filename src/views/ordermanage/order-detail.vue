@@ -85,7 +85,7 @@
               <section style="width:90%;float:left;">
                 <p style="color:#8d8d8d;margin-top:10px;">备货申请协议（附件）：</p>
                 <div>
-                  <div :key="index" class="fj1">
+                  <div class="fj1">
                     <section class="fj_img1">
                       <img src alt />
                     </section>

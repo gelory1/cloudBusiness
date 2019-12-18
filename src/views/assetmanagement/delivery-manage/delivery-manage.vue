@@ -59,7 +59,7 @@
                       </Col>
                       <Col span="2" style="text-align: center">至</Col>
                       <Col span="11">
-                        <InputNumber :min="0" v-model="filterItem.orderend" style="width:140px"></InputNumber>
+                        <InputNumber :min="filterItem.orderstart" v-model="filterItem.orderend" style="width:140px"></InputNumber>
                       </Col>
                     </Row>
                   </FormItem>
@@ -70,7 +70,7 @@
                       </Col>
                       <Col span="2" style="text-align: center">至</Col>
                       <Col span="11">
-                        <InputNumber :min="0" v-model="filterItem.setend" style="width:140px"></InputNumber>
+                        <InputNumber :min="filterItem.setstart" v-model="filterItem.setend" style="width:140px"></InputNumber>
                       </Col>
                     </Row>
                   </FormItem>
@@ -81,7 +81,7 @@
                       </Col>
                       <Col span="2" style="text-align: center">至</Col>
                       <Col span="11">
-                        <InputNumber :min="0" v-model="filterItem.moneyend" style="width:140px"></InputNumber>
+                        <InputNumber :min="filterItem.moneystart" v-model="filterItem.moneyend" style="width:140px"></InputNumber>
                       </Col>
                     </Row>
                   </FormItem>
@@ -321,7 +321,6 @@ export default {
           this.filterStatus = true;
           this.glShow = false;
           this.getDeliveryList(1);
-          this.$Message.success("Success!");
         } else {
           this.$Message.error("Fail!");
         }
@@ -330,7 +329,11 @@ export default {
     handleResetht(){
       this.filterStatus = false;
       for (let key in this.filterItem) {
-        this.filterItem[key] = "";
+        if(key === 'orderstart'||key === 'orderend'||key === 'setstart'||key === 'setend'||key === 'moneystart'||key === 'moneyend'){
+          this.filterItem[key] = 0;
+        }else{
+          this.filterItem[key] = "";
+        }
       }
     },
     tooltipClick(side) {
@@ -370,15 +373,17 @@ export default {
             page_size: 10,
             keyword: this.inputVal,
             shipments_status: index === -1 ? undefined : index,
-            agent_name:this.filterItem.customerName === "" ? undefined : this.filterItem.customerName,
-            shipments_start_time:this.filterItem.startTime === "" ? undefined : this.filterItem.startTime,
-            shipments_end_time:this.filterItem.endTime === "" ? undefined : this.filterItem.endTime,
-            order_count_start:this.filterItem.orderstart === "" ? undefined : this.filterItem.orderstart,
-            order_count_end:this.filterItem.orderend === "" ? undefined : this.filterItem.orderend,
-            product_count_start:this.filterItem.setstart === "" ? undefined : this.filterItem.setstart,
-            product_count_end:this.filterItem.setend === "" ? undefined : this.filterItem.setend,
-            money_start:this.filterItem.moneystart === "" ? undefined : this.filterItem.moneystart,
-            money_end:this.filterItem.moneyend === "" ? undefined : this.filterItem.moneyend,
+            agent_name:this.filterItem.customerName === "" ? undefined : ('%' + this.filterItem.customerName),
+            shipments_start_time:this.filterItem.startTime === "" ? undefined : this.filterItem.startTime.getFullYear() +"-" 
+              +(this.filterItem.startTime.getMonth() + 1) +"-" +this.filterItem.startTime.getDate() +" 00:00:00",
+            shipments_end_time:this.filterItem.endTime === "" ? undefined : this.filterItem.endTime.getFullYear() +"-"
+              +(this.filterItem.endTime.getMonth() + 1) +"-" +this.filterItem.endTime.getDate() +" 23:59:59",
+            order_count_start:this.filterItem.orderend === 0 ? undefined : this.filterItem.orderstart,
+            order_count_end:this.filterItem.orderend === 0 ? undefined : this.filterItem.orderend,
+            product_count_start:this.filterItem.setend === 0 ? undefined : this.filterItem.setstart,
+            product_count_end:this.filterItem.setend === 0 ? undefined : this.filterItem.setend,
+            money_start:this.filterItem.moneyend === 0 ? undefined : String(this.filterItem.moneystart),
+            money_end:this.filterItem.moneyend === 0 ? undefined : String(this.filterItem.moneyend),
           }
         ]
       };
@@ -446,7 +451,22 @@ export default {
   watch: {
     tabName() {
       this.changeTab();
-    }
+    },
+    'filterItem.orderstart'(nv){
+      if(this.filterItem.orderend < nv){
+        this.filterItem.orderend = nv
+      }
+    },
+    'filterItem.setstart'(nv){
+      if(this.filterItem.setend < nv){
+        this.filterItem.setend = nv
+      }
+    },
+    'filterItem.moneystart'(nv){
+      if(this.filterItem.moneyend < nv){
+        this.filterItem.moneyend = nv
+      }
+    },
   }
 };
 </script>
