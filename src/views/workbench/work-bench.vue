@@ -1093,6 +1093,7 @@ export default {
           }else if(status === 3){
             this.fq_data.push(item);
           }else{
+            item.fzr = this.$store.state.user.accountName;
             this.yb_data.push(item);
           }
         });
