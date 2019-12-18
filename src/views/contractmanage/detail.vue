@@ -83,7 +83,7 @@
               <section>
                 <p>签约点数：</p>
                 <p>
-                  <span>{{data.data.signPoint}}</span>(
+                  <span>{{kcmxSum}}</span>(
                   <span class="cor_span" @click="kcmxmodal = true">查看勘查明细</span>)
                 </p>
               </section>
@@ -129,7 +129,7 @@
               </section>
               <section>
                 <p>付款周期：</p>
-                <p>{{data.data.paymentList.length}}期</p>
+                <p>{{data.data.paymentCycle||''}}</p>
               </section>
             </div>
             <div class="select select_h">
@@ -177,7 +177,7 @@
                     <span v-if="showObj[index] == false">
                       <Icon type="arrow-right-b"></Icon>
                     </span>
-                    <span class="zq_c">账期{{index+1}}（付{{index+1}}年年费）</span>
+                    <span class="zq_c">账期{{index+1}}（付{{(data.data.paymentCycle||'').split('+')[index]}}年年费）</span>
                   </p>
                   <p style="margin-left:10px;">
                     <span>
