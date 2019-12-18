@@ -236,7 +236,7 @@
           <TabPane :label="`附件(${fj.length||0})`" name="name4">
             <p class="con-left">共 {{fj.length||0}} 个附件</p>
             <p class="fj_add">
-              <Upload action="/public/api/xlcontract/uploadFile" :data="postData" show-upload-list @on-success="getfiles" @on-error="$Message.error('上传失败，请重试！')" @on-preview="goFileDetail">
+              <Upload action="/public/api/xlcontract/uploadFile" :data="postData" :headers="{user:'x',key:'x'}" show-upload-list @on-success="getfiles" @on-error="$Message.error('上传失败，请重试！')" @on-preview="goFileDetail">
                 <Icon type="plus"></Icon>添加附件
               </Upload>
             </p>
@@ -529,7 +529,8 @@ export default {
         path: "/contractmanage/edit",
         query: {
           paymentList: this.paymentList,
-          remainingMoney: this.remainingMoney
+          remainingMoney: this.remainingMoney,
+          fj:this.fj
         }
       });
     },
@@ -615,6 +616,7 @@ export default {
           // item.size = data.phone;
           // item.where = data.dutyParagraph;
           // item.time = data.bankName;
+          item.data = data;
           this.fj.push(item);
         });
       });
@@ -834,6 +836,7 @@ export default {
       let post = {};
       if(this.data&&this.data.data&&this.data.data.contractNo){
         post.contractNo = this.data.data.contractNo;
+        post.accountId = this.$store.state.user.accountId;
       }
       return post;
     }

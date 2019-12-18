@@ -100,7 +100,7 @@
                 </Col>
                 <Col span="7">
                   <FormItem label="签约用户数" prop="qyyhs" class="con-right">
-                    <Slider class="col-m" max="100000000000" v-model="formValidate.signUserAmount" show-input></Slider>
+                    <Slider class="col-m" :max="100000000000" v-model="formValidate.signUserAmount" show-input></Slider>
                   </FormItem>
                 </Col>
                 <Col span="8">
@@ -246,10 +246,10 @@
               <a v-else @click="goOrderDetail">{{data.data.orderNo}}</a>
             </p>
           </TabPane>
-          <TabPane label="附件" name="name4">
-            <p class="con-left">共 {{fjIndex}} 个附件</p>
+          <TabPane :label="`附件(${fj.length||0})`" name="name4">
+            <p class="con-left">共 {{fj.length}} 个附件</p>
             <p class="fj_add"><Icon type="plus"></Icon> 添加附件</p>
-            <div style="clear:both;margin-top:30px;">
+            <!-- <div style="clear:both;margin-top:30px;">
               <div v-for="(item,index) in fj" class="fj">
                 <section class="fj_img">
                   <img src alt />
@@ -263,10 +263,10 @@
                   </p>
                 </section>
               </div>
-            </div>
+            </div> -->
             <!-- 添加附件 -->
             <div style="clear:both;margin-top:30px;">
-              <div v-for="(item,index) in fj" class="fj">
+              <div v-for="(item,index) in fj" :key="index" class="fj">
                 <section class="fj_img">
                   <img src alt />
                 </section>
@@ -280,7 +280,7 @@
                 </section>
                 <div style="float:right;color:#4a9af5">
                   <span>查看</span>
-                  <span>删除</span>
+                  <span @click="deleteFj(item.data.enclosureId)">删除</span>
                 </div>
               </div>
             </div>
@@ -335,20 +335,6 @@ export default {
         signUserAmount:0,
         projectManager: ''
       },
-      fj: [
-        {
-          wjm: "文件名fj.wjm",
-          size: "3242",
-          where: "dsfs",
-          time: "2342-89"
-        },
-        {
-          wjm: "文件名fj.wjm",
-          size: "3242",
-          where: "dsfs",
-          time: "2342-89"
-        }
-      ],
       update_columns: [
         {
           title: "序号",
@@ -369,7 +355,6 @@ export default {
           key: "updateContent"
         }
       ],
-      fjIndex:"5",
       cityq: [],
       townq: [],
       xmjlq:[],
@@ -429,6 +414,19 @@ export default {
     },
     handleCancel(){
       this.$router.push({ path: "/contractmanage/detail"});
+    },
+    deleteFj(id){
+      let request = {
+        "typeid": 26016,
+        "data": [
+          {
+            "enclosureId": id + ','
+          }
+        ]
+      };
+      this.$http.DELETECONTRACT(request).then(res => {
+
+      })
     }
   },
   beforeCreate(){
@@ -455,6 +453,9 @@ export default {
     },
     remainingMoney(){
       return this.$route.query.remainingMoney;
+    },
+    fj(){
+      return this.$route.query.fj;
     }
   },
   watch:{
