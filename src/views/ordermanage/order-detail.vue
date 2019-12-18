@@ -297,7 +297,7 @@ export default {
                 this.selectedOrder.contractNO = data.contract_no;
                 this.selectedOrder.contract_subject = data.contract_subject;
                 this.selectedOrder.address_detail = data.address_detail;
-                this.selectedOrder.status = data.order_type === 0?this.statusMap[data.order_status+2]:this.statusMap[data.order_status];
+                this.selectedOrder.status = this.statusMap[data.order_status];
                 this.selectedOrder.cellClassName = {
                     status:`button${data.order_status}`
                 };

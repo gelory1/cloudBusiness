@@ -134,7 +134,7 @@
                 </Col>
                 <Col span="7">
                   <FormItem label="付款周期" prop="fkzq" class="con-right">
-                    <Input class="col-m" v-model="data.data.paymentCycle" placeholder  disabled></Input>
+                    <Input class="col-m" v-model="data.data.paymentList.length" placeholder disabled></Input>
                   </FormItem>
                 </Col>
                 <Col span="8">
@@ -248,7 +248,11 @@
           </TabPane>
           <TabPane :label="`附件(${fj.length||0})`" name="name4">
             <p class="con-left">共 {{fj.length}} 个附件</p>
-            <p class="fj_add"><Icon type="plus"></Icon> 添加附件</p>
+            <p class="fj_add">
+              <Upload action="/public/api/xlcontract/uploadFile" :data="postData" :headers="{user:'x',key:'x'}" @on-success="getfiles" @on-error="$Message.error('上传失败，请重试！')" @on-preview="goFileDetail">
+                <Icon type="plus"></Icon>添加附件
+              </Upload>
+            </p>
             <!-- <div style="clear:both;margin-top:30px;">
               <div v-for="(item,index) in fj" class="fj">
                 <section class="fj_img">
@@ -359,12 +363,23 @@ export default {
       townq: [],
       xmjlq:[],
       signUserAmount:0,
-      ruleValidate: {},
+      ruleValidate: {
+        xmjl: [{
+          validator: (rule,value,callback)=> {
+            if(this.formValidate.projectManager&&this.formValidate.projectManager.length>20){
+              return callback(new Error("该字段应少于20个字符"));
+            }else{
+              callback();
+            }
+          },trigger : 'change'
+        }]
+      },
       subjectName,
       showObj:{},
       companys:[],
       projectmen:[],
-      contractContentMap
+      contractContentMap,
+      fj:[]
     };
   },
   methods: {
@@ -375,6 +390,11 @@ export default {
       this.$set(this.showObj,index,!this.showObj[index]);
     },
     handleSubmit(){
+      if(this.formValidate.signUserAmount === this.data.data.signUserAmount&&this.formValidate.projectManager === this.data.data.projectManager){
+        this.$Message.error('未对原始信息内容进行更改');
+        this.$router.push({ path: "/contractmanage/detail"});
+        return;
+      }
       let request = {
         "typeid": 26005,
         "data": [
@@ -384,11 +404,19 @@ export default {
               "contractNo": this.data.data.contractNo,
               "signUserCount": this.formValidate.signUserAmount,
               // "saleManName": "李四",
-              "saleManName": this.formValidate.projectManager,
+              "saleManName": this.formValidate.projectManager||'',
               // "platFormList": this.data.data.platformuserList
             }
         ]
       };
+      let status = true;
+      this.$refs['formValidate'].validate(valid => {
+        if(!valid){
+          this.$Message.error('请按规定编辑相关信息！');
+          status = false;
+        }
+      });
+      if(!status) return;
       this.$http.UPDATECONTRACT(request).then(response => {
         //更新记录
         let req = {
@@ -427,6 +455,31 @@ export default {
       this.$http.DELETECONTRACT(request).then(res => {
 
       })
+    },
+    getfiles(){
+      let request = {
+        typeid: 26015,
+        data: [
+          {
+            customerNo: this.data.data.customerNo||''
+          }
+        ]
+      };
+      this.fj = [];
+      this.$http.XLCONTRACT(request).then(response => {
+        response.data.result.data.fileList.forEach(data => {
+          let item = {};
+          // item.wjm = data.customerName;
+          // item.size = data.phone;
+          // item.where = data.dutyParagraph;
+          // item.time = data.bankName;
+          item.data = data;
+          this.fj.push(item);
+        });
+      });
+    },
+    goFileDetail(){
+
     }
   },
   beforeCreate(){
@@ -438,6 +491,7 @@ export default {
     this.formValidate.city = this.data.data.customerCity;
     this.formValidate.platList = JSON.parse(JSON.stringify(this.data.data.platformuserList));
     this.formValidate.projectManager = this.data.data.projectManager;
+    this.getfiles();
   },
   computed: {
     data(){
@@ -454,8 +508,13 @@ export default {
     remainingMoney(){
       return this.$route.query.remainingMoney;
     },
-    fj(){
-      return this.$route.query.fj;
+    postData(){
+      let post = {};
+      if(this.data&&this.data.data&&this.data.data.contractNo){
+        post.contractNo = this.data.data.contractNo;
+        post.accountId = this.$store.state.user.accountId;
+      }
+      return post;
     }
   },
   watch:{

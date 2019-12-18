@@ -711,7 +711,6 @@ export default {
       this.loading = true;
       this.$http.XLCONTRACT(request).then(
         response => {
-          console.log(response);
           let { data } = response.data.result;
           this.sum = data.sum;
           data.contractList.forEach(con => {

@@ -174,7 +174,7 @@
           </Select>
         </FormItem>
         <FormItem label="要求完成时间" prop="wcsj">
-          <DatePicker type="date" placeholder format="yyyy-MM-dd" @on-change="getDate" class="col-v"></DatePicker>
+          <DatePicker type="date" placeholder format="yyyy-MM-dd" v-model="newgzForm.wcsj" class="col-v"></DatePicker>
         </FormItem>
         <Button class="zf_butt" type="primary" style="margin-left:320px;" @click="addWork">完成</Button>
       </Form>
@@ -786,7 +786,7 @@ export default {
         wcsj: [
           {
             required: true,
-            message:'不能为空'
+            message:'请选择完成时间！'
           }
         ]
       },
@@ -965,6 +965,7 @@ export default {
         "typeid": 28007,
         "data": [
           {
+            "accountId": this.$store.state.user.accountId,
             "workBenchId": this.deliveryData.workBenchId,
             "shipmentsId": this.deliveryData.shipmentsId,
             "operationNo":no,
@@ -1311,6 +1312,7 @@ export default {
         "typeid": 28004,
         "data": [
           {
+            "accountId": this.$store.state.user.accountId,
             "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
             // "photoUrl": "http://10.0.17.213:8068/url/img.png"
           }
@@ -1391,6 +1393,7 @@ export default {
           payAmount: d.je,
         })
       })
+      let dueTime = this.newgzForm.wcsj.getFullYear() + '-' + (this.newgzForm.wcsj.getMonth() + 1) + '-' + this.newgzForm.wcsj.getDate() + ' 00:00:00';
       let request = {
         "typeid": 28002,
         "data": [
@@ -1398,7 +1401,7 @@ export default {
               "workBenchType": this.newgzForm.rwlx,
               "accountId": this.$store.state.user.accountId,
               "chargePerson": this.newgzForm.fzr === ''?-1:this.newgzForm.fzr,
-              "dueTime": this.newgzForm.wcsj,
+              "dueTime": dueTime,
               "workBenchContentList": workBenchContentList
             }
         ]
@@ -1411,9 +1414,6 @@ export default {
           this.getWorkbench();
         }
       })
-    },
-    getDate(value){
-      this.newgzForm.wcsj = value;
     },
     selectedPayStyle(e){
       let index = e.target.getAttribute("index");
@@ -1441,6 +1441,7 @@ export default {
         "typeid": 28005,
         "data": [
             {
+              "accountId": this.$store.state.user.accountId,
               "workBenchId": this.ensurePayBack.workBenchId,
               "lastWorkbenchId": this.ensurePayBack.ensure === false?this.ensurePayBack.lastWorkbenchId:undefined,
             }
@@ -1718,6 +1719,7 @@ export default {
           this.checkedData = [item]; //暂时只能一条一条支付
           this.checkIndex = this.checkedData.length;
         }
+        this.tabName = 'name1';
         this.dbgzTableClick(this.$store.state.app.notifyData.data);
       }
     }

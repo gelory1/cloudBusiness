@@ -60,7 +60,7 @@
       </div>
     </div>
     <!-- 右侧内容页 -->
-    <div class="single-page-con" :style="{left: shrink?'60px':'250px'}">
+    <div class="single-page-con" :style="{left: shrink?'60px':'250px'}" ref="content">
       <div class="single-page">
         <keep-alive :include="cachePage">
           <router-view></router-view>
@@ -231,6 +231,10 @@ export default {
       }
       this.checkTag(to.name);
       localStorage.currentPageName = to.name;
+      window.scrollTo(0, 0)
+      this.$nextTick(()=>{
+        this.$refs['content'].scrollTo(0,0);
+      })
     },
     lang() {
       // util.setCurrentPath(this, this.$route.name); // 在切换语言时用于刷新面包屑

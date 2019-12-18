@@ -45,7 +45,7 @@
           <section>
             <img src="../../images/htgl/暂无.png" alt />
             <div>
-              <span>{{data.data.upTime}}</span>
+              <span>{{data.data.upTime||'暂无'}}</span>
               <br />
               <span class="cor_s">上线时间</span>
             </div>
@@ -129,7 +129,7 @@
               </section>
               <section>
                 <p>付款周期：</p>
-                <p>{{data.data.paymentCycle}}期</p>
+                <p>{{data.data.paymentList.length}}期</p>
               </section>
             </div>
             <div class="select select_h">
@@ -236,7 +236,7 @@
           <TabPane :label="`附件(${fj.length||0})`" name="name4">
             <p class="con-left">共 {{fj.length||0}} 个附件</p>
             <p class="fj_add">
-              <Upload action="/public/api/xlcontract/uploadFile" :data="postData" :headers="{user:'x',key:'x'}" show-upload-list @on-success="getfiles" @on-error="$Message.error('上传失败，请重试！')" @on-preview="goFileDetail">
+              <Upload action="/public/api/xlcontract/uploadFile" :data="postData" :headers="{user:'x',key:'x'}" @on-success="getfiles" @on-error="$Message.error('上传失败，请重试！')" @on-preview="goFileDetail">
                 <Icon type="plus"></Icon>添加附件
               </Upload>
             </p>
@@ -622,7 +622,7 @@ export default {
       });
     },
     goFileDetail(file){
-      console.log(file.response);
+      console.log(file);
     },
     thousandNum(num){
       if(num){

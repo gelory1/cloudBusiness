@@ -469,7 +469,7 @@ export default {
           item.customName = data.agent_name;
           item.contractNO = data.contract_no;
           item.count = data.quantity;
-          item.status = data.order_type === 0?this.statusMap[data.order_status+2]:this.statusMap[data.order_status];
+          item.status = this.statusMap[data.order_status];
           item.cellClassName = {
             status:`button${data.order_status}`
           };
