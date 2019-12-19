@@ -483,3 +483,14 @@
 .form_b button{
   width:60px;
 }
+.shdz{
+  display:inline-block;
+  color: #8d8d8d;
+  line-height:20px;
+  padding-top:10px;
+  width:330px;
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow: hidden;
+  vertical-align: top;
+}

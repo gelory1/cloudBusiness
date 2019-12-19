@@ -4,7 +4,7 @@
       <p style="font-size:16px;margin:20px 0 10px 0;">发货要求</p>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem label="发起人" prop="name">
-          <Input :value="$store.state.user.accountName" placeholder disabled style="width:325px;" />
+          <Input :value="$store.state.user.accountName" placeholder  disabled style="width:325px;" />
         </FormItem>
         <FormItem label="要求发货时间" prop="fhsj">
           <DatePicker
@@ -43,8 +43,26 @@
             </FormItem>
           </Col>
         </Row>
+        <!-- <Row>
+          <Col span="12">
+            <FormItem label="客户" prop="costom">
+              <Select v-model="formValidate.costom" placeholder clearable filterable>
+                <Option :value="item" v-for="item in custom" :key="item">{{item}}</Option>
+              </Select>
+            </FormItem>
+          </Col>
+          </Row>
+          <Row>
+          <Col span="12">
+            <FormItem label="仓库" prop="house">
+              <Select v-model="formValidate.house" placeholder clearable filterable>
+                <Option :value="item" v-for="item in house" :key="item">{{item}}</Option>
+              </Select>
+            </FormItem>
+          </Col>
+        </Row> -->
         <content>
-          <div class="fa_co" style="border:none;margin-top:20px;">
+          <div class="fa_co" style="border:none;">
             <div class="fa_c">
               <span style="font-size:16px">出库设备</span>
             </div>
@@ -240,7 +258,9 @@ export default {
         fhsj: "",
         desc: "",
         pcyq: "",
-        pcyq1: ""
+        pcyq1: "",
+        costom:"",
+        house:""
       },
       pageNum: 1,
       sum: 0,
@@ -527,7 +547,8 @@ export default {
         {
           title: "下单时间",
           key: "xdsj",
-          align: "center"
+          align: "center",
+          // sortable: true
         },
         {
           title: "客户名称",
@@ -537,13 +558,15 @@ export default {
         {
           title: "客户等级",
           key: "khdj",
-          align: "center"
+          align: "center",
+          // sortable: true
         },
         {
           title: "设备数量",
           key: "sbsl",
           align: "center",
           width: 150,
+          // sortable: true,
           render: (h, params) => {
             return h("div", [
               h(
@@ -588,7 +611,9 @@ export default {
       addAllData: [],
       selectionData: {},
       customShow: false,
-      times: []
+      times: [],
+      custom:[],
+      house:[]
     };
   },
   methods: {

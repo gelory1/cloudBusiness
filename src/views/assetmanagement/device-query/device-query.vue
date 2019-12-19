@@ -178,7 +178,6 @@
                 :data="crk_data"
                 size="small"
                 highlight-row
-                :height="tableHeight"
                 :loading="crkLoading"
               ></Table>
               <Page
@@ -1035,7 +1034,6 @@ export default {
   },
   mounted() {
     this.selectClick(0);
-    this.tableHeight = document.body.scrollHeight - 300;
   },
   computed: {
     scrollHeight() {

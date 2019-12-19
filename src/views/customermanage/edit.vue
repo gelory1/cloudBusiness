@@ -46,7 +46,7 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <el-cascader clearable :options="options2"  clearable @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small" style="width:350px;" ></el-cascader>
+                <el-cascader clearable :options="options2"  @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small" style="width:350px;" ></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -115,10 +115,13 @@
                 <Input v-model="formValidate.salesman" readonly />
               </FormItem>
             </Col>
-            <Col span="12" v-if="isFriend">
-              <FormItem label="授权期限" prop="sqTime" class="con-right">
+            <Col span="12" v-if="isFriend" style="">
+            <FormItem label="授权期限" class="con-right"  style="position:relative;">
+              <span style="color:red;position:absolute;left:-70px;top:2px;">*</span>
                 <Row>
                   <Col span="11">
+                  
+                  <FormItem prop="sqstartTime">
                     <DatePicker
                       placement="bottom"
                       type="date"
@@ -126,9 +129,11 @@
                       v-model="formValidate.sqstartTime"
                       format="yyyy-MM-dd"
                     ></DatePicker>
+                  </FormItem>  
                   </Col>
                   <Col span="2" style="text-align: center">-</Col>
                   <Col span="11">
+                  <FormItem prop="sqendTime" class="con-right">
                     <DatePicker
                       placement="bottom"
                       type="date"
@@ -137,6 +142,7 @@
                       style="width:155px"
                       format="yyyy-MM-dd"
                     ></DatePicker>
+                    </FormItem>
                   </Col>
                 </Row>
               </FormItem>
@@ -273,7 +279,7 @@
       </Form>
     </Modal>
     <!-- 添加开票信息 -->
-    <Modal v-model="addkpxxmodal" width="800" @on-ok="saveTicket()" @on-cancel="handleCancel()">
+    <Modal v-model="addkpxxmodal" width="800" @on-ok="saveTicket()" @on-cancel="handleCancel()" class="aa">
       <p style="margin:10px  0 20px 0;font-size:16px">添加开票信息</p>
       <Form
         ref="formAddkpxx"
@@ -332,10 +338,10 @@
             </FormItem>
           </Col>
         </Row>
-        <!-- <FormItem style="margin:40px 0">
-          <Button type="primary" @click="saveTicket()">确认并添加</Button>
+        <FormItem style="margin:40px 0">
+          <Button type="primary" @click="saveTicket('formAddkpxx')">确认并添加</Button>
           <Button @click="handleCancel('formAddkpxx')" style="margin-left: 8px">取消</Button>
-        </FormItem>-->
+        </FormItem>
       </Form>
     </Modal>
     <Modal v-model="addPlatShow" @on-ok="savePlat()">
@@ -503,7 +509,7 @@ export default {
         name: "",
         customer_abbreviation: "",
         nature: natures[0],
-        level: levels[0],
+        level:"",
         industry: industrys[0],
         registered_capital: 0,
         charge_person: "",
@@ -520,7 +526,7 @@ export default {
         empower_city: "",
         protocolNumber: "",
         sqstartTime: "",
-        sqendTime: ""
+        sqendTime:""
       },
       startOption1: {
         disabledDate: time => {
@@ -541,12 +547,11 @@ export default {
         }
       },
       ruleValidate: {
-        sqTime: [
-          {
-            required: true,
-            message: "请选择授权期限",
-            trigger: "blur"
-          }
+        sqstartTime: [
+          { required: true, type: 'date', message: '请选择授权期限', trigger: 'change' }
+        ],
+        sqendTime: [
+          { required: true, type: 'date', message: '请选择授权期限', trigger: 'change' }
         ],
         name: [
           {
@@ -569,15 +574,6 @@ export default {
             message: "请选择客户性质",
             type: "object",
             trigger: "change"
-          }
-        ],
-        industry: [
-          {
-            required: true,
-            message: "请选择客户行业",
-            type: "object",
-            trigger: "change"
-            // trigger: "blur"
           }
         ],
         city: [
@@ -711,30 +707,8 @@ export default {
       ],
       contactIndex: 0,
       ticketIndex: 0,
-      addlxr_data: [
-        {
-          dh: "1563819"
-        }
-      ],
       kpxx: {
-        mc: "贾诩",
-        sh: "3241424324",
-        dh: "23443242424",
-        khyh: "中国银行",
-        yhzh: "2341222312432424",
-        kpdz: "南京雨花台",
-        yjdz: "南京江宁",
-        yjr: "司马懿",
-        yjdh: "21657890987"
       },
-      khxzf: [
-        {
-          val: "213"
-        },
-        {
-          val: "55"
-        }
-      ],
       formAddlxr: {
         contact_name: "",
         contact_id: "",
@@ -800,49 +774,49 @@ export default {
             validator: dutyparagraph
           }
         ],
-        // ticket_address: [
-        //   {
-        //     required: true,
-        //     message: "请输入开票地址",
-        //     trigger: "blur"
-        //   }
-        // ],
-        // phone: [
-        //   {
-        //     required: true,
-        //     trigger: "blur",
-        //     validator: validatePhone
-        //   }
-        // ],
-        // bank_name: [
-        //   {
-        //     required: true,
-        //     message: "请输入开户行",
-        //     trigger: "blur"
-        //   }
-        // ],
-        // bank_account: [
-        //   {
-        //     required: true,
-        //     message: "请输入银行账号",
-        //     trigger: "blur"
-        //     // validator: validateNum
-        //   }
-        // ],
-        // post_info: [
-        //   {
-        //     required: true,
-        //     message: "请输入邮寄地址",
-        //     trigger: "blur"
-        //   }
-        // ],
-        // ticket_contacts: [
-        //   {
-        //     required: true,
-        //     message: "请输入联系人及电话",
-        //     trigger: "blur"
-        //   }
-        // ]
+        ticket_address: [
+          {
+            required: true,
+            message: "请输入开票地址",
+            trigger: "blur"
+          }
+        ],
+        phone: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: validatePhone
+          }
+        ],
+        bank_name: [
+          {
+            required: true,
+            message: "请输入开户行",
+            trigger: "blur"
+          }
+        ],
+        bank_account: [
+          {
+            required: true,
+            message: "请输入银行账号",
+            trigger: "blur"
+            // validator: validateNum
+          }
+        ],
+        post_info: [
+          {
+            required: true,
+            message: "请输入邮寄地址",
+            trigger: "blur"
+          }
+        ],
+        ticket_contacts: [
+          {
+            required: true,
+            message: "请输入联系人及电话",
+            trigger: "blur"
+          }
+        ]
       },
       khdjj: [],
       cityj: [],
@@ -904,8 +878,7 @@ export default {
             this.formValidate.level.index == "" ||
             this.formValidate.province.id == "" ||
             this.formValidate.city.id == "" ||
-            this.formValidate.nature.index == "" ||
-            this.formValidate.industry.index == ""
+            this.formValidate.nature.index == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
           } else {
@@ -931,7 +904,8 @@ export default {
             customerName: this.formValidate.name,
             customerLevel: this.formValidate.level.index,
             customerNature: this.formValidate.nature.index,
-            province: this.formValidate.province.id,
+            // province: this.formValidate.province.id,
+            province: this.options2.name,
             city: this.formValidate.city.id,
             empowerProvince: this.formValidate.empower_province.id,
             empowerCity: this.formValidate.empower_city.id,
@@ -993,7 +967,14 @@ export default {
           .catch(e => {});
       }
     },
-    saveTicket() {
+    saveTicket(name) {
+      this.$refs[name].validate((valid) => {
+          if (valid) {
+              this.$Message.success('Success!');
+          } else {
+              this.$Message.error('Fail!');
+          }
+      });
       let request1 = {
         typeid: 25007,
         data: [
@@ -1084,7 +1065,8 @@ export default {
       this.ticketStatus = "new";
     },
     handleCancel(name) {
-      this.$Message.error("已取消");
+      // this.$Message.error("已取消");
+      this.addkpxxmodal = false
     },
     ok() {
       this.saveTicket();
@@ -1549,7 +1531,7 @@ export default {
   mounted() {
     this.init();
     this.getCitys()
-    this.getPower()
+    this.getPower();
   },
   computed: {
     data() {
@@ -1616,4 +1598,7 @@ export default {
 
 <style>
 @import "./customer.css";
+.aa .ivu-modal-footer {
+    display: none;
+  }
 </style>

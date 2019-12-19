@@ -308,7 +308,7 @@ export default {
     },
     changeSelectItem(item){
       this.selectItem = item;
-    },
+    },       
     createNewAddr(){
       this.status = 'new';
       this.addadressmodal = true;
@@ -321,14 +321,16 @@ export default {
   watch:{
     addadressmodal(nv){
       if(!nv){
-        this.addadressform = {
-          company: "",
-          name: "",
-          tel: "",
-          address: ""
-        }
+        this.$refs.addadressform.resetFields();
+        this.form = {}
+        // this.addadressform = {
+        //   company: "",
+        //   name: "",
+        //   tel: "",
+        //   address: ""
+        // }
       }
-    }
+    },
   }
 };
 </script>
