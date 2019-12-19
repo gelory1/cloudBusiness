@@ -246,7 +246,7 @@
                   <img :src="item.img" alt style="width:30px;height:30px;margin:10px 30px" />
                 </section>
                 <section class="fj_sec">
-                  <a :href="item.url">{{item.wjm}}</a>
+                  <a :href="item.url">{{item.fileName}}</a>
                   <p class="fj_p">
                     <span>{{item.size}}</span> 来自
                     <span>{{item.where}}</span> |
@@ -629,7 +629,8 @@ export default {
           let item = {};
           let arr = data.enclosureAddress.split('/');
           item.wjm = arr[arr.length-1];
-          item.size = data.fileSize >= 1024?((data.fileSize/1024).toFixed(2) + ' MB'): data.fileSize >= 1024*1024?((data.fileSize/(1024*1024)).toFixed(2) + ' GB'):(data.fileSize + ' KB');
+          item.fileName = data.fileName;
+          item.size = data.fileSize >= 1024?((data.fileSize/1024).toFixed(2) + ' KB'): data.fileSize >= 1024*1024?((data.fileSize/(1024*1024)).toFixed(2) + ' MB'):(data.fileSize + ' B');
           item.where = data.accountName;
           item.time = data.uploadTime;
           item.url = data.enclosureAddress;
