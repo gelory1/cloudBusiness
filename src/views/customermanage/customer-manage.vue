@@ -105,7 +105,7 @@
               <div v-show="moreShow" class="more">
                 <p @click="addkpClick">新增开票信息</p>
                 <p @click="exportSelect">导出所选结果</p>
-                <p @click="exportAll">导出全部客户</p>
+                <p><a :href="exportUrl" @click="exportAll" style="color:#495060">导出全部客户</a></p>
               </div>
             </span>
           </div>
@@ -391,6 +391,7 @@ export default {
       empowerCitys:[],
       filterStatus:false,
       disabled:true,
+      exportUrl:''
     };
   },
   methods: {
@@ -581,21 +582,46 @@ export default {
       this.getCustomList(1);
     },
     exportSelect(){
+      if(this.customList_data.filter(data => data._checked === true).length === 0){
+        this.$Message.error('请先选择需要导出的数据！');
+        return;
+      }
       this.$refs['table'].exportCsv({
         filename: '客户信息列表',
+        columns: this.customList_columns.filter((col, index) => index !== 0&&index!==2),
         data: this.customList_data.filter(data => data._checked === true)
       })
       this.moreClick();
     },
     exportAll(){
+      if(this.exportUrl === ''){
+        this.$Message.error('导出失败，请稍后重试！');
+        return;
+      }
       this.moreClick();
-      this.$Message.error('暂不支持！');
+    },
+    export(){
+      let request = {
+        data:[
+          {
+            account_id: this.$store.state.user.accountId
+          }
+        ]
+      };
+      this.$http.EXPORT(request).then(res => {
+        
+      },error => {
+        if(error.data.code === 0){
+          this.exportUrl = error.data.exportUrl;
+        }
+      })
     }
   },
   mounted() {
     this.getCustomList(1);
     this.getProvinces();
-    this.getManagecompanys();   
+    this.getManagecompanys(); 
+    this.export();  
   },
   watch:{
     'filterItem.empower_province':function(nv){
