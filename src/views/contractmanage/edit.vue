@@ -284,7 +284,7 @@
                   </p>
                 </section>
                 <div style="float:right;color:#4a9af5">
-                  <a :href="` http://api.idocv.com/view/url?url=${encodeURI(item.url)}`" target="_blank" rel="nofollow">查看</a>
+                  <a :href="` https://view.officeapps.live.com/op/view.aspx?src=${encodeURI(item.url)}`" target="_blank" rel="nofollow">查看</a>
                   <span @click="deleteFj(item.data.enclosureId)" style="cursor:pointer">删除</span>
                 </div>
               </div>
@@ -297,6 +297,7 @@
         <Modal v-model="orderDetailOpen" width="1000">
           <orderDetail :orderNO="selectedOrder"></orderDetail>
         </Modal>
+        
       </content>
     </Layout>
   </div>
