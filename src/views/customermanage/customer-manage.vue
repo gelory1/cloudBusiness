@@ -105,7 +105,7 @@
               <div v-show="moreShow" class="more">
                 <p @click="addkpClick">新增开票信息</p>
                 <p @click="exportSelect">导出所选结果</p>
-                <p><a :href="exportUrl" @click="exportAll" style="color:#495060">导出全部客户</a></p>
+                <p><a :href="exportUrl === ''?'#':exportUrl" @click="exportAll" style="color:#495060">导出全部客户</a></p>
               </div>
             </span>
           </div>
