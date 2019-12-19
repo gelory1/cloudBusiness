@@ -236,8 +236,9 @@
           <TabPane :label="`附件(${fj.length||0})`" name="name4">
             <p class="con-left">共 {{fj.length||0}} 个附件</p>
             <p class="fj_add">
-              <Upload action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :data="postData" :headers="{user:'x',key:'x'}" :on-success="getfiles" :on-error="uploadFail" :on-preview="goFileDetail">
+              <Upload action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}" :on-success="getfiles" :on-error="uploadFail">
                 <Icon type="plus"></Icon>添加附件
+                <p v-if="uploadLoading">上传中....</p>
               </Upload>
             </p>
             <div style="clear:both">
@@ -508,7 +509,8 @@ export default {
       contractContentMap,
       orderDetailOpen: false,
       selectedOrder: '',
-      selectAccountShow:false
+      selectAccountShow:false,
+      uploadLoading:false
     };
   },
   methods: {
@@ -612,9 +614,10 @@ export default {
     },
     getfiles(res){
       if(res&&res.code !== 0){
-        this.$Message.error('上传失败，请重试！');
+        this.uploadFail();
         return;
       }
+      this.uploadLoading = false;
       let request = {
         typeid: 26015,
         data: [
@@ -651,9 +654,6 @@ export default {
         });
       });
     },
-    goFileDetail(file){
-      console.log(file);
-    },
     thousandNum(num){
       if(num){
         //将num中的$,去掉，将num变成一个纯粹的数据格式字符串
@@ -686,10 +686,14 @@ export default {
       }
     },
     uploadFail(){
+      this.uploadLoading = false;
       this.$Message.error('上传失败，请重试！');
     },
     getHref(url){
       return url;
+    },
+    beforeUpload(){
+      this.uploadLoading = true;
     }
   },
   beforeCreate() {

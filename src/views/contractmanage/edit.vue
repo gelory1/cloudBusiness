@@ -249,8 +249,9 @@
           <TabPane :label="`附件(${fj.length||0})`" name="name4">
             <p class="con-left">共 {{fj.length}} 个附件</p>
             <p class="fj_add">
-              <Upload action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :data="postData" :headers="{user:'x',key:'x'}" @on-success="getfiles" @on-error="$Message.error('上传失败，请重试！')" @on-preview="goFileDetail">
+              <Upload action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}" :on-success="getfiles" :on-error="uploadFail">
                 <Icon type="plus"></Icon>添加附件
+                <p v-if="uploadLoading">上传中....</p>
               </Upload>
             </p>
             <!-- <div style="clear:both;margin-top:30px;">
@@ -283,7 +284,7 @@
                   </p>
                 </section>
                 <div style="float:right;color:#4a9af5">
-                  <a :href="`https://docs.google.com/viewer?url=${item.url}`" target="_blank" rel="nofollow">查看</a>
+                  <a :href="` http://api.idocv.com/view/url?url=${encodeURI(item.url)}`" target="_blank" rel="nofollow">查看</a>
                   <span @click="deleteFj(item.data.enclosureId)" style="cursor:pointer">删除</span>
                 </div>
               </div>
@@ -379,7 +380,8 @@ export default {
       companys:[],
       projectmen:[],
       contractContentMap,
-      fj:[]
+      fj:[],
+      uploadLoading:false
     };
   },
   methods: {
@@ -474,9 +476,17 @@ export default {
         });          
       });
     },
+    uploadFail(){
+      this.uploadLoading = false;
+      this.$Message.error('上传失败，请重试！');
+    },
+    beforeUpload(){
+      this.uploadLoading = true;
+    },
     getfiles(res){
+      this.uploadLoading = false;
       if(res&&res.code !== 0){
-        this.$Message.error('上传失败，请重试！');
+        this.uploadFail();
         return;
       }
       let request = {
@@ -508,16 +518,13 @@ export default {
             item.img = require('../../images/upload/docx.png');
           }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
             item.img = require('../../images/upload/jpg.png');
-          }else if(/^xl(s[xmb]|t[xm]|am)$/.test(fileType)){
+          }else if(/^xl(s|t|am)$/.test(fileType)){
             item.img = require('../../images/upload/excel.png');
           };
           item.data = data;
           this.fj.push(item);
         });
       });
-    },
-    goFileDetail(){
-
     }
   },
   beforeCreate(){
