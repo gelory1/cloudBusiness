@@ -147,7 +147,7 @@
               </section>
               <section style="width:40%;float:left">
                 <p class="sele2">收货地址：</p>
-                <span class>8888888{{}}</span>
+                <span class></span>
               </section>
             </div>
             <div class="select2">

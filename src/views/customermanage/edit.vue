@@ -46,7 +46,7 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <el-cascader clearable :options="options2"  clearable @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small" style="width:350px;" ></el-cascader>
+                <el-cascader v-model="formValidate.empower_province.id" clearable :options="options2"  @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small" style="width:350px;" ></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -115,10 +115,13 @@
                 <Input v-model="formValidate.salesman" readonly />
               </FormItem>
             </Col>
-            <Col span="12" v-if="isFriend">
-              <FormItem label="授权期限" prop="sqTime" class="con-right">
+            <Col span="12" v-if="isFriend" style="">
+            <FormItem label="授权期限" class="con-right"  style="position:relative;">
+              <span style="color:red;position:absolute;left:-70px;top:2px;">*</span>
                 <Row>
                   <Col span="11">
+                  
+                  <FormItem prop="sqstartTime">
                     <DatePicker
                       placement="bottom"
                       type="date"
@@ -126,9 +129,11 @@
                       v-model="formValidate.sqstartTime"
                       format="yyyy-MM-dd"
                     ></DatePicker>
+                  </FormItem>  
                   </Col>
                   <Col span="2" style="text-align: center">-</Col>
                   <Col span="11">
+                  <FormItem prop="sqendTime" class="con-right">
                     <DatePicker
                       placement="bottom"
                       type="date"
@@ -137,6 +142,7 @@
                       style="width:155px"
                       format="yyyy-MM-dd"
                     ></DatePicker>
+                    </FormItem>
                   </Col>
                 </Row>
               </FormItem>
@@ -503,7 +509,7 @@ export default {
         name: "",
         customer_abbreviation: "",
         nature: natures[0],
-        level: levels[0],
+        level:"",
         industry: industrys[0],
         registered_capital: 0,
         charge_person: "",
@@ -520,7 +526,7 @@ export default {
         empower_city: "",
         protocolNumber: "",
         sqstartTime: "",
-        sqendTime: ""
+        sqendTime:""
       },
       startOption1: {
         disabledDate: time => {
@@ -541,12 +547,11 @@ export default {
         }
       },
       ruleValidate: {
-        sqTime: [
-          {
-            required: true,
-            message: "请选择授权期限",
-            trigger: "blur"
-          }
+        sqstartTime: [
+          { required: true, type: 'date', message: '请选择授权期限', trigger: 'change' }
+        ],
+        sqendTime: [
+          { required: true, type: 'date', message: '请选择授权期限', trigger: 'change' }
         ],
         name: [
           {
@@ -569,15 +574,6 @@ export default {
             message: "请选择客户性质",
             type: "object",
             trigger: "change"
-          }
-        ],
-        industry: [
-          {
-            required: true,
-            message: "请选择客户行业",
-            type: "object",
-            trigger: "change"
-            // trigger: "blur"
           }
         ],
         city: [
@@ -711,30 +707,8 @@ export default {
       ],
       contactIndex: 0,
       ticketIndex: 0,
-      addlxr_data: [
-        {
-          dh: "1563819"
-        }
-      ],
       kpxx: {
-        mc: "贾诩",
-        sh: "3241424324",
-        dh: "23443242424",
-        khyh: "中国银行",
-        yhzh: "2341222312432424",
-        kpdz: "南京雨花台",
-        yjdz: "南京江宁",
-        yjr: "司马懿",
-        yjdh: "21657890987"
       },
-      khxzf: [
-        {
-          val: "213"
-        },
-        {
-          val: "55"
-        }
-      ],
       formAddlxr: {
         contact_name: "",
         contact_id: "",
@@ -904,8 +878,7 @@ export default {
             this.formValidate.level.index == "" ||
             this.formValidate.province.id == "" ||
             this.formValidate.city.id == "" ||
-            this.formValidate.nature.index == "" ||
-            this.formValidate.industry.index == ""
+            this.formValidate.nature.index == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
           } else {
@@ -1179,6 +1152,7 @@ export default {
       });
     },
     init() {
+      debugger
       let data = this.data || {};
       this.customer_id = "";
       this.formValidate.name = data.name || "";

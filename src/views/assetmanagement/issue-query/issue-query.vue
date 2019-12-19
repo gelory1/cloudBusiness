@@ -164,7 +164,6 @@
                 :data="rkdj_data"
                 size="small"
                 :loading="inLoading"
-                :height="tableHeight"
               ></Table>
               <Page
                 :current.sync="inPageNum"
@@ -183,7 +182,6 @@
                 :data="ckdj_data"
                 size="small"
                 :loading="outLoading"
-                :height="tableHeight"
               ></Table>
               <Page
                 :current.sync="outPageNum"
@@ -247,14 +245,14 @@
           </div>
           <div>
             <span class="jbleft">收货地址：</span>
-            <span class="wid" style="color: #8d8d8d">{{djxx.address}}</span>
+            <span class="wid shdz">{{djxx.address}}</span>
           </div>
         </div>
         <div style="clear:both;padding-top:10px;">
           <span class="jbleft">订单编号：</span>
           <span
             class="jbright"
-            style="width:700px;word-wrap: break-word;word-break: break-all;overflow: hidden;vertical-align: text-top;"
+            style="width:700px;word-wrap: break-word;word-break: break-all;overflow: hidden;vertical-align: top;"
           >{{djxx.ddbh}}</span>
         </div>
       </div>

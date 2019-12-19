@@ -125,7 +125,7 @@
         >新建发货方案</Button>
       </Menu>
       <Content
-        :style="{background: '#fff', minHeight: '800px'}"
+        :style="{background: '#fff', minHeight: scrollHeight}"
         style="padding-left:20px;margin-top:00px;"
       >
         <Tabs ref="tab" v-model="tabName" @on-change="changeTab">
@@ -141,6 +141,7 @@
               size="small"
               :loading="loading"
               @on-row-dblclick="editClick"
+
             ></Table>
             <Page
               :total="sum"
@@ -150,7 +151,7 @@
               show-total
               @on-change="getDeliveryList"
               show-elevator
-              style="text-align:center;margin-top:20px;margin-bottom:200px"
+              style="text-align:center;margin:20px 0 40px  0;"
             ></Page>
           </TabPane>
         </Tabs>
@@ -299,6 +300,7 @@ export default {
       fh_data: [],
       tabName: "name1",
       filterStatus: false,
+      tableHeight: "",
     };
   },
   methods: {
@@ -447,6 +449,13 @@ export default {
   },
   mounted() {
     this.getDeliveryList(1);
+  },
+  computed: {
+    scrollHeight() {
+      let h = 0;
+      h = document.body.scrollHeight - 185 + "px";
+      return h;
+    },
   },
   watch: {
     tabName() {
