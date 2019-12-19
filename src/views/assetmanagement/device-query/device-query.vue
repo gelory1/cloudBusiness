@@ -761,6 +761,7 @@ export default {
       if (this.tabName !== "name1") this.tabName = "name1";
     },
     getProductList(p) {
+      this.inputVal = '';
       let request = {
         typeid: 23008,
         data: [
@@ -852,7 +853,7 @@ export default {
                   " 23:59:59", //结束名称
             device_status:
               this.filterItem.zt === "" ? undefined : this.filterItem.zt, //状态
-            keyword: this.inputVal === "" ? undefined : this.inputVal,
+            keyword: this.inputVal === ""||this.inputVal === this.selectedProcode ? undefined : this.inputVal,
             page_num: p,
             page_size: 10
           }
