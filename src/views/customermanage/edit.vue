@@ -46,7 +46,7 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <el-cascader clearable :options="options2"  @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small" style="width:350px;" ></el-cascader>
+                <el-cascader clearable v-model="formValidate.city" :options="options2"  @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small" style="width:350px;" ></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -101,8 +101,8 @@
               </FormItem>
             </Col>
             <Col span="12" v-if="isFriend">
-              <FormItem label="授权资质" prop="sqzz" class="con-right" v-model="formValidate.empower_province.id">
-                <el-cascader clearable :options="options1" @expand-change="handleChangeSq" show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
+              <FormItem label="授权资质" prop="sqzz" class="con-right">
+                <el-cascader clearable v-model="formValidate.empower_city" :options="options1" @expand-change="handleChangeSq" show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -520,10 +520,8 @@ export default {
         platformuser_list: [],
         contacts_list: [],
         ticket_list: [],
-        province: {},
-        city: {},
-        empower_province: "",
-        empower_city: "",
+        city: [],
+        empower_city: [],
         protocolNumber: "",
         sqstartTime: "",
         sqendTime:""
@@ -580,7 +578,7 @@ export default {
           {
             required: true,
             message: "请选择城市",
-            type: "object",
+            type: "array",
             trigger: "change"
           }
         ],
@@ -858,11 +856,11 @@ export default {
   methods: {
     handleChange(value) {
       this.dd = value[0];
-      this.getCitys()
+      this.getCitys();
     },
     handleChangeSq(value){
       this.sqCascader = value[0];
-      this.getPower()
+      this.getEmpowerCitys();
     },
     inputChange() {
       this.formAddkpxx.bank_account = this.formAddkpxx.bank_account.replace(
@@ -876,8 +874,7 @@ export default {
         if (valid) {
           if (
             this.formValidate.level.index == "" ||
-            this.formValidate.province.id == "" ||
-            this.formValidate.city.id == "" ||
+            this.formValidate.city.length < 2 ||
             this.formValidate.nature.index == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
@@ -904,11 +901,10 @@ export default {
             customerName: this.formValidate.name,
             customerLevel: this.formValidate.level.index,
             customerNature: this.formValidate.nature.index,
-            // province: this.formValidate.province.id,
-            province: this.options2.name,
-            city: this.formValidate.city.id,
-            empowerProvince: this.formValidate.empower_province.id,
-            empowerCity: this.formValidate.empower_city.id,
+            province: this.formValidate.city[0],
+            city: this.formValidate.city[1],
+            empowerProvince: this.formValidate.empower_city[0],
+            empowerCity: this.formValidate.empower_city[1],
             manageCompany: 2,
             industry: this.formValidate.industry.index,
             mailAddress: this.formValidate.mail_address,
@@ -1087,12 +1083,7 @@ export default {
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
         this.citys = res;
-        this.formValidate.city = JSON.parse(
-          JSON.stringify(
-            res.find(c => c.id === ((this.data || {}).data || {}).city) ||
-              res[0]
-          )
-        );
+        
         if(this.options2.length === 0){
           this.provinces.forEach(p => {
             let item = {
@@ -1106,10 +1097,19 @@ export default {
         if(this.options2.find(p => p.id === this.dd)){
           this.$set(this.options2.find(p => p.id === this.dd),'children',res);
         }
-        
+        this.$nextTick(()=>{
+          let city = (JSON.parse(
+          JSON.stringify(
+            res.find(c => c.id === ((this.data || {}).data || {}).city) ||
+              res[0]
+            )
+          )).id;
+          let arr = [this.dd,city];
+          this.formValidate.city = arr;
+        })
       });
     },
-    getPower() {
+    getEmpowerCitys() {
       let request = {
         typeid: 27003,
         data: [
@@ -1118,9 +1118,11 @@ export default {
           }
         ]
       };
-      this.citys = [];
+      this.empower_citys = [];
+      // this.formValidate.empower_city = {};
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
+        this.empower_citys = res;
         if(this.options1.length === 0){
           this.provinces.forEach(p => {
             let item = {
@@ -1134,30 +1136,16 @@ export default {
         if(this.options1.find(p => p.id === this.sqCascader)){
           this.$set(this.options1.find(p => p.id === this.sqCascader),'children',res);
         }
-        
-      });
-    },
-    getEmpowerCitys() {
-      let request = {
-        typeid: 27003,
-        data: [
-          {
-            province: this.formValidate.empower_province.id
-          }
-        ]
-      };
-      this.empower_citys = [];
-      // this.formValidate.empower_city = {};
-      api.XLSELECT(request).then(response => {
-        console.log(JSON.stringify(response.data))
-        let res = response.data.result.data;
-        this.empower_citys = res;
-        this.formValidate.empower_city = JSON.parse(
+        this.$nextTick(()=>{
+          let empower_city = (JSON.parse(
           JSON.stringify(
             res.find(c => c.id === ((this.data || {}).data || {}).city) ||
               res[0]
-          )
-        );
+            )
+          )).id;
+          let arr = [this.sqCascader,empower_city];
+          this.formValidate.empower_city = arr;
+        })
       });
     },
     init() {
@@ -1209,21 +1197,22 @@ export default {
       this.formValidate.ticket_list = JSON.parse(
         JSON.stringify(((data || {}).data || {}).ticket_list || [])
       );
-      this.formValidate.province = JSON.parse(
+      this.dd = (JSON.parse(
         JSON.stringify(
           this.provinces.find(
             p => p.id === ((data || {}).data || {}).province
           ) || this.provinces[0]
         )
-      );
-      this.formValidate.empower_province = JSON.parse(
+      )).id;
+      this.sqCascader= (JSON.parse(
         JSON.stringify(
           this.provinces.find(
             p => p.id === ((data || {}).data || {}).empower_province
           ) || this.provinces[0]
         )
-      );
+      )).id;
       this.getCitys();
+      this.getEmpowerCitys();
     },
     newContact() {
       this.contactStatus = "new";
@@ -1530,8 +1519,6 @@ export default {
   },
   mounted() {
     this.init();
-    this.getCitys()
-    this.getPower();
   },
   computed: {
     data() {
@@ -1554,35 +1541,6 @@ export default {
     }
   },
   watch: {
-    "dd":function(){
-       this.getCitys();
-    },
-    "sqCascader":function(){
-      this.getPower()
-    },
-    "formValidate.province.id": function() {
-      // this.formValidate.province.id = (this.provinces.find(p => p.name === this.formValidate.province.name)||{}).id;
-      this.getCitys();
-      if (this.formValidate.province.id == "") {
-        this.formValidate.city.id = "";
-      }
-    },
-    "formValidate.empower_province.id": function() {
-      // this.formValidate.empower_province.id = (this.provinces.find(p => p.name === this.formValidate.empower_province.name)||{}).id;
-      this.getEmpowerCitys();
-      if (this.formValidate.empower_province.id == "") {
-        this.formValidate.empower_city.id = "";
-      }
-    },
-    // 'formValidate.level.index':function(){
-    //   this.formValidate.level.index = (this.levels.find(p => p.val === this.formValidate.level.val)||{}).index;
-    // },
-    // 'formValidate.nature.index':function(){
-    //   this.formValidate.nature.index = (this.natures.find(p => p.value === this.formValidate.nature.value)||{}).index;
-    // },
-    // 'formValidate.industry.index':function(){
-    //   this.formValidate.industry.index = (this.industrys.find(p => p.val === this.formValidate.industry.val)||{}).index;
-    // },
     $route: function() {
       this.init();
     },
