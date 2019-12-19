@@ -249,7 +249,7 @@
           <TabPane :label="`附件(${fj.length||0})`" name="name4">
             <p class="con-left">共 {{fj.length}} 个附件</p>
             <p class="fj_add">
-              <Upload action="/public/api/xlcontract/uploadFile" :data="postData" :headers="{user:'x',key:'x'}" @on-success="getfiles" @on-error="$Message.error('上传失败，请重试！')" @on-preview="goFileDetail">
+              <Upload action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :data="postData" :headers="{user:'x',key:'x'}" @on-success="getfiles" @on-error="$Message.error('上传失败，请重试！')" @on-preview="goFileDetail">
                 <Icon type="plus"></Icon>添加附件
               </Upload>
             </p>
