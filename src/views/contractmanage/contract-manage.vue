@@ -36,7 +36,7 @@
                 <span @click="closeglClick" class="gl_p1">X</span>
                 <Form ref="filterItem" :model="filterItem" :label-width="100">
                   <FormItem label="客户名称" prop="customerName">
-                    <Input type="text" v-model="filterItem.customerName" />
+                    <Input type="text" placeholder="请输入" v-model="filterItem.customerName" />
                   </FormItem>
                   <FormItem label="合同性质" prop="contractNature">
                     <Select v-model="filterItem.contractNature" clearable filterable>
@@ -97,7 +97,7 @@
                     </Select>
                   </FormItem>
                   <FormItem label="销售人员" prop="saleName">
-                    <Input type="text" v-model="filterItem.saleName" />
+                    <Input type="text" placeholder="请输入" v-model="filterItem.saleName" />
                   </FormItem>
                   <FormItem label="建档日期">
                     <Row>

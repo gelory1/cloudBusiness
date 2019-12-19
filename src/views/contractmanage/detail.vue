@@ -107,7 +107,7 @@
               </section>
               <section>
                 <p>合同总费用：</p>
-                <p>{{data.data.contractAmount}}元人民币</p>
+                <p>{{thousandNum(data.data.contractAmount)}}元人民币</p>
               </section>
             </div>
             <div class="select select_h">
@@ -164,7 +164,7 @@
               </span>
               <span>
                 剩余款数
-                <span style="color:red">{{thousandNum(remainingMoney)}}</span>元
+                <span style="color:red">{{thousandNum(remainingMoney)||0}}</span>元
               </span>
             </p>
             <div v-for="(item,index) in paymentList" :key="index">
@@ -177,7 +177,7 @@
                     <span v-if="showObj[index] == false">
                       <Icon type="arrow-right-b"></Icon>
                     </span>
-                    <span class="zq_c">账期{{index+1}}（付{{(data.data.paymentCycle||'').split('+')[index]}}年年费）</span>
+                    <span class="zq_c">账期{{index+1}}（付{{(data.data.paymentCycle||'').split('+')[index]}}年费用）</span>
                   </p>
                   <p style="margin-left:10px;">
                     <span>
@@ -236,17 +236,17 @@
           <TabPane :label="`附件(${fj.length||0})`" name="name4">
             <p class="con-left">共 {{fj.length||0}} 个附件</p>
             <p class="fj_add">
-              <Upload action="/public/api/xlcontract/uploadFile" :data="postData" :headers="{user:'x',key:'x'}" @on-success="getfiles" @on-error="$Message.error('上传失败，请重试！')" @on-preview="goFileDetail">
+              <Upload action="/public/api/xlcontract/uploadFile" :data="postData" :headers="{user:'x',key:'x'}" :on-success="getfiles" :on-error="uploadFail" :on-preview="goFileDetail">
                 <Icon type="plus"></Icon>添加附件
               </Upload>
             </p>
             <div style="clear:both">
               <div v-for="(item,index) in fj" :key="index" class="fj">
                 <section class="fj_img">
-                  <img src alt />
+                  <img :src="item.img" alt style="width:30px;height:30px;margin:10px 30px" />
                 </section>
                 <section class="fj_sec">
-                  <p>{{item.wjm}}</p>
+                  <a :href="item.url">{{item.fileName}}</a>
                   <p class="fj_p">
                     <span>{{item.size}}</span> 来自
                     <span>{{item.where}}</span> |
@@ -610,7 +610,11 @@ export default {
        $(".ord").css({"color":"#000000"})
      }
     },
-    getfiles(){
+    getfiles(res){
+      if(res&&res.code !== 0){
+        this.$Message.error('上传失败，请重试！');
+        return;
+      }
       let request = {
         typeid: 26015,
         data: [
@@ -623,11 +627,26 @@ export default {
       this.$http.XLCONTRACT(request).then(response => {
         response.data.result.data.fileList.forEach(data => {
           let item = {};
-          // item.wjm = data.customerName;
-          // item.size = data.phone;
-          // item.where = data.dutyParagraph;
-          // item.time = data.bankName;
+          let arr = data.enclosureAddress.split('/');
+          item.wjm = arr[arr.length-1];
+          item.fileName = data.fileName;
+          item.size = data.fileSize >= 1024?((data.fileSize/1024).toFixed(2) + ' KB'): data.fileSize >= 1024*1024?((data.fileSize/(1024*1024)).toFixed(2) + ' MB'):(data.fileSize + ' B');
+          item.where = data.accountName;
+          item.time = data.uploadTime;
+          item.url = data.enclosureAddress;
           item.data = data;
+          let fileArr = item.wjm.split('.');
+          let fileType = fileArr[fileArr.length-1];
+          item.img = require('../../images/upload/wenjian.png');
+          if(/^pdf$/.test(fileType)){
+            item.img = require('../../images/upload/pdf.png');
+          }else if(/^(txt|doc(x)?)$/.test(fileType)){
+            item.img = require('../../images/upload/docx.png');
+          }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
+            item.img = require('../../images/upload/jpg.png');
+          }else if(/^xl(s[xmb]|t[xm]|am)$/.test(fileType)){
+            item.img = require('../../images/upload/excel.png');
+          };
           this.fj.push(item);
         });
       });
@@ -665,6 +684,12 @@ export default {
         //将数据（符号、整数部分、小数部分）整体组合返回
         return (sign + num + cents); 
       }
+    },
+    uploadFail(){
+      this.$Message.error('上传失败，请重试！');
+    },
+    getHref(url){
+      return url;
     }
   },
   beforeCreate() {

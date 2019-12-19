@@ -121,6 +121,10 @@ const workflow = {
     // 报表查询
     XLREPORT (params) {
         return axios.post('/public/api/xlreport/query', params);
+    },
+    // 导出清单
+    EXPORT (params) {
+        return axios.post('/public/api/xlcustomer/export', params);
     }
 
 };

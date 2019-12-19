@@ -272,10 +272,10 @@
             <div style="clear:both;margin-top:30px;">
               <div v-for="(item,index) in fj" :key="index" class="fj">
                 <section class="fj_img">
-                  <img src alt />
+                  <img :src="item.img" alt style="width:30px;height:30px;margin:10px 30px" />
                 </section>
                 <section class="fj_sec">
-                  <p>{{item.wjm}}</p>
+                  <a :href="item.url">{{item.fileName}}</a>
                   <p class="fj_p">
                     <span>{{item.size}}</span> 来自
                     <span>{{item.where}}</span> |
@@ -283,8 +283,8 @@
                   </p>
                 </section>
                 <div style="float:right;color:#4a9af5">
-                  <span>查看</span>
-                  <span @click="deleteFj(item.data.enclosureId)">删除</span>
+                  <a :href="`https://docs.google.com/viewer?url=${item.url}`" target="_blank" rel="nofollow">查看</a>
+                  <span @click="deleteFj(item.data.enclosureId)" style="cursor:pointer">删除</span>
                 </div>
               </div>
             </div>
@@ -458,11 +458,27 @@ export default {
           }
         ]
       };
-      this.$http.DELETECONTRACT(request).then(res => {
-
-      })
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(()=>{
+          this.$http.DELETECONTRACT(request).then(res => {
+          this.$Message.success('删除成功！');
+          this.getfiles();
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
     },
-    getfiles(){
+    getfiles(res){
+      if(res&&res.code !== 0){
+        this.$Message.error('上传失败，请重试！');
+        return;
+      }
       let request = {
         typeid: 26015,
         data: [
@@ -475,10 +491,26 @@ export default {
       this.$http.XLCONTRACT(request).then(response => {
         response.data.result.data.fileList.forEach(data => {
           let item = {};
-          // item.wjm = data.customerName;
-          // item.size = data.phone;
-          // item.where = data.dutyParagraph;
-          // item.time = data.bankName;
+          let arr = data.enclosureAddress.split('/');
+          item.wjm = arr[arr.length-1];
+          item.fileName = data.fileName;
+          item.size = data.fileSize >= 1024?((data.fileSize/1024).toFixed(2) + ' KB'): data.fileSize >= 1024*1024?((data.fileSize/(1024*1024)).toFixed(2) + ' MB'):(data.fileSize + ' B');
+          item.where = data.accountName;
+          item.time = data.uploadTime;
+          item.url = data.enclosureAddress;
+          item.data = data;
+          let fileArr = item.wjm.split('.');
+          let fileType = fileArr[fileArr.length-1];
+          item.img = require('../../images/upload/wenjian.png');
+          if(/^pdf$/.test(fileType)){
+            item.img = require('../../images/upload/pdf.png');
+          }else if(/^(txt|doc(x)?)$/.test(fileType)){
+            item.img = require('../../images/upload/docx.png');
+          }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
+            item.img = require('../../images/upload/jpg.png');
+          }else if(/^xl(s[xmb]|t[xm]|am)$/.test(fileType)){
+            item.img = require('../../images/upload/excel.png');
+          };
           item.data = data;
           this.fj.push(item);
         });
