@@ -236,7 +236,7 @@
           <TabPane :label="`附件(${fj.length||0})`" name="name4">
             <p class="con-left">共 {{fj.length||0}} 个附件</p>
             <p class="fj_add">
-              <Upload action="/public/api/xlcontract/uploadFile" :data="postData" :headers="{user:'x',key:'x'}" :on-success="getfiles" :on-error="uploadFail" :on-preview="goFileDetail">
+              <Upload action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :data="postData" :headers="{user:'x',key:'x'}" :on-success="getfiles" :on-error="uploadFail" :on-preview="goFileDetail">
                 <Icon type="plus"></Icon>添加附件
               </Upload>
             </p>
@@ -644,7 +644,7 @@ export default {
             item.img = require('../../images/upload/docx.png');
           }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
             item.img = require('../../images/upload/jpg.png');
-          }else if(/^xl(s[xmb]|t[xm]|am)$/.test(fileType)){
+          }else if(/^xl(s|t|am)$/.test(fileType)){
             item.img = require('../../images/upload/excel.png');
           };
           this.fj.push(item);
