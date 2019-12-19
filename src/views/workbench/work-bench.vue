@@ -305,7 +305,7 @@
           </p>
           <p>
             <span class="gray">期望发货时间：</span>
-            {{deliveryData.deliveryTime}}
+            {{deliveryData.deliveryTime.split(' ')[0]}}
              之前
           </p>
         </div>
@@ -1587,9 +1587,9 @@ export default {
         };
         let { data } = response.data.result;
         this.deliveryData.schemeNo = data[0].shipments_no;
-        this.deliveryData.time = data[0].shipments_time;
+        this.deliveryData.time = data[0].shipments_creationtime;
         this.deliveryData.manageMan = data[0].user_name;
-        this.deliveryData.deliveryTime = data[0].shipments_creationtime;
+        this.deliveryData.deliveryTime = data[0].shipments_time;
         this.deliveryData.des = data[0].shipments_describe;
         this.deliveryData.shipments_start_batch = data[0].shipments_start_batch;
         this.deliveryData.shipments_end_batch = data[0].shipments_end_batch;
