@@ -85,6 +85,19 @@
 export default {
   name: "edit",
   data() {
+    const dutyparagraph = (rule, value, callback) => {
+      if (
+        this.formAddinformat.dutyparagraph !== ""
+      ) {
+        var expression = /^[A-Z0-9]{15}$|^[A-Z0-9]{17}$|^[A-Z0-9]{18}$|^[A-Z0-9]{20}$/;
+        if (expression.test(value) == false) {
+          callback(new Error("请出入正确的税号(15、17、18、20位数字字母组合)！"));
+        }
+      } else {
+        callback(new Error("该字段不能为空"));
+      }
+      callback();
+    };
     return {
       formAddinformat: {
         khda: "",
@@ -109,8 +122,7 @@ export default {
         ],
         sh: [
           {
-            required: true,
-            message: "请填写客户税号",
+            validator:dutyparagraph,
             trigger: "blur"
           }
         ],
@@ -163,6 +175,10 @@ export default {
   },
   methods: {
     handleSubmit(name) {
+      if(this.selectedCustom === ''){
+        this.$Message.error('请选择客户档案，若列表中未找到，可新增客户！');
+        return;
+      }
       this.$refs[name].validate(valid => {
         if (valid) {
           let request2 = {
@@ -210,7 +226,7 @@ export default {
       this.$http.XLSELECT(requst).then(response =>{
         let res = response.data.result.data;
         this.customerList = JSON.parse(JSON.stringify(res));
-        this.selectedCustom = this.customerList[0].id;
+        // this.selectedCustom = this.customerList[0].id;
       })
     },
   },
