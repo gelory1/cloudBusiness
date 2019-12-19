@@ -235,7 +235,7 @@ export default {
             })
           }
         } else {
-          this.$Message.error("Fail!");
+          this.$Message.error("请按规定填写内容!");
         }
       });
     },
