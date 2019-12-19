@@ -131,13 +131,18 @@
           </div>
         </section>
       </div>
-      <Upload multiple type="drag" action="/" class="upload">
+      <Upload multiple type="drag" v-if="imgUrl === ''" action="/public/api/xlcontract/uploadFile" :before-upload="beforeUpload" :format="['jpg','jpeg','png']" :on-format-error="handleFormatError"
+        :data="{contractNo: -1}" :headers="{user:'x',key:'x'}" :show-upload-list="false" :on-success="uploadSuccess" :on-error="uploadFail"  class="upload">
         <div style="padding: 20px 0">
           <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-          <p>上传付款凭证</p>
-          <p>(格式：JPG、PNG、JPEG)</p>
+          <p v-if="!spinShow">上传付款凭证</p>
+          <p v-if="!spinShow">(格式：JPG、PNG、JPEG)</p>
+          <p v-if="spinShow">上传中...</p>
         </div>
       </Upload>
+      <div style="display:flex;justify-content:center">
+        <img :src="imgUrl" v-if="imgUrl !== ''" :class="{fk_img:true,active:isActive}" @click="isActive = !isActive" />
+      </div>
       <Button class="zf_butt" type="primary" @click="sureClick" :disabled="buttonDisabled">确认已支付</Button>
     </Modal>
     <!-- 新建工作待办 -->
@@ -263,7 +268,7 @@
           </p>
           <p>
             <span>付款凭证：</span>
-            <img src="../../images/workbench/payback.png" alt :class="{fk_img:true,active:isActive}" @click="isActive = !isActive"  />
+            <img :src="ensurePayBack.url" alt :class="{fk_img:true,active:isActive}" @click="isActive = !isActive"  />
           </p>
         </div>
       </div>
@@ -902,6 +907,7 @@ export default {
         paymentPeriod: "",
         receiveSide: "",
         trader: "",
+        url: '',
         workBenchStatus:'',
         ensure:"",
         workBenchId:""
@@ -953,7 +959,9 @@ export default {
         report_name:'',
         report_value: [],
       },
-      dataIndex: 0
+      dataIndex: 0,
+      imgUrl: '',
+      spinShow: false
     };
   },
   methods: {
@@ -1186,6 +1194,7 @@ export default {
             paymentPeriod: params.row.data.workBenchContentObj.paymentPeriod,
             receiveSide: params.row.data.workBenchContentObj.receiveSide,
             trader: params.row.data.workBenchContentObj.trader,
+            url: params.row.data.photoUrl,
             workBenchType: params.row.data.workBenchType,
             ensure:'',
             workBenchId: params.row.data.workbenchId
@@ -1308,13 +1317,17 @@ export default {
       this.checkIndex = data.length;
     },
     sureClick() {
+      if(this.imgUrl === ''){
+        this.$Message.error('请先上传付款截图！');
+        return;
+      }
       let request = {
         "typeid": 28004,
         "data": [
           {
             "accountId": this.$store.state.user.accountId,
             "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
-            // "photoUrl": "http://10.0.17.213:8068/url/img.png"
+            "photoUrl": this.imgUrl
           }
         ]
       }
@@ -1323,6 +1336,7 @@ export default {
         if(this.tabName === 'name3'){
           this.getWorkbench();
         }
+        this.imgUrl = '';
       },error => {
         if(error.data.code === 0){
           this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
@@ -1331,6 +1345,7 @@ export default {
           }
           this.$Message.success('成功！');
         }
+        this.imgUrl = '';
       })
       this.zfqrmodal = false;
       this.zfmodal = false;
@@ -1673,6 +1688,25 @@ export default {
         }
       }
       // this.selectReportData = this.reportData[1].find(r => r.report_id === val);
+    },
+    uploadSuccess(response, file, fileList){
+      if(response.code === 0){
+        this.imgUrl = response.result.address;
+        this.$Message.success('上传成功！');
+        this.spinShow = false;
+      }else{
+        this.uploadFail();
+      }
+    },
+    uploadFail(){
+      this.$Message.error(`上传失败，请稍后重试！`);
+      this.spinShow = false;
+    },
+    handleFormatError (file) {
+      this.$Message.error(`上传类型错误，请上传正确的图片类型（.jpg、.jpeg、.png）`);
+    },
+    beforeUpload(){
+      this.spinShow = true;
     }
   },
   mounted() {
