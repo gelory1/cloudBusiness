@@ -46,7 +46,7 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <el-cascader v-model="formValidate.empower_province.id" clearable :options="options2"  @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small" style="width:350px;" ></el-cascader>
+                <el-cascader clearable :options="options2"  @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small" style="width:350px;" ></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -279,7 +279,7 @@
       </Form>
     </Modal>
     <!-- 添加开票信息 -->
-    <Modal v-model="addkpxxmodal" width="800" @on-ok="saveTicket()" @on-cancel="handleCancel()">
+    <Modal v-model="addkpxxmodal" width="800" @on-ok="saveTicket()" @on-cancel="handleCancel()" class="aa">
       <p style="margin:10px  0 20px 0;font-size:16px">添加开票信息</p>
       <Form
         ref="formAddkpxx"
@@ -338,10 +338,10 @@
             </FormItem>
           </Col>
         </Row>
-        <!-- <FormItem style="margin:40px 0">
-          <Button type="primary" @click="saveTicket()">确认并添加</Button>
+        <FormItem style="margin:40px 0">
+          <Button type="primary" @click="saveTicket('formAddkpxx')">确认并添加</Button>
           <Button @click="handleCancel('formAddkpxx')" style="margin-left: 8px">取消</Button>
-        </FormItem>-->
+        </FormItem>
       </Form>
     </Modal>
     <Modal v-model="addPlatShow" @on-ok="savePlat()">
@@ -774,49 +774,49 @@ export default {
             validator: dutyparagraph
           }
         ],
-        // ticket_address: [
-        //   {
-        //     required: true,
-        //     message: "请输入开票地址",
-        //     trigger: "blur"
-        //   }
-        // ],
-        // phone: [
-        //   {
-        //     required: true,
-        //     trigger: "blur",
-        //     validator: validatePhone
-        //   }
-        // ],
-        // bank_name: [
-        //   {
-        //     required: true,
-        //     message: "请输入开户行",
-        //     trigger: "blur"
-        //   }
-        // ],
-        // bank_account: [
-        //   {
-        //     required: true,
-        //     message: "请输入银行账号",
-        //     trigger: "blur"
-        //     // validator: validateNum
-        //   }
-        // ],
-        // post_info: [
-        //   {
-        //     required: true,
-        //     message: "请输入邮寄地址",
-        //     trigger: "blur"
-        //   }
-        // ],
-        // ticket_contacts: [
-        //   {
-        //     required: true,
-        //     message: "请输入联系人及电话",
-        //     trigger: "blur"
-        //   }
-        // ]
+        ticket_address: [
+          {
+            required: true,
+            message: "请输入开票地址",
+            trigger: "blur"
+          }
+        ],
+        phone: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: validatePhone
+          }
+        ],
+        bank_name: [
+          {
+            required: true,
+            message: "请输入开户行",
+            trigger: "blur"
+          }
+        ],
+        bank_account: [
+          {
+            required: true,
+            message: "请输入银行账号",
+            trigger: "blur"
+            // validator: validateNum
+          }
+        ],
+        post_info: [
+          {
+            required: true,
+            message: "请输入邮寄地址",
+            trigger: "blur"
+          }
+        ],
+        ticket_contacts: [
+          {
+            required: true,
+            message: "请输入联系人及电话",
+            trigger: "blur"
+          }
+        ]
       },
       khdjj: [],
       cityj: [],
@@ -904,7 +904,8 @@ export default {
             customerName: this.formValidate.name,
             customerLevel: this.formValidate.level.index,
             customerNature: this.formValidate.nature.index,
-            province: this.formValidate.province.id,
+            // province: this.formValidate.province.id,
+            province: this.options2.name,
             city: this.formValidate.city.id,
             empowerProvince: this.formValidate.empower_province.id,
             empowerCity: this.formValidate.empower_city.id,
@@ -966,7 +967,14 @@ export default {
           .catch(e => {});
       }
     },
-    saveTicket() {
+    saveTicket(name) {
+      this.$refs[name].validate((valid) => {
+          if (valid) {
+              this.$Message.success('Success!');
+          } else {
+              this.$Message.error('Fail!');
+          }
+      });
       let request1 = {
         typeid: 25007,
         data: [
@@ -1057,7 +1065,8 @@ export default {
       this.ticketStatus = "new";
     },
     handleCancel(name) {
-      this.$Message.error("已取消");
+      // this.$Message.error("已取消");
+      this.addkpxxmodal = false
     },
     ok() {
       this.saveTicket();
@@ -1152,7 +1161,6 @@ export default {
       });
     },
     init() {
-      debugger
       let data = this.data || {};
       this.customer_id = "";
       this.formValidate.name = data.name || "";
@@ -1523,7 +1531,7 @@ export default {
   mounted() {
     this.init();
     this.getCitys()
-    this.getPower()
+    this.getPower();
   },
   computed: {
     data() {
@@ -1590,4 +1598,7 @@ export default {
 
 <style>
 @import "./customer.css";
+.aa .ivu-modal-footer {
+    display: none;
+  }
 </style>

@@ -4,7 +4,7 @@
       <p style="font-size:16px;margin:20px 0 10px 0;">发货要求</p>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem label="发起人" prop="name">
-          <Input :value="$store.state.user.accountName" placeholder  style="width:325px;" />
+          <Input :value="$store.state.user.accountName" placeholder  disabled style="width:325px;" />
         </FormItem>
         <FormItem label="要求发货时间" prop="fhsj">
           <DatePicker
@@ -43,7 +43,7 @@
             </FormItem>
           </Col>
         </Row>
-        <Row>
+        <!-- <Row>
           <Col span="12">
             <FormItem label="客户" prop="costom">
               <Select v-model="formValidate.costom" placeholder clearable filterable>
@@ -60,7 +60,7 @@
               </Select>
             </FormItem>
           </Col>
-        </Row>
+        </Row> -->
         <content>
           <div class="fa_co" style="border:none;">
             <div class="fa_c">
