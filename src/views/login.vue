@@ -91,12 +91,28 @@ export default {
       };
       this.$http.AUTHORITY(request).then(() => {        
       },res => {
+        let roleMap = {
+          19:'超级管理员',
+          20:'业务管控',
+          18:'财务',
+          17:'合作伙伴'
+        }
         if(res.data.code === 0){
+          let role = [];
+          res.data.role.forEach(r => {
+            if(roleMap[r[0]]){
+              role.push(roleMap[r[0]]);
+            }
+          })
+          if(role.indexOf('超级管理员') !== -1){
+            role = ['超级管理员'];
+          }
           let authority = [];
           res.data.priv.forEach(p => {
             authority.push({
               id:p[0],
-              path:p[1]
+              path:p[1],
+              role:role
             });
           });
           localStorage.setItem('authority',JSON.stringify(authority));//本地保存列表

@@ -218,6 +218,9 @@ export default {
           name: "login"
         });
         this.$store.commit('resetWorkBenchData');
+        let authority = [];
+        localStorage.setItem('authority',JSON.stringify(authority));//本地保存列表
+        this.$store.commit('setAutority',authority);//更新登录列表
         this.$notify.closeAll();
       }
     },

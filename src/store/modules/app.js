@@ -63,7 +63,7 @@ const app = {
             state.tagsList.push(...list);
         },
         setAutority (state, list) {
-            state.authority.push(...list);
+            state.authority = list;
         },
         updateMenulist (state) {
             let accessCode = parseInt(Cookies.get('access'));
@@ -248,6 +248,7 @@ const app = {
             let _this = payload.this;
             context.commit('setNotifyData', {status: false, data: []});
             axios.XLWORKBENCH(request).then(response => {
+                if (!Cookies.get('user')) return;
                 let { data } = response.data.result;
                 let updateStatus = false;
                 data.forEach(d => {

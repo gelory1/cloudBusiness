@@ -105,7 +105,7 @@
               <div v-show="moreShow" class="more">
                 <p @click="addkpClick">新增开票信息</p>
                 <p @click="exportSelect">导出所选结果</p>
-                <p><a :href="exportUrl === ''?'#':exportUrl" @click="exportAll" style="color:#495060">导出全部客户</a></p>
+                <p><a :href="exportUrl === ''||this.isFinance||this.isCooperative?'#':exportUrl" @click="exportAll" style="color:#495060">导出全部客户</a></p>
               </div>
             </span>
           </div>
@@ -605,6 +605,10 @@ export default {
       this.getCustomList(1);
     },
     exportSelect(){
+      if(this.isFinance||this.isCooperative){
+        this.$Message.error('权限不足！');
+        return;
+      }
       if(this.customList_data.filter(data => data._checked === true).length === 0){
         this.$Message.error('请先选择需要导出的数据！');
         return;
@@ -617,6 +621,10 @@ export default {
       this.moreClick();
     },
     exportAll(){
+      if(this.isFinance||this.isCooperative){
+        this.$Message.error('权限不足！');
+        return;
+      }
       if(this.exportUrl === ''){
         this.$Message.error('导出失败，请稍后重试！');
         return;
@@ -624,6 +632,9 @@ export default {
       this.moreClick();
     },
     export(){
+      if(this.isFinance||this.isCooperative){
+        return;
+      }
       let request = {
         data:[
           {
@@ -645,6 +656,18 @@ export default {
     this.getProvinces();
     this.getManagecompanys(); 
     this.export();  
+  },
+  computed:{
+    isFinance(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '财务');
+      }
+    },
+    isCooperative(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
+      }
+    }
   },
   watch:{
     'filterItem.empower_province':function(nv){
