@@ -200,6 +200,10 @@ export default {
                           click: () => {
                                 this.$store.commit('selectedCustom',params.row);
                                 localStorage.setItem('customInfo',JSON.stringify(params.row));
+                                if(!this.$store.state.app.authority.find(a => a.id === 701)){
+                                  this.$Message.error('权限不足！');
+                                  return;
+                                }
                                 this.$router.push({ path: "/customermanage/see" });
                             }
                         }
@@ -222,12 +226,24 @@ export default {
                        if (value == "查看") {
                         this.$store.commit('selectedCustom',params.row);
                         localStorage.setItem('customInfo',JSON.stringify(params.row));
+                        if(!this.$store.state.app.authority.find(a => a.id === 701)){
+                          this.$Message.error('权限不足！');
+                          return;
+                        }
                         this.$router.push({ path: "/customermanage/see" });
                       } else if (value == "编辑") {
                         this.$store.commit('selectedCustom',params.row);
                         localStorage.setItem('customInfo',JSON.stringify(params.row));
+                        if(!this.$store.state.app.authority.find(a => a.id === 702)){
+                          this.$Message.error('权限不足！');
+                          return;
+                        }
                         this.$router.push({ path: "/customermanage/edit" });
                       } else if (value == "删除") {
+                        if(!this.$store.state.app.authority.find(a => a.id === 702)){
+                          this.$Message.error('权限不足！');
+                          return;
+                        }
                         this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
                           confirmButtonText: '确定',
                           cancelButtonText: '取消',
@@ -521,6 +537,10 @@ export default {
       if(!this.filterStatus) $(".cor").css({ color: "#000000" });
     },
     addkpClick() {
+      if(!this.$store.state.app.authority.find(a => a.id === 704)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$router.push({ path: "/customermanage/add-informat" });
     },
     selectChange(item){
@@ -534,6 +554,10 @@ export default {
       })
     },
     addClick(){
+      if(!this.$store.state.app.authority.find(a => a.id === 703)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$store.commit('selectedCustom',{});
       localStorage.setItem('customInfo',JSON.stringify({}));
       this.$router.push({ path: "/customermanage/new" });

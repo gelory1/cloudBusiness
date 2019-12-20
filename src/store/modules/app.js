@@ -55,11 +55,15 @@ const app = {
         notifyData: {
             status: false,
             data: {}
-        }
+        },
+        authority: []
     },
     mutations: {
         setTagsList (state, list) {
             state.tagsList.push(...list);
+        },
+        setAutority (state, list) {
+            state.authority.push(...list);
         },
         updateMenulist (state) {
             let accessCode = parseInt(Cookies.get('access'));

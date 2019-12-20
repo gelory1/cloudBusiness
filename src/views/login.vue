@@ -76,15 +76,36 @@ export default {
               localStorage.setItem('accountName',response.data.accountName);
               this.$store.commit('setAccountId',response.data.accountId);
               this.$store.commit('setAccountName',response.data.accountName);
-              this.$router.push({
-                name: "home_index"
-              });
+              this.getAuthority();
             } else {
               this.$Message.error("用户名或密码不正确");
             }
           }
         });
       });
+    },
+    getAuthority(){
+      let request = {
+        typeid: 22101,
+        accountid: this.$store.state.user.accountId
+      };
+      this.$http.AUTHORITY(request).then(() => {        
+      },res => {
+        if(res.data.code === 0){
+          let authority = [];
+          res.data.priv.forEach(p => {
+            authority.push({
+              id:p[0],
+              path:p[1]
+            });
+          });
+          localStorage.setItem('authority',JSON.stringify(authority));//本地保存列表
+          this.$store.commit('setAutority',authority);//更新登录列表
+          this.$router.push({
+            name: "home_index"
+          });
+        }
+      })
     }
   }
 };

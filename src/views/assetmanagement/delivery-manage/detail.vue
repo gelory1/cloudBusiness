@@ -160,10 +160,14 @@ export default {
   },
   methods: {
     editClick(){
-      this.$router.push({
+      if(this.authority.find(a => a.id === 1006)){
+        this.$router.push({
           name: "delivery_detail2",
           query: this.detailData
         });
+      }else{
+        this.$Message.error('权限不足！');
+      }
     },
     changeRow(data) {
       this.currentRow = JSON.parse(JSON.stringify(data));
@@ -299,6 +303,9 @@ export default {
         })
       }
       return customList;
+    },
+    authority(){
+      return this.$store.state.app.authority;
     }
   },
   watch:{

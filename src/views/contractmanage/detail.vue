@@ -538,6 +538,10 @@ export default {
       }
     },
     bjbuttClick() {
+      if(!this.$store.state.app.authority.find(a => a.id === 802)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$router.push({
         path: "/contractmanage/edit",
         query: {

@@ -569,6 +569,10 @@ export default {
       this.getContracts(1);
     },
     openDetail(data) {
+      if(!this.$store.state.app.authority.find(a => a.id === 801)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$store.commit("selectedContract", JSON.parse(JSON.stringify(data)));
       localStorage.setItem("contractInfo", JSON.stringify(data));
       this.$router.push({ path: "/contractmanage/detail" });
