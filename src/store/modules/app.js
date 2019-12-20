@@ -226,6 +226,9 @@ const app = {
             state.showNotice = true;
             state.workBenchData = data;
         },
+        resetWorkBenchData (state) {
+            state.workBenchData = [];
+        },
         setNotifyData (state, data) {
             state.notifyData = data;
         }

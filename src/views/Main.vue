@@ -217,7 +217,7 @@ export default {
         this.$router.push({
           name: "login"
         });
-        this.$store.commit('setWorkBenchData',[]);
+        this.$store.commit('resetWorkBenchData');
         this.$notify.closeAll();
       }
     },
