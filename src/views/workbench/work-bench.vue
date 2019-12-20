@@ -696,7 +696,7 @@ export default {
                       },
                       on:{
                         'input': (value) => {
-                          this.addStore[params.index].je = value;
+                          this.addStore[params.index].je = parseFloat(value);
                         },
                         //  'on-keyup':()=>{
                         //   //  alert(this.newgzForm.add_data.je)
