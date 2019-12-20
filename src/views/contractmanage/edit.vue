@@ -504,7 +504,7 @@ export default {
         typeid: 26015,
         data: [
           {
-            customerNo: this.data.data.customerNo||''
+            contractNo: this.data.data.contractNo||''
           }
         ]
       };
