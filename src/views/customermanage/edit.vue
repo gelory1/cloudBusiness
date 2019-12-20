@@ -771,49 +771,6 @@ export default {
             trigger: "blur",
             validator: dutyparagraph
           }
-        ],
-        ticket_address: [
-          {
-            required: true,
-            message: "请输入开票地址",
-            trigger: "blur"
-          }
-        ],
-        phone: [
-          {
-            required: true,
-            trigger: "blur",
-            validator: validatePhone
-          }
-        ],
-        bank_name: [
-          {
-            required: true,
-            message: "请输入开户行",
-            trigger: "blur"
-          }
-        ],
-        bank_account: [
-          {
-            required: true,
-            message: "请输入银行账号",
-            trigger: "blur"
-            // validator: validateNum
-          }
-        ],
-        post_info: [
-          {
-            required: true,
-            message: "请输入邮寄地址",
-            trigger: "blur"
-          }
-        ],
-        ticket_contacts: [
-          {
-            required: true,
-            message: "请输入联系人及电话",
-            trigger: "blur"
-          }
         ]
       },
       khdjj: [],
