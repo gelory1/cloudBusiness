@@ -33,18 +33,19 @@
           <Input class="gz_input" icon="ios-search" v-model="inputVal" placeholder="请输入内容" style="margin-top:6px" @on-enter="getWorkbench" @on-click="getWorkbench"/>
         </div>
         <div class="gz_right right">
-          <div class="left gz_rig bor" v-show="reportData[1]">
+          <div class="left gz_rig bor" v-show="reportDataLeft.length > 0">
             <Select v-model="bhlmodel" size="small" clearable filterable @on-change="selectReport(1,$event)">
-                <Option :value="item.report_id" v-for="item in reportData[1]" :key="item.report_id">{{item.report_name}}</Option>
+                <Option :value="item.report_id" v-for="item in reportDataLeft" :key="item.report_id">{{item.report_name}}</Option>
             </Select>
             <p class="bh_p"><big>{{selectReportData.report_value[0]}}</big><i> {{selectReportData.report_value[1]}}</i><span>&#x3000;<b>{{selectReportData.report_value[2]}}</b></span></p>
           </div>
-          <div class="right gz_rig bor">
-            <Select v-model="kclmodel" size="small" clearable filterable>
-                <Option value="bd">本地库存量</Option>
-                <Option value="ck">仓库库存量</Option>
+          <div class="right gz_rig bor" v-show="reportDataRight.length > 0">
+            <Select v-model="kclmodel" size="small" clearable filterable @on-change="selectReport(0,$event)">
+                <Option :value="item.report_id" v-for="item in reportDataRight" :key="item.report_id">{{item.report_name}}</Option>
             </Select>
-            <p class="bh_p"><big>3000</big><i> 台</i></p>
+            <p class="bh_p"><big>{{selectReportData0.report_value[0]}}</big><i> {{selectReportData0.report_value[1]}}</i>
+              <!-- <span>&#x3000;<b>{{selectReportData0.report_value[2]}}</b></span> -->
+            </p>
           </div>
           <div style="clear: both;">
           </div>
@@ -884,7 +885,7 @@ export default {
       indexStyle:"",
       indexStyle1:"",
       bhlmodel:"",
-      kclmodel:"bd",
+      kclmodel:"",
       zzmodel:"",
       yxmodel:"",
       newsShow:true,
@@ -938,6 +939,16 @@ export default {
       orderDataCache: [],
       reportData:{},
       selectReportData:{
+        report_display:0,
+        report_id:0,
+        report_name:'',
+        report_value: [
+          '',
+          '',
+          '',
+        ],
+      },
+      selectReportData0:{
         report_display:0,
         report_id:0,
         report_name:'',
@@ -1660,12 +1671,10 @@ export default {
         let { data } = res.data.result;
         data.forEach(d => {
           if(!this.reportData[d.report_display]){
-            this.reportData[d.report_display] = [];
+            this.$set(this.reportData, d.report_display,[]);
           }
           this.reportData[d.report_display].push(d);
         })
-        this.bhlmodel = this.reportData[1][0].report_id;
-        this.selectReport(1,this.bhlmodel);
         this.zzmodel = this.reportData[2][0].report_id;
         this.selectReport(2,this.zzmodel);
         this.yxmodel = this.reportData[3][0].report_id;
@@ -1673,11 +1682,11 @@ export default {
       })
     },
     selectReport(index,val){
-      
-      let obj = this.reportData[index].find(r => r.report_id === val);
-      let data = index === 1?this.selectReportData:index === 2?this.selectReportData2:this.selectReportData3;
+      let obj = (index === 0?this.reportData[1]:this.reportData[index]).find(r => r.report_id === val);
+      if(index === 0) console.log(obj);
+      let data = index === 0?this.selectReportData0:index === 1?this.selectReportData:index === 2?this.selectReportData2:this.selectReportData3;
       for(let key in obj){
-        if(typeof(obj[key]) === 'object'&&index === 1){
+        if(typeof(obj[key]) === 'object'&&(index === 1||index === 0)){
           data[key][0] = obj[key][0];
           data[key][1] = obj[key][1];
           data[key][2] = obj[key][2];
@@ -1827,6 +1836,32 @@ export default {
       if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
         return this.$store.state.app.authority[0].role.find(r => r === '财务');
       }
+    },
+    reportDataLeft(){
+      let data = [];
+      if(this.reportData[1]&&this.reportData[1].length>0){
+        data = this.reportData[1].filter(i => {
+          return i.report_name.indexOf('库存量') === -1
+        })
+        if(this.bhlmodel === ''){
+          this.bhlmodel = data[0].report_id;
+          this.selectReport(1,this.bhlmodel);
+        }
+      }
+      return data;
+    },
+    reportDataRight(){
+      let data = [];
+      if(this.reportData[1]&&this.reportData[1].length>0){
+        data = this.reportData[1].filter(i => {
+          return i.report_name.indexOf('库存量') !== -1
+        })
+        if(this.kclmodel === ''){
+          this.kclmodel = data[0].report_id;
+          this.selectReport(0,this.kclmodel);
+        }
+      }
+      return data;
     }
   }
 };
