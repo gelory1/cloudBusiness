@@ -580,6 +580,7 @@ export default {
       }
       this.$http.XLSELECT(request).then(response => {
         this.companys = response.data.result.data;
+        localStorage.setItem('companys',JSON.stringify(this.companys));
       })
     },
     getCitys(province,isEmpower){
