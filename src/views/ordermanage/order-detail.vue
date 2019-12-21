@@ -118,6 +118,16 @@
                 <Table :columns="device_columns" :data="device_data2" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
         </Tabs>
+        <div class="dd_div" v-if="selectedOrder.type == '备货订单'" style="float:right;margin:15px 30px 0 0;font-size:13px;">
+            <section>
+              <span class="dd_span" style="width:100px;display:inline-block">货款总计（元）</span>
+              <span style="color:#000000;font-weight:bold">{{selectedOrder.order_little_amount}}</span>
+            </section>
+            <section>
+              <span class="dd_span" style="width:100px;display:inline-block">大写</span>
+              <span style="color:#000000;font-weight:bold">{{selectedOrder.order_big_amount}}</span>
+            </section>
+          </div>
       </div>
     </div>
 </template>
@@ -296,6 +306,8 @@ export default {
                 this.selectedOrder.orderNO = data.order_no;
                 this.selectedOrder.type = this.businessMap[data.order_type];
                 this.selectedOrder.time = data.order_time;
+                this.selectedOrder.order_big_amount = data.order_big_amount;
+                this.selectedOrder.order_little_amount = data.order_little_amount;
                 this.selectedOrder.salesType = this.saleMap[data.sale_type];
                 this.selectedOrder.customName = data.agent_name;
                 this.selectedOrder.contractNO = data.contract_no;
@@ -400,4 +412,5 @@ export default {
 </script>
 <style scoped>
 @import "../contractmanage/contract.css";
+@import "../customermanage/customer.css";
 </style>

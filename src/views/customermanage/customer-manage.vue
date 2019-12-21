@@ -45,6 +45,7 @@
                     </Row>
                   </FormItem>
                   <FormItem label="省份/城市" prop="city">
+                  <!-- <el-cascader clearable :options="options2"  @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small"></el-cascader> -->
                     <Row>
                       <Col span="12">
                         <Select v-model="filterItem.province" clearable filterable>
