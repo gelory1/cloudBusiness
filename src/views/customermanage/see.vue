@@ -8,7 +8,7 @@
           type="primary"
           size="large"
           style="float:right;width:80px;"
-          @click="$router.push('/customermanage/edit')"
+          @click="goEdit"
         >编辑</Button>
       </div>
 
@@ -325,6 +325,13 @@ export default {
         let res = response.data.result.data;
         this.citys = res;
       });
+    },
+    goEdit(){
+      if(!this.$store.state.app.authority.find(a => a.id === 702)){
+        this.$Message.error('权限不足！');
+        return;
+      }
+      this.$router.push('/customermanage/edit');
     }
   },
   mounted() {

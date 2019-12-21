@@ -769,18 +769,38 @@ export default {
         data: [
           {
             account_id: this.$store.state.user.accountId,
-            page_num: p,
-            page_size: 10,
+            page_num: p==='orderInit'?undefined:p,
+            page_size: p==='orderInit'?undefined:10,
             product_code: "",
+            order_list: p==='orderInit'?JSON.parse(this.$route.query.order):undefined,
             keyword: this.addOrderInput
           }
         ]
       };
-      this.dd_data = [];
-      this.sum = 0;
-      this.$http.PostXLASSETS(request).then(response => {
+      if(p !== 'orderInit'){
         this.dd_data = [];
+        this.sum = 0;
+      }
+      this.$http.PostXLASSETS(request).then(response => {
         let { data } = response.data.result;
+        if(p === 'orderInit'){
+          data.forEach(d => {
+            let item = {};
+            item.data = d;
+            item.ddbh = d.order_no;
+            item.ywlx = this.orderMap[d.order_type];
+            item.xdsj = d.order_time;
+            item.khmc = d.customer_name;
+            item.khdj = this.levelMap[d.customer_level];
+            item.sbsl = d.quantity;
+            item.product_list = d.product_list;
+            this.outcksb_data1.push(item);
+          })
+          this.$refs["cktable"].objData[0]._isHighlight = true;
+          this.changeRow(this.outcksb_data1[0]);
+          return;
+        }
+        this.dd_data = [];
         this.sum = data[0].sum;
         data[0].order_list.forEach(d => {
           let item = {};
@@ -1008,6 +1028,9 @@ export default {
     }
   },
   mounted() {
+    if(this.$route.query.order){
+      this.getOrderList('orderInit');
+    }
     this.getOrderList(1);
     this.getTimes();
   },

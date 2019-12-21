@@ -538,6 +538,10 @@ export default {
       }
     },
     bjbuttClick() {
+      if(!this.$store.state.app.authority.find(a => a.id === 802)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$router.push({
         path: "/contractmanage/edit",
         query: {
@@ -622,7 +626,7 @@ export default {
         typeid: 26015,
         data: [
           {
-            customerNo: this.data.data.customerNo||''
+            contractNo: this.data.data.contractNo||''
           }
         ]
       };
@@ -711,6 +715,11 @@ export default {
   watch: {
     fpmodal(nv) {
       if (nv) this.getTicket();
+    },
+    $route(){
+      this.getkcmx();
+      this.getTicket();
+      this.getfiles();
     }
   },
   computed: {

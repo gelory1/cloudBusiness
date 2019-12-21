@@ -249,10 +249,14 @@ export default {
                     click: () => {
                       let data = { ...params.row };
                       data.shipments_id = data.data.shipments_id;
-                      this.$router.push({
-                        name: "delivery_detail",
-                        query: data
-                      });
+                      if(this.authority.find(a => a.id === 1004)){
+                        this.$router.push({
+                          name: "delivery_detail",
+                          query: data
+                        });
+                      }else{
+                        this.$Message.error('权限不足！');
+                      }
                     }
                   }
                 },
@@ -351,18 +355,26 @@ export default {
         item.data.shipments_status === 3
       ) {
         item.shipments_id = item.data.shipments_id;
-        this.$router.push({
-          name: "delivery_detail2",
-          query: item
-        });
+        if(this.authority.find(a => a.id === 1006)){
+          this.$router.push({
+            name: "delivery_detail2",
+            query: item
+          });
+        }else{
+          this.$Message.error('权限不足！');
+        }
       } else {
         this.$Message.error("当前状态不支持编辑！");
       }
     },
     addClick() {
-      this.$router.push({
-        path: "/assetmanage/delivery-manage/newbuild"
-      });
+      if(this.authority.find(a => a.id === 1005)){
+        this.$router.push({
+          path: "/assetmanage/delivery-manage/newbuild"
+        });
+      }else{
+        this.$Message.error('权限不足！');
+      }
     },
     getDeliveryList(p) {
       let index = this.fhStatus.find(f => f.name === this.tabName).index - 1;
@@ -456,6 +468,9 @@ export default {
       h = document.body.scrollHeight - 185 + "px";
       return h;
     },
+    authority(){
+      return this.$store.state.app.authority;
+    }
   },
   watch: {
     tabName() {

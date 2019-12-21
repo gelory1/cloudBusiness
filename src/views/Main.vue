@@ -103,7 +103,38 @@ export default {
   },
   computed: {
     menuList() {
-      return this.$store.state.app.menuList;
+      let menuList = [];
+      if(this.authority&&this.authority.length>0){
+        this.$store.state.app.menuList.forEach(menu => {
+          let whiteList = ['/','/setting'];
+          if(this.authority.find(a => a.path === menu.path)||whiteList.indexOf(menu.path)!==-1){
+            let children = [];
+            children = menu.children.filter((m,i) => {
+              let path = menu.path + '/' + m.name;
+              if(this.authority.find(a => a.path === path)||i === 0||whiteList.indexOf(menu.path)!==-1){
+                return true
+              }
+            });
+            menuList.push({
+              component:menu.component,
+              icon:menu.icon,
+              name:menu.name,
+              path:menu.path,
+              title:menu.title,
+              children
+            });
+          }
+        })
+      }
+      return menuList;
+      // return this.$store.state.app.menuList;
+    },
+    authority(){
+      let authority = [];
+      if(JSON.parse(localStorage.getItem('authority'))||this.$store.state.app.authority){
+        authority = JSON.parse(localStorage.getItem('authority'))||this.$store.state.app.authority;
+      }
+      return authority;
     },
     pageTagsList() {
       return this.$store.state.app.pageOpenedList; // 打开的页面的页面对象
@@ -143,7 +174,9 @@ export default {
       setInterval(() => {
         if(Cookies.get('user')) this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
       },10000*12)
-      
+      if(this.$store.state.app.authority.length === 0){
+        this.$store.commit('setAutority',this.authority);
+      }
       // var websocaket =null;
 		 	// if('WebSocket' in window){
 			// 	 websocaket = new WebSocket("ws://localhost:8080/WebSockt/WebSocketTest");//用于创建 WebSocket 对象。WebSocketTest对应的是java类的注解值
@@ -184,7 +217,10 @@ export default {
         this.$router.push({
           name: "login"
         });
-        this.$store.commit('setWorkBenchData',[]);
+        this.$store.commit('resetWorkBenchData');
+        let authority = [];
+        localStorage.setItem('authority',JSON.stringify(authority));//本地保存列表
+        this.$store.commit('setAutority',authority);//更新登录列表
         this.$notify.closeAll();
       }
     },

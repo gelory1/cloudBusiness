@@ -441,7 +441,6 @@ export default {
           ]
         }
         this.$http.XLCONTRACT(req).then(response => {
-          alert(JSON.stringify(response))
           let data = JSON.parse(JSON.stringify(this.data));
           data.data.signUserAmount = this.formValidate.signUserAmount;
           data.data.projectManager = this.formValidate.projectManager;
@@ -504,7 +503,7 @@ export default {
         typeid: 26015,
         data: [
           {
-            customerNo: this.data.data.customerNo||''
+            contractNo: this.data.data.contractNo||''
           }
         ]
       };

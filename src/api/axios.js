@@ -46,6 +46,10 @@ const workflow = {
     GetLOGIN (params) {
         return axios.post('/public/api/xlselect/login', params);
     },
+    // 权限
+    AUTHORITY (params) {
+        return axios.post('/public/api/xloaconnect/query', params);
+    },
     // 设备资产查询
     PostXLASSETS (params) {
         return axios.post('/public/api/xlassets/query', params);

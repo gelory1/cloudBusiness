@@ -105,7 +105,7 @@
               <div v-show="moreShow" class="more">
                 <p @click="addkpClick">新增开票信息</p>
                 <p @click="exportSelect">导出所选结果</p>
-                <p><a :href="exportUrl === ''?'#':exportUrl" @click="exportAll" style="color:#495060">导出全部客户</a></p>
+                <p><a :href="exportUrl === ''||this.isFinance||this.isCooperative?'#':exportUrl" @click="exportAll" style="color:#495060">导出全部客户</a></p>
               </div>
             </span>
           </div>
@@ -200,6 +200,10 @@ export default {
                           click: () => {
                                 this.$store.commit('selectedCustom',params.row);
                                 localStorage.setItem('customInfo',JSON.stringify(params.row));
+                                if(!this.$store.state.app.authority.find(a => a.id === 701)){
+                                  this.$Message.error('权限不足！');
+                                  return;
+                                }
                                 this.$router.push({ path: "/customermanage/see" });
                             }
                         }
@@ -222,12 +226,24 @@ export default {
                        if (value == "查看") {
                         this.$store.commit('selectedCustom',params.row);
                         localStorage.setItem('customInfo',JSON.stringify(params.row));
+                        if(!this.$store.state.app.authority.find(a => a.id === 701)){
+                          this.$Message.error('权限不足！');
+                          return;
+                        }
                         this.$router.push({ path: "/customermanage/see" });
                       } else if (value == "编辑") {
                         this.$store.commit('selectedCustom',params.row);
                         localStorage.setItem('customInfo',JSON.stringify(params.row));
+                        if(!this.$store.state.app.authority.find(a => a.id === 702)){
+                          this.$Message.error('权限不足！');
+                          return;
+                        }
                         this.$router.push({ path: "/customermanage/edit" });
                       } else if (value == "删除") {
+                        if(!this.$store.state.app.authority.find(a => a.id === 702)){
+                          this.$Message.error('权限不足！');
+                          return;
+                        }
                         this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
                           confirmButtonText: '确定',
                           cancelButtonText: '取消',
@@ -521,6 +537,10 @@ export default {
       if(!this.filterStatus) $(".cor").css({ color: "#000000" });
     },
     addkpClick() {
+      if(!this.$store.state.app.authority.find(a => a.id === 704)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$router.push({ path: "/customermanage/add-informat" });
     },
     selectChange(item){
@@ -534,6 +554,10 @@ export default {
       })
     },
     addClick(){
+      if(!this.$store.state.app.authority.find(a => a.id === 703)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$store.commit('selectedCustom',{});
       localStorage.setItem('customInfo',JSON.stringify({}));
       this.$router.push({ path: "/customermanage/new" });
@@ -581,6 +605,10 @@ export default {
       this.getCustomList(1);
     },
     exportSelect(){
+      if(this.isFinance||this.isCooperative){
+        this.$Message.error('权限不足！');
+        return;
+      }
       if(this.customList_data.filter(data => data._checked === true).length === 0){
         this.$Message.error('请先选择需要导出的数据！');
         return;
@@ -593,6 +621,10 @@ export default {
       this.moreClick();
     },
     exportAll(){
+      if(this.isFinance||this.isCooperative){
+        this.$Message.error('权限不足！');
+        return;
+      }
       if(this.exportUrl === ''){
         this.$Message.error('导出失败，请稍后重试！');
         return;
@@ -600,6 +632,9 @@ export default {
       this.moreClick();
     },
     export(){
+      if(this.isFinance||this.isCooperative){
+        return;
+      }
       let request = {
         data:[
           {
@@ -621,6 +656,18 @@ export default {
     this.getProvinces();
     this.getManagecompanys(); 
     this.export();  
+  },
+  computed:{
+    isFinance(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '财务');
+      }
+    },
+    isCooperative(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
+      }
+    }
   },
   watch:{
     'filterItem.empower_province':function(nv){

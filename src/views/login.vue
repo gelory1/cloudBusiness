@@ -76,15 +76,52 @@ export default {
               localStorage.setItem('accountName',response.data.accountName);
               this.$store.commit('setAccountId',response.data.accountId);
               this.$store.commit('setAccountName',response.data.accountName);
-              this.$router.push({
-                name: "home_index"
-              });
+              this.getAuthority();
             } else {
               this.$Message.error("用户名或密码不正确");
             }
           }
         });
       });
+    },
+    getAuthority(){
+      let request = {
+        typeid: 22101,
+        accountid: this.$store.state.user.accountId
+      };
+      this.$http.AUTHORITY(request).then(() => {        
+      },res => {
+        let roleMap = {
+          19:'超级管理员',
+          20:'业务管控',
+          18:'财务',
+          17:'合作伙伴'
+        }
+        if(res.data.code === 0){
+          let role = [];
+          res.data.role.forEach(r => {
+            if(roleMap[r[0]]){
+              role.push(roleMap[r[0]]);
+            }
+          })
+          if(role.indexOf('超级管理员') !== -1){
+            role = ['超级管理员'];
+          }
+          let authority = [];
+          res.data.priv.forEach(p => {
+            authority.push({
+              id:p[0],
+              path:p[1],
+              role:role
+            });
+          });
+          localStorage.setItem('authority',JSON.stringify(authority));//本地保存列表
+          this.$store.commit('setAutority',authority);//更新登录列表
+          this.$router.push({
+            name: "home_index"
+          });
+        }
+      })
     }
   }
 };

@@ -40,8 +40,10 @@ router.beforeEach((to, from, next) => {
             if (curRouterObj && curRouterObj.title) {
                 Util.title(curRouterObj.title, router.app);
             }
-            if (curRouterObj && curRouterObj.access !== undefined) { // 需要判断权限的路由
-                if (curRouterObj.access === parseInt(Cookies.get('access'))) {
+            console.log(curRouterObj);
+            if (curRouterObj && curRouterObj.access) { // 需要判断权限的路由
+                let authority = JSON.parse(localStorage.getItem('authority'));
+                if (authority.find(a => a.path === authority.path)) {
                     Util.toDefaultPage([otherRouter, otherRouter1, otherRouterOrder,assetRouter, ...appRouter], to.name, router, next); // 如果在地址栏输入的是一级菜单则默认打开其第一个二级菜单的页面
                 } else {
                     next({

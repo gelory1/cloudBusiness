@@ -73,7 +73,7 @@
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px;margin-top:0px;">
         <Tabs ref="tab" v-model="tabName">
           <TabPane v-for="item in orderStatus" :label="item.type" :name="item.name" :key="item.name">
-            <Table :columns="order_columns" :data="order_data[item.index]" size="small" @on-row-click="openOrder" :loading="loading"></Table>
+            <Table :columns="order_columns" :data="order_data[item.index]" size="small" @on-selection-change="changeSelection" @on-row-click="openOrder" :loading="loading"></Table>
              <Page
               :current.sync="pageNum"
               :total="sum"
@@ -406,13 +406,41 @@ export default {
       salesTypes,
       companys:[],
       filterStatus:false,
-      deviceTabName: 'name1'
+      deviceTabName: 'name1',
+      selectOrderList:{}
     };
   },
   methods: {
     plfhClick(){
-       this.$router.push({
-        path: "/assetmanage/delivery-manage/newbuild"
+      let list = [];
+      let status = false;
+      if(!this.$store.state.app.authority.find(a => a.id === 1005)){
+        this.$Message.error('权限不足！');
+        return;
+      }
+      for(let key in this.selectOrderList){
+        this.selectOrderList[key].forEach(s => {
+          if(s.type ==='备货订单'){
+            status = true;
+          }else{
+            list.push(s.data.order_id);
+          }
+        })
+      }
+      if(list.length === 0){
+        if(status){
+          this.$Message.error('只能添加合同订单，请重新选择！');
+          return;
+        }
+        this.$Message.error('请先选择需要发货的订单！');
+        return;
+      }
+      if(status){
+        this.$Message.info('只能添加合同订单，已为您自动过滤掉备货订单！');
+      }
+      this.$router.push({
+        path: "/assetmanage/delivery-manage/newbuild",
+        query:{order:JSON.stringify(list)}
       });
     },
     selectedDown(side) {
@@ -462,6 +490,11 @@ export default {
         this.sum = res.data.result.data[0].sum;
         res.data.result.data[0].orderList.forEach(data => {
           let item = {};
+          if((this.selectOrderList[this.pageNum]||[]).find(s => s.data.order_id === data.order_id)){
+            item._checked = true;
+          }else{
+            item._checked = false;
+          }
           item.orderNO = data.order_no;
           item.type = this.businessMap[data.order_type];
           item.time = data.order_time;
@@ -549,10 +582,20 @@ export default {
       }
     },
     addOrder(){
+      if(!this.$store.state.app.authority.find(a => a.id === 901)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$router.push('/ordermanage/create');
     },
     toPay(){
       // console.log(111);
+    },
+    changeSelection(selection){
+      if(!this.selectOrderList[this.pageNum]){
+        this.selectOrderList[this.pageNum] = [];
+      }
+      this.selectOrderList[this.pageNum] = selection;
     }
   },
   mounted(){
