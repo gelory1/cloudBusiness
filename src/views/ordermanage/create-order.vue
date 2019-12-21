@@ -578,8 +578,8 @@ export default {
             }
           }
         } else {
-          // this.$Message.error("无添加设备或发货数量为0");
-          // return;
+          this.$Message.error("无添加设备或发货数量为0");
+          return;
         }
       } else {
         this.$Message.error("请填写完整的信息！");
@@ -631,7 +631,7 @@ export default {
         response => {
           if (response.data.code !== 0) return;
           this.$Message.success("添加成功！");
-          (this.formValidate = {
+          this.formValidate = {
             name: "",
             orderType: "",
             customer: {
@@ -647,7 +647,7 @@ export default {
               index: "",
               value: ""
             }
-          }),
+          };
             this.$set(
               this.formValidate.customer,
               "index",
@@ -659,7 +659,7 @@ export default {
         error => {
           if (error.data.code === 0) {
             this.$Message.success("添加成功！");
-            (this.formValidate = {
+            this.formValidate = {
               name: "",
               orderType: "",
               customer: {
@@ -675,7 +675,7 @@ export default {
                 index: "",
                 value: ""
               }
-            }),
+            }
               this.$set(
                 this.formValidate.customer,
                 "index",
@@ -687,12 +687,14 @@ export default {
               this.customs[0].value
             );
             this.$router.push("/ordermanage/ordermanage");
+          }else if(error.data.message){
+            this.$Message.error(error.data.message);
           }
         }
       );
     },
     onCancel() {
-      (this.formValidate = {
+      this.formValidate = {
         name: "",
         orderType: "",
         customer: {
@@ -708,8 +710,8 @@ export default {
           index: "",
           value: ""
         }
-      }),
-        this.$set(this.formValidate.customer, "index", this.customs[0].index);
+      };
+      this.$set(this.formValidate.customer, "index", this.customs[0].index);
       this.$set(this.formValidate.customer, "value", this.customs[0].value);
       this.$router.push("/ordermanage/ordermanage");
     }
@@ -814,6 +816,9 @@ export default {
       if (!nv) {
         this.addData = {};
       }
+    },
+    $route(){
+      this.addDevices(1);
     }
   }
 };

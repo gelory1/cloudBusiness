@@ -231,6 +231,9 @@ const app = {
         },
         setNotifyData (state, data) {
             state.notifyData = data;
+        },
+        resetShowNotice (state) {
+            state.showNotice = false;
         }
     },
     actions: {
