@@ -4,7 +4,7 @@
       <div>
         <div class="gz_left left bor" style="min-height:700px;">
           <!-- <Input icon="ios-search" placeholder="请输入。。。。" class="gz_input"></Input> -->
-          <Tabs value="name1" v-model="tabName" >
+          <Tabs label="待办工作" v-model="tabName" >
             <TabPane :label="label" name="name1">
               <Table
                 height="720"
@@ -545,7 +545,7 @@ export default {
         {
           title: "类型",
           key: "type",
-          width: '100',
+          width: '150',
           align: 'center'
         },
         {
@@ -558,6 +558,12 @@ export default {
           title: "截至日期",
           key: "jztime",
           width: '100',
+          align: 'center'
+        },
+        {
+          title: " ",
+          key: "",
+          width: '1',
           align: 'center'
         }
       ],
@@ -584,7 +590,7 @@ export default {
         {
           title: "类型",
           key: "type",
-          width: '100',
+          width: '150',
           align: 'center'
         },
         {
@@ -597,6 +603,12 @@ export default {
           title: "日期",
           key: "duetime",
           width: '150',
+          align: 'center'
+        },
+        {
+          title: " ",
+          key: "",
+          width: '1',
           align: 'center'
         }
       ],
@@ -626,7 +638,7 @@ export default {
         {
           title: "类型",
           key: "type",
-          width: '100',
+          width: '150',
           align: 'center'
         },
         {
@@ -658,6 +670,12 @@ export default {
               )
             ]);
           }
+        },
+        {
+          title: " ",
+          key: "",
+          width: '1',
+          align: 'center'
         }
       ],
       fq_data: [
