@@ -866,27 +866,27 @@ export default {
           key: "jldw",
           align: "center",
         },
-        {
-          title:"发货批次",
-          key:"delivery_batch",
-          align:"center",      
-          render:(h,params)=>{
-              return h('Select',{
-                props:{
-                  placeholder:"未设置",
-                  size:"small"
-                }
-              },
-              this.deliveryBatch.map((item)=>{
-                  return h('Option',{
-                    props:{
-                      value:item.value,
-                      label:item.name
-                    }
-                  })
-              }))
-            }
-        },
+        // {
+        //   title:"发货批次",
+        //   key:"delivery_batch",
+        //   align:"center",      
+        //   render:(h,params)=>{
+        //       return h('Select',{
+        //         props:{
+        //           placeholder:"未设置",
+        //           size:"small"
+        //         }
+        //       },
+        //       this.deliveryBatch.map((item)=>{
+        //           return h('Option',{
+        //             props:{
+        //               value:item.value,
+        //               label:item.name
+        //             }
+        //           })
+        //       }))
+        //     }
+        // },
         {
           title: "数量",
           key: "sl",
