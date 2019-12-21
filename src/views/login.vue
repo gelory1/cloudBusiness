@@ -95,11 +95,12 @@ export default {
           19:'超级管理员',
           20:'业务管控',
           18:'财务',
-          17:'合作伙伴'
+          17:'合作伙伴',
+          22:'销售人员'
         }
         if(res.data.code === 0){
           let role = [];
-          res.data.role.forEach(r => {
+          (res.data.role||[]).forEach(r => {
             if(roleMap[r[0]]){
               role.push(roleMap[r[0]]);
             }
@@ -108,7 +109,7 @@ export default {
             role = ['超级管理员'];
           }
           let authority = [];
-          res.data.priv.forEach(p => {
+          (res.data.priv||[]).forEach(p => {
             authority.push({
               id:p[0],
               path:p[1],
@@ -117,6 +118,8 @@ export default {
           });
           localStorage.setItem('authority',JSON.stringify(authority));//本地保存列表
           this.$store.commit('setAutority',authority);//更新登录列表
+          this.$store.commit('resetWorkBenchData');
+          this.$store.commit('resetShowNotice');
           this.$router.push({
             name: "home_index"
           });

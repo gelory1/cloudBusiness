@@ -9,16 +9,16 @@
                 </p>
             </div>
             <Button :style="`position:absolute;margin-top:30px;right:30px;top:30px;background-color:${(statusColorMap[selectedOrder.status]||{}).backgroundColor};
-                color:${(statusColorMap[selectedOrder.status]||{}).color}`">
+                color:${(statusColorMap[selectedOrder.status]||{}).color}`" v-show="selectedOrder.status !== '待支付'">
                 {{selectedOrder.status}}
             </Button>
-            <!-- <Poptip ref="popTip" trigger="hover" content="去支付" placement="bottom" style="position:absolute;right:30px;top:30px;text-align:center;" v-show="selectedOrder.status === '待支付'">
+            <Poptip ref="popTip" trigger="hover" content="去支付" placement="bottom" style="position:absolute;right:30px;top:30px;text-align:center;" v-show="selectedOrder.status === '待支付'">
                 <Button :style="`margin-top:30px;background-color:${(statusColorMap[selectedOrder.status]||{}).backgroundColor};
                 color:${(statusColorMap[selectedOrder.status]||{}).color}`">
                 {{selectedOrder.status}}
                 </Button>
             </Poptip>
-           -->
+          
             <div style="position:relative;">
                 <div :style="{
                 height: 28 + 'px',
@@ -55,17 +55,21 @@
                 <span class="jbleft">销售类型：</span>
                 <span class="jbright">{{selectedOrder.salesType}}</span>
             </div>
-            <div>
+            <div v-if="selectedOrder.type ==='合同订单'">
                 <span class="jbleft">客户名称：</span>
                 <span class="jbright">{{selectedOrder.customName}}</span>
             </div>
             </div>
             <div style="line-height:40px;width:50%;float:right">
-            <div>
+            <div v-if="selectedOrder.type !=='合同订单'">
+                <span class="jbleft">客户名称：</span>
+                <span class="jbright">{{selectedOrder.customName}}</span>
+            </div>
+            <div v-if="selectedOrder.type==='合同订单'">
                 <span class="jbleft">合同编号：</span>
                 <span class="jbright">{{selectedOrder.contractNO}}</span>
             </div>
-            <div>
+            <div v-if="selectedOrder.type==='合同订单'">
                 <span class="jbleft">合同主体：</span>
                 <span class="jbright">{{subjectName[selectedOrder.contract_subject]}}</span>
             </div>
