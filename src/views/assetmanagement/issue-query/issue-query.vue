@@ -268,7 +268,7 @@
                 highlight-row
                 @on-current-change="rkbhClick"
                 size="small"
-                style="margin:10px 0 0 20px;overflow:auto"
+                style="margin:10px 0 0 20px;overflow:auto;min-height:400px;"
               ></Table>
             </div>
             <div style="width:83%;float:right;">
@@ -276,7 +276,7 @@
                 :columns="device_columns"
                 :data="indevice_data"
                 size="small"
-                style="margin:10px 0 0 0;overflow:auto"
+                style="margin:10px 0 0 0;overflow:auto;min-height:400px;"
               ></Table>
             </div>
           </TabPane>
@@ -366,7 +366,7 @@
                 disabled-hover
                 highlight-row
                 @on-row-click="ckbhClick"
-                style="margin:10px 0 0 20px;overflow:auto"
+                style="margin:10px 0 0 20px;overflow:auto;min-height:400px;"
               ></Table>
             </div>
             <div style="width:83%;float:right;">
@@ -375,7 +375,7 @@
                 :columns="device_columns"
                 :data="outdevice_data"
                 size="small"
-                style="margin:10px 0 0 0;overflow:auto"
+                style="margin:10px 0 0 0;overflow:auto;min-height:400px;"
               ></Table>
             </div>
           </TabPane>
@@ -864,8 +864,29 @@ export default {
         {
           title: "计量单位",
           key: "jldw",
-          align: "center"
+          align: "center",
         },
+        // {
+        //   title:"发货批次",
+        //   key:"delivery_batch",
+        //   align:"center",      
+        //   render:(h,params)=>{
+        //       return h('Select',{
+        //         props:{
+        //           placeholder:"未设置",
+        //           size:"small"
+        //         }
+        //       },
+        //       this.deliveryBatch.map((item)=>{
+        //           return h('Option',{
+        //             props:{
+        //               value:item.value,
+        //               label:item.name
+        //             }
+        //           })
+        //       }))
+        //     }
+        // },
         {
           title: "数量",
           key: "sl",
@@ -957,6 +978,16 @@ export default {
       },
       selectedprocode: "",
       selectedWhid: "",
+      deliveryBatch:[
+          {
+            name:"仓库1",
+            value:"1"
+          },
+          {
+            name:"仓库2",
+            value:"2"
+          },
+      ],
       sblb_columns: [
         {
           title: "条码",
@@ -1407,5 +1438,8 @@ export default {
 }
 .ivu-select-dropdown.ivu-select-dropdown-transfer.ivu-auto-complete {
   max-height: 400px;
+}
+.ivu-select-single .ivu-select-selection .ivu-select-placeholder{
+ color:orange
 }
 </style>

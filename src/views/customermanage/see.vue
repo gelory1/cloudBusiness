@@ -35,7 +35,7 @@
             <span class="icon">
               <Icon type="android-pin"></Icon>
             </span>
-            <span v-show="!data.level||data.city.length===0" style="color:#000000;">暂无</span>
+            <span v-show="!data.city||data.city.length===0" style="color:#000000;">暂无</span>
             <span>{{data.city}}</span>
           </div>
           <div>
@@ -145,12 +145,18 @@
                   style="margin:0 5px"
                 >({{item.platform_id}}){{item.platform_name}}</span>
               </section>
-              <section style="width:40%;float:left">
-                <p class="sele2">收货地址：</p>
-                <span class></span>
+              <section style="width:20%;float:left">
+                <p class="sele2">授权期限</p>
+                <!-- <p  style="color:#000000;">暂无</p> -->
+                <p></p>
+              </section>
+              <section style="width:20%;float:left">
+                <p class="sele2">邮政编码：</p>
+                <p v-show="!((data||{}).data||{}).post_code||((data||{}).data||{}).post_code.length===0" style="color:#000000;">暂无</p>
+                <p>{{((data||{}).data||{}).post_code}}</p>
               </section>
             </div>
-            <div class="select2">
+            <div class="select2" v-if="data.nature == '合作伙伴'">
               <section style="width:90%;float:left;margin-top:30px;">
                 <p class="sele2">合作协议（附件）：</p>
                 <div>
@@ -336,6 +342,7 @@ export default {
   },
   mounted() {
     this.getCity();
+
   },
   computed: {
     data() {

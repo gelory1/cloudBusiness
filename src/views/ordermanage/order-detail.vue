@@ -85,7 +85,7 @@
             </div>
             </div>
         </div>
-        <div style="margin-left:40px;">
+        <div style="margin-left:40px;"  v-if="this.selectedOrder.type == '备货订单'">
               <section style="width:90%;float:left;">
                 <p style="color:#8d8d8d;margin-top:10px;">备货申请协议（附件）：</p>
                 <div>
@@ -399,5 +399,5 @@ export default {
 }
 </script>
 <style scoped>
-
+@import "../contractmanage/contract.css";
 </style>

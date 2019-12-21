@@ -71,7 +71,7 @@
                 disabled-hover
                 highlight-row
                 @on-current-change="changeRow"
-                style="margin:20px 0 0 0px;overflow:auto"
+                style="margin:20px 0 0 0px;overflow:auto;min-height:400px;"
               ></Table>
             </div>
             <div style="width:83%;float:right;">
@@ -90,7 +90,7 @@
                 :columns="device_columns"
                 :data="device_data"
                 size="small"
-                style="margin:0px 0 0 0;overflow:auto"
+                style="margin:0px 0 0 0;overflow:auto;min-height:400px"
               ></Table>
             </div>
           </div>
@@ -121,6 +121,16 @@ export default {
           key: "orderNo"
         }
       ],
+      deliveryBatch:[
+          {
+            name:"仓库1",
+            value:"1"
+          },
+          {
+            name:"仓库2",
+            value:"2"
+          },
+      ],
       device_columns: [
         {
           title: "存货编码",
@@ -142,6 +152,31 @@ export default {
           key: "product_unit",
           align: "center"
         },
+        // {
+        //   title:"发货批次",
+        //   key:"delivery_batch",
+        //   align:"center",      
+        //   render:(h,params)=>{
+        //       return h('Select',{
+        //         props:{
+        //           placeholder:"未设置",
+        //           size:"small"
+        //         },
+        //         style:{
+        //           // position:'relative'
+        //         }
+        //       },
+        //       this.deliveryBatch.map((item)=>{
+        //           return h('Option',{
+        //             props:{
+        //               placeholder:"未设置",
+        //               value:item.value,
+        //               label:item.name
+        //             }
+        //           })
+        //       }))
+        //     }
+        // },
         {
           title: "数量",
           key: "quantity_shipped",
@@ -329,4 +364,7 @@ export default {
 <style>
 @import "../assetmanage.css";
 @import "../../customermanage/customer.css";
+.ivu-select-single .ivu-select-selection .ivu-select-placeholder{
+ color:orange
+}
 </style>

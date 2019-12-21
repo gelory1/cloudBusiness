@@ -1,6 +1,6 @@
 <template>
   <div class="addinformat">
-    <Layout class="layout" style="min-height:700px;">
+    <Layout class="layout" style="min-height:800px;">
       <p class="div_p">开票信息</p>
       <Form
         ref="formAddinformat"

@@ -112,7 +112,7 @@
                 <el-cascader clearable v-model="formValidate.salesman" :options="salesList" filterable @expand-change="changeCompony" :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
             </Col>
-            <Col span="12" v-if="isFriend" style="">
+            <Col span="12" v-if="isFriend">
             <FormItem label="授权期限" class="con-right"  style="position:relative;">
               <span style="color:red;position:absolute;left:-70px;top:2px;">*</span>
                 <Row>
@@ -543,7 +543,8 @@ export default {
         empower_city: [],
         protocolNumber: "",
         sqstartTime: "",
-        sqendTime:""
+        sqendTime:"",
+        company:""
       },
       startOption1: {
         disabledDate: time => {
@@ -594,6 +595,14 @@ export default {
           }
         ],
         city: [
+          {
+            required: true,
+            message: "请选择城市",
+            type: "array",
+            trigger: "change"
+          }
+        ],
+        empower_city: [
           {
             required: true,
             message: "请选择城市",
@@ -870,6 +879,7 @@ export default {
           if (
             this.formValidate.level.index == "" ||
             this.formValidate.city.length < 2 ||
+            this.formValidate.empower_city.length < 2 ||
             this.formValidate.nature.index == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
