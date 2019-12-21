@@ -177,6 +177,7 @@ export default {
       if(this.$store.state.app.authority.length === 0){
         this.$store.commit('setAutority',this.authority);
       }
+      this.getRegions();
       // var websocaket =null;
 		 	// if('WebSocket' in window){
 			// 	 websocaket = new WebSocket("ws://localhost:8080/WebSockt/WebSocketTest");//用于创建 WebSocket 对象。WebSocketTest对应的是java类的注解值
@@ -257,6 +258,28 @@ export default {
     },
     scrollBarResize() {
       this.$refs.scrollBar.resize();
+    },
+    getRegions(){
+      let request = {
+        typeid: 27012,
+        data:[{}]
+      }
+      this.$http.XLSELECT(request).then(res => {
+        let regions = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 1);
+        let arr2 = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 2);
+        let arr3 = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 3);
+        regions.forEach(a1 => {
+          a1.children = arr2.filter(a2 => a2.name.indexOf(a1.name) !==-1);
+          a1.children.forEach(a2 => {
+            a2.children = arr3.filter(a3 => a3.name.indexOf(a2.name) !== -1);
+            a2.name = a2.name.split(' ')[a2.name.split(' ').length -1];
+            a2.children.forEach(a3 => {
+              a3.name = a3.name.split(' ')[a3.name.split(' ').length -1];
+            })
+          })
+        })
+        localStorage.setItem('regions',JSON.stringify(regions));
+      });
     }
   },
   watch: {

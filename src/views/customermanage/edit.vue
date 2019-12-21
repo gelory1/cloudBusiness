@@ -46,7 +46,7 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <el-cascader clearable v-model="formValidate.city" :options="options2" filterable @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small" style="width:350px;" ></el-cascader>
+                <el-cascader clearable v-model="formValidate.city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name',checkStrictly:true}" size="small" style="width:350px;" ></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -102,7 +102,7 @@
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="授权资质" prop="sqzz" class="con-right">
-                <el-cascader clearable v-model="formValidate.empower_city" :options="options1" filterable @expand-change="handleChangeSq" show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
+                <el-cascader clearable v-model="formValidate.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name',multiple: true,checkStrictly:true}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -168,8 +168,8 @@
                   </div>
                 </section>
               </div>
-              <p style="font-size:12px;color:#495060;margin-left:-10px;float:left;" v-if="!uploadLoading&&file.name === ''">合作协议（附件）</p>
-              <Upload ref="upload" action="/public/api/xlcontract/uploadFile" v-show="!uploadLoading&&file.name === ''" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
+              <p style="font-size:12px;color:#495060;margin-left:-10px;float:left;" v-if="!uploadLoading&&file.name === ''&&isFriend">合作协议（附件）</p>
+              <Upload ref="upload" action="/public/api/xlcontract/uploadFile" v-show="!uploadLoading&&file.name === ''&&isFriend" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
                 <Button type="text" icon="plus" style="color:#4a9af5;margin:-5px 0 0 -10px;;">添加附件</Button>
               </Upload>
               <!-- <p v-if="uploadLoading">上传中...</p> -->
@@ -831,7 +831,9 @@ export default {
       contactStatus: "new",
       customer_id: "",
       dd:"",
+      ddArea:"",
       sqCascader:"",
+      sqArea:"",
       newLocalData: {},
       provinces_county: [],
       salesList: [],
@@ -849,18 +851,12 @@ export default {
       postData:{
         accountId:'',
         customerNo:''
-      }
+      },
+      deleteStatus: false,
+      uploadStatus: false
     };
   },
   methods: {
-    handleChange(value) {
-      this.dd = value[0];
-      this.getCitys();
-    },
-    handleChangeSq(value){
-      this.sqCascader = value[0];
-      this.getEmpowerCitys();
-    },
     changeCompony(value){
       this.formValidate.salesman = [];
       this.manageCompany = value[0];
@@ -895,6 +891,16 @@ export default {
       this.$router.go(-1);
     },
     editCustomer() {
+      let startTime = this.formValidate.sqstartTime.getFullYear()+'-' + (this.formValidate.sqstartTime.getMonth() + 1) +'-' + this.formValidate.sqstartTime.getDate();
+      let endTime = this.formValidate.sqendTime.getFullYear()+'-' + (this.formValidate.sqendTime.getMonth() + 1) +'-' + this.formValidate.sqendTime.getDate();
+      let empowerList = [];
+      this.formValidate.empower_city.forEach(e => {
+        empowerList.push({
+          empowerPrivince:e[0],
+          empowerCity:e[1],
+          empowerArea:e[2],
+        })
+      })
       let request = {
         typeid: this.isNewCreate ? 25002 : 25006,
         data: [
@@ -908,9 +914,9 @@ export default {
             customerNature: this.formValidate.nature.index,
             province: this.formValidate.city[0],
             city: this.formValidate.city[1],
-            empowerProvince: this.formValidate.empower_city[0],
-            empowerCity: this.formValidate.empower_city[1],
-            manageCompany: this.formValidate.salesman[0],
+            area: this.formValidate.city[2]?this.formValidate.city[2]:0,
+            empowerList,
+            manageCompany: this.manageCompany,
             saleNo: this.formValidate.salesman[1]?this.formValidate.salesman[1]:-1,
             industry: this.formValidate.industry.index,
             mailAddress: this.formValidate.mail_address,
@@ -919,7 +925,9 @@ export default {
             customerAbbreviation: this.formValidate.customer_abbreviation,
             chargePerson: this.formValidate.charge_person,
             postCode: this.formValidate.post_code,
-            protocolNumber: this.formValidate.protocolNumber
+            protocolNumber: this.formValidate.protocolNumber,
+            empowerStartTime: startTime,
+            empowerEndTime: endTime,
           }
         ]
       };
@@ -964,11 +972,15 @@ export default {
         api
           .UPDATECUSTOMER(request)
           .then(response => {
-              if(this.file.name !== ''){
+            if(this.deleteStatus){
+              this.delete();
+            }else{
+              if(this.file.name !== ''&&this.uploadStatus){
                 this.postData.accountId = this.$store.state.user.accountId;
                 this.postData.customerNo = ((this.data||{}).data||{}).customer_no;
                 this.$refs.upload.post(this.file.file);
               }
+            }
               this.$Message.success("客户信息更新成功！");
               this.$router.push("/customermanage/customermanage");
           })
@@ -1093,7 +1105,7 @@ export default {
       };
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
-        
+        let citys = [];
         if(this.options2.length === 0){
           this.provinces.forEach(p => {
             let item = {
@@ -1105,7 +1117,21 @@ export default {
           })
         }
         if(this.options2.find(p => p.id === this.dd)){
-          this.$set(this.options2.find(p => p.id === this.dd),'children',res);
+          let child = [];
+          res.forEach(r => {
+            child.push({
+              id: r.id,
+              name: r.name,
+            })
+          })
+          this.$set(this.options2.find(p => p.id === this.dd),'children',child);
+          this.ddArea = (JSON.parse(
+            JSON.stringify(
+              this.provinces.find(
+                p => p.id === ((this.data || {}).data || {}).empower_province
+              ) || this.provinces[0]
+            )
+          )).id;
         }
         this.$nextTick(()=>{
           let city = (JSON.parse(
@@ -1270,7 +1296,29 @@ export default {
       this.getSales();
       this.getCitys();
       this.getEmpowerCitys();
-
+      if(((data || {}).data || {}).enclosure){
+        this.file.name = ((data || {}).data || {}).enclosure.fileName;
+        this.file.size = ((data || {}).data || {}).enclosure.fileSize;
+        this.file.size = this.file.size >= 1024?((this.file.size/1024).toFixed(2) + ' KB'): this.file.size >= 1024*1024?((this.file.size/(1024*1024)).toFixed(2) + ' MB'):(this.file.size + ' B');
+        this.file.uploadMan = ((data || {}).data || {}).enclosure.accountName;
+        this.file.date = ((data || {}).data || {}).enclosure.uploadTime;
+        this.file.address = ((data || {}).data || {}).enclosure.enclosureAddress;
+        this.file.id = (((data || {}).data || {}).enclosure||{}).enclosureId;
+        let fileArr = this.file.name.split('.');
+        let fileType = fileArr[fileArr.length-1];
+        this.file.img = require('../../images/upload/wenjian.png');
+        if(/^pdf$/.test(fileType)){
+          this.file.img = require('../../images/upload/pdf.png');
+        }else if(/^(txt|doc(x)?)$/.test(fileType)){
+          this.file.img = require('../../images/upload/docx.png');
+        }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
+          this.file.img = require('../../images/upload/jpg.png');
+        }else if(/^xl(s|t|am)$/.test(fileType)){
+          this.file.img = require('../../images/upload/excel.png');
+        };
+      }
+      this.formValidate.sqstartTime = ((data || {}).data || {}).empowerStartTime;
+      this.formValidate.sqendTime = ((data || {}).data || {}).empowerEndTime;
     },
     newContact() {
       this.contactStatus = "new";
@@ -1577,8 +1625,8 @@ export default {
     beforeUpload(file){
       this.$Message.success('上传成功！');
       this.file.name = file.name;
-      this.file.size = file.size >= 1024?((file.size/1024).toFixed(2) + ' KB'): file.size >= 1024*1024?((file.size/(1024*1024)).toFixed(2) + ' MB'):(file.size + ' B');;
-      this.file.date = new Date();
+      this.file.size = file.size >= 1024?((file.size/1024).toFixed(2) + ' KB'): file.size >= 1024*1024?((file.size/(1024*1024)).toFixed(2) + ' MB'):(file.size + ' B');
+      this.file.date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
       this.file.uploadMan = this.$store.state.user.accountName;
       this.file.file = file;
       let fileArr = file.name.split('.');
@@ -1593,59 +1641,41 @@ export default {
       }else if(/^xl(s|t|am)$/.test(fileType)){
         this.file.img = require('../../images/upload/excel.png');
       };
+      this.uploadStatus = true;
       return false;
     },
-    // uploadSuccess(res,file){
-    //   this.$Message.success('上传成功！');
-    //   this.file.name = file.name;
-    //   this.file.size = file.size = file.size >= 1024?((file.size/1024).toFixed(2) + ' KB'): file.size >= 1024*1024?((file.size/(1024*1024)).toFixed(2) + ' MB'):(file.size + ' B');;
-    //   this.file.date = new Date();
-    //   this.file.uploadMan = this.$store.state.user.accountName;
-    //   this.file.address = file.response.result.address;
-    //   this.file.id = file.response.result.id;
-    //   let fileArr = file.name.split('.');
-    //   let fileType = fileArr[fileArr.length-1];
-    //   this.file.img = require('../../images/upload/wenjian.png');
-    //   if(/^pdf$/.test(fileType)){
-    //     this.file.img = require('../../images/upload/pdf.png');
-    //   }else if(/^(txt|doc(x)?)$/.test(fileType)){
-    //     this.file.img = require('../../images/upload/docx.png');
-    //   }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
-    //     this.file.img = require('../../images/upload/jpg.png');
-    //   }else if(/^xl(s|t|am)$/.test(fileType)){
-    //     this.file.img = require('../../images/upload/excel.png');
-    //   };
-    // },
-    // uploadFail(){
-    //   this.$Message.error('上传失败，请重试！');
-    // },
-    deleteFile(){
+    delete(){
       let request = {
         "typeid": 26016,
         "data": [
           {
-            "enclosureId": (((this.data || {}).data || {}).file||{}).id + ','
+            "enclosureId": (((this.data || {}).data || {}).enclosure||{}).enclosureId + ','
           }
         ]
       };
+      this.$http.DELETECONTRACT(request).then(res => {
+        if(this.file.name !== ''){
+          this.postData.accountId = this.$store.state.user.accountId;
+          this.postData.customerNo = ((this.data||{}).data||{}).customer_no;
+          this.$refs.upload.post(this.file.file);
+        }
+      })
+    },
+    deleteFile(){
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(()=>{
-        if(isNewCreate){
-          this.$Message.success('删除成功！');
-          for(let key in this.file){
-            this.file[key] = '';
-          }
-          return;
+        if(this.isNewCreate){
+          
+        }else{
+          this.deleteStatus = true;
         }
-        this.$http.DELETECONTRACT(request).then(res => {
-          this.$Message.success('删除成功！');
-          for(let key in this.file){
-            this.file[key] = '';
-          }
-        })
+        this.$Message.success('删除成功！');
+        for(let key in this.file){
+          this.file[key] = '';
+        }
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -1663,6 +1693,9 @@ export default {
     },
     provinces() {
       return JSON.parse(localStorage.getItem("provinces")) || {};
+    },
+    regions() {
+      return JSON.parse(localStorage.getItem("regions")) || [];
     },
     companys() {
       return JSON.parse(localStorage.getItem("companys")) || {};

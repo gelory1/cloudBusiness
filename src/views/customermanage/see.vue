@@ -145,10 +145,9 @@
                   style="margin:0 5px"
                 >({{item.platform_id}}){{item.platform_name}}</span>
               </section>
-              <section style="width:20%;float:left">
+              <section style="width:20%;float:left" v-if="data.nature == '合作伙伴'">
                 <p class="sele2">授权期限</p>
-                <!-- <p  style="color:#000000;">暂无</p> -->
-                <p></p>
+                <p  style="color:#000000;">{{((data||{}).data||{}).empowerStartTime}}-{{((data||{}).data||{}).empowerEndTime}}</p>
               </section>
               <section style="width:20%;float:left">
                 <p class="sele2">邮政编码：</p>
@@ -160,19 +159,20 @@
               <section style="width:90%;float:left;margin-top:30px;">
                 <p class="sele2">合作协议（附件）：</p>
                 <div>
-                  <div class="fj1">
-                    <section class="fj_img1">
-                      <img src alt />
-                    </section>
-                    <section class="fj_sec1">
-                      <p>item.wjm</p>
-                      <p class="fj_p1">
-                        <span>item.size</span> 来自
-                        <span>item.where</span> |
-                        <span>item.time</span>
-                      </p>
-                    </section>
+                  <div class="fj1" v-if="file.name">
+                    <section class="fj_img">
+                        <img :src="file.img" alt style="width:20px;height:20px;margin:20px 40px" />
+                      </section>
+                      <section class="fj_sec1" style="margin:10px 0">
+                        <a :href="file.address"><p>{{file.name}}</p></a>
+                        <p class="fj_p1">
+                          <span>{{file.size}}</span> 来自
+                          <span>{{file.uploadMan}}</span> |
+                          <span>{{file.date}}</span>
+                        </p>
+                      </section>
                   </div>
+                  <p v-else>暂无</p>
                 </div>
               </section>
             </div>
@@ -361,6 +361,31 @@ export default {
           c => c.id === ((this.data || {}).data || {}).empower_city
         ) || {};
       return (province.name || "") + " " + (city.name || "");
+    },
+    file(){
+      let file = {};
+      if(this.data&&this.data.data&&this.data.data.enclosure){
+        file.name = ((this.data || {}).data || {}).enclosure.fileName;
+        file.size = ((this.data || {}).data || {}).enclosure.fileSize;
+        file.size = file.size >= 1024?((file.size/1024).toFixed(2) + ' KB'): file.size >= 1024*1024?((file.size/(1024*1024)).toFixed(2) + ' MB'):(file.size + ' B');
+        file.uploadMan = ((this.data || {}).data || {}).enclosure.accountName;
+        file.date = ((this.data || {}).data || {}).enclosure.uploadTime;
+        file.address = ((this.data || {}).data || {}).enclosure.enclosureAddress;
+        file.id = (((this.data || {}).data || {}).enclosure||{}).enclosureId;
+        let fileArr = file.name.split('.');
+        let fileType = fileArr[fileArr.length-1];
+        file.img = require('../../images/upload/wenjian.png');
+        if(/^pdf$/.test(fileType)){
+          file.img = require('../../images/upload/pdf.png');
+        }else if(/^(txt|doc(x)?)$/.test(fileType)){
+          file.img = require('../../images/upload/docx.png');
+        }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
+          file.img = require('../../images/upload/jpg.png');
+        }else if(/^xl(s|t|am)$/.test(fileType)){
+          file.img = require('../../images/upload/excel.png');
+        };
+      }
+      return file;
     }
   }
 };
