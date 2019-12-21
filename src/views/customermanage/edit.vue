@@ -1133,7 +1133,7 @@ export default {
             let item = {
               id:p.id,
               name:p.name,
-              children:[{id:-1,name:'未加载'}],
+              children:[],
             }
             this.salesList.push(item);
           })
