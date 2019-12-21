@@ -34,7 +34,7 @@
                     </div>
                 </div>
             </div>
-    </div>-->
+    </div> -->
     <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'250px'}">
       <div style="height:70px;background:#528DFF;">
         <div class="header-avator-con">
