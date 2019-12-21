@@ -132,7 +132,7 @@
                   :columns="outdevice_columns"
                   :data="outcksb_data"
                   size="small"
-                  style="margin:0px 0 0 0;overflow:auto"
+                  style="margin:0px 0 0 0;overflow:auto;min-height:350px;"
                   class="ne_but"
                 ></Table>
               </div>
@@ -331,6 +331,16 @@ export default {
           }
         }
       ],
+      deliveryBatch:[
+          {
+            name:"仓库1",
+            value:"1"
+          },
+          {
+            name:"仓库2",
+            value:"2"
+          },
+      ],
       cksb_columns: [
         {
           title: "存货编码",
@@ -364,6 +374,27 @@ export default {
               )
             ]);
           }
+        },{
+          title:"发货批次",
+          key:"delivery_batch",
+          align:"center",      
+          render:(h,params)=>{
+              return h('Select',{
+                props:{
+                  placeholder:"未设置",
+                  size:"small"
+                }
+              },
+              this.deliveryBatch.map((item)=>{
+                  return h('Option',{
+                    props:{
+                      placeholder:"未设置",
+                      value:item.value,
+                      label:item.name
+                    }
+                  })
+              }))
+            }
         },
         {
           title: "数量",
@@ -1105,5 +1136,8 @@ export default {
 .del .ivu-table-cell {
   padding-left: 8px;
   padding-right: 0px;
+}
+.ivu-select-single .ivu-select-selection .ivu-select-placeholder{
+ color:orange
 }
 </style>

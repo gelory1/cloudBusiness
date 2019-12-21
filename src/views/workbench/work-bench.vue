@@ -756,23 +756,8 @@ export default {
         yf: "23456"
       },
       morezf: [
-        {
-          skf: "曹操",
-          htbh: "456789",
-          dyzq: "账期56789",
-          yf: "23456"
-        },
-        {
-          skf: "曹操",
-          htbh: "456789",
-          dyzq: "账期56789",
-          yf: "23456"
-        }
       ],
       hkhz: {
-        skf: "5678",
-        yf: "56789",
-        dksj: "2020-5-90"
       },
       newgzRules: {
         rwlx: [

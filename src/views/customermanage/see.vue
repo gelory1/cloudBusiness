@@ -150,7 +150,7 @@
                 <span class></span>
               </section>
             </div>
-            <div class="select2">
+            <div class="select2" v-if="data.nature == '合作伙伴'">
               <section style="width:90%;float:left;margin-top:30px;">
                 <p class="sele2">合作协议（附件）：</p>
                 <div>

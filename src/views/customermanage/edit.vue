@@ -115,7 +115,7 @@
                 <Input v-model="formValidate.salesman" readonly />
               </FormItem>
             </Col>
-            <Col span="12" v-if="isFriend" style="">
+            <Col span="12" v-if="isFriend">
             <FormItem label="授权期限" class="con-right"  style="position:relative;">
               <span style="color:red;position:absolute;left:-70px;top:2px;">*</span>
                 <Row>
@@ -149,7 +149,17 @@
             </Col>
           </Row>
           <Row>
-            <Col>
+            <Col span="12" v-if="isFriend">
+              <FormItem label="运营公司" prop="company" :label-width="90">
+                <!-- <Select v-model="formValidate.salesman" clearable filterable>
+                      <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
+                </Select>-->
+                <Input v-model="formValidate.company" readonly />
+              </FormItem>
+            </Col>
+           </Row>
+          <Row>
+            <Col v-if="isFriend">
               <p style="font-size:12px;color:#495060;margin-left:-10px;float:left;">合作协议（附件）</p>
               <Upload action="//jsonplaceholder.typicode.com/posts/" style="display:inline;">
                 <Button type="text" icon="plus" style="color:#4a9af5;margin:-5px 0 0 -10px;;">添加附件</Button>
@@ -524,7 +534,8 @@ export default {
         empower_city: [],
         protocolNumber: "",
         sqstartTime: "",
-        sqendTime:""
+        sqendTime:"",
+        company:""
       },
       startOption1: {
         disabledDate: time => {
@@ -575,6 +586,14 @@ export default {
           }
         ],
         city: [
+          {
+            required: true,
+            message: "请选择城市",
+            type: "array",
+            trigger: "change"
+          }
+        ],
+        empower_city: [
           {
             required: true,
             message: "请选择城市",
@@ -875,6 +894,7 @@ export default {
           if (
             this.formValidate.level.index == "" ||
             this.formValidate.city.length < 2 ||
+            this.formValidate.empower_city.length < 2 ||
             this.formValidate.nature.index == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
