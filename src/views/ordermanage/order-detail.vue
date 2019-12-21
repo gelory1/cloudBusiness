@@ -118,14 +118,14 @@
                 <Table :columns="device_columns" :data="device_data2" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
         </Tabs>
-        <div class="dd_div" v-if="selectedOrder.type == '备货订单'" style="float:right;margin:10px 30px 0 0;">
+        <div class="dd_div" v-if="selectedOrder.type == '备货订单'" style="float:right;margin:15px 30px 0 0;font-size:13px;">
             <section>
-              <span class="dd_span">货款总计（元）</span>
-              <span>{{selectedOrder.order_big_amount}}</span>
+              <span class="dd_span" style="width:100px;display:inline-block">货款总计（元）</span>
+              <span style="color:#000000;font-weight:bold">{{selectedOrder.order_little_amount}}</span>
             </section>
             <section>
-              <span class="dd_span">大写</span>
-              <span>{{selectedOrder.order_little_amount}}</span>
+              <span class="dd_span" style="width:100px;display:inline-block">大写</span>
+              <span style="color:#000000;font-weight:bold">{{selectedOrder.order_big_amount}}</span>
             </section>
           </div>
       </div>
