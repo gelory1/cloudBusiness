@@ -601,9 +601,6 @@ export default {
   mounted(){
     this.getOrderList(1);
     this.getManagecompanys();
-    $('.ivu-poptip-body-content-inner').css('color','#2d8cf0');
-    $('.ivu-poptip-body-content-inner').css('cursor','pointer');
-    $('.ivu-poptip-body').on('click',() => {this.toPay()});
   },
   computed:{
     selectedTab(){

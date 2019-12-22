@@ -132,6 +132,7 @@
     </div>
 </template>
 <script>
+let $ = require("jquery");
 const statusColorMap = {
   '审批中':{
     backgroundColor: '#FDF6EC',
@@ -289,7 +290,23 @@ export default {
         }
     },
     mounted(){
-        // this.getDetail();
+        $('.ivu-poptip-body-content-inner').css('color','#2d8cf0');
+        $('.ivu-poptip-body-content-inner').css('cursor','pointer');
+        $('.ivu-poptip-body').on('click',() => {
+            let request = {
+                "typeid": 28009,
+                "data": [
+                    {
+                        "orderNo": this.orderNO,
+                        "orderAmount": this.selectedOrder.data.order_little_amount,
+                        "accountId": this.$store.state.user.accountId
+                    }	
+                ]
+            }
+            this.$http.SETWORKBENCH(request).then(res => {
+                this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+            })
+        });
     },
     methods:{
         getDetail(){

@@ -285,7 +285,7 @@ export default {
                 "on-change": a => {
                   params.row.num = a;
                   params.row.totalPrice = a * params.row.price;
-                  this.$set(this.deviceStore, params.index, params.row);
+                  this.$set(this.formValidate.devices_list, params.index, params.row);
                 }
               }
             });
@@ -421,7 +421,6 @@ export default {
       addsb_data: [],
       addData: {},
       addStore: {},
-      deviceStore: {},
       customs: [],
       cahceData: [],
       addsbmodal: false,
@@ -457,16 +456,6 @@ export default {
       this.addDevices(1);
     },
     addDevices(p) {
-      if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
-        for (let key in this.deviceStore) {
-          let index = this.formValidate.devices_list.findIndex(
-            d => d.productCode === this.deviceStore[key].productCode
-          );
-          if (index >= 0) {
-            this.formValidate.devices_list[index] = this.deviceStore[key];
-          }
-        }
-      }
       if (this.addStore.page && this.addData[this.addStore.page]) {
         for (let key in this.addStore) {
           let index = this.addData[this.addStore.page].findIndex(
@@ -568,15 +557,7 @@ export default {
     },
     onSubmit(name) {
       if (this.formValidate.store.index != "") {
-        if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
-          for (let key in this.deviceStore) {
-            let index = this.formValidate.devices_list.findIndex(
-              d => d.productCode === this.deviceStore[key].productCode
-            );
-            if (index >= 0) {
-              this.formValidate.devices_list[index] = this.deviceStore[key];
-            }
-          }
+        if (this.formValidate.devices_list && this.formValidate.devices_list.length > 0) {
         } else {
           this.$Message.error("无添加设备或发货数量为0");
           return;
@@ -778,28 +759,9 @@ export default {
         this.formValidate.devices_list &&
         this.formValidate.devices_list.length > 0
       ) {
-        if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
-          let obj = [];
-          for (let key in this.deviceStore) {
-            if (obj.length === 0) {
-              obj = this.formValidate.devices_list.filter(
-                d => d.productCode === this.deviceStore[key].productCode
-              );
-            } else {
-              obj = obj.filter(
-                d => d.productCode === this.deviceStore[key].productCode
-              );
-            }
-            price += this.deviceStore[key].totalPrice;
-          }
-          obj.forEach(data => {
-            price += data.totalPrice;
-          });
-        } else {
-          this.formValidate.devices_list.forEach(data => {
-            price += data.totalPrice;
-          });
-        }
+        this.formValidate.devices_list.forEach(data => {
+          price += data.totalPrice;
+        });
       }
       return price;
     },
