@@ -701,15 +701,9 @@ export default {
         this.filterItem[key] = "";
       }
     },
-<<<<<<< HEAD
-    addOrder() {
-      if (!this.$store.state.app.authority.find(a => a.id === 901)) {
-        this.$Message.error("权限不足！");
-=======
     addOrder(){
       if(!this.$store.state.app.authority.find(a => a.id === 901)||!(this.isCooperative||this.isSuper||this.isSale)){
         this.$Message.error('权限不足！');
->>>>>>> e3f3247f489a17e3dd8be074991384fc717ae40b
         return;
       }
       this.$router.push("/ordermanage/create");
@@ -727,20 +721,14 @@ export default {
   mounted() {
     this.getOrderList(1);
     this.getManagecompanys();
-<<<<<<< HEAD
     $(".ivu-poptip-body-content-inner").css("color", "#2d8cf0");
     $(".ivu-poptip-body-content-inner").css("cursor", "pointer");
     $(".ivu-poptip-body").on("click", () => {
       this.toPay();
     });
   },
-  computed: {
-    selectedTab() {
-=======
-  },
   computed:{
     selectedTab(){
->>>>>>> e3f3247f489a17e3dd8be074991384fc717ae40b
       let select = {};
       if (this.orderStatus.length > 0) {
         select = this.orderStatus.find(t => t.name === this.tabName);
@@ -759,8 +747,6 @@ export default {
         });
       }
       return orderStatus;
-<<<<<<< HEAD
-=======
     },
     isSuper(){
       if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
@@ -776,7 +762,6 @@ export default {
       if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
         return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
       }
->>>>>>> e3f3247f489a17e3dd8be074991384fc717ae40b
     }
   },
   watch: {
