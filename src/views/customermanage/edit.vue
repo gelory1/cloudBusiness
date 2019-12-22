@@ -950,8 +950,8 @@ export default {
             protocolNumber: this.formValidate.protocolNumber,
             empowerProvince:0,
             empowerCity:0,
-            empowerStartTime: startTime,
-            empowerEndTime: endTime,
+            empowerStartTime: startTime===''?undefined:startTime,
+            empowerEndTime: endTime===''?undefined:endTime,
           }
         ]
       };
