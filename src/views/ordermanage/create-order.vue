@@ -614,6 +614,7 @@ export default {
             orderAmount: this.totalPrice + "",
             whId: this.formValidate.store.index,
             addressName: this.formValidate.adress.value,
+            addressId: this.formValidate.adress.index,
             agentId: this.formValidate.customer.index,
             saleType: 2,
             orderType: 1,
