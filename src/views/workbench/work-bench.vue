@@ -1220,7 +1220,7 @@ export default {
             contractNo: params.row.data.workBenchContentObj.contractNo,
             orderNo: params.row.data.workBenchContentObj.orderNo,
             lastWorkbenchId: params.row.data.workBenchContentObj.lastWorkbenchId,
-            payAmount: params.row.data.workBenchContentObj.payAmount,
+            payAmount: params.row.data.workBenchContentObj.payAmount||params.row.data.workBenchContentObj.orderAmount,
             payTime: params.row.data.workBenchContentObj.payTime,
             payUnitName: params.row.data.workBenchContentObj.payUnitName,
             paymentPeriod: params.row.data.workBenchContentObj.paymentPeriod,
