@@ -1011,14 +1011,16 @@ export default {
       }
     },
     saveTicket(name) {
+      let status = false;
       this.$refs[name].validate((valid) => {
           if (valid) {
               // this.$Message.success('Success!');
           } else {
               this.$Message.error('请按照规定填写！');
-              return;
+              status = true;
           }
       });
+      if(status) return;
       let request1 = {
         typeid: 25007,
         data: [
