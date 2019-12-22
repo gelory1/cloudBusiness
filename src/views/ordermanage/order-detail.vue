@@ -88,21 +88,22 @@
         <div style="margin-left:40px;"  v-if="this.selectedOrder.type == '备货订单'">
               <section style="width:90%;float:left;">
                 <p style="color:#8d8d8d;margin-top:10px;">备货申请协议（附件）：</p>
-                <div>
+                <div v-if="selectedOrder.file.id">
                   <div class="fj1">
-                    <section class="fj_img1">
-                      <img src alt />
+                    <section class="fj_img">
+                      <img :src="selectedOrder.file.img" alt style="width:20px;height:20px;margin:20px 40px" />
                     </section>
-                    <section class="fj_sec1" style="margin-top:0px">
-                      <p>item.wjm</p>
+                    <section class="fj_sec1" style="margin-top:15px">
+                      <a :href="selectedOrder.file.address"><p>{{selectedOrder.file.name}}</p></a>
                       <p class="fj_p1">
-                        <span>item.size</span> 来自
-                        <span>item.where</span> |
-                        <span>item.time</span>
+                        <span>{{selectedOrder.file.size}}</span> 来自
+                        <span>{{selectedOrder.file.uploadMan}}</span> |
+                        <span>{{selectedOrder.file.date}}</span>
                       </p>
                     </section>
                   </div>
                 </div>
+                <p v-else>暂无</p>
               </section>
             </div>
         <div style="clear:both;overflow: hidden;">
@@ -203,7 +204,8 @@ export default {
             deviceTabName: 'name1',
             device_data: [],
             selectedOrder: {
-                data:{}
+                data:{},
+                file:{}
             },
             device_columns: [
                 {
@@ -293,6 +295,7 @@ export default {
         $('.ivu-poptip-body-content-inner').css('color','#2d8cf0');
         $('.ivu-poptip-body-content-inner').css('cursor','pointer');
         $('.ivu-poptip-body').on('click',() => {
+            $('.ivu-poptip-body').css('display','none');
             let request = {
                 "typeid": 28009,
                 "data": [
@@ -352,6 +355,30 @@ export default {
                 this.selectedOrder.contract_subject = data.contract_subject;
                 this.selectedOrder.address_detail = data.address_detail;
                 this.selectedOrder.status = this.statusMap[data.order_status];
+                if(data.order_enclosure&&data.order_enclosure.length>0){
+                    let file_size = data.order_enclosure[0].file_size;
+                    let fileArr = data.order_enclosure[0].file_name.split('.');
+                    let fileType = fileArr[fileArr.length-1];
+                    let img = require('../../images/upload/wenjian.png');
+                    if(/^pdf$/.test(fileType)){
+                        img = require('../../images/upload/pdf.png');
+                    }else if(/^(txt|doc(x)?)$/.test(fileType)){
+                        img = require('../../images/upload/docx.png');
+                    }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
+                        img = require('../../images/upload/jpg.png');
+                    }else if(/^xl(s|t|am)$/.test(fileType)){
+                        img = require('../../images/upload/excel.png');
+                    };
+                    this.selectedOrder.file = {
+                        name:data.order_enclosure[0].file_name,
+                        size:file_size >= 1024?((file_size/1024).toFixed(2) + ' KB'): file_size >= 1024*1024?((file_size/(1024*1024)).toFixed(2) + ' MB'):(file_size + ' B'),
+                        uploadMan:data.order_enclosure[0].account_name,
+                        date:data.order_enclosure[0].upload_time,
+                        address:data.order_enclosure[0].enclosure_address,
+                        id:data.order_enclosure[0].enclosure_id,
+                        img:img,
+                    }
+                }
                 this.selectedOrder.cellClassName = {
                     status:`button${data.order_status}`
                 };
