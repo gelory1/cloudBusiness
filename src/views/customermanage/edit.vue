@@ -1013,9 +1013,10 @@ export default {
     saveTicket(name) {
       this.$refs[name].validate((valid) => {
           if (valid) {
-              this.$Message.success('Success!');
+              // this.$Message.success('Success!');
           } else {
-              this.$Message.error('Fail!');
+              this.$Message.error('请按照规定填写！');
+              return;
           }
       });
       let request1 = {
