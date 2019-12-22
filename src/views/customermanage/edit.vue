@@ -875,7 +875,7 @@ export default {
           if (
             this.formValidate.level.index == "" ||
             this.formValidate.city.length < 2 ||
-            this.formValidate.empower_city.length < 2 ||
+            (this.formValidate.nature.index === 2&&(this.formValidate.empower_city||[]).length < 2) ||
             this.formValidate.nature.index == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
@@ -891,8 +891,13 @@ export default {
       this.$router.go(-1);
     },
     editCustomer() {
-      let startTime = this.formValidate.sqstartTime.getFullYear()+'-' + (this.formValidate.sqstartTime.getMonth() + 1) +'-' + this.formValidate.sqstartTime.getDate();
-      let endTime = this.formValidate.sqendTime.getFullYear()+'-' + (this.formValidate.sqendTime.getMonth() + 1) +'-' + this.formValidate.sqendTime.getDate();
+      let startTime = '',endTime = '';
+      if(this.formValidate.sqstartTime){
+        startTime = this.formValidate.sqstartTime.getFullYear()+'-' + (this.formValidate.sqstartTime.getMonth() + 1) +'-' + this.formValidate.sqstartTime.getDate();
+      }
+      if(this.formValidate.sqendTime){
+        endTime = this.formValidate.sqendTime.getFullYear()+'-' + (this.formValidate.sqendTime.getMonth() + 1) +'-' + this.formValidate.sqendTime.getDate();
+      }
       let empowerList = [];
       this.formValidate.empower_city.forEach((e,index) => {
         if(typeof(e) === 'object'){
@@ -932,7 +937,7 @@ export default {
             province: this.formValidate.city[0],
             city: this.formValidate.city[1],
             area: this.formValidate.city[2]?this.formValidate.city[2]:0,
-            empowerList,
+            empowerList:empowerList.length === 0?undefined:empowerList,
             manageCompany: this.manageCompany,
             saleNo: this.formValidate.salesman[1]?this.formValidate.salesman[1]:-1,
             industry: this.formValidate.industry.index,
