@@ -304,7 +304,27 @@ export default {
                 ]
             }
             this.$http.SETWORKBENCH(request).then(res => {
-                this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+                if(res.data.result.data.length>0){
+                    this.$notify({
+                        title: '支付提醒',
+                        message: `${this.orderNO}备货订单已签署完毕，请尽快支付。点击直接处理`,
+                        duration: 60000,
+                        offset: 100,
+                        openData: () => {
+                            let d = this.$store.state.app.workBenchData.find(d => d.workbenchId === res.data.result.data[0][0]);
+                            let item = {
+                                data: d
+                            };
+                            this.$router.push({path: '/home', query: {notice: item}});
+                        },
+                        onClick: function () {
+                            this.close();
+                            this.openData();
+                        }
+                    });
+                }else{
+                    this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+                }
             })
         });
     },
