@@ -639,6 +639,7 @@ export default {
                     on: {
                         click: () => {
                             this.dataIndex = params.index;
+                            this.checkedData = [params.row];
                             this.dbgzTableClick(params);
                           }
                       }
@@ -1373,7 +1374,8 @@ export default {
           "data": [
             {
               "workBenchId": this.checkedData[0].data.workbenchId,
-              "accountId":1009
+              "accountId": this.$store.state.user.accountId,
+              "photoUrl": this.imgUrl
             }
           ]
         }
@@ -1511,12 +1513,13 @@ export default {
         return;
       }
       let request = {
-        "typeid": 28005,
+        "typeid": this.ensurePayBack.orderNo?28011:28005,
         "data": [
             {
               "accountId": this.$store.state.user.accountId,
               "workBenchId": this.ensurePayBack.workBenchId,
               "lastWorkbenchId": this.ensurePayBack.ensure === false?this.ensurePayBack.lastWorkbenchId:undefined,
+              "orderNo": this.ensurePayBack.orderNo === ''?undefined:this.ensurePayBack.orderNo
             }
         ]
       }

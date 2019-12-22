@@ -266,7 +266,7 @@ const app = {
                                 message = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
                                 break;
                             case 4:
-                                message = `到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
+                                message = `到账待确认，金额：${d.workBenchContentObj.payAmount || d.workBenchContentObj.orderAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
                                 break;
                             case 3:
                                 if (d.workBenchContentObj.contractNo) {

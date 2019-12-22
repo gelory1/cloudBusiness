@@ -315,7 +315,7 @@ export default {
                         offset: 100,
                         openData: () => {
                             this.$Message.info('处理中...');
-                            let d = this.$store.state.app.workBenchData.find(d => d.workbenchId === res.data.result.data[0][0]);
+                            let d = this.$store.state.app.workBenchData.find(d => d.workbenchId === res.data.result.data[0][0])||{};
                             let item = {
                                 data: d
                             };
