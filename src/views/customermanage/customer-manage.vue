@@ -422,6 +422,7 @@ export default {
             customer_nature:this.selectedCustomType.no,
             province:this.filterItem.city[0]||0,
             city:this.filterItem.city[1]||0,
+            area:this.filterItem.city[2]||0,
             manage_company:this.filterItem.manageCompany === ''?0:this.filterItem.manageCompany,
             empowerProvince:this.filterItem.empower_city[0]||0,
             empowerCity:this.filterItem.empower_city[1]||0,
