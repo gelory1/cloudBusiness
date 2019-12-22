@@ -106,8 +106,8 @@ export default {
       let menuList = [];
       if(this.authority&&this.authority.length>0){
         this.$store.state.app.menuList.forEach(menu => {
-          let whiteList = ['/','/setting'];
-          if(this.authority.find(a => a.path === menu.path)||whiteList.indexOf(menu.path)!==-1){
+          let whiteList = ['/'];
+          if(this.authority.find(a => a.path === menu.path||a.path === 'addressManage')||whiteList.indexOf(menu.path)!==-1){
             let children = [];
             children = menu.children.filter((m,i) => {
               let path = menu.path + '/' + m.name;
