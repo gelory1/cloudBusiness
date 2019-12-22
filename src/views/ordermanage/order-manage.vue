@@ -582,7 +582,7 @@ export default {
       }
     },
     addOrder(){
-      if(!this.$store.state.app.authority.find(a => a.id === 901)){
+      if(!this.$store.state.app.authority.find(a => a.id === 901)||!(this.isCooperative||this.isSuper||this.isSale)){
         this.$Message.error('权限不足！');
         return;
       }
@@ -623,6 +623,21 @@ export default {
       }
       return orderStatus;
     },
+    isSuper(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '超级管理员');
+      }
+    },
+    isSale(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '销售人员');
+      }
+    },
+    isCooperative(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
+      }
+    }
   },
   watch: {
     tabName(nv){
