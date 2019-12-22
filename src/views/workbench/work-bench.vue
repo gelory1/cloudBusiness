@@ -1259,6 +1259,10 @@ export default {
         }
     },
     surehrClick(){
+      if(this.isFinance){
+        this.$Message.error('权限不足！');
+        return;
+      }
       if(!this.hz1_data[this.indexStyle]||!this.hz2_data[this.indexStyle1]){
         this.$Message.error('请选择相应合同及账期后再核入！');
         return;
