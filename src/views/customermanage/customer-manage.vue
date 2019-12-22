@@ -31,33 +31,10 @@
                     </Select>
                   </FormItem>
                   <FormItem label="授权资质" prop="sqzz">
-                    <Row>
-                      <Col span="12">
-                        <Select v-model="filterItem.empower_province" clearable filterable>
-                          <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                      <Col span="12">
-                        <Select v-model="filterItem.empower_city" clearable filterable>
-                          <Option :value="item.id" v-for="(item,index) in empowerCitys" :key="index">{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                    </Row>
+                    <el-cascader clearable v-model="filterItem.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name'}" size="small"></el-cascader>
                   </FormItem>
                   <FormItem label="省份/城市" prop="city">
-                  <!-- <el-cascader clearable :options="options2"  @expand-change="handleChange" show-all-levels :props="{ value: 'id', label: 'name',}" size="small"></el-cascader> -->
-                    <Row>
-                      <Col span="12">
-                        <Select v-model="filterItem.province" clearable filterable>
-                          <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                      <Col span="12">
-                        <Select v-model="filterItem.city" clearable filterable  :disabled="disabled">
-                          <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                    </Row>
+                    <el-cascader clearable v-model="filterItem.city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name'}" size="small"></el-cascader>
                   </FormItem>
                   <FormItem label="运营公司" prop="yygs">
                     <Select v-model="filterItem.manageCompany" clearable filterable>
@@ -345,11 +322,9 @@ export default {
       filterItem: {
         manageCompany: 0,
         nature: 0,
-        city: 0,
+        city: [],
         salesman: "",
-        empower_province: 0,
-        empower_city: 0,
-        province: 0,
+        empower_city: [],
         startTime:'',
         endTime:'',
         sqstartTime:"",
@@ -445,11 +420,11 @@ export default {
             create_endtime:endTime,
             customer_level:this.filterItem.nature === ''?0:this.filterItem.nature,
             customer_nature:this.selectedCustomType.no,
-            province:this.filterItem.province === ''?0:this.filterItem.province,
-            city:this.filterItem.city === ''?0:this.filterItem.city,
+            province:this.filterItem.city[0]||0,
+            city:this.filterItem.city[1]||0,
             manage_company:this.filterItem.manageCompany === ''?0:this.filterItem.manageCompany,
-            empowerProvince:this.filterItem.empower_province === ''?0:this.filterItem.empower_province,
-            empowerCity:this.filterItem.empower_city === ''?0:this.filterItem.empower_city,
+            empowerProvince:this.filterItem.empower_city[0]||0,
+            empowerCity:this.filterItem.empower_city[1]||0,
             saleName:this.filterItem.salesman,
             keyword:this.inputVal
           }
@@ -563,17 +538,6 @@ export default {
       localStorage.setItem('customInfo',JSON.stringify({}));
       this.$router.push({ path: "/customermanage/new" });
     },
-    getProvinces(){
-      let request = {
-        typeid: 27002
-      };
-      this.$http.XLSELECT(request).then(response => {
-        let res = response.data.result.data;
-        this.provinces = res;
-        this.$store.commit('getProvinces',res);
-        localStorage.setItem('provinces',JSON.stringify(res));
-      });
-    },
     getManagecompanys(){
       let request = {
         typeid:27001
@@ -582,25 +546,6 @@ export default {
         this.companys = response.data.result.data;
         localStorage.setItem('companys',JSON.stringify(this.companys));
       })
-    },
-    getCitys(province,isEmpower){
-      let request = {
-        typeid: 27003,
-        data: [
-          {
-            province:province
-          }
-        ]
-      };
-      this.citys = [];
-      this.$http.XLSELECT(request).then(response => {
-        let res = response.data.result.data;
-        if(isEmpower){
-          this.empowerCitys = res;
-        }else{ 
-          this.citys = res;
-        }
-      });
     },
     search(){
       this.pageNum = 1;
@@ -655,7 +600,6 @@ export default {
   },
   mounted() {
     this.getCustomList(1);
-    this.getProvinces();
     this.getManagecompanys(); 
     this.export();  
   },
@@ -669,24 +613,13 @@ export default {
       if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
         return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
       }
-    }
+    },
+    regions() {
+      return JSON.parse(localStorage.getItem("regions")) || [];
+    },
   },
   watch:{
-    'filterItem.empower_province':function(nv){
-      if(nv !==0&&nv!=='') this.getCitys(nv,true);
-      if(this.filterItem.empower_province == ''){
-        this.filterItem.empower_city = ''
-      }
-    },
-    'filterItem.province':function(nv){
-      if(nv !==0&&nv!=='') this.getCitys(nv,false);
-      if(this.filterItem.province == ''){
-        this.filterItem.city = ''
-        this.disabled = true
-      }else{
-        this.disabled = false
-      }
-    },
+
   }
 };
 </script>

@@ -1620,10 +1620,10 @@ export default {
   },
   computed: {
     data() {
+      if (Object.keys(this.$store.state.user.customerInfo).length > 0) {
+        return this.$store.state.user.customerInfo;
+      }
       return JSON.parse(localStorage.getItem("customInfo")) || {};
-    },
-    provinces() {
-      return JSON.parse(localStorage.getItem("provinces")) || {};
     },
     regions() {
       return JSON.parse(localStorage.getItem("regions")) || [];
