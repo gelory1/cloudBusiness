@@ -46,7 +46,7 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <el-cascader clearable v-model="formValidate.city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name',checkStrictly:true}" size="small" style="width:350px;" ></el-cascader>
+                <el-cascader clearable v-model="formValidate.city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;" ></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -102,7 +102,7 @@
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="授权资质" prop="sqzz" class="con-right">
-                <el-cascader clearable v-model="formValidate.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name',multiple: true,checkStrictly:true}" size="small" style="width:350px;"></el-cascader>
+                <el-cascader clearable v-model="formValidate.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -810,7 +810,6 @@ export default {
       checkbox: "",
       addlxrmodal: false,
       addkpxxmodal: false,
-      natures: natures,
       levels: levels,
       industrys: industrys,
       addPlatShow: false,
@@ -875,7 +874,7 @@ export default {
           if (
             this.formValidate.level.index == "" ||
             this.formValidate.city.length < 2 ||
-            this.formValidate.empower_city.length < 2 ||
+            (this.formValidate.nature.index === 2&&(this.formValidate.empower_city||[]).length < 2) ||
             this.formValidate.nature.index == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
@@ -891,15 +890,37 @@ export default {
       this.$router.go(-1);
     },
     editCustomer() {
-      let startTime = this.formValidate.sqstartTime.getFullYear()+'-' + (this.formValidate.sqstartTime.getMonth() + 1) +'-' + this.formValidate.sqstartTime.getDate();
-      let endTime = this.formValidate.sqendTime.getFullYear()+'-' + (this.formValidate.sqendTime.getMonth() + 1) +'-' + this.formValidate.sqendTime.getDate();
+      let startTime = '',endTime = '';
+      if(this.formValidate.sqstartTime){
+        startTime = this.formValidate.sqstartTime.getFullYear()+'-' + (this.formValidate.sqstartTime.getMonth() + 1) +'-' + this.formValidate.sqstartTime.getDate();
+      }
+      if(this.formValidate.sqendTime){
+        endTime = this.formValidate.sqendTime.getFullYear()+'-' + (this.formValidate.sqendTime.getMonth() + 1) +'-' + this.formValidate.sqendTime.getDate();
+      }
       let empowerList = [];
-      this.formValidate.empower_city.forEach(e => {
-        empowerList.push({
-          empowerPrivince:e[0],
-          empowerCity:e[1],
-          empowerArea:e[2],
-        })
+      this.formValidate.empower_city.forEach((e,index) => {
+        if(typeof(e) === 'object'){
+          empowerList.push({
+            empowerProvince:e[0],
+            empowerCity:e[1],
+            empowerArea:e[2]
+          })
+        }else{
+          if(empowerList.length === 0){
+            empowerList.push({
+              empowerProvince:-1,
+              empowerCity:-1,
+              empowerArea:-1
+            })
+          }
+          if(index === 1){
+            empowerList[0].empowerPrivince = e;
+          }else if(index === 2){
+            empowerList[0].empowerCity = e;
+          }else if(index === 3){
+            empowerList[0].empowerArea = e;
+          }
+        }
       })
       let request = {
         typeid: this.isNewCreate ? 25002 : 25006,
@@ -915,7 +936,7 @@ export default {
             province: this.formValidate.city[0],
             city: this.formValidate.city[1],
             area: this.formValidate.city[2]?this.formValidate.city[2]:0,
-            empowerList,
+            empowerList:empowerList.length === 0?undefined:empowerList,
             manageCompany: this.manageCompany,
             saleNo: this.formValidate.salesman[1]?this.formValidate.salesman[1]:-1,
             industry: this.formValidate.industry.index,
@@ -926,8 +947,10 @@ export default {
             chargePerson: this.formValidate.charge_person,
             postCode: this.formValidate.post_code,
             protocolNumber: this.formValidate.protocolNumber,
-            empowerStartTime: startTime,
-            empowerEndTime: endTime,
+            empowerProvince:0,
+            empowerCity:0,
+            empowerStartTime: startTime===''?undefined:startTime,
+            empowerEndTime: endTime===''?undefined:endTime,
           }
         ]
       };
@@ -988,14 +1011,21 @@ export default {
       }
     },
     saveTicket(name) {
+      let status = false;
       this.$refs[name].validate((valid) => {
           if (valid) {
+<<<<<<< HEAD
               this.$Message.success('Success!');
               this.addkpxxmodal = false
+=======
+              // this.$Message.success('Success!');
+>>>>>>> e3f3247f489a17e3dd8be074991384fc717ae40b
           } else {
-              this.$Message.error('Fail!');
+              this.$Message.error('请按照规定填写！');
+              status = true;
           }
       });
+      if(status) return;
       let request1 = {
         typeid: 25007,
         data: [
@@ -1095,57 +1125,6 @@ export default {
     cancel() {
       this.addlxrmodal = false;
     },
-    getCitys() {
-      let request = {
-        typeid: 27003,
-        data: [
-          {
-            province: this.dd
-          }
-        ]
-      };
-      api.XLSELECT(request).then(response => {
-        let res = response.data.result.data;
-        let citys = [];
-        if(this.options2.length === 0){
-          this.provinces.forEach(p => {
-            let item = {
-              id:p.id,
-              name:p.name,
-              children:[],
-            }
-            this.options2.push(item);
-          })
-        }
-        if(this.options2.find(p => p.id === this.dd)){
-          let child = [];
-          res.forEach(r => {
-            child.push({
-              id: r.id,
-              name: r.name,
-            })
-          })
-          this.$set(this.options2.find(p => p.id === this.dd),'children',child);
-          this.ddArea = (JSON.parse(
-            JSON.stringify(
-              this.provinces.find(
-                p => p.id === ((this.data || {}).data || {}).empower_province
-              ) || this.provinces[0]
-            )
-          )).id;
-        }
-        this.$nextTick(()=>{
-          let city = (JSON.parse(
-          JSON.stringify(
-            res.find(c => c.id === ((this.data || {}).data || {}).city) ||
-              res[0]
-            )
-          )).id;
-          let arr = [this.dd,city];
-          this.formValidate.city = arr;
-        })
-      });
-    },
     getSales() {
       let request = {
         typeid: 27008,
@@ -1172,12 +1151,7 @@ export default {
           this.$set(this.salesList.find(p => p.id === this.manageCompany),'children',res);
         }
         this.$nextTick(()=>{
-          let salesman = (JSON.parse(
-          JSON.stringify(
-            res.find(c => c.id === ((this.data || {}).data || {}).manageCompany) ||
-              res[0]
-            )
-          )).id;
+          let salesman = ((this.data || {}).data || {}).saleId;
           let arr = [this.manageCompany,salesman];
           this.formValidate.salesman = arr;
         })
@@ -1186,43 +1160,6 @@ export default {
           this.$set(this.salesList.find(p => p.id === this.manageCompany),'children',[]);
           this.formValidate.salesman = [];
         }
-      });
-    },
-    getEmpowerCitys() {
-      let request = {
-        typeid: 27003,
-        data: [
-          {
-            province: this.sqCascader
-          }
-        ]
-      };
-      // this.formValidate.empower_city = {};
-      api.XLSELECT(request).then(response => {
-        let res = response.data.result.data;
-        if(this.options1.length === 0){
-          this.provinces.forEach(p => {
-            let item = {
-              id:p.id,
-              name:p.name,
-              children:[],
-            }
-            this.options1.push(item);
-          })
-        }
-        if(this.options1.find(p => p.id === this.sqCascader)){
-          this.$set(this.options1.find(p => p.id === this.sqCascader),'children',res);
-        }
-        this.$nextTick(()=>{
-          let empower_city = (JSON.parse(
-          JSON.stringify(
-            res.find(c => c.id === ((this.data || {}).data || {}).city) ||
-              res[0]
-            )
-          )).id;
-          let arr = [this.sqCascader,empower_city];
-          this.formValidate.empower_city = arr;
-        })
       });
     },
     init() {
@@ -1273,30 +1210,30 @@ export default {
       this.formValidate.ticket_list = JSON.parse(
         JSON.stringify(((data || {}).data || {}).ticket_list || [])
       );
-      this.dd = (JSON.parse(
-        JSON.stringify(
-          this.provinces.find(
-            p => p.id === ((data || {}).data || {}).province
-          ) || this.provinces[0]
-        )
-      )).id;
-      this.sqCascader= (JSON.parse(
-        JSON.stringify(
-          this.provinces.find(
-            p => p.id === ((data || {}).data || {}).empower_province
-          ) || this.provinces[0]
-        )
-      )).id;
-      this.manageCompany = (JSON.parse(
-        JSON.stringify(
-          this.companys.find(
-            p => p.id === ((data || {}).data || {}).manage_company
-          ) || this.companys[0]
-        )
-      )).id;
+      let city = [];
+      city.push(((data || {}).data || {}).province);
+      city.push(((data || {}).data || {}).city);
+      if(((data || {}).data || {}).area) city.push(((data || {}).data || {}).area);
+      this.formValidate.city = city;
+      let empowerCity = [];
+      if(((data || {}).data || {}).areaList&&((data || {}).data || {}).areaList.length>0){
+        if(((data || {}).data || {}).areaList.length === 1){
+          empowerCity.push(((data || {}).data || {}).areaList[0].empowerProvince);
+          empowerCity.push(((data || {}).data || {}).areaList[0].empowerCity);
+          if(((data || {}).data || {}).areaList[0].empowerArea) empowerCity.push(((data || {}).data || {}).areaList[0].empowerArea);
+        }else{
+          ((data || {}).data || {}).areaList.forEach(a => {
+              let arr = [];
+              arr.push(a.empowerProvince);
+              arr.push(a.empowerCity);
+              if(a.empowerArea) arr.push(a.empowerArea);
+              empowerCity.push(arr);
+          })
+        }
+      }
+      this.formValidate.empower_city = empowerCity;
+      this.manageCompany = ((data || {}).data || {}).manage_company;
       this.getSales();
-      this.getCitys();
-      this.getEmpowerCitys();
       if(((data || {}).data || {}).enclosure){
         this.file.name = ((data || {}).data || {}).enclosure.fileName;
         this.file.size = ((data || {}).data || {}).enclosure.fileSize;
@@ -1690,10 +1627,10 @@ export default {
   },
   computed: {
     data() {
+      if (Object.keys(this.$store.state.user.customerInfo).length > 0) {
+        return this.$store.state.user.customerInfo;
+      }
       return JSON.parse(localStorage.getItem("customInfo")) || {};
-    },
-    provinces() {
-      return JSON.parse(localStorage.getItem("provinces")) || {};
     },
     regions() {
       return JSON.parse(localStorage.getItem("regions")) || [];
@@ -1713,14 +1650,26 @@ export default {
     isFriend() {
       return this.formValidate.nature.index === 2;
     },
-    // postData(){
-    //   let post = {};
-    //   if(this.data&&this.data.data&&this.data.data.customer_no){
-    //     post.customerNo = this.data.data.customer_no;
-    //     post.accountId = this.$store.state.user.accountId;
-    //   }
-    //   return post;
-    // }
+    isCooperative(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
+      }
+    },
+    isSaleManage(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
+      }
+    },
+    natures(){
+      let natureArr = [];
+      if(this.isCooperative){
+        natureArr = natures.filter(i =>i.index === 3);
+      }
+      if(this.isSaleManage){
+        natureArr = natures.filter(i =>i.index !== 3);
+      }
+      return natureArr;
+    },
   },
   watch: {
     $route: function() {

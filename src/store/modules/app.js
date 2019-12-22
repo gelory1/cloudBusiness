@@ -269,7 +269,11 @@ const app = {
                                 message = `到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
                                 break;
                             case 3:
-                                message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
+                                if (d.workBenchContentObj.contractNo) {
+                                    message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
+                                } else if (d.workBenchContentObj.orderNo) {
+                                    message = `${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。点击直接处理`;
+                                }
                                 break;
                             case 12:
                                 message = '发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里';

@@ -7,7 +7,7 @@
           <p class="p_span">
             <b>{{item.company}}</b>
             <!--  -->
-            <span class="icon">
+            <span class="icon" v-if="!isFinance">
               <Dropdown  style="float:right;text-align:center;position:relative" trigger="click" @on-click="dropDownClick">
                 <div style="width:12px" @click="changeSelectItem(item)">
                   <Icon type="android-more-vertical"></Icon>
@@ -317,6 +317,13 @@ export default {
   mounted() {
     this.getAddresses();
     this.getWhs();
+  },
+  computed:{
+    isFinance(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '财务');
+      }
+    },
   },
   watch:{
     addadressmodal(nv){

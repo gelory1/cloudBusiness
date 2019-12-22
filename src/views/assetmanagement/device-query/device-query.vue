@@ -760,7 +760,6 @@ export default {
       if (this.tabName !== "name1") this.tabName = "name1";
     },
     getProductList(p) {
-      this.inputVal = '';
       let request = {
         typeid: 23008,
         data: [
@@ -1055,6 +1054,10 @@ export default {
       if (nv === "name1") {
         this.selectedWhid = "";
         this.selectedProcode = "";
+        if(this.inputVal !== ''){
+          this.inputVal = '';
+          this.getProductList(1);
+        }
         this.pageName2 = 1;
       }
     }

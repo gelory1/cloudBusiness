@@ -211,6 +211,7 @@
               <div class="zq_div2" v-show="showObj[index]&&item.paybackList.length>0">
                 <section class="zq_se2">
                   <div>ID</div>
+                  <div>付款方式</div>
                   <div>支付时间</div>
                   <div>确认时间</div>
                   <div>支付金额（元）</div>
@@ -218,6 +219,7 @@
                 <div v-for="(p,i) in item.paybackList" :key="i" class="payList">
                   <section>
                     <div>{{p.paybackId}}</div>
+                    <div>{{p.paymentWay}}</div>
                     <div>{{p.paybackTime}}</div>
                     <div>{{p.paybackSureTime}}</div>
                     <div>{{thousandNum(p.paybackAmount)}}</div>
@@ -235,7 +237,7 @@
           </TabPane>
           <TabPane :label="`附件(${fj.length||0})`" name="name4">
             <p class="con-left">共 {{fj.length||0}} 个附件</p>
-            <p class="fj_add">
+            <p class="fj_add" v-if="this.$store.state.app.authority.find(a => a.id === 802)">
               <Upload action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}" :on-success="getfiles" :on-error="uploadFail">
                 <Icon type="plus"></Icon>添加附件
                 <p v-if="uploadLoading">上传中....</p>
@@ -873,7 +875,12 @@ export default {
         post.accountId = this.$store.state.user.accountId;
       }
       return post;
-    }
+    },
+    isFinance(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '财务');
+      }
+    },
   }
 };
 </script>

@@ -106,8 +106,8 @@ export default {
       let menuList = [];
       if(this.authority&&this.authority.length>0){
         this.$store.state.app.menuList.forEach(menu => {
-          let whiteList = ['/','/setting'];
-          if(this.authority.find(a => a.path === menu.path)||whiteList.indexOf(menu.path)!==-1){
+          let whiteList = ['/'];
+          if(this.authority.find(a => a.path === menu.path||a.path === 'addressManage')||whiteList.indexOf(menu.path)!==-1){
             let children = [];
             children = menu.children.filter((m,i) => {
               let path = menu.path + '/' + m.name;
@@ -272,8 +272,11 @@ export default {
           a1.children = arr2.filter(a2 => a2.name.indexOf(a1.name) !==-1);
           a1.children.forEach(a2 => {
             a2.children = arr3.filter(a3 => a3.name.indexOf(a2.name) !== -1);
+            if(a2.children.length === 0){
+              a2.children = undefined;
+            }
             a2.name = a2.name.split(' ')[a2.name.split(' ').length -1];
-            a2.children.forEach(a3 => {
+            if(a2.children&&a2.children.length>0) a2.children.forEach(a3 => {
               a3.name = a3.name.split(' ')[a3.name.split(' ').length -1];
             })
           })

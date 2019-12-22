@@ -91,7 +91,8 @@
       <div class="zf_div">
         <p>
           <Icon type="ios-information-outline"></Icon>
-          <span>正在使用线下支付，请确认支付金额后点击【确认已支付】</span>
+          <span v-if="zf.htbh">正在使用线下支付，请确认支付金额后点击【确认已支付】</span>
+          <span v-if="zf.orderNo">正在进行备货支付，请确认支付金额后点击【确认】</span>
         </p>
         <p>
           <span class="marl">收款方：</span>
@@ -104,13 +105,19 @@
         </p>
         <!-- --------------------单条展示 --------------------->
         <section v-show="dtzfShow">
-          <p>
+          <p v-if="zf.htbh">
             <span class="marl">
               合同编号：
               <span class="underline">{{zf.htbh}}</span>
             </span>
           </p>
-          <p>
+          <p v-if="zf.orderNo">
+            <span class="marl">
+              订单编号：
+              <span class="underline">{{zf.orderNo}}</span>
+            </span>
+          </p>
+          <p v-if="zf.htbh">
             <span class="marl">对应账期：</span>
             <span>{{zf.dyzq}}</span>
           </p>
@@ -251,11 +258,15 @@
             <span>当前状态：</span>
             <i>{{typeMap[ensurePayBack.workBenchType]}}</i>
           </p>
-          <p>
+          <p v-if="ensurePayBack.contractNo">
             <span>合同编号：</span>
             <i>{{ensurePayBack.contractNo}}</i>
           </p>
-          <p>
+          <p v-if="ensurePayBack.orderNo">
+            <span>订单编号：</span>
+            <i>{{ensurePayBack.orderNo}}</i>
+          </p>
+          <p v-if="ensurePayBack.contractNo">
             <span>对应账期：</span>
             <i style="font-weight:bold">{{ensurePayBack.paymentPeriod}}</i>
           </p>
@@ -769,10 +780,11 @@ export default {
         }
       ],
       zf: {
-        skf: "曹操",
-        htbh: "456789",
-        dyzq: "账期56789",
-        yf: "23456"
+        skf: "",
+        htbh: "",
+        dyzq: "",
+        yf: "",
+        orderNo:''      
       },
       morezf: [
       ],
@@ -1097,7 +1109,12 @@ export default {
               item.gznr = status === 1?`到账待确认，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 3:
-              item.gznr = status === 1?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
+              if (d.workBenchContentObj.contractNo) {
+                item.gznr = status === 1?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
+              } else if (d.workBenchContentObj.orderNo) {
+                  item.gznr = `${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。点击直接处理`;
+                  item.gznr = status === 1?`${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.orderNo}备货订单已签署完毕。`;
+              }
               break;
             case 12:
               item.gznr = status === 1?`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`:`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。`;
@@ -1186,7 +1203,7 @@ export default {
     },
     dbgzTableClick(params){
       this.$store.commit('setNotifyData', {status: false, data: []});
-      if(params.row.data.workBenchType === 3){
+        if(params.row.data.workBenchType === 3){
           this.zfmodal = true;
         }else if(params.row.data.workBenchType === 10){
           this.hkhzmodal = true;
@@ -1201,8 +1218,9 @@ export default {
           this.dkqrmodal = true;
           this.ensurePayBack = {
             contractNo: params.row.data.workBenchContentObj.contractNo,
+            orderNo: params.row.data.workBenchContentObj.orderNo,
             lastWorkbenchId: params.row.data.workBenchContentObj.lastWorkbenchId,
-            payAmount: params.row.data.workBenchContentObj.payAmount,
+            payAmount: params.row.data.workBenchContentObj.payAmount||params.row.data.workBenchContentObj.orderAmount,
             payTime: params.row.data.workBenchContentObj.payTime,
             payUnitName: params.row.data.workBenchContentObj.payUnitName,
             paymentPeriod: params.row.data.workBenchContentObj.paymentPeriod,
@@ -1246,6 +1264,10 @@ export default {
         }
     },
     surehrClick(){
+      if(this.isFinance){
+        this.$Message.error('权限不足！');
+        return;
+      }
       if(!this.hz1_data[this.indexStyle]||!this.hz2_data[this.indexStyle1]){
         this.$Message.error('请选择相应合同及账期后再核入！');
         return;
@@ -1304,12 +1326,21 @@ export default {
     },
     nextzfClick() {
       this.zfmodal = false;
-      this.zf.skf = this.checkedData[0].data.workBenchContentObj.receiveSide;
-      this.zf.htbh = this.checkedData[0].data.workBenchContentObj.contractNo;
-      this.zf.dyzq = this.checkedData[0].data.workBenchContentObj.paymentPeriod;
-      this.zf.yf = 0;
+      if( this.checkedData[0].data.workBenchContentObj.orderNo){
+        this.zf.orderNo = this.checkedData[0].data.workBenchContentObj.orderNo;
+        this.zf.yf = this.checkedData[0].data.workBenchContentObj.orderAmount;
+        this.zf.skf = '';
+        this.zf.htbh = '';
+        this.zf.dyzq = '';
+      }else{
+        this.zf.skf = this.checkedData[0].data.workBenchContentObj.receiveSide;
+        this.zf.htbh = this.checkedData[0].data.workBenchContentObj.contractNo;
+        this.zf.dyzq = this.checkedData[0].data.workBenchContentObj.paymentPeriod;
+        this.zf.yf = 0;
+        this.orderNo = '';
+      }
       this.checkedData.forEach(data => {
-        this.zf.yf += Number(data.data.workBenchContentObj.payAmount);
+        this.zf.yf += Number(data.data.workBenchContentObj.payAmount)||0;
       })
 
       //暂时只支持一条一条进行支付
@@ -1335,15 +1366,28 @@ export default {
         this.$Message.error('请先上传付款截图！');
         return;
       }
-      let request = {
-        "typeid": 28004,
-        "data": [
-          {
-            "accountId": this.$store.state.user.accountId,
-            "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
-            "photoUrl": this.imgUrl
-          }
-        ]
+      let request;
+      if(this.checkedData[0].data.workBenchContentObj.orderNo){
+        request = {
+          "typeid": 28010,
+          "data": [
+            {
+              "workBenchId": this.checkedData[0].data.workbenchId,
+              "accountId":1009
+            }
+          ]
+        }
+      }else{
+        request = {
+          "typeid": 28004,
+          "data": [
+            {
+              "accountId": this.$store.state.user.accountId,
+              "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
+              "photoUrl": this.imgUrl
+            }
+          ]
+        }
       }
       this.$http.UPDATEWORKBENCH(request).then(response => {
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});

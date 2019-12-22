@@ -289,7 +289,7 @@ export default {
                 "on-change": a => {
                   params.row.num = a;
                   params.row.totalPrice = a * params.row.price;
-                  this.$set(this.deviceStore, params.index, params.row);
+                  this.$set(this.formValidate.devices_list, params.index, params.row);
                 }
               }
             });
@@ -415,6 +415,10 @@ export default {
                     this.addStore[params.index] = params.row;
                     this.addStore[params.index].num = a;
                     this.addStore.page = this.pageNum;
+                    if(!this.addData[this.pageNum]){
+                       this.addData[this.pageNum] = [];
+                    }
+                    this.addData[this.pageNum].push(params.row);
                   }
                 }
               })
@@ -425,7 +429,6 @@ export default {
       addsb_data: [],
       addData: {},
       addStore: {},
-      deviceStore: {},
       customs: [],
       cahceData: [],
       addsbmodal: false,
@@ -456,22 +459,12 @@ export default {
     },
     addDeviceClick() {
       this.addsbmodal = true;
-      // this.addDevices(1);
+      this.addDevices(1);
     },
     getAddset() {
       this.addDevices(1);
     },
     addDevices(p) {
-      if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
-        for (let key in this.deviceStore) {
-          let index = this.formValidate.devices_list.findIndex(
-            d => d.productCode === this.deviceStore[key].productCode
-          );
-          if (index >= 0) {
-            this.formValidate.devices_list[index] = this.deviceStore[key];
-          }
-        }
-      }
       if (this.addStore.page && this.addData[this.addStore.page]) {
         for (let key in this.addStore) {
           let index = this.addData[this.addStore.page].findIndex(
@@ -500,6 +493,16 @@ export default {
         data[0].product_list.forEach(data => {
           let _checked = false;
           let num = 0;
+          if (
+            this.formValidate.devices_list &&
+            this.formValidate.devices_list.length > 0 &&
+            this.formValidate.devices_list.find(d => d.productCode === data.product_code)
+          ) {
+            _checked = true;
+            num =this.formValidate.devices_list.find(
+              d => d.productCode === data.product_code
+            ).num;
+          }
           if (
             this.addData[p] &&
             this.addData[p].length > 0 &&
@@ -568,22 +571,14 @@ export default {
           let obj = this.formValidate.devices_list.find(
             item => item.productCode === d.product_code
           );
-          obj.num += d.num;
+          obj.num = d.num;
           obj.totalPrice = d.product_price * obj.num;
         }
       });
     },
     onSubmit(name) {
       if (this.formValidate.store.index != "") {
-        if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
-          for (let key in this.deviceStore) {
-            let index = this.formValidate.devices_list.findIndex(
-              d => d.productCode === this.deviceStore[key].productCode
-            );
-            if (index >= 0) {
-              this.formValidate.devices_list[index] = this.deviceStore[key];
-            }
-          }
+        if (this.formValidate.devices_list && this.formValidate.devices_list.length > 0) {
         } else {
           this.$Message.error("无添加设备或发货数量为0");
           return;
@@ -626,6 +621,7 @@ export default {
             orderAmount: this.totalPrice + "",
             whId: this.formValidate.store.index,
             addressName: this.formValidate.adress.value,
+            addressId: this.formValidate.adress.index,
             agentId: this.formValidate.customer.index,
             saleType: 2,
             orderType: 1,
@@ -789,28 +785,9 @@ export default {
         this.formValidate.devices_list &&
         this.formValidate.devices_list.length > 0
       ) {
-        if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
-          let obj = [];
-          for (let key in this.deviceStore) {
-            if (obj.length === 0) {
-              obj = this.formValidate.devices_list.filter(
-                d => d.productCode === this.deviceStore[key].productCode
-              );
-            } else {
-              obj = obj.filter(
-                d => d.productCode === this.deviceStore[key].productCode
-              );
-            }
-            price += this.deviceStore[key].totalPrice;
-          }
-          obj.forEach(data => {
-            price += data.totalPrice;
-          });
-        } else {
-          this.formValidate.devices_list.forEach(data => {
-            price += data.totalPrice;
-          });
-        }
+        this.formValidate.devices_list.forEach(data => {
+          price += data.totalPrice;
+        });
       }
       return price;
     },
@@ -826,6 +803,7 @@ export default {
     addsbmodal(nv) {
       if (!nv) {
         this.addData = {};
+        this.pageNum = 1;
       }
     },
     $route() {
