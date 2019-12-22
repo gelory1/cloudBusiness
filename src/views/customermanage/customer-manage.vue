@@ -615,6 +615,11 @@ export default {
         return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
       }
     },
+    isSaleManage(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
+      }
+    },
     regions() {
       return JSON.parse(localStorage.getItem("regions")) || [];
     },

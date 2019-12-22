@@ -810,7 +810,6 @@ export default {
       checkbox: "",
       addlxrmodal: false,
       addkpxxmodal: false,
-      natures: natures,
       levels: levels,
       industrys: industrys,
       addPlatShow: false,
@@ -1643,14 +1642,26 @@ export default {
     isFriend() {
       return this.formValidate.nature.index === 2;
     },
-    // postData(){
-    //   let post = {};
-    //   if(this.data&&this.data.data&&this.data.data.customer_no){
-    //     post.customerNo = this.data.data.customer_no;
-    //     post.accountId = this.$store.state.user.accountId;
-    //   }
-    //   return post;
-    // }
+    isCooperative(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
+      }
+    },
+    isSaleManage(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
+      }
+    },
+    natures(){
+      let natureArr = [];
+      if(this.isCooperative){
+        natureArr = natures.filter(i =>i.index === 3);
+      }
+      if(this.isSaleManage){
+        natureArr = natures.filter(i =>i.index !== 3);
+      }
+      return natureArr;
+    },
   },
   watch: {
     $route: function() {

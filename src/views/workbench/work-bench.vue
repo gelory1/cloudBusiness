@@ -258,11 +258,15 @@
             <span>当前状态：</span>
             <i>{{typeMap[ensurePayBack.workBenchType]}}</i>
           </p>
-          <p>
+          <p v-if="ensurePayBack.contractNo">
             <span>合同编号：</span>
             <i>{{ensurePayBack.contractNo}}</i>
           </p>
-          <p>
+          <p v-if="ensurePayBack.orderNo">
+            <span>订单编号：</span>
+            <i>{{ensurePayBack.orderNo}}</i>
+          </p>
+          <p v-if="ensurePayBack.contractNo">
             <span>对应账期：</span>
             <i style="font-weight:bold">{{ensurePayBack.paymentPeriod}}</i>
           </p>
@@ -1214,6 +1218,7 @@ export default {
           this.dkqrmodal = true;
           this.ensurePayBack = {
             contractNo: params.row.data.workBenchContentObj.contractNo,
+            orderNo: params.row.data.workBenchContentObj.orderNo,
             lastWorkbenchId: params.row.data.workBenchContentObj.lastWorkbenchId,
             payAmount: params.row.data.workBenchContentObj.payAmount,
             payTime: params.row.data.workBenchContentObj.payTime,
@@ -1324,11 +1329,15 @@ export default {
       if( this.checkedData[0].data.workBenchContentObj.orderNo){
         this.zf.orderNo = this.checkedData[0].data.workBenchContentObj.orderNo;
         this.zf.yf = this.checkedData[0].data.workBenchContentObj.orderAmount;
+        this.zf.skf = '';
+        this.zf.htbh = '';
+        this.zf.dyzq = '';
       }else{
         this.zf.skf = this.checkedData[0].data.workBenchContentObj.receiveSide;
         this.zf.htbh = this.checkedData[0].data.workBenchContentObj.contractNo;
         this.zf.dyzq = this.checkedData[0].data.workBenchContentObj.paymentPeriod;
         this.zf.yf = 0;
+        this.orderNo = '';
       }
       this.checkedData.forEach(data => {
         this.zf.yf += Number(data.data.workBenchContentObj.payAmount)||0;
