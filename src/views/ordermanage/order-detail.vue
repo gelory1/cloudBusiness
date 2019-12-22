@@ -122,7 +122,7 @@
         <div class="dd_div" v-if="selectedOrder.type == '备货订单'" style="float:right;margin:15px 30px 0 0;font-size:13px;">
             <section>
               <span class="dd_span" style="width:100px;display:inline-block">货款总计（元）</span>
-              <span style="color:#000000;font-weight:bold">{{selectedOrder.order_little_amount}}</span>
+              <span style="color:#000000;font-weight:bold">{{selectedOrder.order_little_amount.toLocaleString()}}</span>
             </section>
             <section>
               <span class="dd_span" style="width:100px;display:inline-block">大写</span>

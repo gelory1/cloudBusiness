@@ -112,5 +112,5 @@ module.exports = {
             secure: false
           }
         }
-    }
+    }  
 };

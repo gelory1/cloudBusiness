@@ -1014,7 +1014,8 @@ export default {
       let status = false;
       this.$refs[name].validate((valid) => {
           if (valid) {
-              // this.$Message.success('Success!');
+              this.$Message.success('Success!');
+              this.addkpxxmodal = false
           } else {
               this.$Message.error('请按照规定填写！');
               status = true;
