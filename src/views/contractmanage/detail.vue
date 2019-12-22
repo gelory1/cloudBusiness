@@ -211,6 +211,7 @@
               <div class="zq_div2" v-show="showObj[index]&&item.paybackList.length>0">
                 <section class="zq_se2">
                   <div>ID</div>
+                  <div>付款方式</div>
                   <div>支付时间</div>
                   <div>确认时间</div>
                   <div>支付金额（元）</div>
@@ -218,6 +219,7 @@
                 <div v-for="(p,i) in item.paybackList" :key="i" class="payList">
                   <section>
                     <div>{{p.paybackId}}</div>
+                    <div>{{p.paymentWay}}</div>
                     <div>{{p.paybackTime}}</div>
                     <div>{{p.paybackSureTime}}</div>
                     <div>{{thousandNum(p.paybackAmount)}}</div>
