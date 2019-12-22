@@ -420,14 +420,6 @@ export default {
       ticketType:"",
       subjectName,
       zq: {
-        time: "54654-56464",
-        bqyf: "3242",
-        bqsf: "3424",
-        ykp: "1323",
-        ID: "432424234",
-        zfsj: "2333-98",
-        qrsj: "342-44",
-        zfje: "342"
       },
       fj: [],
       update_columns: [
@@ -487,13 +479,6 @@ export default {
         }
       ],
       kcmx_data: [
-        {
-          chbm: "214-343",
-          chmc: "343",
-          ggxh: "44",
-          zjl: "个",
-          num: "233"
-        }
       ],
       kpxx: [],
       fjIndex: "4",

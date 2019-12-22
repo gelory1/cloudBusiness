@@ -1091,10 +1091,10 @@ export default {
               item.gznr = status === 1?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，您有一个待审批的工作`;
               break;
             case 10:
-              item.gznr = status === 1?`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
+              item.gznr = status === 1?`回款待核准，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 4:
-              item.gznr = status === 1?`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
+              item.gznr = status === 1?`到账待确认，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 3:
               item.gznr = status === 1?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;

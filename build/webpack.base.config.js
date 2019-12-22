@@ -98,5 +98,5 @@ module.exports = {
             secure: false
           }
         }
-    }
+    }  
 };

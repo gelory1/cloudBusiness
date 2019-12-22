@@ -991,6 +991,7 @@ export default {
       this.$refs[name].validate((valid) => {
           if (valid) {
               this.$Message.success('Success!');
+              this.addkpxxmodal = false
           } else {
               this.$Message.error('Fail!');
           }

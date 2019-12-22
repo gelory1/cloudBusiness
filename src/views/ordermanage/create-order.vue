@@ -50,7 +50,11 @@
           <Col span="16">
             <FormItem label="收货地址" prop="adress" :label-width="90">
               <Select v-model="formValidate.adress.index" placeholder filterable clearable>
-                <Option v-for="(item) in adresses" :value="(item||{}).index" :key="(item||{}).index">
+                <Option
+                  v-for="(item) in adresses"
+                  :value="(item||{}).index"
+                  :key="(item||{}).index"
+                >
                   <span
                     v-if="item.status === 1"
                     :style="{color: formValidate.adress.index === item.index?'white':'#3896f5'}"
@@ -80,7 +84,7 @@
           <div class="dd_div">
             <section>
               <span class="dd_span">货款总计（元）</span>
-              <span>{{totalPrice}}</span>
+              <span>{{totalPrice.toLocaleString()}}</span>
             </section>
             <section>
               <span class="dd_span">大写</span>
@@ -425,7 +429,8 @@ export default {
       customs: [],
       cahceData: [],
       addsbmodal: false,
-      inputVal: ""
+      inputVal: "",
+      selData: []
     };
   },
   methods: {
@@ -520,10 +525,12 @@ export default {
     selectDevices(selection) {
       this.addData[this.pageNum] = selection;
       for (let key in this.addStore) {
+        this.addStore[key]._checked = true;
         let index = selection.findIndex(
           d => d.product_code === this.addStore[key].product_code
         );
         if (index >= 0) {
+          this.addStore[key]._checked = true;
           this.addData[this.pageNum][index] = this.addStore[key];
         }
       }
@@ -648,11 +655,7 @@ export default {
               value: ""
             }
           };
-            this.$set(
-              this.formValidate.customer,
-              "index",
-              this.customs[0].index
-            );
+          this.$set(this.formValidate.customer, "index", this.customs[0].index);
           this.$set(this.formValidate.customer, "value", this.customs[0].value);
           this.$router.push("/ordermanage/ordermanage");
         },
@@ -675,19 +678,19 @@ export default {
                 index: "",
                 value: ""
               }
-            }
-              this.$set(
-                this.formValidate.customer,
-                "index",
-                this.customs[0].index
-              );
+            };
+            this.$set(
+              this.formValidate.customer,
+              "index",
+              this.customs[0].index
+            );
             this.$set(
               this.formValidate.customer,
               "value",
               this.customs[0].value
             );
             this.$router.push("/ordermanage/ordermanage");
-          }else if(error.data.message){
+          } else if (error.data.message) {
             this.$Message.error(error.data.message);
           }
         }
@@ -714,7 +717,7 @@ export default {
       this.$set(this.formValidate.customer, "index", this.customs[0].index);
       this.$set(this.formValidate.customer, "value", this.customs[0].value);
       this.$router.push("/ordermanage/ordermanage");
-    }
+    },
   },
   computed: {
     stores() {
@@ -746,7 +749,7 @@ export default {
         this.formValidate.customer.index &&
         this.formValidate.customer.index !== "" &&
         this.formValidate.store.index &&
-        this.formValidate.store.index !== ""&&
+        this.formValidate.store.index !== "" &&
         this.formValidate.adress
       ) {
         let cusomer =
@@ -767,8 +770,16 @@ export default {
           });
         }
         let selectAddress = adresses.find(a => a.status === 1) || adresses[0];
-        this.$set(this.formValidate.adress, "index", (selectAddress||{}).index||'');
-        this.$set(this.formValidate.adress, "value", (selectAddress||{}).value||'');
+        this.$set(
+          this.formValidate.adress,
+          "index",
+          (selectAddress || {}).index || ""
+        );
+        this.$set(
+          this.formValidate.adress,
+          "value",
+          (selectAddress || {}).value || ""
+        );
       }
       return adresses;
     },
@@ -817,7 +828,7 @@ export default {
         this.addData = {};
       }
     },
-    $route(){
+    $route() {
       this.addDevices(1);
     }
   }
