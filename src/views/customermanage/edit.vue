@@ -1656,12 +1656,17 @@ export default {
         return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
       }
     },
+    isSaleMan(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '销售人员');
+      }
+    },
     natures(){
       let natureArr = [];
       if(this.isCooperative){
         natureArr = natures.filter(i =>i.index === 3);
-      }else if(this.isSaleManage){
-        natureArr = natures.filter(i =>i.index !== 3);
+      }else if(this.isSaleMan){
+        natureArr = natures.filter(i =>i.index === 1);
       }else{
         natureArr = natures;
       }
