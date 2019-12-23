@@ -126,7 +126,7 @@
             </section>
             <section>
               <span class="dd_span" style="width:100px;display:inline-block">大写</span>
-              <span style="color:#000000;font-weight:bold">{{selectedOrder.order_big_amount}}</span>
+              <span style="color:#000000;font-weight:bold">{{upperAmount}}</span>
             </section>
           </div>
       </div>
@@ -467,6 +467,9 @@ export default {
             }
             return index;
         },
+        upperAmount(){
+            return this.$util.NumberToChinese(Number(this.selectedOrder.order_big_amount));
+        }
     },
     watch: {
         orderNO(){
