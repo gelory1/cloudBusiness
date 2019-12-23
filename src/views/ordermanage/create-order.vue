@@ -309,21 +309,29 @@ export default {
         },
         {
           title:'操作',
-          width: '100',
+          width: '200',
           key: 'action',
           align: "center",
           render:(h,params) => {
-            return h('Button',{
-                props: {
-                    type: 'error',
-                    size: 'small'
+            return h('Poptip',{
+                props:{
+                  title:'是否确定删除？',
+                  confirm:true
                 },
-                on: {
-                    click: () => {
-                      this.formValidate.devices_list = this.formValidate.devices_list.filter(d =>d.productCode !==params.row.productCode);
-                    }
+                on:{
+                  'on-ok':() =>{
+                    this.formValidate.devices_list = this.formValidate.devices_list.filter(d =>d.productCode !==params.row.productCode);
+                    this.$Message.info('已删除！');
+                  }
                 }
-            }, '删除')
+              },[
+                h('Button',{
+                  props:{
+                    size: 'small'
+                  }
+                },'删除')
+              ]
+            )
           }
         }
       ],
