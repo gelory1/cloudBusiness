@@ -22,7 +22,7 @@
         </Row>
         <Row>
           <Col span="16">
-            <FormItem label="客户名称" prop="customer" :label-width="90">
+            <FormItem label="申请公司" prop="customer" :label-width="90">
               <Select v-model="formValidate.customer.index" placeholder filterable clearable>
                 <Option
                   v-for="(item,index) in customs"
@@ -167,7 +167,7 @@ export default {
         name: [
           {
             required: true,
-            message: "请输入客户名称",
+            message: "请输入申请公司",
             trigger: "blur"
           }
         ],
@@ -306,6 +306,25 @@ export default {
         {
           title: "税率",
           key: "tax"
+        },
+        {
+          title:'操作',
+          width: '100',
+          key: 'action',
+          align: "center",
+          render:(h,params) => {
+            return h('Button',{
+                props: {
+                    type: 'error',
+                    size: 'small'
+                },
+                on: {
+                    click: () => {
+                      this.formValidate.devices_list = this.formValidate.devices_list.filter(d =>d.productCode !==params.row.productCode);
+                    }
+                }
+            }, '删除')
+          }
         }
       ],
       addsb_columns: [
