@@ -205,7 +205,7 @@
             <span class="marl">付款方：</span>
             <span>{{hkhz.skf}}</span>
             <span class="zf_sk">
-              <b>{{hkhz.yf}}</b>元
+              <b>{{parseFloat(hkhz.yf).toFixed(2)}}</b>元
             </span>
           </p>
           <p class="hk_span">
