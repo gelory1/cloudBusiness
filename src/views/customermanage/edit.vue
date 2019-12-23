@@ -873,8 +873,8 @@ export default {
         if (valid) {
           if (
             this.formValidate.level.index == "" ||
-            this.formValidate.city.length < 2 ||
-            (this.formValidate.nature.index === 2&&(this.formValidate.empower_city||[]).length < 2) ||
+            this.formValidate.city.length < 1 ||
+            (this.formValidate.nature.index === 2&&(this.formValidate.empower_city||[]).length < 1) ||
             this.formValidate.nature.index == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
@@ -934,7 +934,7 @@ export default {
             customerLevel: this.formValidate.level.index,
             customerNature: this.formValidate.nature.index,
             province: this.formValidate.city[0],
-            city: this.formValidate.city[1],
+            city: this.formValidate.city[1]?this.formValidate.city[1]:0,
             area: this.formValidate.city[2]?this.formValidate.city[2]:0,
             empowerList:empowerList.length === 0?undefined:empowerList,
             manageCompany: this.manageCompany,
