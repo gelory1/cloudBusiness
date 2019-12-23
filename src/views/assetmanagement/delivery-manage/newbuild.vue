@@ -652,6 +652,7 @@ export default {
     handleSubmit(name, status) {
       let list = [];
       let s = false;
+      let num = 0;
       this.outcksb_data1.forEach(o => {
         if (o.ddbh !== "汇总" && o.product_list) {
           o.product_list.forEach(p => {
@@ -668,10 +669,15 @@ export default {
               quantity_shipped:
                 p.product_quantity - p.issued_count || p.quantity_shipped || 0
             });
+            num += p.product_quantity - p.issued_count || p.quantity_shipped || 0;
           });
         }
       });
       if (s) return; //校验失败跳出
+      if (num === 0){
+        this.$Message.error('请确保存在至少一项数量大于零的产品！');
+        return;
+      }
       this.$refs[name].validate(valid => {
         if (valid) {
           if (this.outcksb_data.length > 0) {

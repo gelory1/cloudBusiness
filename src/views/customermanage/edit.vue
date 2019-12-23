@@ -1660,9 +1660,10 @@ export default {
       let natureArr = [];
       if(this.isCooperative){
         natureArr = natures.filter(i =>i.index === 3);
-      }
-      if(this.isSaleManage){
+      }else if(this.isSaleManage){
         natureArr = natures.filter(i =>i.index !== 3);
+      }else{
+        natureArr = natures;
       }
       return natureArr;
     },
