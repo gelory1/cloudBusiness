@@ -68,7 +68,8 @@
     </layout>
     <!-- 支付方式弹框 -->
     <Modal v-model="zfmodal" class="aa">
-      <p class="zf_p">支付</p>
+      <p class="zf_p" v-if="this.tabName == 'name1' || this.workStatus == 1">待办-支付</p>
+      <p class="zf_p" v-if="this.tabName == 'name2' || this.workStatus == 2">已办-支付</p>
       <p class="zf_p1">请选择支付方式：</p>
       <div class="zffs" @click="selectedPayStyle">
         <div class="zf_img" index="0" :style="{borderColor:borderColor[0]}">
@@ -676,7 +677,7 @@ export default {
                   style: {
                     color: params.row.zt === 2?"#898A8D":"orange",
                     marginLeft: "-10px"
-                  }
+                  },
                 },
                 this.statusMap[params.row.zt]
               )
@@ -988,7 +989,8 @@ export default {
       },
       dataIndex: 0,
       imgUrl: '',
-      spinShow: false
+      spinShow: false,
+      workStatus:"",
     };
   },
   methods: {
@@ -1204,7 +1206,8 @@ export default {
     },
     dbgzTableClick(params){
       this.$store.commit('setNotifyData', {status: false, data: []});
-        if(params.row.data.workBenchType === 3){
+        if(params.row.data.workBenchType === 3){              
+          this.workStatus = params.row.data.workBenchStatus
           this.zfmodal = true;
         }else if(params.row.data.workBenchType === 10){
           this.hkhzmodal = true;

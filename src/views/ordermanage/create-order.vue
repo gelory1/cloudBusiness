@@ -22,7 +22,7 @@
         </Row>
         <Row>
           <Col span="16">
-            <FormItem label="客户名称" prop="customer" :label-width="90">
+            <FormItem label="申请公司" prop="customer" :label-width="90">
               <Select v-model="formValidate.customer.index" placeholder filterable clearable>
                 <Option
                   v-for="(item,index) in customs"

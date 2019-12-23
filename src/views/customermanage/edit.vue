@@ -522,6 +522,7 @@ export default {
       callback();
     };
     return {
+      natures,
       options1:[],
       options2:[],
       formValidate: {
