@@ -1107,7 +1107,7 @@ export default {
               item.gznr = status === 1?`回款待核准，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 4:
-              item.gznr = status === 1?`到账待确认，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
+              item.gznr = status === 1?`到账待确认，金额：${parseFloat(d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName||''})，请戳这里`:`到账待确认，金额：${d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount}(付款方：${d.workBenchContentObj.payUnitName||''})`;
               break;
             case 3:
               if (d.workBenchContentObj.contractNo) {
