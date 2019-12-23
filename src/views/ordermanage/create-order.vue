@@ -167,7 +167,7 @@ export default {
         name: [
           {
             required: true,
-            message: "请输入客户名称",
+            message: "请输入申请公司",
             trigger: "blur"
           }
         ],
@@ -306,6 +306,33 @@ export default {
         {
           title: "税率",
           key: "tax"
+        },
+        {
+          title:'操作',
+          width: '200',
+          key: 'action',
+          align: "center",
+          render:(h,params) => {
+            return h('Poptip',{
+                props:{
+                  title:'是否确定删除？',
+                  confirm:true
+                },
+                on:{
+                  'on-ok':() =>{
+                    this.formValidate.devices_list = this.formValidate.devices_list.filter(d =>d.productCode !==params.row.productCode);
+                    this.$Message.info('已删除！');
+                  }
+                }
+              },[
+                h('Button',{
+                  props:{
+                    size: 'small'
+                  }
+                },'删除')
+              ]
+            )
+          }
         }
       ],
       addsb_columns: [

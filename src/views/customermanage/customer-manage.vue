@@ -553,7 +553,7 @@ export default {
       this.getCustomList(1);
     },
     exportSelect(){
-      if(this.isFinance||this.isCooperative){
+      if(this.isFinance||this.isCooperative||this.isSaleMan){
         this.$Message.error('权限不足！');
         return;
       }
@@ -569,7 +569,7 @@ export default {
       this.moreClick();
     },
     exportAll(){
-      if(this.isFinance||this.isCooperative){
+      if(this.isFinance||this.isCooperative||this.isSaleMan){
         this.$Message.error('权限不足！');
         return;
       }
@@ -580,7 +580,7 @@ export default {
       this.moreClick();
     },
     export(){
-      if(this.isFinance||this.isCooperative){
+      if(this.isFinance||this.isCooperative||this.isSaleMan){
         return;
       }
       let request = {
@@ -618,6 +618,11 @@ export default {
     isSaleManage(){
       if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
         return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
+      }
+    },
+    isSaleMan(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '销售人员');
       }
     },
     regions() {

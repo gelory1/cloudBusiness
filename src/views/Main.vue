@@ -270,7 +270,10 @@ export default {
         let arr3 = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 3);
         regions.forEach(a1 => {
           a1.children = arr2.filter(a2 => a2.name.indexOf(a1.name) !==-1);
-          a1.children.forEach(a2 => {
+          if(a1.children.length === 0){
+              a1.children = undefined;
+            }
+          (a1.children||[]).forEach(a2 => {
             a2.children = arr3.filter(a3 => a3.name.indexOf(a2.name) !== -1);
             if(a2.children.length === 0){
               a2.children = undefined;

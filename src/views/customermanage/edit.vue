@@ -874,8 +874,8 @@ export default {
         if (valid) {
           if (
             this.formValidate.level.index == "" ||
-            this.formValidate.city.length < 2 ||
-            (this.formValidate.nature.index === 2&&(this.formValidate.empower_city||[]).length < 2) ||
+            this.formValidate.city.length < 1 ||
+            (this.formValidate.nature.index === 2&&(this.formValidate.empower_city||[]).length < 1) ||
             this.formValidate.nature.index == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
@@ -935,7 +935,7 @@ export default {
             customerLevel: this.formValidate.level.index,
             customerNature: this.formValidate.nature.index,
             province: this.formValidate.city[0],
-            city: this.formValidate.city[1],
+            city: this.formValidate.city[1]?this.formValidate.city[1]:0,
             area: this.formValidate.city[2]?this.formValidate.city[2]:0,
             empowerList:empowerList.length === 0?undefined:empowerList,
             manageCompany: this.manageCompany,
@@ -1657,13 +1657,19 @@ export default {
         return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
       }
     },
+    isSaleMan(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '销售人员');
+      }
+    },
     natures(){
       let natureArr = [];
       if(this.isCooperative){
         natureArr = natures.filter(i =>i.index === 3);
-      }
-      if(this.isSaleManage){
-        natureArr = natures.filter(i =>i.index !== 3);
+      }else if(this.isSaleMan){
+        natureArr = natures.filter(i =>i.index === 1);
+      }else{
+        natureArr = natures;
       }
       return natureArr;
     },
