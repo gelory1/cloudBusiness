@@ -127,7 +127,6 @@
               :data="order_data[item.index]"
               size="small"
               @on-selection-change="changeSelection"
-              @on-row-click="openOrder"
               :loading="loading"
             ></Table>
             <Page
@@ -224,96 +223,6 @@ const orderTypes = [
   {
     type: "备货订单",
     ids: [1]
-  }
-];
-const order_columns = [
-  {
-    type: "selection",
-    align: "center",
-    width: 80
-  },
-  {
-    key: "orderNO",
-    title: "单据编号",
-    align: "center",
-    render: (h, params) => {
-      return h("div", [
-        h(
-          "a",
-          {
-            class: "iconShow",
-            style: {},
-            on: {
-              click: () => {
-                this.openOrder(params.row);
-              }
-            }
-          },
-          params.row.orderNO
-        )
-      ]);
-    }
-  },
-  {
-    key: "type",
-    title: "业务类型",
-    width: 100,
-    align: "center"
-  },
-  {
-    key: "time",
-    title: "下单时间",
-    align: "center"
-  },
-  {
-    key: "salesType",
-    title: "销售类型",
-    width: 100,
-    align: "center"
-  },
-  {
-    key: "customName",
-    title: "客户名称",
-    align: "center",
-    width: 250
-  },
-  {
-    key: "contractNO",
-    title: "合同编号",
-    align: "center"
-  },
-  {
-    key: "count",
-    title: "设备数量",
-    width: 100,
-    align: "center"
-  },
-  {
-    key: "status",
-    title: "状态",
-    align: "center",
-    render: (h, params) => {
-      return h("div", [
-        h(
-          "Button",
-          {
-            props: {
-              // type: "",
-              size: "small"
-            },
-            style: {
-              backgroundColor: params.row.status
-                ? statusColorMap[params.row.status].backgroundColor
-                : "white",
-              color: params.row.status
-                ? statusColorMap[params.row.status].color
-                : "#7D7F82"
-            }
-          },
-          params.row.status || "无状态"
-        )
-      ]);
-    }
   }
 ];
 const businessMap = {
@@ -433,7 +342,96 @@ export default {
       orderStatus1,
       orderStatus2,
       tabName: "name1",
-      order_columns,
+      order_columns:[
+        {
+          type: "selection",
+          align: "center",
+          width: 80
+        },
+        {
+          key: "orderNO",
+          title: "单据编号",
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "a",
+                {
+                  class: "iconShow",
+                  style: {},
+                  on: {
+                    click: () => {
+                      this.openOrder(params.row);
+                    }
+                  }
+                },
+                params.row.orderNO
+              )
+            ]);
+          }
+        },
+        {
+          key: "type",
+          title: "业务类型",
+          width: 100,
+          align: "center"
+        },
+        {
+          key: "time",
+          title: "下单时间",
+          align: "center"
+        },
+        {
+          key: "salesType",
+          title: "销售类型",
+          width: 100,
+          align: "center"
+        },
+        {
+          key: "customName",
+          title: "客户名称",
+          align: "center",
+          width: 250
+        },
+        {
+          key: "contractNO",
+          title: "合同编号",
+          align: "center"
+        },
+        {
+          key: "count",
+          title: "设备数量",
+          width: 100,
+          align: "center"
+        },
+        {
+          key: "status",
+          title: "状态",
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    // type: "",
+                    size: "small"
+                  },
+                  style: {
+                    backgroundColor: params.row.status
+                      ? statusColorMap[params.row.status].backgroundColor
+                      : "white",
+                    color: params.row.status
+                      ? statusColorMap[params.row.status].color
+                      : "#7D7F82"
+                  }
+                },
+                params.row.status || "无状态"
+              )
+            ]);
+          }
+        }
+      ],
       order_data: {
         0: [],
         1: [],
