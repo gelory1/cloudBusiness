@@ -543,7 +543,7 @@ export default {
                           click: () => {
                               this.dbgzTableClick(params);
                               if(params.row.data.workBenchType === 3){
-                                this.gz_data[params.index]._checked = true;
+                                // this.gz_data[params.index]._checked = true;
                                 // this.gzselClick([params.row]);
                                 this.checkedData = [params.row]; //暂时只能一条一条支付
                                 this.checkIndex = this.checkedData.length;
@@ -1127,7 +1127,7 @@ export default {
           item.fzr = d.accountId === -1?'待认领':(d.accountName||'');
           item.jztime = d.dueTimeDescribe;
           item.duetime = d.dueTime;
-          item._checked = d.false;
+          // item._checked = d.false;
           item.zt = d.workBenchStatus;
           item.index = i+1;
           item.data = d;
@@ -1181,7 +1181,7 @@ export default {
             htbh:d.contractNo,
             htmc:d.customerName,
             paymentList:paymentList,
-            _checked:false
+            // _checked:false
           })
         })
         this.hz2_data = [];
@@ -1193,9 +1193,9 @@ export default {
     rowClassName (row, index) {
         if (index === this.indexStyle) {
             return 'demo-table-info-row';
-            this.hz1_data[index]._checked = true
+            // this.hz1_data[index]._checked = true
         } 
-        this.hz1_data[index]._checked = false
+        // this.hz1_data[index]._checked = false
         return '';
     },
     rowClassName1(row,index){
@@ -1415,7 +1415,7 @@ export default {
     },
     hz1Click(val,index){
       this.indexStyle = index;
-      this.hz1_data[index]._checked = true
+      // this.hz1_data[index]._checked = true
       this.hz2_data = val.paymentList||[];
     },
     hz2Click(val,index){
@@ -1769,6 +1769,7 @@ export default {
     },
     beforeUpload(){
       this.spinShow = true;
+      this.imgUrl = '';
     }
   },
   mounted() {

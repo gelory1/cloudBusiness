@@ -325,8 +325,7 @@ export default {
       this.eyeShow = !this.eyeShow;
     },
     goBack() {
-      var _self = this;
-      _self.$router.go(-1);
+      this.$router.push("/customermanage/customermanage");
     },
     getCity() {
       let request = {

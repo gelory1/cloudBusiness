@@ -208,8 +208,9 @@ export default {
       this.currentRow = JSON.parse(JSON.stringify(data));
     },
     goBack() {
-      var _self = this;
-      _self.$router.go(-1);
+     this.$router.push({
+        path: "/assetmanage/delivery-manage"
+      });
     },
     getDetail(){
       let request = {
