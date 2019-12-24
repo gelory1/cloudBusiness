@@ -1838,6 +1838,11 @@ export default {
         this.tabName = 'name1';
         this.dbgzTableClick(this.$store.state.app.notifyData.data);
       }
+    },
+    zfqrmodal(nv){
+      if(!nv){
+        this.imgUrl = '';
+      }
     }
   },
   computed:{
