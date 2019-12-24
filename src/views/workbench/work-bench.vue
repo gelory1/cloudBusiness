@@ -1138,6 +1138,7 @@ export default {
             this.fq_data.push(item);
           }else{
             item.fzr = this.$store.state.user.accountName;
+            item.duetime = d.handledTime;
             this.yb_data.push(item);
           }
         });

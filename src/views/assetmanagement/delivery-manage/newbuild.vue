@@ -765,6 +765,7 @@ export default {
         this.getOrderList(1);
       }
       this.outcksb_data1.splice(index, 1);
+      this.orderDataCache = JSON.parse(JSON.stringify(this.outcksb_data1));
       this.$nextTick(() => {
         this.$refs["cktable"].objData[0]._isHighlight = true;
         this.changeRow(this.outcksb_data1[0]);
@@ -871,6 +872,7 @@ export default {
         });
       }
       this.outcksb_data1 = data;
+      this.orderDataCache = JSON.parse(JSON.stringify(this.outcksb_data1));
       this.$nextTick(() => {
         this.$refs["cktable"].objData[0]._isHighlight = true;
         this.changeRow(this.outcksb_data1[0]);
@@ -955,6 +957,7 @@ export default {
       if (name === "全部") {
         this.outcksb_data1 = JSON.parse(JSON.stringify(this.orderDataCache));
       } else {
+        this.outcksb_data1 = JSON.parse(JSON.stringify(this.orderDataCache));
         this.outcksb_data1 = this.outcksb_data1.filter(
           o => o.khmc === name || o.ddbh === "汇总"
         );
@@ -1123,6 +1126,16 @@ export default {
     },
     customList() {
       let customList = ["全部"];
+      if(this.orderDataCache&&this.orderDataCache.length>0){
+        this.orderDataCache.forEach(o => {
+          if(o.ddbh === '汇总') return;
+          let customer_name = o.khmc || "--";
+          if(customList.indexOf(customer_name) === -1){
+            customList.push(customer_name);
+          }
+        })
+        return customList;
+      }
       if (this.outcksb_data1 && this.outcksb_data1.length > 0) {
         this.outcksb_data1.forEach(o => {
           if (o.ddbh !== "汇总") {

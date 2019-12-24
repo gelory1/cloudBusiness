@@ -292,7 +292,7 @@
               </div>
             </div>
           </TabPane>
-          <TabPane label="更新记录" name="name5">
+          <TabPane label="更新记录" name="name5" v-if="!isCooperative">
             <Table ref="currentRowTable" :columns="update_columns" :data="data.data.updateList"></Table>
           </TabPane>
         </Tabs>
@@ -603,6 +603,11 @@ export default {
         post.accountId = this.$store.state.user.accountId;
       }
       return post;
+    },
+    isCooperative(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
+      }
     }
   },
   watch:{
