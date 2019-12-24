@@ -607,7 +607,7 @@ export default {
       if (this.formValidate.store.index != "") {
         if (this.formValidate.devices_list && this.formValidate.devices_list.length > 0) {
         } else {
-          this.$Message.error("无添加设备或发货数量为0");
+          this.$Message.error("无添加设备!");
           return;
         }
       } else {
@@ -626,6 +626,10 @@ export default {
             unit: data.unit
           });
       });
+      if(productList.length === 0){
+        this.$Message.error("设备数量不能为0!");
+        return;
+      }
       let myDate = new Date();
       let date =
         myDate.getFullYear() +
