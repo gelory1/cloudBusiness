@@ -1881,7 +1881,7 @@ export default {
       return this.tabName !== 'name1'&&(this.fq_data[this.dataIndex]||{}).zt !== 1;
     },
     hkhzDisabled(){
-      return !(this.workBenchData.accountId === -1||this.workBenchData.accountId === this.$store.state.user.accountId);
+      return !(this.workBenchData.accountId === -1||this.workBenchData.accountId === this.$store.state.user.accountId||this.isSuperAdmin);
     },
     isSuperAdmin(){
       if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
