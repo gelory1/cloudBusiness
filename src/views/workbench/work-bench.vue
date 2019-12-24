@@ -27,7 +27,7 @@
               <Table height="700" :columns="fq_columns" :data="fq_data" :loading="loading"></Table>
             </TabPane>
           </Tabs>
-          <p class="gzadd" @click="newgzClick" v-if="isSuperAdmin||isFinance">
+          <p class="gzadd" @click="newgzClick" v-if="isSuperAdmin||isFinance||isSaleManage">
             <img src="../../images/workbench/add.png" alt />
           </p>
           <Input class="gz_input" icon="ios-search" v-model="inputVal" placeholder="请输入内容" style="margin-top:6px" @on-enter="getWorkbench" @on-click="getWorkbench"/>
@@ -1916,6 +1916,11 @@ export default {
     isFinance(){
       if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
         return this.$store.state.app.authority[0].role.find(r => r === '财务');
+      }
+    },
+    isSaleManage(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
       }
     },
     reportDataLeft(){

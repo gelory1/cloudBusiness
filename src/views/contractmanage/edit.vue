@@ -287,7 +287,7 @@
                 </section>
                 <div style="float:right;color:#4a9af5">
                   <!-- <a :href="` https://view.officeapps.live.com/op/view.aspx?src=${encodeURI(item.url)}`" target="_blank" rel="nofollow">查看</a> -->
-                  <span @click="deleteFj(item.data.enclosureId)" style="cursor:pointer" v-if="item.data.enclosureType !== 4">删除</span>
+                  <span @click="deleteFj(item.data.enclosureId)" style="cursor:pointer" v-if="item.data.enclosureType !== 4&&item.data.enclosureType !== 5">删除</span>
                 </div>
               </div>
             </div>

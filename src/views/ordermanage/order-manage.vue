@@ -700,7 +700,7 @@ export default {
       }
     },
     addOrder(){
-      if(!this.$store.state.app.authority.find(a => a.id === 901)||!(this.isCooperative||this.isSuper||this.isSale)){
+      if(!this.$store.state.app.authority.find(a => a.id === 901)||!(this.isCooperative||this.isSuper)){
         this.$Message.error('权限不足！');
         return;
       }
