@@ -185,9 +185,9 @@ const businessMap = {
   1: '备货订单'
 };
 const saleMap = {
-  0: '直销',
+  2: '直销',
   1: '渠道',
-  2: '其他'
+  3: '其他'
 };
 export default {
     name:'orderDetail',
