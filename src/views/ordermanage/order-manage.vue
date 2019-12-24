@@ -503,7 +503,7 @@ export default {
       }
       for (let key in this.selectOrderList) {
         this.selectOrderList[key].forEach(s => {
-          if (s.type === "备货订单") {
+          if (s.status !== "已下单") {
             status = true;
           } else {
             list.push(s.data.order_id);
@@ -512,14 +512,14 @@ export default {
       }
       if (list.length === 0) {
         if (status) {
-          this.$Message.error("只能添加合同订单，请重新选择！");
+          this.$Message.error("只能选择订单状态为已下单的订单，请重新选择！");
           return;
         }
         this.$Message.error("请先选择需要发货的订单！");
         return;
       }
       if (status) {
-        this.$Message.info("只能添加合同订单，已为您自动过滤掉备货订单！");
+        this.$Message.info("只能添加订单状态为已下单的订单，已为您自动过滤掉其他状态的订单！");
       }
       this.$router.push({
         path: "/assetmanage/delivery-manage/newbuild",
