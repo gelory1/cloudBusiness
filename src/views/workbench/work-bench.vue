@@ -1903,7 +1903,7 @@ export default {
       return customList;
     },
     buttonDisabled(){
-      return this.tabName !== 'name1'&&(this.fq_data[this.dataIndex]||{}).zt !== 1;
+      return (this.tabName === 'name3'&&(this.fq_data[this.dataIndex]||{}).zt !== 1)||this.tabName === 'name2';
     },
     hkhzDisabled(){
       return !(this.workBenchData.accountId === -1||this.workBenchData.accountId === this.$store.state.user.accountId||this.isSuperAdmin);
