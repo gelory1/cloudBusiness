@@ -278,9 +278,13 @@ export default {
             if(a2.children.length === 0){
               a2.children = undefined;
             }
-            a2.name = a2.name.split(' ')[a2.name.split(' ').length -1];
-            if(a2.children&&a2.children.length>0) a2.children.forEach(a3 => {
-              a3.name = a3.name.split(' ')[a3.name.split(' ').length -1];
+            a2.name = a2.name.replace(/\s+/g,'|');
+            let arr = a2.name.split('|');
+            a2.name = arr[arr.length - 1];
+            (a2.children||[]).forEach(a3 => {
+              a3.name = a3.name.replace(/\s+/g,'|');
+              let arr2 = a3.name.split('|');
+              a3.name = arr2[arr2.length -1];
             })
           })
         })
