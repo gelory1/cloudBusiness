@@ -237,7 +237,7 @@
           <div class="hz2"><Table :row-class-name="rowClassName1" :columns="hz2_columns" :data="hz2_data" @on-row-click="hz2Click"></Table></div>
         </section>
       </div>
-      <Button class="zf_butt" type="primary" style="margin-left:450px;" @click="surehrClick" :disabled="buttonDisabled">确认核入</Button>
+      <Button class="zf_butt" type="primary" style="margin-left:450px;" @click="surehrClick" :disabled="buttonDisabled||hkhzDisabled">确认核入</Button>
     </Modal>
     <!-- 财务-到款确认 -->
     <Modal v-model="dkqrmodal" class="aa">
@@ -1879,6 +1879,9 @@ export default {
     },
     buttonDisabled(){
       return this.tabName !== 'name1'&&(this.fq_data[this.dataIndex]||{}).zt !== 1;
+    },
+    hkhzDisabled(){
+      return !(this.workBenchData.accountId === -1||this.workBenchData.accountId === this.$store.state.user.accountId);
     },
     isSuperAdmin(){
       if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
