@@ -144,9 +144,14 @@
                 </Col>
               </Row>
                 <Row>
-                <Col span="14">
+                <Col span="7">
                   <FormItem label="实施地点" prop="ssdd" :label-width="90">
                     <Input  v-model="data.data.implementation" placeholder disabled></Input>
+                  </FormItem>
+                </Col>
+                <Col span="7">
+                  <FormItem label="合同类型" prop="htlx" class="con-right">
+                    <Input class="col-m" v-model="data.contractType" placeholder disabled></Input>
                   </FormItem>
                 </Col>
                 <Col span="8">

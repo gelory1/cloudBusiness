@@ -70,7 +70,7 @@
               </section>
               <section>
                 <p>合同主体：</p>
-                <p>{{subjectName[data.data.contractSubject]}}</p>
+                <p>{{data.data.contractSubjectName}}</p>
               </section>
               <section>
                 <p>合同内容：</p>
@@ -145,6 +145,10 @@
               <section>
                 <p>实施地点</p>
                 <p>{{data.data.implementation}}</p>
+              </section>
+              <section>
+                <p>合同类型</p>
+                <p>{{data.contractType}}</p>
               </section>
               <section>
                 <p>联系人及电话：</p>

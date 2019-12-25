@@ -47,6 +47,15 @@
                       >{{item.val}}</Option>
                     </Select>
                   </FormItem>
+                  <FormItem label="合同类型" prop="contractType">
+                    <Select v-model="filterItem.contractType" clearable filterable>
+                      <Option
+                        :value="item.index"
+                        v-for="(item,index) in contractTypes"
+                        :key="index"
+                      >{{item.val}}</Option>
+                    </Select>
+                  </FormItem>
                   <FormItem label="合同内容" prop="htnr">
                     <Select v-model="filterItem.contractContent" clearable filterable>
                       <Option
@@ -319,6 +328,16 @@ const natures = [
     index: 9
   }
 ];
+const contractTypes = [
+  {
+    val:'非备货合同',
+    index:0
+  },
+  {
+    val:'备货合同',
+    index:1
+  },
+];
 const salesTypeMap = {
   1: "渠道",
   2: "直销",
@@ -375,6 +394,7 @@ export default {
       contractStatus,
       contractNatureMap,
       salesTypeMap,
+      contractTypes,
       contract_columns: [
         {
           type: "selection",
@@ -406,6 +426,11 @@ export default {
         {
           title: "合同性质",
           key: "contractNature",
+          align: "center"
+        },
+        {
+          title: "合同类型",
+          key: "contractType",
           align: "center"
         },
         {
@@ -481,6 +506,7 @@ export default {
       filterItem: {
         customerName: "",
         contractNature: "",
+        contractType:'',
         contractContent: "",
         province: "",
         city: "",
@@ -679,6 +705,10 @@ export default {
               this.filterItem.contractNature === ""
                 ? 0
                 : this.filterItem.contractNature,
+            contractType:
+              this.filterItem.contractType === ""
+                ? -1
+                : this.filterItem.contractType,
             contractContent:
               this.filterItem.contractContent === ""
                 ? 0
@@ -711,6 +741,7 @@ export default {
             let item = {};
             item.contractNo = con.contractNo;
             item.contractNature = this.contractNatureMap[con.contractNature];
+            item.contractType = (this.contractTypes.find(c => c.index === con.contractType)||{}).val;
             item.contractStatus = this.contractStatus.find(
               s => s.index === con.contractStatus
             ).status;
