@@ -22,7 +22,7 @@
         </Row>
         <Row>
           <Col span="16">
-            <FormItem label="客户名称" prop="customer" :label-width="90">
+            <FormItem label="申请公司" prop="customer" :label-width="90">
               <Select v-model="formValidate.customer.index" placeholder filterable clearable>
                 <Option
                   v-for="(item,index) in customs"
@@ -50,7 +50,11 @@
           <Col span="16">
             <FormItem label="收货地址" prop="adress" :label-width="90">
               <Select v-model="formValidate.adress.index" placeholder filterable clearable>
-                <Option v-for="(item) in adresses" :value="(item||{}).index" :key="(item||{}).index">
+                <Option
+                  v-for="(item) in adresses"
+                  :value="(item||{}).index"
+                  :key="(item||{}).index"
+                >
                   <span
                     v-if="item.status === 1"
                     :style="{color: formValidate.adress.index === item.index?'white':'#3896f5'}"
@@ -80,7 +84,7 @@
           <div class="dd_div">
             <section>
               <span class="dd_span">货款总计（元）</span>
-              <span>{{totalPrice}}</span>
+              <span>{{totalPrice.toLocaleString()}}</span>
             </section>
             <section>
               <span class="dd_span">大写</span>
@@ -89,8 +93,8 @@
           </div>
         </div>
         <FormItem style="width:300px;margin:200px auto;margin-bottom:20px;">
-          <Button type="primary" @click="onSubmit('formValidate')">提交</Button>
-          <Button type="ghost" style="margin-left: 18px" @click="onCancel">取消</Button>
+          <Button type="primary" @click="onSubmit('formValidate')" :loading="subLoading">提交</Button>
+          <Button type="ghost" style="margin-left: 18px" @click="onCancel" :disabled="subLoading">取消</Button>
         </FormItem>
       </Form>
     </Layout>
@@ -121,6 +125,7 @@
         :current.sync="pageNum"
         :total="sum"
         :page-size="10"
+        show-total
         size="small"
         @on-change="addDevices"
         show-elevator
@@ -162,7 +167,7 @@ export default {
         name: [
           {
             required: true,
-            message: "请输入客户名称",
+            message: "请输入申请公司",
             trigger: "blur"
           }
         ],
@@ -284,7 +289,7 @@ export default {
                 "on-change": a => {
                   params.row.num = a;
                   params.row.totalPrice = a * params.row.price;
-                  this.$set(this.deviceStore, params.index, params.row);
+                  this.$set(this.formValidate.devices_list, params.index, params.row);
                 }
               }
             });
@@ -301,6 +306,33 @@ export default {
         {
           title: "税率",
           key: "tax"
+        },
+        {
+          title:'操作',
+          width: '200',
+          key: 'action',
+          align: "center",
+          render:(h,params) => {
+            return h('Poptip',{
+                props:{
+                  title:'是否确定删除？',
+                  confirm:true
+                },
+                on:{
+                  'on-ok':() =>{
+                    this.formValidate.devices_list = this.formValidate.devices_list.filter(d =>d.productCode !==params.row.productCode);
+                    this.$Message.info('已删除！');
+                  }
+                }
+              },[
+                h('Button',{
+                  props:{
+                    size: 'small'
+                  }
+                },'删除')
+              ]
+            )
+          }
         }
       ],
       addsb_columns: [
@@ -410,6 +442,10 @@ export default {
                     this.addStore[params.index] = params.row;
                     this.addStore[params.index].num = a;
                     this.addStore.page = this.pageNum;
+                    if(!this.addData[this.pageNum]){
+                       this.addData[this.pageNum] = [];
+                    }
+                    this.addData[this.pageNum].push(params.row);
                   }
                 }
               })
@@ -420,11 +456,12 @@ export default {
       addsb_data: [],
       addData: {},
       addStore: {},
-      deviceStore: {},
       customs: [],
       cahceData: [],
       addsbmodal: false,
-      inputVal: ""
+      inputVal: "",
+      selData: [],
+      subLoading: false
     };
   },
   methods: {
@@ -450,22 +487,12 @@ export default {
     },
     addDeviceClick() {
       this.addsbmodal = true;
-      // this.addDevices(1);
+      this.addDevices(1);
     },
     getAddset() {
       this.addDevices(1);
     },
     addDevices(p) {
-      if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
-        for (let key in this.deviceStore) {
-          let index = this.formValidate.devices_list.findIndex(
-            d => d.productCode === this.deviceStore[key].productCode
-          );
-          if (index >= 0) {
-            this.formValidate.devices_list[index] = this.deviceStore[key];
-          }
-        }
-      }
       if (this.addStore.page && this.addData[this.addStore.page]) {
         for (let key in this.addStore) {
           let index = this.addData[this.addStore.page].findIndex(
@@ -495,6 +522,16 @@ export default {
           let _checked = false;
           let num = 0;
           if (
+            this.formValidate.devices_list &&
+            this.formValidate.devices_list.length > 0 &&
+            this.formValidate.devices_list.find(d => d.productCode === data.product_code)
+          ) {
+            _checked = true;
+            num =this.formValidate.devices_list.find(
+              d => d.productCode === data.product_code
+            ).num;
+          }
+          if (
             this.addData[p] &&
             this.addData[p].length > 0 &&
             this.addData[p].find(d => d.product_code === data.product_code)
@@ -519,10 +556,12 @@ export default {
     selectDevices(selection) {
       this.addData[this.pageNum] = selection;
       for (let key in this.addStore) {
+        this.addStore[key]._checked = true;
         let index = selection.findIndex(
           d => d.product_code === this.addStore[key].product_code
         );
         if (index >= 0) {
+          this.addStore[key]._checked = true;
           this.addData[this.pageNum][index] = this.addStore[key];
         }
       }
@@ -560,27 +599,21 @@ export default {
           let obj = this.formValidate.devices_list.find(
             item => item.productCode === d.product_code
           );
-          obj.num += d.num;
+          obj.num = d.num;
           obj.totalPrice = d.product_price * obj.num;
         }
       });
     },
     onSubmit(name) {
       if (this.formValidate.store.index != "") {
-        if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
-          for (let key in this.deviceStore) {
-            let index = this.formValidate.devices_list.findIndex(
-              d => d.productCode === this.deviceStore[key].productCode
-            );
-            if (index >= 0) {
-              this.formValidate.devices_list[index] = this.deviceStore[key];
-            }
-          }
+        if (this.formValidate.devices_list && this.formValidate.devices_list.length > 0) {
         } else {
-          this.$Message.error("无添加设备或发货数量为0");
+          this.$Message.error("无添加设备!");
+          return;
         }
       } else {
         this.$Message.error("请填写完整的信息！");
+        return;
       }
       let productList = [];
       this.formValidate.devices_list.forEach(data => {
@@ -594,6 +627,10 @@ export default {
             unit: data.unit
           });
       });
+      if(productList.length === 0){
+        this.$Message.error("设备数量不能为0!");
+        return;
+      }
       let myDate = new Date();
       let date =
         myDate.getFullYear() +
@@ -616,6 +653,7 @@ export default {
             orderAmount: this.totalPrice + "",
             whId: this.formValidate.store.index,
             addressName: this.formValidate.adress.value,
+            addressId: this.formValidate.adress.index,
             agentId: this.formValidate.customer.index,
             saleType: 2,
             orderType: 1,
@@ -624,11 +662,12 @@ export default {
           }
         ]
       };
+      this.subLoading = true;
       this.$http.SETORDER(request).then(
         response => {
           if (response.data.code !== 0) return;
           this.$Message.success("添加成功！");
-          (this.formValidate = {
+          this.formValidate = {
             name: "",
             orderType: "",
             customer: {
@@ -644,19 +683,17 @@ export default {
               index: "",
               value: ""
             }
-          }),
-            this.$set(
-              this.formValidate.customer,
-              "index",
-              this.customs[0].index
-            );
+          };
+          this.$set(this.formValidate.customer, "index", this.customs[0].index);
           this.$set(this.formValidate.customer, "value", this.customs[0].value);
+          this.subLoading = false;
           this.$router.push("/ordermanage/ordermanage");
         },
         error => {
+          this.subLoading = false;
           if (error.data.code === 0) {
             this.$Message.success("添加成功！");
-            (this.formValidate = {
+            this.formValidate = {
               name: "",
               orderType: "",
               customer: {
@@ -672,24 +709,26 @@ export default {
                 index: "",
                 value: ""
               }
-            }),
-              this.$set(
-                this.formValidate.customer,
-                "index",
-                this.customs[0].index
-              );
+            };
+            this.$set(
+              this.formValidate.customer,
+              "index",
+              this.customs[0].index
+            );
             this.$set(
               this.formValidate.customer,
               "value",
               this.customs[0].value
             );
             this.$router.push("/ordermanage/ordermanage");
+          } else if (error.data.message) {
+            this.$Message.error(error.data.message);
           }
         }
       );
     },
     onCancel() {
-      (this.formValidate = {
+      this.formValidate = {
         name: "",
         orderType: "",
         customer: {
@@ -705,11 +744,11 @@ export default {
           index: "",
           value: ""
         }
-      }),
-        this.$set(this.formValidate.customer, "index", this.customs[0].index);
+      };
+      this.$set(this.formValidate.customer, "index", this.customs[0].index);
       this.$set(this.formValidate.customer, "value", this.customs[0].value);
       this.$router.push("/ordermanage/ordermanage");
-    }
+    },
   },
   computed: {
     stores() {
@@ -741,7 +780,8 @@ export default {
         this.formValidate.customer.index &&
         this.formValidate.customer.index !== "" &&
         this.formValidate.store.index &&
-        this.formValidate.store.index !== ""
+        this.formValidate.store.index !== "" &&
+        this.formValidate.adress
       ) {
         let cusomer =
           this.cahceData.find(
@@ -761,8 +801,16 @@ export default {
           });
         }
         let selectAddress = adresses.find(a => a.status === 1) || adresses[0];
-        this.$set(this.formValidate.adress, "index", selectAddress.index);
-        this.$set(this.formValidate.adress, "value", selectAddress.value);
+        this.$set(
+          this.formValidate.adress,
+          "index",
+          (selectAddress || {}).index || ""
+        );
+        this.$set(
+          this.formValidate.adress,
+          "value",
+          (selectAddress || {}).value || ""
+        );
       }
       return adresses;
     },
@@ -772,28 +820,9 @@ export default {
         this.formValidate.devices_list &&
         this.formValidate.devices_list.length > 0
       ) {
-        if (this.deviceStore && Object.keys(this.deviceStore).length > 0) {
-          let obj = [];
-          for (let key in this.deviceStore) {
-            if (obj.length === 0) {
-              obj = this.formValidate.devices_list.filter(
-                d => d.productCode === this.deviceStore[key].productCode
-              );
-            } else {
-              obj = obj.filter(
-                d => d.productCode === this.deviceStore[key].productCode
-              );
-            }
-            price += this.deviceStore[key].totalPrice;
-          }
-          obj.forEach(data => {
-            price += data.totalPrice;
-          });
-        } else {
-          this.formValidate.devices_list.forEach(data => {
-            price += data.totalPrice;
-          });
-        }
+        this.formValidate.devices_list.forEach(data => {
+          price += data.totalPrice;
+        });
       }
       return price;
     },
@@ -809,7 +838,11 @@ export default {
     addsbmodal(nv) {
       if (!nv) {
         this.addData = {};
+        this.pageNum = 1;
       }
+    },
+    $route() {
+      this.addDevices(1);
     }
   }
 };

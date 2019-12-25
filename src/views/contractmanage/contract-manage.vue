@@ -36,13 +36,22 @@
                 <span @click="closeglClick" class="gl_p1">X</span>
                 <Form ref="filterItem" :model="filterItem" :label-width="100">
                   <FormItem label="客户名称" prop="customerName">
-                    <Input type="text" v-model="filterItem.customerName" />
+                    <Input type="text" placeholder="请输入" v-model="filterItem.customerName" />
                   </FormItem>
                   <FormItem label="合同性质" prop="contractNature">
                     <Select v-model="filterItem.contractNature" clearable filterable>
                       <Option
                         :value="item.index"
                         v-for="(item,index) in natures"
+                        :key="index"
+                      >{{item.val}}</Option>
+                    </Select>
+                  </FormItem>
+                  <FormItem label="合同类型" prop="contractType">
+                    <Select v-model="filterItem.contractType" clearable filterable>
+                      <Option
+                        :value="item.index"
+                        v-for="(item,index) in contractTypes"
                         :key="index"
                       >{{item.val}}</Option>
                     </Select>
@@ -97,7 +106,7 @@
                     </Select>
                   </FormItem>
                   <FormItem label="销售人员" prop="saleName">
-                    <Input type="text" v-model="filterItem.saleName" />
+                    <Input type="text" placeholder="请输入" v-model="filterItem.saleName" />
                   </FormItem>
                   <FormItem label="建档日期">
                     <Row>
@@ -107,6 +116,7 @@
                           placement="bottom"
                           placeholder="开始日期"
                           v-model="filterItem.signStarttime"
+                          :options="startOption"
                         ></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
@@ -116,7 +126,7 @@
                           placement="bottom"
                           placeholder="结束日期"
                           v-model="filterItem.signEndtime"
-                          @on-change="changeTime"
+                          :options="endOption"
                         ></DatePicker>
                       </Col>
                     </Row>
@@ -126,6 +136,7 @@
                       <Col span="11">
                         <DatePicker
                           type="date"
+                          :options="startOption1"
                           placement="bottom"
                           placeholder="开始日期"
                           v-model="filterItem.dueStarttime"
@@ -136,6 +147,7 @@
                         <DatePicker
                           type="date"
                           placement="bottom"
+                          :options="endOption1"
                           placeholder="结束日期"
                           v-model="filterItem.dueEndtime"
                         ></DatePicker>
@@ -177,6 +189,7 @@
           :total="sum"
           :current.sync="pageNum"
           :page-size="10"
+          show-total
           @on-change="getContracts"
           size="small"
           show-elevator
@@ -188,189 +201,14 @@
 </template>
 ``
 <script>
-const contractStatus = [
-  {
-    status: "所有合同状态",
-    index: -1
-  },
-  {
-    status: "审批签约中",
-    index: 0
-  },
-  {
-    status: "生效实施中",
-    index: 1
-  },
-  {
-    status: "上线试运行",
-    index: 2
-  },
-  {
-    status: "回款待确认",
-    index: 3
-  },
-  {
-    status: "财务开票中",
-    index: 4
-  },
-  {
-    status: "商务转运营",
-    index: 5
-  },
-  {
-    status: "到期待续签",
-    index: 6
-  }
-];
-const contractNatureMap = {
-  1: "新签",
-  2: "续签",
-  3: "补装",
-  4: "移点",
-  5: "减点",
-  6: "重签",
-  7: "作废",
-  8: "续费",
-  9: "其他"
-};
-const contractContentMap = {
-  1: "配用电",
-  2: "环保设施智能监测系统",
-  3: "中央空调",
-  4: "油烟监测",
-  5: "工地扬尘",
-  6: "园区抄表",
-  7: "综合能源",
-  100: "其他"
-};
-const contents = [
-  {
-    val: "配用电",
-    index: 1
-  },
-  {
-    val: "环保设施智能监测系统",
-    index: 2
-  },
-  {
-    val: "中央空调",
-    index: 3
-  },
-  {
-    val: "油烟监测",
-    index: 4
-  },
-  {
-    val: "工地扬尘",
-    index: 5
-  },
-  {
-    val: "园区抄表",
-    index: 6
-  },
-  {
-    val: "综合能源",
-    index: 7
-  },
-  {
-    val: "其他",
-    index: 100
-  }
-];
-const natures = [
-  {
-    val: "新签",
-    index: 1
-  },
-  {
-    val: "续签",
-    index: 2
-  },
-  {
-    val: "补装",
-    index: 3
-  },
-  {
-    val: "移点",
-    index: 4
-  },
-  {
-    val: "减点",
-    index: 5
-  },
-  {
-    val: "重签",
-    index: 6
-  },
-  {
-    val: "作废",
-    index: 7
-  },
-  {
-    val: "续费",
-    index: 8
-  },
-  {
-    val: "其他",
-    index: 9
-  }
-];
-const salesTypeMap = {
-  1: "渠道",
-  2: "直销",
-  3: "其他"
-};
-const salesTypes = [
-  {
-    val: "渠道",
-    index: 1
-  },
-  {
-    val: "直销",
-    index: 2
-  },
-  {
-    val: "其他",
-    index: 3
-  }
-];
-const statusColorMap = {
-  审批签约中: {
-    backgroundColor: "#FDF6EC",
-    color: "#E7A440"
-  },
-  生效实施中: {
-    backgroundColor: "#F0F9EC",
-    color: "#78C950"
-  },
-  上线试运行: {
-    backgroundColor: "#CCF5F5",
-    color: "#66E0E0"
-  },
-  回款待确认: {
-    backgroundColor: "#EBF5FE",
-    color: "#54A3F6"
-  },
-  财务开票中: {
-    backgroundColor: "#EEEEFF",
-    color: "#7272D0"
-  },
-  商务转运营: {
-    backgroundColor: "#F4F4F5",
-    color: "#7D7F82"
-  },
-  到期待续签: {
-    backgroundColor: "#F8EBEB",
-    color: "#F68C8C"
-  }
-};
 export default {
   name: "contract",
   data() {
     return {
-      contractStatus,
-      contractNatureMap,
-      salesTypeMap,
+      contractStatus:this.$option.contract.status,
+      contractNatureMap:this.$option.contract.natureMap,
+      salesTypeMap:this.$option.contract.salesTypeMap,
+      contractTypes:this.$option.contract.types,
       contract_columns: [
         {
           type: "selection",
@@ -405,6 +243,11 @@ export default {
           align: "center"
         },
         {
+          title: "合同类型",
+          key: "contractType",
+          align: "center"
+        },
+        {
           title: "合同状态",
           key: "contractStatus",
           align: "center",
@@ -419,11 +262,11 @@ export default {
                   },
                   style: {
                     backgroundColor: params.row.contractStatus
-                      ? statusColorMap[params.row.contractStatus]
+                      ? this.$option.contract.statusColorMap[params.row.contractStatus]
                           .backgroundColor
                       : "white",
                     color: params.row.contractStatus
-                      ? statusColorMap[params.row.contractStatus].color
+                      ? this.$option.contract.statusColorMap[params.row.contractStatus].color
                       : "#7D7F82"
                   }
                 },
@@ -458,11 +301,11 @@ export default {
           key: "saleType",
           align: "center"
         },
-        {
-          title: "销售负责人",
-          key: "saleName",
-          align: "center"
-        },
+        // {
+        //   title: "销售负责人",
+        //   key: "saleName",
+        //   align: "center"
+        // },
         {
           title: "运营公司",
           key: "manageCompany",
@@ -477,6 +320,7 @@ export default {
       filterItem: {
         customerName: "",
         contractNature: "",
+        contractType:'',
         contractContent: "",
         province: "",
         city: "",
@@ -487,6 +331,34 @@ export default {
         signEndtime: "",
         dueStarttime: "",
         dueEndtime: ""
+      },
+      startOption:{
+        disabledDate:time =>{
+          if(this.filterItem.signEndtime){
+            return time.getTime() > new Date(this.filterItem.signEndtime).getTime()
+          }
+        }
+      },
+      endOption:{
+        disabledDate:time =>{
+          if(this.filterItem.signStarttime){
+            return time.getTime() < new Date(this.filterItem.signStarttime).getTime()
+          }
+        }
+      },
+      startOption1:{
+        disabledDate:time =>{
+          if(this.filterItem.dueEndtime){
+            return time.getTime() > new Date(this.filterItem.dueEndtime).getTime()
+          }
+        }
+      },
+      endOption1:{
+        disabledDate:time =>{
+          if(this.filterItem.dueStarttime){
+            return time.getTime() < new Date(this.filterItem.dueStarttime).getTime()
+          }
+        }
       },
       khmch: [
         {
@@ -507,31 +379,22 @@ export default {
       moreShow: false,
       disabled: true,
       butZT: "XXX",
-      selectedStatus: contractStatus[0],
+      selectedStatus: this.$option.contract.status[0],
       sum: 0,
       inputVal: "",
       loading: false,
       pageNum: 1,
       filterStatus: false,
-      natures,
-      salesTypes,
+      natures:this.$option.contract.natures,
+      salesTypes:this.$option.contract.salesTypes,
       provinces: [],
       citys: [],
       companys: [],
-      contractContentMap,
-      contents
+      contractContentMap:this.$option.contract.contentMap,
+      contents:this.$option.contract.contents
     };
   },
   methods: {
-    changeTime(){
-      if (
-        new Date(this.filterItem.signStarttime).getTime() <
-        new Date(this.filterItem.signEndtime).getTime()
-      ) {
-        this.$message.error("结束时间不能小于开始时间");
-        return false;
-      }
-    },
     contractClick(side) {
       if (side === "inside") {
         this.tooptipShow = !this.tooptipShow;
@@ -546,6 +409,10 @@ export default {
       this.getContracts(1);
     },
     openDetail(data) {
+      if(!this.$store.state.app.authority.find(a => a.id === 801)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$store.commit("selectedContract", JSON.parse(JSON.stringify(data)));
       localStorage.setItem("contractInfo", JSON.stringify(data));
       this.$router.push({ path: "/contractmanage/detail" });
@@ -652,6 +519,10 @@ export default {
               this.filterItem.contractNature === ""
                 ? 0
                 : this.filterItem.contractNature,
+            contractType:
+              this.filterItem.contractType === ""
+                ? -1
+                : this.filterItem.contractType,
             contractContent:
               this.filterItem.contractContent === ""
                 ? 0
@@ -678,13 +549,13 @@ export default {
       this.loading = true;
       this.$http.XLCONTRACT(request).then(
         response => {
-          console.log(response);
           let { data } = response.data.result;
           this.sum = data.sum;
           data.contractList.forEach(con => {
             let item = {};
             item.contractNo = con.contractNo;
             item.contractNature = this.contractNatureMap[con.contractNature];
+            item.contractType = (this.contractTypes.find(c => c.index === con.contractType)||{}).val;
             item.contractStatus = this.contractStatus.find(
               s => s.index === con.contractStatus
             ).status;

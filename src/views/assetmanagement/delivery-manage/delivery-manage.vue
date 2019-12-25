@@ -1,9 +1,9 @@
 <template>
   <div class="delivery" @click="tooltipClick('outside')">
     <Layout>
-      <Menu width="auto" size="small" style="padding-top:30px;">
+      <Menu width="auto" size="small" style="height:70px;">
         <div class="fh_but">
-          <Button type="ghost">发货方案查询</Button>
+          <Button type="ghost" style="margin-top:15px;margin-left:5px;">发货方案查询</Button>
         </div>
         <Header :style="{background: '#fff',minWidth:'400px'}">
           <div style="float:right;" @click.stop="tooltipClick('inside')">
@@ -25,7 +25,83 @@
               <div v-show="glShow" class="gl">
                 <p class="gl_p">过滤条件</p>
                 <span @click="closeglClick" class="gl_p1">X</span>
-              </div> 
+                <Form ref="filterItem" :model="filterItem" :label-width="100">
+                  <FormItem label="客户名称" prop="customerName">
+                    <Input type="text" v-model="filterItem.customerName" />
+                  </FormItem>
+                  <FormItem label="发起时间段">
+                    <Row>
+                      <Col span="11">
+                        <DatePicker
+                          type="date"
+                          placement="bottom"
+                          placeholder="开始日期"
+                          v-model="filterItem.startTime"
+                          :options="startOption"
+                        ></DatePicker>
+                      </Col>
+                      <Col span="2" style="text-align: center">-</Col>
+                      <Col span="11">
+                        <DatePicker
+                          type="date"
+                          placement="bottom"
+                          placeholder="结束日期"
+                          v-model="filterItem.endTime"
+                          :options="endOption"
+                        ></DatePicker>
+                      </Col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="订单数量级">
+                    <Row>
+                      <Col span="11">
+                        <InputNumber :min="0" v-model="filterItem.orderstart" style="width:100%"></InputNumber>
+                      </Col>
+                      <Col span="2" style="text-align: center">至</Col>
+                      <Col span="11">
+                        <InputNumber :min="filterItem.orderstart" v-model="filterItem.orderend" style="width:100%"></InputNumber>
+                      </Col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="设备数量级" prop>
+                    <Row>
+                      <Col span="11">
+                        <InputNumber :min="0" v-model="filterItem.setstart" style="width:100%"></InputNumber>
+                      </Col>
+                      <Col span="2" style="text-align: center">至</Col>
+                      <Col span="11">
+                        <InputNumber :min="filterItem.setstart" v-model="filterItem.setend" style="width:100%"></InputNumber>
+                      </Col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="金额范围" prop>
+                    <Row>
+                      <Col span="11">
+                        <InputNumber :min="0" v-model="filterItem.moneystart" style="width:100%"></InputNumber>
+                      </Col>
+                      <Col span="2" style="text-align: center">至</Col>
+                      <Col span="11">
+                        <InputNumber :min="filterItem.moneystart" v-model="filterItem.moneyend" style="width:100%"></InputNumber>
+                      </Col>
+                    </Row>
+                  </FormItem>
+                  <!-- <FormItem label="完成度">
+                    <Row>
+                      <Col span="11">
+                        <Input type="text" v-model="filterItem.prostart" />
+                      </Col>
+                      <Col span="2" style="text-align: center">至</Col>
+                      <Col span="11">
+                        <Input type="text" v-model="filterItem.proend" />
+                      </Col>
+                    </Row>
+                  </FormItem> -->
+                  <FormItem>
+                    <Button @click="handleResetht('filterItem')" style="margin-left: 8px">重置</Button>
+                    <Button type="primary" @click="handleSubmitht('filterItem')">确定</Button>
+                  </FormItem>
+                </Form>
+              </div>
             </span>
             <span style="padding:0 5px">|</span>
             <span class="f-more">
@@ -39,10 +115,19 @@
               </div>
             </span>
           </div>
-          <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" @click="addClick">新建发货方案</Button>
+          <div></div>
         </Header>
+         <Button
+          type="primary"
+          icon="ios-plus-empty"
+          class="addBut1"
+          @click="addClick"
+        >新建发货方案</Button>
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px;margin-top:-10px;">
+      <Content
+        :style="{background: '#fff', minHeight: scrollHeight}"
+        style="padding-left:20px;margin-top:00px;"
+      >
         <Tabs ref="tab" v-model="tabName" @on-change="changeTab">
           <TabPane
             v-for="(item,index) in fhStatus"
@@ -56,15 +141,17 @@
               size="small"
               :loading="loading"
               @on-row-dblclick="editClick"
+
             ></Table>
             <Page
               :total="sum"
               :current.sync="pageNum"
               :page-size="10"
               size="small"
+              show-total
               @on-change="getDeliveryList"
               show-elevator
-              style="text-align:center;margin-top:20px;margin-bottom:200px"
+              style="text-align:center;margin:20px 0 40px  0;"
             ></Page>
           </TabPane>
         </Tabs>
@@ -74,45 +161,47 @@
 </template>
 
 <script>
-const fhStatus = [
-  {
-    type: "全部",
-    name: "name1",
-    index: 0
-  },
-  {
-    type: "草稿",
-    name: "name2",
-    index: 1
-  },
-  {
-    type: "审批中",
-    name: "name3",
-    index: 2
-  },
-  {
-    type: "已通过",
-    name: "name4",
-    index: 3
-  },
-  {
-    type: "被驳回",
-    name: "name5",
-    index: 4
-  }
-];
 export default {
   name: "deliveryManage",
   data() {
     return {
-      fhStatus,
+      fhStatus: this.$option.asset.deliveryStatus,
       inputVal: "",
-      sum:0,
-      pageNum:1,
+      sum: 0,
+      pageNum: 1,
       loading: false,
       glShow: false,
       moreShow: false,
       filterStatus: false,
+      filterItem: {
+        customerName: "",
+        startTime: "",
+        endTime: "",
+        orderstart: 0,
+        orderend: 0,
+        setstart: 0,
+        setend: 0,
+        moneystart: 0,
+        moneyend: 0,
+        prostart: "",
+        proend: ""
+      },
+      startOption: {
+        disabledDate: time => {
+          if (this.filterItem.endTime) {
+            return time.getTime() > new Date(this.filterItem.endTime).getTime();
+          }
+        }
+      },
+      endOption: {
+        disabledDate: time => {
+          if (this.filterItem.startTime) {
+            return (
+              time.getTime() < new Date(this.filterItem.startTime).getTime()
+            );
+          }
+        }
+      },
       fh_columns: [
         {
           type: "selection",
@@ -131,12 +220,16 @@ export default {
                   props: {},
                   on: {
                     click: () => {
-                      let data = {...params.row};
+                      let data = { ...params.row };
                       data.shipments_id = data.data.shipments_id;
-                      this.$router.push({
-                        name: "delivery_detail",
-                        query: data
-                      });
+                      if(this.authority.find(a => a.id === 1004)){
+                        this.$router.push({
+                          name: "delivery_detail",
+                          query: data
+                        });
+                      }else{
+                        this.$Message.error('权限不足！');
+                      }
                     }
                   }
                 },
@@ -182,10 +275,46 @@ export default {
         }
       ],
       fh_data: [],
-      tabName: "name1"
+      tabName: "name1",
+      filterStatus: false,
+      tableHeight: "",
     };
   },
   methods: {
+    handleSubmitht(name){
+      let status = true;
+      for(let key in this.filterItem){
+        if(this.filterItem[key] !== ''&&this.filterItem[key] !== 0){
+          status = false;
+        }
+      }
+      if(status){
+        this.filterStatus = false;
+        $(".cor").css({ color: "#000000" });
+        this.glShow = false;
+        this.getDeliveryList(1);
+        return;
+      }
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          this.filterStatus = true;
+          this.glShow = false;
+          this.getDeliveryList(1);
+        } else {
+          this.$Message.error("Fail!");
+        }
+      });
+    },
+    handleResetht(){
+      this.filterStatus = false;
+      for (let key in this.filterItem) {
+        if(key === 'orderstart'||key === 'orderend'||key === 'setstart'||key === 'setend'||key === 'moneystart'||key === 'moneyend'){
+          this.filterItem[key] = 0;
+        }else{
+          this.filterItem[key] = "";
+        }
+      }
+    },
     tooltipClick(side) {
       if (side === "inside") {
         this.tooptipShow = !this.tooptipShow;
@@ -194,61 +323,89 @@ export default {
       }
     },
     editClick(item) {
-      if(item.data.shipments_status === 0||item.data.shipments_status === 3){
+      if (
+        item.data.shipments_status === 0 ||
+        item.data.shipments_status === 3
+      ) {
         item.shipments_id = item.data.shipments_id;
-        this.$router.push({
-          name: "delivery_detail2",
-          query: item
-        });
-      }else{
-        this.$Message.error('当前状态不支持编辑！');
+        if(this.authority.find(a => a.id === 1006)){
+          this.$router.push({
+            name: "delivery_detail2",
+            query: item
+          });
+        }else{
+          this.$Message.error('权限不足！');
+        }
+      } else {
+        this.$Message.error("当前状态不支持编辑！");
       }
     },
     addClick() {
-      this.$router.push({
-        path: "/assetmanage/delivery-manage/newbuild"
-      });
+      if(this.authority.find(a => a.id === 1005)){
+        this.$router.push({
+          path: "/assetmanage/delivery-manage/newbuild"
+        });
+      }else{
+        this.$Message.error('权限不足！');
+      }
     },
     getDeliveryList(p) {
-      let index = this.fhStatus.find(f => f.name === this.tabName).index -1;
+      let index = this.fhStatus.find(f => f.name === this.tabName).index - 1;
       let request = {
-        "typeid": 23019,
-        "data": [
-            {
-              "account_id": this.$store.state.user.accountId,
-              "page_num": p,
-              "page_size": 10,
-              "keyword": this.inputVal,
-              "shipments_status": index === -1?undefined:index
-            }
+        typeid: 23019,
+        data: [
+          {
+            account_id: this.$store.state.user.accountId,
+            page_num: p,
+            page_size: 10,
+            keyword: this.inputVal,
+            shipments_status: index === -1 ? undefined : index,
+            agent_name:this.filterItem.customerName === "" ? undefined : ('%' + this.filterItem.customerName),
+            shipments_start_time:this.filterItem.startTime === "" ? undefined : this.filterItem.startTime.getFullYear() +"-" 
+              +(this.filterItem.startTime.getMonth() + 1) +"-" +this.filterItem.startTime.getDate() +" 00:00:00",
+            shipments_end_time:this.filterItem.endTime === "" ? undefined : this.filterItem.endTime.getFullYear() +"-"
+              +(this.filterItem.endTime.getMonth() + 1) +"-" +this.filterItem.endTime.getDate() +" 23:59:59",
+            order_count_start:this.filterItem.orderend === 0 ? undefined : this.filterItem.orderstart,
+            order_count_end:this.filterItem.orderend === 0 ? undefined : this.filterItem.orderend,
+            product_count_start:this.filterItem.setend === 0 ? undefined : this.filterItem.setstart,
+            product_count_end:this.filterItem.setend === 0 ? undefined : this.filterItem.setend,
+            money_start:this.filterItem.moneyend === 0 ? undefined : String(this.filterItem.moneystart),
+            money_end:this.filterItem.moneyend === 0 ? undefined : String(this.filterItem.moneyend),
+          }
         ]
       };
       this.fh_data = [];
       this.loading = true;
-      this.$http.PostXLASSETS(request).then(response => {
-        this.loading = false;
-        this.fh_data = [];
-        let { data } = response.data.result;
-        this.sum = data[0].sum;
-        data[0].shipments_list.forEach(s => {
-          this.fh_data.push({
-            fabh: s.shipments_no,
-            fqr: s.user_name,
-            fqsj: s.shipments_creation_time,
-            fqms: s.shipments_describe,
-            ddsl: s.order_quantity,
-            sbsl: s.product_sum,
-            jexj: s.total_money,
-            zt: (this.fhStatus.find(f => f.index === s.shipments_status+1)||{}).type,
-            data:s
-          })
-        });
-      },error => {
-        this.loading = false;
-        this.fh_data = [];
-      })
+      this.$http.PostXLASSETS(request).then(
+        response => {
+          this.loading = false;
+          this.fh_data = [];
+          let { data } = response.data.result;
+          this.sum = data[0].sum;
+          data[0].shipments_list.forEach(s => {
+            this.fh_data.push({
+              fabh: s.shipments_no,
+              fqr: s.user_name,
+              fqsj: s.shipments_creation_time,
+              fqms: s.shipments_describe,
+              ddsl: s.order_quantity,
+              sbsl: s.product_sum,
+              jexj: s.total_money,
+              zt: (
+                this.fhStatus.find(f => f.index === s.shipments_status + 1) ||
+                {}
+              ).type,
+              data: s
+            });
+          });
+        },
+        error => {
+          this.loading = false;
+          this.fh_data = [];
+        }
+      );
     },
-    changeTab(){
+    changeTab() {
       this.pageNum = 1;
       this.getDeliveryList(1);
     },
@@ -278,17 +435,39 @@ export default {
   mounted() {
     this.getDeliveryList(1);
   },
-  watch:{
-    tabName(){
-      this.changeTab();
+  computed: {
+    scrollHeight() {
+      let h = 0;
+      h = document.body.scrollHeight - 185 + "px";
+      return h;
+    },
+    authority(){
+      return this.$store.state.app.authority;
     }
+  },
+  watch: {
+    tabName() {
+      this.changeTab();
+    },
+    'filterItem.orderstart'(nv){
+      if(this.filterItem.orderend < nv){
+        this.filterItem.orderend = nv
+      }
+    },
+    'filterItem.setstart'(nv){
+      if(this.filterItem.setend < nv){
+        this.filterItem.setend = nv
+      }
+    },
+    'filterItem.moneystart'(nv){
+      if(this.filterItem.moneyend < nv){
+        this.filterItem.moneyend = nv
+      }
+    },
   }
 };
 </script>
 
 <style>
 @import "../assetmanage.css";
-.ivu-layout-header{
-    line-height:80px
-}
 </style>

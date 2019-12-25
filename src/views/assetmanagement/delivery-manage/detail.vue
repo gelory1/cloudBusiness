@@ -6,6 +6,7 @@
         <span>返回</span>
       </div>
       <header class="fa_mid">
+        <Button v-if="$route.query.zt == '草稿'" type="ghost" class="right fa_b1" @click="editClick">编辑</Button>
         <Button type="ghost" class="right fa_b">{{$route.query.zt}}</Button>
         <h2>发货方案详情</h2>
 
@@ -24,7 +25,7 @@
           </p>
           <p>
             <span class="gray">期望发货时间：</span>
-            {{detailData.deliveryTime}} 之前
+            {{detailData.deliveryTime.split(' ')[0]}} 之前
           </p>
         </div>
         <div class="fa_div1">
@@ -70,7 +71,7 @@
                 disabled-hover
                 highlight-row
                 @on-current-change="changeRow"
-                style="margin:20px 0 0 0px;overflow:auto"
+                style="margin:20px 0 0 0px;overflow:auto;min-height:400px;"
               ></Table>
             </div>
             <div style="width:83%;float:right;">
@@ -89,7 +90,7 @@
                 :columns="device_columns"
                 :data="device_data"
                 size="small"
-                style="margin:0px 0 0 0;overflow:auto"
+                style="margin:0px 0 0 0;overflow:auto;min-height:400px"
               ></Table>
             </div>
           </div>
@@ -120,6 +121,16 @@ export default {
           key: "orderNo"
         }
       ],
+      deliveryBatch:[
+          {
+            name:"仓库1",
+            value:"1"
+          },
+          {
+            name:"仓库2",
+            value:"2"
+          },
+      ],
       device_columns: [
         {
           title: "存货编码",
@@ -141,6 +152,31 @@ export default {
           key: "product_unit",
           align: "center"
         },
+        // {
+        //   title:"发货批次",
+        //   key:"delivery_batch",
+        //   align:"center",      
+        //   render:(h,params)=>{
+        //       return h('Select',{
+        //         props:{
+        //           placeholder:"未设置",
+        //           size:"small"
+        //         },
+        //         style:{
+        //           // position:'relative'
+        //         }
+        //       },
+        //       this.deliveryBatch.map((item)=>{
+        //           return h('Option',{
+        //             props:{
+        //               placeholder:"未设置",
+        //               value:item.value,
+        //               label:item.name
+        //             }
+        //           })
+        //       }))
+        //     }
+        // },
         {
           title: "数量",
           key: "quantity_shipped",
@@ -158,12 +194,23 @@ export default {
     };
   },
   methods: {
+    editClick(){
+      if(this.authority.find(a => a.id === 1006)){
+        this.$router.push({
+          name: "delivery_detail2",
+          query: this.detailData
+        });
+      }else{
+        this.$Message.error('权限不足！');
+      }
+    },
     changeRow(data) {
       this.currentRow = JSON.parse(JSON.stringify(data));
     },
     goBack() {
-      var _self = this;
-      _self.$router.go(-1);
+     this.$router.push({
+        path: "/assetmanage/delivery-manage"
+      });
     },
     getDetail(){
       let request = {
@@ -188,12 +235,14 @@ export default {
         ];
         let { data } = response.data.result;
         this.detailData.schemeNo = data[0].shipments_no;
-        this.detailData.time = data[0].shipments_time;
+        this.detailData.time = data[0].shipments_creationtime;
         this.detailData.manageMan = data[0].user_name;
-        this.detailData.deliveryTime = data[0].shipments_creationtime;
+        this.detailData.deliveryTime = data[0].shipments_time;
         this.detailData.des = data[0].shipments_describe;
         this.detailData.shipments_start_batch = data[0].shipments_start_batch;
         this.detailData.shipments_end_batch = data[0].shipments_end_batch;
+        this.detailData.shipments_id = request.data[0].shipments_id;
+        this.detailData.data = data[0];
         data[0].product_list.forEach(p => {
           if(!this.detailData.orderList.find(o => o.order_id === p.order_id)){
             this.detailData.orderList.push({
@@ -290,6 +339,9 @@ export default {
         })
       }
       return customList;
+    },
+    authority(){
+      return this.$store.state.app.authority;
     }
   },
   watch:{
@@ -313,4 +365,7 @@ export default {
 <style>
 @import "../assetmanage.css";
 @import "../../customermanage/customer.css";
+.ivu-select-single .ivu-select-selection .ivu-select-placeholder{
+ color:orange
+}
 </style>

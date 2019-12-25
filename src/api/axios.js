@@ -46,6 +46,10 @@ const workflow = {
     GetLOGIN (params) {
         return axios.post('/public/api/xlselect/login', params);
     },
+    // 权限
+    AUTHORITY (params) {
+        return axios.post('/public/api/xloaconnect/query', params);
+    },
     // 设备资产查询
     PostXLASSETS (params) {
         return axios.post('/public/api/xlassets/query', params);
@@ -94,6 +98,10 @@ const workflow = {
     UPDATECONTRACT (params) {
         return axios.post('/public/api/xlcontract/update', params);
     },
+    // 合同删除
+    DELETECONTRACT (params) {
+        return axios.post('/public/api/xlcontract/delete', params);
+    },
     // 回款合入
     SETCONTRACT (params) {
         return axios.post('/public/api/xlcontract/set', params);
@@ -117,6 +125,10 @@ const workflow = {
     // 报表查询
     XLREPORT (params) {
         return axios.post('/public/api/xlreport/query', params);
+    },
+    // 导出清单
+    EXPORT (params) {
+        return axios.post('/public/api/xlcustomer/export', params);
     }
 
 };

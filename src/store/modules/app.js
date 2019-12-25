@@ -55,11 +55,15 @@ const app = {
         notifyData: {
             status: false,
             data: {}
-        }
+        },
+        authority: []
     },
     mutations: {
         setTagsList (state, list) {
             state.tagsList.push(...list);
+        },
+        setAutority (state, list) {
+            state.authority = list;
         },
         updateMenulist (state) {
             let accessCode = parseInt(Cookies.get('access'));
@@ -222,8 +226,14 @@ const app = {
             state.showNotice = true;
             state.workBenchData = data;
         },
+        resetWorkBenchData (state) {
+            state.workBenchData = [];
+        },
         setNotifyData (state, data) {
             state.notifyData = data;
+        },
+        resetShowNotice (state) {
+            state.showNotice = false;
         }
     },
     actions: {
@@ -241,6 +251,7 @@ const app = {
             let _this = payload.this;
             context.commit('setNotifyData', {status: false, data: []});
             axios.XLWORKBENCH(request).then(response => {
+                if (!Cookies.get('user')) return;
                 let { data } = response.data.result;
                 let updateStatus = false;
                 data.forEach(d => {
@@ -255,10 +266,14 @@ const app = {
                                 message = `回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
                                 break;
                             case 4:
-                                message = `到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
+                                message = `到账待确认，金额：${d.workBenchContentObj.payAmount || d.workBenchContentObj.orderAmount}(付款方：${d.workBenchContentObj.payUnitName})，点击直接处理`;
                                 break;
                             case 3:
-                                message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
+                                if (d.workBenchContentObj.contractNo) {
+                                    message = `${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。点击直接处理`;
+                                } else if (d.workBenchContentObj.orderNo) {
+                                    message = `${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。点击直接处理`;
+                                }
                                 break;
                             case 12:
                                 message = '发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里';

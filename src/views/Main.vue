@@ -34,7 +34,7 @@
                     </div>
                 </div>
             </div>
-    </div>-->
+    </div> -->
     <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'250px'}">
       <div style="height:70px;background:#528DFF;">
         <div class="header-avator-con">
@@ -60,7 +60,7 @@
       </div>
     </div>
     <!-- 右侧内容页 -->
-    <div class="single-page-con" :style="{left: shrink?'60px':'250px'}">
+    <div class="single-page-con" :style="{left: shrink?'60px':'250px'}" ref="content">
       <div class="single-page">
         <keep-alive :include="cachePage">
           <router-view></router-view>
@@ -103,7 +103,38 @@ export default {
   },
   computed: {
     menuList() {
-      return this.$store.state.app.menuList;
+      let menuList = [];
+      if(this.authority&&this.authority.length>0){
+        this.$store.state.app.menuList.forEach(menu => {
+          let whiteList = ['/'];
+          if(this.authority.find(a => a.path === menu.path||a.path === 'addressManage')||whiteList.indexOf(menu.path)!==-1){
+            let children = [];
+            children = menu.children.filter((m,i) => {
+              let path = menu.path + '/' + m.name;
+              if(this.authority.find(a => a.path === path)||i === 0||whiteList.indexOf(menu.path)!==-1){
+                return true
+              }
+            });
+            menuList.push({
+              component:menu.component,
+              icon:menu.icon,
+              name:menu.name,
+              path:menu.path,
+              title:menu.title,
+              children
+            });
+          }
+        })
+      }
+      return menuList;
+      // return this.$store.state.app.menuList;
+    },
+    authority(){
+      let authority = [];
+      if(JSON.parse(localStorage.getItem('authority'))||this.$store.state.app.authority){
+        authority = JSON.parse(localStorage.getItem('authority'))||this.$store.state.app.authority;
+      }
+      return authority;
     },
     pageTagsList() {
       return this.$store.state.app.pageOpenedList; // 打开的页面的页面对象
@@ -143,7 +174,10 @@ export default {
       setInterval(() => {
         if(Cookies.get('user')) this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
       },10000*12)
-      
+      if(this.$store.state.app.authority.length === 0){
+        this.$store.commit('setAutority',this.authority);
+      }
+      this.getRegions();
       // var websocaket =null;
 		 	// if('WebSocket' in window){
 			// 	 websocaket = new WebSocket("ws://localhost:8080/WebSockt/WebSocketTest");//用于创建 WebSocket 对象。WebSocketTest对应的是java类的注解值
@@ -184,7 +218,11 @@ export default {
         this.$router.push({
           name: "login"
         });
-        this.$store.commit('setWorkBenchData',[]);
+        this.$store.commit('resetWorkBenchData');
+        this.$store.commit('resetShowNotice');
+        let authority = [];
+        localStorage.setItem('authority',JSON.stringify(authority));//本地保存列表
+        this.$store.commit('setAutority',authority);//更新登录列表
         this.$notify.closeAll();
       }
     },
@@ -220,6 +258,38 @@ export default {
     },
     scrollBarResize() {
       this.$refs.scrollBar.resize();
+    },
+    getRegions(){
+      let request = {
+        typeid: 27012,
+        data:[{}]
+      }
+      this.$http.XLSELECT(request).then(res => {
+        let regions = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 1);
+        let arr2 = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 2);
+        let arr3 = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 3);
+        regions.forEach(a1 => {
+          a1.children = arr2.filter(a2 => a2.id - a1.id>0&&a2.id-a1.id<10000);
+          (a1.children||[]).forEach(a2 => {
+            a2.children = arr3.filter(a3 => a3.id - a2.id>0&&a3.id-a2.id<100);
+            a2.name = a2.name.replace(/\s+/g,'|');
+            let arr = a2.name.split('|');
+            a2.name = arr[arr.length - 1];
+            (a2.children||[]).forEach(a3 => {
+              a3.name = a3.name.replace(/\s+/g,'|');
+              let arr2 = a3.name.split('|');
+              a3.name = arr2[arr2.length -1];
+            })
+            if(a2.children.length === 0){
+              a2.children = undefined;
+            }
+          })
+          if(a1.children.length === 0){
+              a1.children = undefined;
+            }
+        })
+        localStorage.setItem('regions',JSON.stringify(regions));
+      });
     }
   },
   watch: {
@@ -231,6 +301,10 @@ export default {
       }
       this.checkTag(to.name);
       localStorage.currentPageName = to.name;
+      window.scrollTo(0, 0)
+      this.$nextTick(()=>{
+        this.$refs['content'].scrollTo(0,0);
+      })
     },
     lang() {
       // util.setCurrentPath(this, this.$route.name); // 在切换语言时用于刷新面包屑

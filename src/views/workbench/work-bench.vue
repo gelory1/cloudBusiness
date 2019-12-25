@@ -4,7 +4,7 @@
       <div>
         <div class="gz_left left bor" style="min-height:700px;">
           <!-- <Input icon="ios-search" placeholder="请输入。。。。" class="gz_input"></Input> -->
-          <Tabs value="name1" v-model="tabName" >
+          <Tabs label="待办工作" v-model="tabName" >
             <TabPane :label="label" name="name1">
               <Table
                 height="720"
@@ -27,24 +27,25 @@
               <Table height="700" :columns="fq_columns" :data="fq_data" :loading="loading"></Table>
             </TabPane>
           </Tabs>
-          <p class="gzadd" @click="newgzClick">
+          <p class="gzadd" @click="newgzClick" v-if="isSuperAdmin||isFinance||isSaleManage">
             <img src="../../images/workbench/add.png" alt />
           </p>
           <Input class="gz_input" icon="ios-search" v-model="inputVal" placeholder="请输入内容" style="margin-top:6px" @on-enter="getWorkbench" @on-click="getWorkbench"/>
         </div>
         <div class="gz_right right">
-          <div class="left gz_rig bor" v-show="reportData[1]">
+          <div class="left gz_rig bor" v-show="reportDataLeft.length > 0">
             <Select v-model="bhlmodel" size="small" clearable filterable @on-change="selectReport(1,$event)">
-                <Option :value="item.report_id" v-for="item in reportData[1]" :key="item.report_id">{{item.report_name}}</Option>
+                <Option :value="item.report_id" v-for="item in reportDataLeft" :key="item.report_id">{{item.report_name}}</Option>
             </Select>
             <p class="bh_p"><big>{{selectReportData.report_value[0]}}</big><i> {{selectReportData.report_value[1]}}</i><span>&#x3000;<b>{{selectReportData.report_value[2]}}</b></span></p>
           </div>
-          <div class="right gz_rig bor">
-            <Select v-model="kclmodel" size="small" clearable filterable style="width:100px">
-                <Option value="bd">本地库存量</Option>
-                <Option value="ck">仓库库存量</Option>
+          <div class="right gz_rig bor" v-show="reportDataRight.length > 0">
+            <Select v-model="kclmodel" size="small" clearable filterable @on-change="selectReport(0,$event)">
+                <Option :value="item.report_id" v-for="item in reportDataRight" :key="item.report_id">{{item.report_name}}</Option>
             </Select>
-            <p class="bh_p"><big>3000</big><i> 台</i></p>
+            <p class="bh_p"><big>{{selectReportData0.report_value[0]}}</big><i> {{selectReportData0.report_value[1]}}</i>
+              <!-- <span>&#x3000;<b>{{selectReportData0.report_value[2]}}</b></span> -->
+            </p>
           </div>
           <div style="clear: both;">
           </div>
@@ -67,7 +68,8 @@
     </layout>
     <!-- 支付方式弹框 -->
     <Modal v-model="zfmodal" class="aa">
-      <p class="zf_p">支付</p>
+      <p class="zf_p" v-if="this.tabName == 'name1' || this.workStatus == 1">待办-支付</p>
+      <p class="zf_p" v-if="this.tabName == 'name2' || this.workStatus == 2">已办-支付</p>
       <p class="zf_p1">请选择支付方式：</p>
       <div class="zffs" @click="selectedPayStyle">
         <div class="zf_img" index="0" :style="{borderColor:borderColor[0]}">
@@ -90,11 +92,13 @@
       <div class="zf_div">
         <p>
           <Icon type="ios-information-outline"></Icon>
-          <span>正在使用线下支付，请确认支付金额后点击【确认已支付】</span>
+          <span v-if="zf.htbh">正在使用线下支付，请确认支付金额后点击【确认已支付】</span>
+          <span v-if="zf.orderNo">正在进行备货支付，请确认支付金额后点击【确认】</span>
         </p>
         <p>
           <span class="marl">收款方：</span>
-          <span>{{zf.skf}}</span>
+          <span>新联电子</span>
+          <!-- <span>{{zf.skf}}</span> -->
           <span class="zf_sk">
             应付
             <b>{{zf.yf}}</b>元
@@ -102,13 +106,19 @@
         </p>
         <!-- --------------------单条展示 --------------------->
         <section v-show="dtzfShow">
-          <p>
+          <p v-if="zf.htbh">
             <span class="marl">
               合同编号：
               <span class="underline">{{zf.htbh}}</span>
             </span>
           </p>
-          <p>
+          <p v-if="zf.orderNo">
+            <span class="marl">
+              订单编号：
+              <span class="underline">{{zf.orderNo}}</span>
+            </span>
+          </p>
+          <p v-if="zf.htbh">
             <span class="marl">对应账期：</span>
             <span>{{zf.dyzq}}</span>
           </p>
@@ -130,13 +140,19 @@
           </div>
         </section>
       </div>
-      <Upload multiple type="drag" action="/" class="upload">
+      <Upload multiple type="drag" v-if="imgUrl === ''" action="/public/api/xlcontract/uploadFile" :before-upload="beforeUpload" :format="['jpg','jpeg','png']" :on-format-error="handleFormatError"
+        :data="{contractNo: -1}" :headers="{user:'x',key:'x'}" :show-upload-list="false" :on-success="uploadSuccess" :on-error="uploadFail"  class="upload">
         <div style="padding: 20px 0">
           <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-          <p>上传付款凭证</p>
-          <p>(格式：JPG、PNG、JPEG)</p>
+          <p v-if="!spinShow">上传付款凭证</p>
+          <p v-if="!spinShow">(格式：JPG、PNG、JPEG)</p>
+          <p v-if="spinShow">上传中...</p>
         </div>
       </Upload>
+      <div style="display:flex;justify-content:center;position:relative" v-if="imgUrl !== ''">
+        <img :src="imgUrl" :class="{fk_img:true,active:isActive}" @click.stop="isActive = !isActive" />
+        <span style="position:relative;margin-left:5px;cursor:pointer;top:-10px" @click="closeImg" ><Icon type="close" /></span>
+      </div>
       <Button class="zf_butt" type="primary" @click="sureClick" :disabled="buttonDisabled">确认已支付</Button>
     </Modal>
     <!-- 新建工作待办 -->
@@ -173,7 +189,7 @@
           </Select>
         </FormItem>
         <FormItem label="要求完成时间" prop="wcsj">
-          <DatePicker type="date" placeholder format="yyyy-MM-dd" @on-change="getDate" class="col-v"></DatePicker>
+          <DatePicker type="date" placeholder format="yyyy-MM-dd" v-model="newgzForm.wcsj" class="col-v"></DatePicker>
         </FormItem>
         <Button class="zf_butt" type="primary" style="margin-left:320px;" @click="addWork">完成</Button>
       </Form>
@@ -191,7 +207,7 @@
             <span class="marl">付款方：</span>
             <span>{{hkhz.skf}}</span>
             <span class="zf_sk">
-              <b>{{hkhz.yf}}</b>元
+              <b>{{parseFloat(hkhz.yf).toFixed(2)}}</b>元
             </span>
           </p>
           <p class="hk_span">
@@ -215,13 +231,14 @@
               @on-change="getRebackAppr"
               size="small"
               show-elevator
+              show-total
               style="text-align:center;margin-top:20px;"
             ></Page>
           </div>
           <div class="hz2"><Table :row-class-name="rowClassName1" :columns="hz2_columns" :data="hz2_data" @on-row-click="hz2Click"></Table></div>
         </section>
       </div>
-      <Button class="zf_butt" type="primary" style="margin-left:450px;" @click="surehrClick" :disabled="buttonDisabled">确认核入</Button>
+      <Button class="zf_butt" type="primary" style="margin-left:450px;" @click="surehrClick" :disabled="buttonDisabled||hkhzDisabled">确认核入</Button>
     </Modal>
     <!-- 财务-到款确认 -->
     <Modal v-model="dkqrmodal" class="aa">
@@ -243,11 +260,15 @@
             <span>当前状态：</span>
             <i>{{typeMap[ensurePayBack.workBenchType]}}</i>
           </p>
-          <p>
+          <p v-if="ensurePayBack.contractNo">
             <span>合同编号：</span>
             <i>{{ensurePayBack.contractNo}}</i>
           </p>
-          <p>
+          <p v-if="ensurePayBack.orderNo">
+            <span>订单编号：</span>
+            <i>{{ensurePayBack.orderNo}}</i>
+          </p>
+          <p v-if="ensurePayBack.contractNo">
             <span>对应账期：</span>
             <i style="font-weight:bold">{{ensurePayBack.paymentPeriod}}</i>
           </p>
@@ -261,7 +282,7 @@
           </p>
           <p>
             <span>付款凭证：</span>
-            <img src="../../images/workbench/payback.png" alt :class="{fk_img:true,active:isActive}" @click="isActive = !isActive"  />
+            <img :src="ensurePayBack.url" alt :class="{fk_img:true,active:isActive}" @click="isActive = !isActive"  />
           </p>
         </div>
       </div>
@@ -298,7 +319,7 @@
           </p>
           <p>
             <span class="gray">期望发货时间：</span>
-            {{deliveryData.deliveryTime}}
+            {{deliveryData.deliveryTime.split(' ')[0]}}
              之前
           </p>
         </div>
@@ -395,80 +416,6 @@ import highchartsLine from './highcharts-line.vue';
 import { error } from 'highcharts';
 import XLSX from 'xlsx';
 
-const typeMap = {
-  1:' 审批提醒',
-  2:' 签署提醒',
-  3:'支付提醒',
-  4:'（财务）到款确认',
-  5:'下单提醒',
-  6:'发货提醒',
-  7:'收货提醒',
-  8:'上线审批',
-  9:'上线通知',
-  10: '回款核准',
-  11: '开票提醒',
-  12: '发货方案审批'
-}
-const rwlxs = [
-  // {
-  //   val: '审批提醒',
-  //   index: 1
-  // },
-  // {
-  //   val: '签署提醒',
-  //   index: 2
-  // },
-  // {
-  //   val: '支付提醒',
-  //   index: 3
-  // },
-  // {
-  //   val: '（财务）到款确认',
-  //   index: 4
-  // },
-  // {
-  //   val: '下单提醒',
-  //   index: 5
-  // },
-  // {
-  //   val: '发货提醒',
-  //   index: 6
-  // },
-  // {
-  //   val: '收货提醒',
-  //   index: 7
-  // },
-  // {
-  //   val: '上线审批',
-  //   index: 8
-  // },
-  // {
-  //   val: '上线通知',
-  //   index: 9
-  // },
-  {
-    val: '回款核准',
-    index: 10
-  },
-  // {
-  //   val: '开票提醒',
-  //   index: 11
-  // },
-  // {
-  //   val: '发货方案审批',
-  //   index: 12
-  // },
-]
-const statusMap = {
-  1:'待办',
-  2:'已办'
-}
-const deliveryMap = {
-  0:"草稿",
-  1:"审批中",
-  2:"已通过",
-  3:"被驳回",
-};
 export default {
   name: "work-bench",
   components:{
@@ -479,10 +426,10 @@ export default {
     return {
       textarea:"",
       refuseShow:false,
-      typeMap,
-      statusMap,
-      rwlxs,
-      deliveryMap,
+      typeMap:this.$option.workbench.typeMap,
+      statusMap:this.$option.workbench.statusMap,
+      rwlxs:this.$option.workbench.addTypes,
+      deliveryMap:this.$option.asset.deliveryStatusMap,
       inputVal: '',
       customName: '',
       loading: false,
@@ -523,7 +470,7 @@ export default {
                           click: () => {
                               this.dbgzTableClick(params);
                               if(params.row.data.workBenchType === 3){
-                                this.gz_data[params.index]._checked = true;
+                                // this.gz_data[params.index]._checked = true;
                                 // this.gzselClick([params.row]);
                                 this.checkedData = [params.row]; //暂时只能一条一条支付
                                 this.checkIndex = this.checkedData.length;
@@ -537,7 +484,7 @@ export default {
         {
           title: "类型",
           key: "type",
-          width: '100',
+          width: '150',
           align: 'center'
         },
         {
@@ -550,6 +497,12 @@ export default {
           title: "截至日期",
           key: "jztime",
           width: '100',
+          align: 'center'
+        },
+        {
+          title: " ",
+          key: "",
+          width: '1',
           align: 'center'
         }
       ],
@@ -576,7 +529,7 @@ export default {
         {
           title: "类型",
           key: "type",
-          width: '100',
+          width: '150',
           align: 'center'
         },
         {
@@ -589,6 +542,12 @@ export default {
           title: "日期",
           key: "duetime",
           width: '150',
+          align: 'center'
+        },
+        {
+          title: " ",
+          key: "",
+          width: '1',
           align: 'center'
         }
       ],
@@ -608,6 +567,7 @@ export default {
                     on: {
                         click: () => {
                             this.dataIndex = params.index;
+                            this.checkedData = [params.row];
                             this.dbgzTableClick(params);
                           }
                       }
@@ -618,7 +578,7 @@ export default {
         {
           title: "类型",
           key: "type",
-          width: '100',
+          width: '150',
           align: 'center'
         },
         {
@@ -644,12 +604,18 @@ export default {
                   style: {
                     color: params.row.zt === 2?"#898A8D":"orange",
                     marginLeft: "-10px"
-                  }
+                  },
                 },
                 this.statusMap[params.row.zt]
               )
             ]);
           }
+        },
+        {
+          title: " ",
+          key: "",
+          width: '1',
+          align: 'center'
         }
       ],
       fq_data: [
@@ -689,10 +655,9 @@ export default {
                       },
                       on:{
                         'input': (value) => {
-                          this.addStore[params.index].je = value;
+                          this.addStore[params.index].je = parseFloat(value);
                         },
                         //  'on-keyup':()=>{
-                        //    debugger
                         //   //  alert(this.newgzForm.add_data.je)
                         //    alert(value)
                         //    this.addStore[params.index].je = this.addStore[params.index].je.replace(/[^\d]/g, '')
@@ -744,29 +709,15 @@ export default {
         }
       ],
       zf: {
-        skf: "曹操",
-        htbh: "456789",
-        dyzq: "账期56789",
-        yf: "23456"
+        skf: "",
+        htbh: "",
+        dyzq: "",
+        yf: "",
+        orderNo:''      
       },
       morezf: [
-        {
-          skf: "曹操",
-          htbh: "456789",
-          dyzq: "账期56789",
-          yf: "23456"
-        },
-        {
-          skf: "曹操",
-          htbh: "456789",
-          dyzq: "账期56789",
-          yf: "23456"
-        }
       ],
       hkhz: {
-        skf: "5678",
-        yf: "56789",
-        dksj: "2020-5-90"
       },
       newgzRules: {
         rwlx: [
@@ -785,7 +736,7 @@ export default {
         wcsj: [
           {
             required: true,
-            message:'不能为空'
+            message:'请选择完成时间！'
           }
         ]
       },
@@ -878,7 +829,7 @@ export default {
       indexStyle:"",
       indexStyle1:"",
       bhlmodel:"",
-      kclmodel:"bd",
+      kclmodel:"",
       zzmodel:"",
       yxmodel:"",
       newsShow:true,
@@ -901,6 +852,7 @@ export default {
         paymentPeriod: "",
         receiveSide: "",
         trader: "",
+        url: '',
         workBenchStatus:'',
         ensure:"",
         workBenchId:""
@@ -940,6 +892,16 @@ export default {
           '',
         ],
       },
+      selectReportData0:{
+        report_display:0,
+        report_id:0,
+        report_name:'',
+        report_value: [
+          '',
+          '',
+          '',
+        ],
+      },
       selectReportData2:{
         report_display:0,
         report_id:0,
@@ -952,7 +914,10 @@ export default {
         report_name:'',
         report_value: [],
       },
-      dataIndex: 0
+      dataIndex: 0,
+      imgUrl: '',
+      spinShow: false,
+      workStatus:"",
     };
   },
   methods: {
@@ -964,6 +929,7 @@ export default {
         "typeid": 28007,
         "data": [
           {
+            "accountId": this.$store.state.user.accountId,
             "workBenchId": this.deliveryData.workBenchId,
             "shipmentsId": this.deliveryData.shipmentsId,
             "operationNo":no,
@@ -988,13 +954,14 @@ export default {
           this.$http.SETXLASSETS(request).then(response => {
           },error => {
               if(error.data.code === 0){
-                let {allocationList} = error.data;
+                let {allocationList,billTime} = error.data;
                 let request = {
                 "typeid": 23007,
                 "data": [
                     {
                         "account_id": this.$store.state.user.accountId,
-                        "allocation_id": allocationList
+                        allocationList,
+                        billTime
                     }
                   ]
                 };
@@ -1063,26 +1030,31 @@ export default {
           let item = {};
           switch (d.workBenchType) {
             case 1:
-              item.gznr = status === 1?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，您有一个待审批的工作`;
+              item.gznr = status === 1?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，审批已完成`;
               break;
             case 10:
-              item.gznr = status === 1?`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款待核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
+              item.gznr = status === 1?`回款待核准，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款已核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 4:
-              item.gznr = status === 1?`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`到账待确认，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
+              item.gznr = status === 1?`到账待确认，金额：${parseFloat(d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName||''})，请戳这里`:`到账已确认，金额：${d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount}(付款方：${d.workBenchContentObj.payUnitName||''})`;
               break;
             case 3:
-              item.gznr = status === 1?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
+              if (d.workBenchContentObj.contractNo) {
+                item.gznr = status === 1?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
+              } else if (d.workBenchContentObj.orderNo) {
+                  item.gznr = `${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。点击直接处理`;
+                  item.gznr = status === 1?`${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.orderNo}备货订单已签署完毕。`;
+              }
               break;
             case 12:
-              item.gznr = status === 1?`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`:`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。`;
+              item.gznr = status === 1?`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`:`发货方案审批提醒，审批完成。`;
               break;
           }
           item.type = this.typeMap[d.workBenchType];
           item.fzr = d.accountId === -1?'待认领':(d.accountName||'');
           item.jztime = d.dueTimeDescribe;
           item.duetime = d.dueTime;
-          item._checked = d.false;
+          // item._checked = d.false;
           item.zt = d.workBenchStatus;
           item.index = i+1;
           item.data = d;
@@ -1091,6 +1063,8 @@ export default {
           }else if(status === 3){
             this.fq_data.push(item);
           }else{
+            item.fzr = this.$store.state.user.accountName;
+            item.duetime = d.handledTime;
             this.yb_data.push(item);
           }
         });
@@ -1135,7 +1109,7 @@ export default {
             htbh:d.contractNo,
             htmc:d.customerName,
             paymentList:paymentList,
-            _checked:false
+            // _checked:false
           })
         })
         this.hz2_data = [];
@@ -1147,9 +1121,9 @@ export default {
     rowClassName (row, index) {
         if (index === this.indexStyle) {
             return 'demo-table-info-row';
-            this.hz1_data[index]._checked = true
+            // this.hz1_data[index]._checked = true
         } 
-        this.hz1_data[index]._checked = false
+        // this.hz1_data[index]._checked = false
         return '';
     },
     rowClassName1(row,index){
@@ -1160,7 +1134,8 @@ export default {
     },
     dbgzTableClick(params){
       this.$store.commit('setNotifyData', {status: false, data: []});
-      if(params.row.data.workBenchType === 3){
+        if(params.row.data.workBenchType === 3){              
+          this.workStatus = params.row.data.workBenchStatus
           this.zfmodal = true;
         }else if(params.row.data.workBenchType === 10){
           this.hkhzmodal = true;
@@ -1175,19 +1150,21 @@ export default {
           this.dkqrmodal = true;
           this.ensurePayBack = {
             contractNo: params.row.data.workBenchContentObj.contractNo,
+            orderNo: params.row.data.workBenchContentObj.orderNo,
             lastWorkbenchId: params.row.data.workBenchContentObj.lastWorkbenchId,
-            payAmount: params.row.data.workBenchContentObj.payAmount,
+            payAmount: params.row.data.workBenchContentObj.payAmount?parseFloat(params.row.data.workBenchContentObj.payAmount).toFixed(2):parseFloat(params.row.data.workBenchContentObj.orderAmount).toFixed(2),
             payTime: params.row.data.workBenchContentObj.payTime,
             payUnitName: params.row.data.workBenchContentObj.payUnitName,
             paymentPeriod: params.row.data.workBenchContentObj.paymentPeriod,
             receiveSide: params.row.data.workBenchContentObj.receiveSide,
             trader: params.row.data.workBenchContentObj.trader,
+            url: params.row.data.photoUrl,
             workBenchType: params.row.data.workBenchType,
             ensure:'',
             workBenchId: params.row.data.workbenchId
           }
         }else if(params.row.data.workBenchType === 1){
-          this.$alert(`您有一个合同待审批，合同号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||'' }`, '审批提醒', {
+          this.$alert(`您有一个${(params.row.data.workBenchContentObj||{}).orderNo?'备货流程':'合同'}待审批，${(params.row.data.workBenchContentObj||{}).orderNo?'订单':'合同'}号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||(params.row.data.workBenchContentObj||{}).orderNo }`, '审批提醒', {
             confirmButtonText: '确定',
             callback: action => {
               if(action === 'confirm'){
@@ -1219,6 +1196,10 @@ export default {
         }
     },
     surehrClick(){
+      if(this.isFinance){
+        this.$Message.error('权限不足！');
+        return;
+      }
       if(!this.hz1_data[this.indexStyle]||!this.hz2_data[this.indexStyle1]){
         this.$Message.error('请选择相应合同及账期后再核入！');
         return;
@@ -1277,12 +1258,21 @@ export default {
     },
     nextzfClick() {
       this.zfmodal = false;
-      this.zf.skf = this.checkedData[0].data.workBenchContentObj.receiveSide;
-      this.zf.htbh = this.checkedData[0].data.workBenchContentObj.contractNo;
-      this.zf.dyzq = this.checkedData[0].data.workBenchContentObj.paymentPeriod;
-      this.zf.yf = 0;
+      if( this.checkedData[0].data.workBenchContentObj.orderNo){
+        this.zf.orderNo = this.checkedData[0].data.workBenchContentObj.orderNo;
+        this.zf.yf = this.checkedData[0].data.workBenchContentObj.orderAmount;
+        this.zf.skf = '';
+        this.zf.htbh = '';
+        this.zf.dyzq = '';
+      }else{
+        this.zf.skf = this.checkedData[0].data.workBenchContentObj.receiveSide;
+        this.zf.htbh = this.checkedData[0].data.workBenchContentObj.contractNo;
+        this.zf.dyzq = this.checkedData[0].data.workBenchContentObj.paymentPeriod;
+        this.zf.yf = 0;
+        this.orderNo = '';
+      }
       this.checkedData.forEach(data => {
-        this.zf.yf += Number(data.data.workBenchContentObj.payAmount);
+        this.zf.yf += Number(data.data.workBenchContentObj.payAmount)||0;
       })
 
       //暂时只支持一条一条进行支付
@@ -1304,20 +1294,40 @@ export default {
       this.checkIndex = data.length;
     },
     sureClick() {
-      let request = {
-        "typeid": 28004,
-        "data": [
-          {
-            "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
-            // "photoUrl": "http://10.0.17.213:8068/url/img.png"
-          }
-        ]
+      if(this.imgUrl === ''){
+        this.$Message.error('请先上传付款截图！');
+        return;
+      }
+      let request;
+      if(this.checkedData[0].data.workBenchContentObj.orderNo){
+        request = {
+          "typeid": 28010,
+          "data": [
+            {
+              "workBenchId": this.checkedData[0].data.workbenchId,
+              "accountId": this.$store.state.user.accountId,
+              "photoUrl": this.imgUrl
+            }
+          ]
+        }
+      }else{
+        request = {
+          "typeid": 28004,
+          "data": [
+            {
+              "accountId": this.$store.state.user.accountId,
+              "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
+              "photoUrl": this.imgUrl
+            }
+          ]
+        }
       }
       this.$http.UPDATEWORKBENCH(request).then(response => {
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
         if(this.tabName === 'name3'){
           this.getWorkbench();
         }
+        this.imgUrl = '';
       },error => {
         if(error.data.code === 0){
           this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
@@ -1326,13 +1336,14 @@ export default {
           }
           this.$Message.success('成功！');
         }
+        this.imgUrl = '';
       })
       this.zfqrmodal = false;
       this.zfmodal = false;
     },
     hz1Click(val,index){
       this.indexStyle = index;
-      this.hz1_data[index]._checked = true
+      // this.hz1_data[index]._checked = true
       this.hz2_data = val.paymentList||[];
     },
     hz2Click(val,index){
@@ -1388,6 +1399,7 @@ export default {
           payAmount: d.je,
         })
       })
+      let dueTime = this.newgzForm.wcsj.getFullYear() + '-' + (this.newgzForm.wcsj.getMonth() + 1) + '-' + this.newgzForm.wcsj.getDate() + ' 00:00:00';
       let request = {
         "typeid": 28002,
         "data": [
@@ -1395,7 +1407,7 @@ export default {
               "workBenchType": this.newgzForm.rwlx,
               "accountId": this.$store.state.user.accountId,
               "chargePerson": this.newgzForm.fzr === ''?-1:this.newgzForm.fzr,
-              "dueTime": this.newgzForm.wcsj,
+              "dueTime": dueTime,
               "workBenchContentList": workBenchContentList
             }
         ]
@@ -1408,9 +1420,6 @@ export default {
           this.getWorkbench();
         }
       })
-    },
-    getDate(value){
-      this.newgzForm.wcsj = value;
     },
     selectedPayStyle(e){
       let index = e.target.getAttribute("index");
@@ -1435,11 +1444,13 @@ export default {
         return;
       }
       let request = {
-        "typeid": 28005,
+        "typeid": this.ensurePayBack.orderNo?28011:28005,
         "data": [
             {
+              "accountId": this.$store.state.user.accountId,
               "workBenchId": this.ensurePayBack.workBenchId,
               "lastWorkbenchId": this.ensurePayBack.ensure === false?this.ensurePayBack.lastWorkbenchId:undefined,
+              "orderNo": this.ensurePayBack.orderNo === ''?undefined:this.ensurePayBack.orderNo
             }
         ]
       }
@@ -1568,9 +1579,9 @@ export default {
         };
         let { data } = response.data.result;
         this.deliveryData.schemeNo = data[0].shipments_no;
-        this.deliveryData.time = data[0].shipments_time;
+        this.deliveryData.time = data[0].shipments_creationtime;
         this.deliveryData.manageMan = data[0].user_name;
-        this.deliveryData.deliveryTime = data[0].shipments_creationtime;
+        this.deliveryData.deliveryTime = data[0].shipments_time;
         this.deliveryData.des = data[0].shipments_describe;
         this.deliveryData.shipments_start_batch = data[0].shipments_start_batch;
         this.deliveryData.shipments_end_batch = data[0].shipments_end_batch;
@@ -1641,12 +1652,10 @@ export default {
         let { data } = res.data.result;
         data.forEach(d => {
           if(!this.reportData[d.report_display]){
-            this.reportData[d.report_display] = [];
+            this.$set(this.reportData, d.report_display,[]);
           }
           this.reportData[d.report_display].push(d);
         })
-        this.bhlmodel = this.reportData[1][0].report_id;
-        this.selectReport(1,this.bhlmodel);
         this.zzmodel = this.reportData[2][0].report_id;
         this.selectReport(2,this.zzmodel);
         this.yxmodel = this.reportData[3][0].report_id;
@@ -1654,11 +1663,11 @@ export default {
       })
     },
     selectReport(index,val){
-      
-      let obj = this.reportData[index].find(r => r.report_id === val);
-      let data = index === 1?this.selectReportData:index === 2?this.selectReportData2:this.selectReportData3;
+      let obj = (index === 0?this.reportData[1]:this.reportData[index]).find(r => r.report_id === val);
+      if(index === 0) console.log(obj);
+      let data = index === 0?this.selectReportData0:index === 1?this.selectReportData:index === 2?this.selectReportData2:this.selectReportData3;
       for(let key in obj){
-        if(typeof(obj[key]) === 'object'&&index === 1){
+        if(typeof(obj[key]) === 'object'&&(index === 1||index === 0)){
           data[key][0] = obj[key][0];
           data[key][1] = obj[key][1];
           data[key][2] = obj[key][2];
@@ -1669,6 +1678,44 @@ export default {
         }
       }
       // this.selectReportData = this.reportData[1].find(r => r.report_id === val);
+    },
+    uploadSuccess(response, file, fileList){
+      if(response.code === 0){
+        this.imgUrl = response.result.address;
+        this.$Message.success('上传成功！');
+        this.spinShow = false;
+      }else{
+        this.uploadFail();
+      }
+    },
+    uploadFail(){
+      this.$Message.error(`上传失败，请稍后重试！`);
+      this.spinShow = false;
+    },
+    handleFormatError (file) {
+      this.$Message.error(`上传类型错误，请上传正确的图片类型（.jpg、.jpeg、.png）`);
+    },
+    beforeUpload(){
+      this.spinShow = true;
+      this.imgUrl = '';
+    },
+    closeImg(){
+      this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.imgUrl = '';
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
     }
   },
   mounted() {
@@ -1708,7 +1755,21 @@ export default {
       this.getWorkbench();
     },
     '$store.state.app.notifyData.status'(nv){
-      if(nv) this.dbgzTableClick(this.$store.state.app.notifyData.data);
+      if(nv) {
+        let item = ((this.$store.state.app.notifyData||{}).data||{}).row||{};
+        if(item.data.workBenchType === 3&&this.checkedData.length === 0){
+          // this.gzselClick([item]);
+          this.checkedData = [item]; //暂时只能一条一条支付
+          this.checkIndex = this.checkedData.length;
+        }
+        this.tabName = 'name1';
+        this.dbgzTableClick(this.$store.state.app.notifyData.data);
+      }
+    },
+    zfqrmodal(nv){
+      if(!nv){
+        this.imgUrl = '';
+      }
     }
   },
   computed:{
@@ -1769,7 +1830,51 @@ export default {
       return customList;
     },
     buttonDisabled(){
-      return this.tabName !== 'name1'&&(this.fq_data[this.dataIndex]||{}).zt !== 1;
+      return (this.tabName === 'name3'&&(this.fq_data[this.dataIndex]||{}).zt !== 1)||this.tabName === 'name2';
+    },
+    hkhzDisabled(){
+      return !(this.workBenchData.accountId === -1||this.workBenchData.accountId === this.$store.state.user.accountId||this.isSuperAdmin);
+    },
+    isSuperAdmin(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '超级管理员');
+      }
+    },
+    isFinance(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '财务');
+      }
+    },
+    isSaleManage(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
+      }
+    },
+    reportDataLeft(){
+      let data = [];
+      if(this.reportData[1]&&this.reportData[1].length>0){
+        data = this.reportData[1].filter(i => {
+          return i.report_name.indexOf('库存量') === -1
+        })
+        if(this.bhlmodel === ''){
+          this.bhlmodel = data[0].report_id;
+          this.selectReport(1,this.bhlmodel);
+        }
+      }
+      return data;
+    },
+    reportDataRight(){
+      let data = [];
+      if(this.reportData[1]&&this.reportData[1].length>0){
+        data = this.reportData[1].filter(i => {
+          return i.report_name.indexOf('库存量') !== -1
+        })
+        if(this.kclmodel === ''){
+          this.kclmodel = data[0].report_id;
+          this.selectReport(0,this.kclmodel);
+        }
+      }
+      return data;
     }
   }
 };

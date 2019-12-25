@@ -45,7 +45,7 @@
           <section>
             <img src="../../images/htgl/暂无.png" alt />
             <div>
-              <span>{{data.data.upTime}}</span>
+              <span>{{data.data.upTime||'暂无'}}</span>
               <br />
               <span class="cor_s">上线时间</span>
             </div>
@@ -70,7 +70,7 @@
               </section>
               <section>
                 <p>合同主体：</p>
-                <p>{{subjectName[data.data.contractSubject]}}</p>
+                <p>{{data.data.contractSubjectName}}</p>
               </section>
               <section>
                 <p>合同内容：</p>
@@ -83,7 +83,7 @@
               <section>
                 <p>签约点数：</p>
                 <p>
-                  <span>{{data.data.signPoint}}</span>(
+                  <span>{{kcmxSum}}</span>(
                   <span class="cor_span" @click="kcmxmodal = true">查看勘查明细</span>)
                 </p>
               </section>
@@ -107,7 +107,7 @@
               </section>
               <section>
                 <p>合同总费用：</p>
-                <p>{{data.data.contractAmount}}元人民币</p>
+                <p>{{thousandNum(data.data.contractAmount)}}元人民币</p>
               </section>
             </div>
             <div class="select select_h">
@@ -117,7 +117,7 @@
               </section>
               <section>
                 <p>销售人员：</p>
-                <p>{{data.saleManName}}</p>
+                <p>{{data.saleName}}</p>
               </section>
               <section>
                 <p>销售方式：</p>
@@ -129,7 +129,7 @@
               </section>
               <section>
                 <p>付款周期：</p>
-                <p>{{data.data.paymentCycle}}期</p>
+                <p>{{data.data.paymentCycle||''}}</p>
               </section>
             </div>
             <div class="select select_h">
@@ -147,6 +147,10 @@
                 <p>{{data.data.implementation}}</p>
               </section>
               <section>
+                <p>合同类型</p>
+                <p>{{data.contractType}}</p>
+              </section>
+              <section>
                 <p>联系人及电话：</p>
                 <p>{{data.data.contractInfo}}</p>
               </section>
@@ -160,11 +164,11 @@
             <p class="det_p">
               <span class="det_span">
                 合同总金额
-                <span style="color:#000000;">{{data.data.contractAmount}}</span>元
+                <span style="color:#000000;">{{thousandNum(data.data.contractAmount)}}</span>元
               </span>
               <span>
                 剩余款数
-                <span style="color:red">{{remainingMoney}}</span>元
+                <span style="color:red">{{thousandNum(remainingMoney)||0}}</span>元
               </span>
             </p>
             <div v-for="(item,index) in paymentList" :key="index">
@@ -177,22 +181,22 @@
                     <span v-if="showObj[index] == false">
                       <Icon type="arrow-right-b"></Icon>
                     </span>
-                    <span class="zq_c">账期{{index+1}}（付{{index+1}}年年费）</span>
+                    <span class="zq_c">账期{{index+1}}（付{{(data.data.paymentCycle||'').split('+')[index]}}年费用）</span>
                   </p>
                   <p style="margin-left:10px;">
                     <span>
                       <Icon type="ios-calendar-outline"></Icon>
                     </span>
-                    <span>{{item.paymentTime}}-{{item.dueTime}}</span>
+                    <span>{{item.paymentTime}}<span style="margin:0 15px;">-</span>{{item.dueTime}}</span>
                   </p>
                 </section>
                 <section class="zq_c zq_se" style="color:#797979;">
                   <p class="zq_p">本期应付（元）</p>
-                  <p>{{item.paymentAmount}}</p>
+                  <p>{{thousandNum(item.paymentAmount)||0}}</p>
                 </section>
                 <section class="zq_c zq_se" style="color:#797979;">
                   <p class="zq_p">本期实付（元）</p>
-                  <p>{{item.currentAmount}}</p>
+                  <p>{{thousandNum(item.currentAmount)||0}}</p>
                 </section>
                 <section class="zq_c zq_se" style="color:#797979;">
                   <p class="zq_p" v-if="item.currentTicketAmount > 0">已开票（元）</p>
@@ -201,16 +205,17 @@
                       class="cor_span"
                       style="margin-right:10px"
                       v-if="item.currentTicketAmount>0"
-                    >{{item.currentTicketAmount}}</p>
-                    <p class="cor_span">
+                    >{{thousandNum(item.currentTicketAmount)||0}}</p>
+                    <!-- <p class="cor_span">
                       <Button size="small" @click="fpmodal = true" v-if="item.ticketButton">开发票</Button>
-                    </p>
+                    </p> -->
                   </div>
                 </section>
               </div>
               <div class="zq_div2" v-show="showObj[index]&&item.paybackList.length>0">
                 <section class="zq_se2">
                   <div>ID</div>
+                  <div>付款方式</div>
                   <div>支付时间</div>
                   <div>确认时间</div>
                   <div>支付金额（元）</div>
@@ -218,9 +223,10 @@
                 <div v-for="(p,i) in item.paybackList" :key="i" class="payList">
                   <section>
                     <div>{{p.paybackId}}</div>
+                    <div>{{p.paymentWay}}</div>
                     <div>{{p.paybackTime}}</div>
                     <div>{{p.paybackSureTime}}</div>
-                    <div>{{p.paybackAmount}}</div>
+                    <div>{{thousandNum(p.paybackAmount)}}</div>
                   </section>
                 </div>
               </div>
@@ -233,20 +239,21 @@
               <a v-else @click="goOrderDetail">{{data.data.orderNo}}</a>
             </p>
           </TabPane>
-          <TabPane label="附件" name="name4">
-            <p class="con-left">共 {{fjIndex}} 个附件</p>
-            <p class="fj_add">
-              <Upload action="//10.0.17.213:31380/posts/">
+          <TabPane :label="`附件(${fj.length||0})`" name="name4">
+            <p class="con-left">共 {{fj.length||0}} 个附件</p>
+            <p class="fj_add" v-if="this.$store.state.app.authority.find(a => a.id === 802)">
+              <Upload action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}" :on-success="getfiles" :on-error="uploadFail">
                 <Icon type="plus"></Icon>添加附件
+                <p v-if="uploadLoading">上传中....</p>
               </Upload>
             </p>
             <div style="clear:both">
               <div v-for="(item,index) in fj" :key="index" class="fj">
                 <section class="fj_img">
-                  <img src alt />
+                  <img :src="item.img" alt style="width:30px;height:30px;margin:10px 30px" />
                 </section>
                 <section class="fj_sec">
-                  <p>{{item.wjm}}</p>
+                  <a :href="item.url">{{item.fileName}}</a>
                   <p class="fj_p">
                     <span>{{item.size}}</span> 来自
                     <span>{{item.where}}</span> |
@@ -256,14 +263,14 @@
               </div>
             </div>
           </TabPane>
-          <TabPane label="更新记录" name="name5">
+          <TabPane label="更新记录" name="name5" v-if="!isCooperative">
             <Table ref="currentRowTable" :columns="update_columns" :data="data.data.updateList"></Table>
           </TabPane>
         </Tabs>
       </content>
     </Layout>
     <!-- 查看勘察明细弹框 -->
-    <Modal v-model="kcmxmodal" width="800">
+    <Modal v-model="kcmxmodal" width="800" class="close_unable">
       <p style="margin:5px 0 10px 0;font-size:18px">勘察明细</p>
       <p style="font-size:16px;margin:20px 5px;">设备清单</p>
       <Table :columns="kcmx_columns" :data="kcmx_data"></Table>
@@ -277,6 +284,15 @@
     <Modal v-model="fpmodal" width="800">
       <footer style="font-size:14px">
         <p class="header_p head">开票信息</p>
+        <p class="header_p1">请选择发票类型：</p>
+        <RadioGroup v-model="ticketType" style="margin:0px 0px 30px 20px;"  @on-change="radioClick"> 
+          <Radio label="ordinary">
+            <span class="ord">普通发票</span>
+          </Radio>
+          <Radio label="increment">
+            <span class="inc">增值税专票</span>
+          </Radio>
+        </RadioGroup>
         <p class="header_p1">请选择需要执行的开票信息：</p>
         <div v-if="kpxxLength">未查询到开票信息</div>
         <div class="kpxx" v-for="(kpxx,index) in kpxx" :key="index" style="margin-bottom:20px;">
@@ -348,62 +364,49 @@
             <div style="clear:both"></div>
           </div>
         </div>
+        <span>发票金额（元）：</span>
+    <div class="acc_div">
+      <section class="acc_sec" @click="accountClick"><span>10000</span><Icon type="chevron-down" v-if="this.selectAccountShow == false" style="float:right;padding:3px;"></Icon><Icon v-if="this.selectAccountShow == true" type="chevron-up" style="float:right;padding:3px;"></Icon></section>
+      <div  class="acc_div1" v-show="selectAccountShow">
+      <section v-for="item in account" style="margin-bottom:5px;">
+        <Checkbox v-model="item.single"></Checkbox><span>{{item.zq}}</span></span>&#x3000;&#x3000;&#x3000;
+               <span>实付：<span>{{item.money}}</span></span>
+      </section>
+      </div>
+    </div>
       </footer>
     </Modal>
+    <Modal v-model="orderDetailOpen" width="1000">
+        <orderDetail :orderNO="selectedOrder"></orderDetail>
+      </Modal>
   </div>
 </template>
 
 <script>
-const subjectName = {
-  1: "电能云",
-  2: "智慧能源",
-  3: "维智泰",
-  4: "耀邦达",
-  5: "股份公司",
-  6: "志达",
-  7: "康源",
-  8: "新联能源",
-  100: "其他"
-};
-const contractContentMap = {
-  1: "配用电",
-  2: "环保设施智能监测系统",
-  3: "中央空调",
-  4: "油烟监测",
-  5: "工地扬尘",
-  6: "园区抄表",
-  7: "综合能源",
-  100: "其他"
-};
+import orderDetail from '../ordermanage/order-detail';
 export default {
   name: "detail",
+  components:{
+    orderDetail
+  },
   data() {
     return {
-      subjectName,
-      zq: {
-        time: "54654-56464",
-        bqyf: "3242",
-        bqsf: "3424",
-        ykp: "1323",
-        ID: "432424234",
-        zfsj: "2333-98",
-        qrsj: "342-44",
-        zfje: "342"
+      account:[{
+        zq:"账期1",
+        money:"123",
+        single:false
       },
-      fj: [
-        {
-          wjm: "文件名fj.wjm",
-          size: "3242",
-          where: "dsfs",
-          time: "2342-89"
-        },
-        {
-          wjm: "文件名fj.wjm",
-          size: "3242",
-          where: "dsfs",
-          time: "2342-89"
-        }
-      ],
+      {
+        zq:"账期2",
+        money:"6663",
+        single:false
+      }],
+      single:false,
+      ticketType:"",
+      subjectName:this.$option.contract.subjectNameMap,
+      zq: {
+      },
+      fj: [],
       update_columns: [
         {
           title: "序号",
@@ -414,17 +417,17 @@ export default {
         {
           title: "更新时间",
           key: "updateTime",
-          align: "center",
+          align: "center"
         },
         {
           title: "更新者",
           key: "accountName",
-          align: "center",
+          align: "center"
         },
         {
           title: "更新内容",
           key: "updateContent",
-          align: "center",
+          align: "center"
         }
       ],
       kcmx_columns: [
@@ -461,13 +464,6 @@ export default {
         }
       ],
       kcmx_data: [
-        {
-          chbm: "214-343",
-          chmc: "343",
-          ggxh: "44",
-          zjl: "个",
-          num: "233"
-        }
       ],
       kpxx: [],
       fjIndex: "4",
@@ -476,17 +472,26 @@ export default {
       kcmxmodal: false,
       fpmodal: false,
       cjdwsl: "78",
-      zqShow: true,
       sqShow: false,
       zkShow: true,
       showObj: {},
       checkbox: [],
-      contractContentMap
+      contractContentMap:this.$option.contract.contentMap,
+      orderDetailOpen: false,
+      selectedOrder: '',
+      selectAccountShow:false,
+      uploadLoading:false
     };
   },
   methods: {
     goback() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push({
+        path:'/contractmanage'
+      })    
+    },
+    accountClick(){
+      this.selectAccountShow = !this.selectAccountShow
     },
     shrinkClick(index) {
       this.kpxx[index].zt = !this.kpxx[index].zt;
@@ -506,11 +511,16 @@ export default {
       }
     },
     bjbuttClick() {
+      if(!this.$store.state.app.authority.find(a => a.id === 802)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$router.push({
         path: "/contractmanage/edit",
         query: {
           paymentList: this.paymentList,
-          remainingMoney: this.remainingMoney
+          remainingMoney: this.remainingMoney,
+          fj:this.fj
         }
       });
     },
@@ -518,10 +528,8 @@ export default {
       this.$set(this.showObj, index, !this.showObj[index]);
     },
     goOrderDetail() {
-      this.$router.push({
-        path: "/ordermanage/orderManage",
-        query: { orderNo: this.data.data.orderNo }
-      });
+      this.selectedOrder = this.data.data.orderNo;
+      this.orderDetailOpen = true;
     },
     getkcmx() {
       let request = {
@@ -551,7 +559,7 @@ export default {
         typeid: 26009,
         data: [
           {
-            customerNo: this.data.data.customerNo||''
+            customerNo: this.data.data.customerNo || ""
           }
         ]
       };
@@ -571,27 +579,128 @@ export default {
           this.kpxx.push(item);
         });
       });
+    },
+    radioClick(val){
+     if(val == "ordinary"){
+       $(".ord").css({"color":"#4a9af5"})
+       $(".inc").css({"color":"#000000"})
+     }else{
+       $(".inc").css({"color":"#4a9af5"})
+       $(".ord").css({"color":"#000000"})
+     }
+    },
+    getfiles(res){
+      if(res&&res.code !== 0){
+        this.uploadFail();
+        return;
+      }
+      this.uploadLoading = false;
+      let request = {
+        typeid: 26015,
+        data: [
+          {
+            contractNo: this.data.data.contractNo||''
+          }
+        ]
+      };
+      this.fj = [];
+      this.$http.XLCONTRACT(request).then(response => {
+        response.data.result.data.fileList.forEach(data => {
+          let item = {};
+          let arr = data.enclosureAddress.split('/');
+          item.wjm = arr[arr.length-1];
+          item.fileName = data.fileName;
+          item.size = data.fileSize >= 1024?((data.fileSize/1024).toFixed(2) + ' KB'): data.fileSize >= 1024*1024?((data.fileSize/(1024*1024)).toFixed(2) + ' MB'):(data.fileSize + ' B');
+          item.where = data.accountName;
+          item.time = data.uploadTime;
+          item.url = data.enclosureAddress;
+          item.data = data;
+          let fileArr = item.wjm.split('.');
+          let fileType = fileArr[fileArr.length-1];
+          item.img = require('../../images/upload/wenjian.png');
+          if(/^pdf$/.test(fileType)){
+            item.img = require('../../images/upload/pdf.png');
+          }else if(/^(txt|doc(x)?)$/.test(fileType)){
+            item.img = require('../../images/upload/docx.png');
+          }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
+            item.img = require('../../images/upload/jpg.png');
+          }else if(/^xl(s|t|am)$/.test(fileType)){
+            item.img = require('../../images/upload/excel.png');
+          };
+          this.fj.push(item);
+        });
+      });
+    },
+    thousandNum(num){
+      if(num){
+        //将num中的$,去掉，将num变成一个纯粹的数据格式字符串
+        num = num.toString().replace(/\$|\,/g,'');
+        //如果num不是数字，则将num置0，并返回
+        if(''==num || isNaN(num)){return 'Not a Number ! ';}
+        //如果num是负数，则获取她的符号
+        var sign = num.indexOf("-")> 0 ? '-' : '';
+        //如果存在小数点，则获取数字的小数部分
+        var cents = num.indexOf(".")> 0 ? num.substr(num.indexOf(".")) : '';
+        cents = cents.length>1 ? cents : '' ;//注意：这里如果是使用change方法不断的调用，小数是输入不了的
+        //获取数字的整数数部分
+        num = num.indexOf(".")>0 ? num.substring(0,(num.indexOf("."))) : num ;
+        //如果没有小数点，整数部分不能以0开头
+        if('' == cents){ if(num.length>1 && '0' == num.substr(0,1)){return 'Not a Number ! ';}}
+        //如果有小数点，且整数的部分的长度大于1，则整数部分不能以0开头
+        else{if(num.length>1 && '0' == num.substr(0,1)){return 'Not a Number ! ';}}
+        //针对整数部分进行格式化处理，这是此方法的核心，也是稍难理解的一个地方，逆向的来思考或者采用简单的事例来实现就容易多了
+        /*
+          也可以这样想象，现在有一串数字字符串在你面前，如果让你给他家千分位的逗号的话，你是怎么来思考和操作的?
+          字符串长度为0/1/2/3时都不用添加
+          字符串长度大于3的时候，从右往左数，有三位字符就加一个逗号，然后继续往前数，直到不到往前数少于三位字符为止
+         */
+        for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
+        {
+            num = num.substring(0,num.length-(4*i+3))+','+num.substring(num.length-(4*i+3));
+        }
+        //将数据（符号、整数部分、小数部分）整体组合返回
+        return (sign + num + cents); 
+      }
+    },
+    uploadFail(){
+      this.uploadLoading = false;
+      this.$Message.error('上传失败，请重试！');
+    },
+    getHref(url){
+      return url;
+    },
+    beforeUpload(){
+      this.uploadLoading = true;
     }
   },
   beforeCreate() {
-    if (Object.keys(JSON.parse(localStorage.getItem('contractInfo'))||{}).length === 0)
+    if (
+      Object.keys(JSON.parse(localStorage.getItem("contractInfo")) || {})
+        .length === 0
+    )
       this.$router.push({ path: "/contractmanage/contractmanage" });
   },
   mounted() {
     this.getkcmx();
     this.getTicket();
+    this.getfiles();
   },
   watch: {
     fpmodal(nv) {
       if (nv) this.getTicket();
+    },
+    $route(){
+      this.getkcmx();
+      this.getTicket();
+      this.getfiles();
     }
   },
   computed: {
     data() {
-      if(Object.keys(this.$store.state.user.contractInfo).length>0){
+      if (Object.keys(this.$store.state.user.contractInfo).length > 0) {
         return this.$store.state.user.contractInfo;
       }
-      return JSON.parse(localStorage.getItem('contractInfo'))||{};
+      return JSON.parse(localStorage.getItem("contractInfo")) || {};
     },
     kcmxSum() {
       let sum = 0;
@@ -627,7 +736,8 @@ export default {
           let computeAmountStart = "";
           let computeAmountEnd = "";
           for (let i = 1; i <= index; i++) {
-            backAmount += this.data.data.paymentList[index -1].paymentAmount || 0;
+            backAmount +=
+              this.data.data.paymentList[index - 1].paymentAmount || 0;
           }
           if (
             this.data.data.paybackList &&
@@ -635,7 +745,7 @@ export default {
           ) {
             this.data.data.paybackList.forEach((b, i) => {
               allAmount += Number(b.paybackAmount);
-              if (allAmount >= backAmount && payIndex === "") {
+              if (allAmount > backAmount && payIndex === "") {
                 payIndex = i;
                 computeAmountStart =
                   allAmount - backAmount - item.paymentAmount > 0
@@ -648,8 +758,12 @@ export default {
               ) {
                 payEndIndex = i;
                 computeAmountEnd =
-                  Number(b.paybackAmount)  - item.paymentAmount + (allAmount - Number(b.paybackAmount) - backAmount) > 0
-                    ? item.paymentAmount - (allAmount - Number(b.paybackAmount) - backAmount)
+                  Number(b.paybackAmount) -
+                    item.paymentAmount +
+                    (allAmount - Number(b.paybackAmount) - backAmount) >
+                  0
+                    ? item.paymentAmount -
+                      (allAmount - Number(b.paybackAmount) - backAmount)
                     : Number(b.paybackAmount);
               }
             });
@@ -664,17 +778,22 @@ export default {
                 ? allAmount - backAmount
                 : 0;
           }
-          if(payIndex === ''){
+          if (payIndex === "") {
             item.paybackList = [];
-          }else{
-            item.paybackList = JSON.parse(JSON.stringify((this.data.data.paybackList || []).filter(
-              (a, i) => i >= payIndex && i <= payEndIndex
-            )));
+          } else {
+            item.paybackList = JSON.parse(
+              JSON.stringify(
+                (this.data.data.paybackList || []).filter(
+                  (a, i) => i >= payIndex && i <= payEndIndex
+                )
+              )
+            );
           }
-          (item.paybackList[0]||{}).paybackAmount = computeAmountStart;
-          if(item.paybackList.length >1&&computeAmountEnd!=='') (item.paybackList[
-            item.paybackList.length - 1
-          ]||{}).paybackAmount = computeAmountEnd;
+          (item.paybackList[0] || {}).paybackAmount = computeAmountStart;
+          if (item.paybackList.length > 1 && computeAmountEnd !== "")
+            (
+              item.paybackList[item.paybackList.length - 1] || {}
+            ).paybackAmount = computeAmountEnd;
           //计算发票信息
           let allTicketAmount = 0;
           if (
@@ -734,6 +853,24 @@ export default {
     },
     kpxxLength() {
       return this.kpxx.length === 0;
+    },
+    postData(){
+      let post = {};
+      if(this.data&&this.data.data&&this.data.data.contractNo){
+        post.contractNo = this.data.data.contractNo;
+        post.accountId = this.$store.state.user.accountId;
+      }
+      return post;
+    },
+    isFinance(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '财务');
+      }
+    },
+    isCooperative(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
+      }
     }
   }
 };
@@ -743,4 +880,13 @@ export default {
 @import "../assetmanagement/assetmanage.css";
 @import "../customermanage/customer.css";
 @import "./contract.css";
+.cc .ivu-btn{
+  background: white;
+  color:orange;
+  width:200px;
+  text-align:left
+}
+.close_unable .ivu-modal-footer{
+  display: none;
+}
 </style>

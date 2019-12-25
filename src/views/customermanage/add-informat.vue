@@ -1,6 +1,6 @@
 <template>
   <div class="addinformat">
-    <Layout class="layout" style="min-height:700px;">
+    <Layout class="layout" style="min-height:800px;">
       <p class="div_p">开票信息</p>
       <Form
         ref="formAddinformat"
@@ -34,6 +34,8 @@
             </FormItem>
           </Col>
         </Row>
+         <hr style="width:100%;border:1px dashed #e4e7ed;margin-bottom:25px;">
+        <p style="color:#8d8d8d;margin:10px 0 30px 50px"><Icon type="information-circled"></Icon><span> 专用发票必须填写以下信息才为有效凭证</span></p>
         <Row>
           <Col span="12">
             <FormItem label="开票地址" prop="kpdz">
@@ -83,6 +85,19 @@
 export default {
   name: "edit",
   data() {
+    const dutyparagraph = (rule, value, callback) => {
+      if (
+        this.formAddinformat.dutyparagraph !== ""
+      ) {
+        var expression = /^[A-Z0-9]{15}$|^[A-Z0-9]{17}$|^[A-Z0-9]{18}$|^[A-Z0-9]{20}$/;
+        if (expression.test(value) == false) {
+          callback(new Error("请出入正确的税号(15、17、18、20位数字字母组合)！"));
+        }
+      } else {
+        callback(new Error("该字段不能为空"));
+      }
+      callback();
+    };
     return {
       formAddinformat: {
         khda: "",
@@ -107,53 +122,52 @@ export default {
         ],
         sh: [
           {
-            required: true,
-            message: "请填写客户税号",
+            validator:dutyparagraph,
             trigger: "blur"
           }
         ],
-        kpdz: [
-          {
-            required: true,
-            message: "请填写开票地址",
-            trigger: "blur"
-          }
-        ],
-        dh: [
-          {
-            required: true,
-            message: "请填写电话",
-            trigger: "blur"
-          }
-        ],
-        khh: [
-          {
-            required: true,
-            message: "请填写开户行",
-            trigger: "blur"
-          }
-        ],
-        yhzh: [
-          {
-            required: true,
-            message: "请填写银行账号",
-            trigger: "blur"
-          }
-        ],
-        yjdz: [
-          {
-            required: true,
-            message: "请填写邮寄地址",
-            trigger: "blur"
-          }
-        ],
-        rjdh: [
-          {
-            required: true,
-            message: "请填写联系人及电话",
-            trigger: "blur"
-          }
-        ],
+        // kpdz: [
+        //   {
+        //     required: true,
+        //     message: "请填写开票地址",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // dh: [
+        //   {
+        //     required: true,
+        //     message: "请填写电话",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // khh: [
+        //   {
+        //     required: true,
+        //     message: "请填写开户行",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // yhzh: [
+        //   {
+        //     required: true,
+        //     message: "请填写银行账号",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // yjdz: [
+        //   {
+        //     required: true,
+        //     message: "请填写邮寄地址",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // rjdh: [
+        //   {
+        //     required: true,
+        //     message: "请填写联系人及电话",
+        //     trigger: "blur"
+        //   }
+        // ],
       },
       customerList:[],
       selectedCustom:''
@@ -161,6 +175,10 @@ export default {
   },
   methods: {
     handleSubmit(name) {
+      if(this.selectedCustom === ''){
+        this.$Message.error('请选择客户档案，若列表中未找到，可新增客户！');
+        return;
+      }
       this.$refs[name].validate(valid => {
         if (valid) {
           let request2 = {
@@ -208,7 +226,7 @@ export default {
       this.$http.XLSELECT(requst).then(response =>{
         let res = response.data.result.data;
         this.customerList = JSON.parse(JSON.stringify(res));
-        this.selectedCustom = this.customerList[0].id;
+        // this.selectedCustom = this.customerList[0].id;
       })
     },
   },

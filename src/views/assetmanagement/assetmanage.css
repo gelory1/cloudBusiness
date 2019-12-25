@@ -100,9 +100,6 @@
   .menu .ivu-icon-ios-arrow-down:before {
     display: none;
   }
-  .ivu-layout-header {
-    padding: 0px 10px 0 0;
-  }
   .ivu-layout-sider-children {
     border-right: 1px solid #dddddd;
   }
@@ -237,6 +234,7 @@
   }
   .ivu-icon-clipboard:before{
     color:#4a9af5;
+    color:#d4d3d3
   }
   /* 客户管理 */
   .customer{
@@ -244,11 +242,19 @@
   }
   .addBut{
     position: absolute;
-    top:10px;
+    top:8px;
     right:10px;
     z-index:999
-
   }
+  .addBut1{
+    float:right;
+    margin-right:10px;
+  }
+ /* .ivu-btn-ghost{ 
+    color:#409eff;
+    border:1px solid #b3d8ff;
+    background: #ecf5ff;
+} */
   .issue .ivu-table-row-highlight td{
     background-color: #2d8cf0;
     color: white;
@@ -345,6 +351,13 @@
   color:#67c23a;
   border:1px solid #e1f3d8;
   background: #f0f9ec;
+}
+.fa_b1{
+  font-size:18px;
+  color:#409eff;
+  border:1px solid #b3d8ff;
+  background: #ecf5ff;
+  margin-left:20px;
 }
 .fa_co{
   clear:both;
@@ -469,4 +482,15 @@
 }
 .form_b button{
   width:60px;
+}
+.shdz{
+  display:inline-block;
+  color: #8d8d8d;
+  line-height:20px;
+  padding-top:10px;
+  width:330px;
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow: hidden;
+  vertical-align: top;
 }

@@ -9,18 +9,33 @@
         <Menu width="auto" size="small">
           <div class="tip">
             <p class="tooltip" @click.stop="tooltipClick('inside')">
-              {{cpxhpz[cktype_current_index].mc}}
+              {{cpxhpz[cktype_current_index].name}}
               <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
             </p>
             <div class="tooltipslot" v-show="tooptipShow">
-              <p v-for="(item,index) in cpxhpz" :key="index" @click="selectClick(index)">{{item.mc}}</p>
+              <p v-for="(item,index) in cpxhpz" :key="index" @click="selectClick(index)">{{item.name}}</p>
             </div>
           </div>
         </Menu>
         <hr
           style="border:0.6px solid #DDDDDD;width:90%;margin:0 auto;margin-top:20px;margin-bottom:5px;"
         />
-        <div :style="{height:scrollHeight,overflow:'auto'}">
+        <AutoComplete
+          v-model="completeValue"
+          @on-select="goMenu"
+          clearable
+          transfer
+          placeholder="搜索仓库"
+          @keyup.enter.native="searchMenu"
+          :style="{width:180 + 'px',marginLeft:10+'px',marginBottom: 5+'px'}"
+        >
+          <Option
+            v-for="item in completeData"
+            :value="item.wh_name"
+            :key="item.wh_id"
+          >{{ item.wh_name }}</Option>
+        </AutoComplete>
+        <div :style="{height:scrollHeight,overflow:'auto'}" ref="menuContainer">
           <Menu
             width="auto"
             class="menu"
@@ -97,6 +112,7 @@
                         <DatePicker
                           placement="left"
                           type="date"
+                          :options="startOption"
                           placeholder="Select date"
                           v-model="filterItem.kssj"
                         ></DatePicker>
@@ -106,6 +122,7 @@
                         <DatePicker
                           placement="left"
                           type="date"
+                          :options="endOption"
                           placeholder="Select date"
                           v-model="filterItem.jssj"
                         ></DatePicker>
@@ -155,6 +172,7 @@
                 :page-size="10"
                 @on-change="getProductList"
                 size="small"
+                show-total
                 show-elevator
                 style="text-align:center;margin:20px 0;"
               ></Page>
@@ -165,7 +183,6 @@
                 :data="crk_data"
                 size="small"
                 highlight-row
-                :height="tableHeight"
                 :loading="crkLoading"
               ></Table>
               <Page
@@ -175,6 +192,7 @@
                 @on-change="getCrkList"
                 size="small"
                 show-elevator
+                show-total
                 style="text-align:center;margin:20px 0;"
               ></Page>
             </TabPane>
@@ -302,28 +320,9 @@ export default {
   },
   data() {
     return {
-      status,
-      mapStatus: {
-        "-1": "销售出库",
-        0: "出库中（针对仓库）",
-        1: "待收货",
-        10: "入库；已收货",
-        20: "领用",
-        30: "拆除",
-        40: "安装",
-        50: "丢失",
-        60: "上线",
-        70: "退货"
-      },
-      mapType: {
-        0: "出库",
-        1: "入库",
-        2: "领用",
-        3: "拆除",
-        4: "安装",
-        5: "丢失",
-        6: "上线"
-      },
+      status:this.$option.asset.issueStatus,
+      mapStatus: this.$option.asset.deviceStatusMap,
+      mapType: this.$option.asset.deviceTypeMap,
       cktype_current_index: 0,
       crk_current_index: 0,
       ck_current_index: "",
@@ -613,7 +612,7 @@ export default {
           title: "最新操作时间",
           key: "czsj",
           align: "center",
-          width:150
+          width: 150
         }
       ],
       crk_data: [],
@@ -629,24 +628,7 @@ export default {
       },
       yjjl_data: [],
       czjldata: [],
-      cpxhpz: [
-        {
-          mc: "所有类型仓库",
-          id: undefined
-        },
-        {
-          mc: "成品库",
-          id: 0
-        },
-        {
-          mc: "工程物资库",
-          id: 1
-        },
-        {
-          mc: "固定资产库",
-          id: 2
-        }
-      ],
+      cpxhpz: this.$option.asset.query,
       filterItem: {
         chbm: "",
         chmc: "",
@@ -657,6 +639,20 @@ export default {
         zt: "",
         kssj: "",
         jssj: ""
+      },
+      startOption: {
+        disabledDate: time => {
+          if (this.filterItem.jssj) {
+            return time.getTime() > new Date(this.filterItem.jssj).getTime();
+          }
+        }
+      },
+      endOption: {
+        disabledDate: time => {
+          if (this.filterItem.kssj) {
+            return time.getTime() < new Date(this.filterItem.kssj).getTime();
+          }
+        }
       },
       glShow: false,
       moreShow: false,
@@ -676,7 +672,8 @@ export default {
       pageName1: 1,
       pageName2: 1,
       filterStatus: false,
-      tableHeight: ""
+      tableHeight: "",
+      completeValue: ""
     };
   },
   methods: {
@@ -730,6 +727,12 @@ export default {
       this.ck_current_index = "";
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
+      if (this.jbxx_data == "") {
+        this.zkSum = 1;
+      }
+      if (this.crk_data == "") {
+        this.crkSum = 1;
+      }
     },
     getProductList(p) {
       let request = {
@@ -741,7 +744,7 @@ export default {
             wh_id:
               this.menudata &&
               this.menudata.length > 0 &&
-              this.ck_current_index !== ""
+              this.ck_current_index !== ""&&this.ck_current_index !==0
                 ? this.menudata[this.ck_current_index].wh_id
                 : undefined,
             keyword: this.inputVal === "" ? undefined : this.inputVal,
@@ -754,12 +757,13 @@ export default {
           }
         ]
       };
-      if (request.data[0].wh_id) {
-        this.inputVal = "";
-        request.data[0].keyword = undefined;
-      }
+      // if (request.data[0].wh_id) {
+      //   this.inputVal = "";
+      //   request.data[0].keyword = undefined;
+      // }
       this.jbxx_data = [];
       this.ckLoading = true;
+      this.zkSum = 0;
       this.$http.PostXLASSETS(request).then(
         response => {
           this.jbxx_data = [];
@@ -823,7 +827,10 @@ export default {
                   " 23:59:59", //结束名称
             device_status:
               this.filterItem.zt === "" ? undefined : this.filterItem.zt, //状态
-            keyword: this.inputVal === "" ? undefined : this.inputVal,
+            keyword:
+              this.inputVal === "" || this.inputVal === this.selectedProcode
+                ? undefined
+                : this.inputVal,
             page_num: p,
             page_size: 10
           }
@@ -864,6 +871,12 @@ export default {
       this.ck_current_index = index;
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
+      if (this.jbxx_data == "") {
+        this.zkSum = 1;
+      }
+      if (this.crk_data == "") {
+        this.crkSum = 1;
+      }
     },
     getMenuList(index) {
       if (index == "0") {
@@ -887,7 +900,7 @@ export default {
       };
       this.menudata = [];
       this.$http.PostXLASSETS(request).then(response => {
-        this.menudata = [];
+        this.menudata = [{wh_name:'所有仓库',wh_id:''}];
         let res = response.data.result;
         this.zkSum = res.sum;
         for (var i = 0; i < res.data.length; i++) {
@@ -901,11 +914,11 @@ export default {
     },
     search(val) {
       // if(this.inputVal === '') return;
-      this.inputVal = this.inputVal.replace(/^\s+|\s+$/g, "");
-      this.getMenuList(0);
-      if (this.$refs.menu.currentActiveName !== -1)
-        this.$refs.menu.currentActiveName = -1;
-      this.ck_current_index = "";
+      // this.inputVal = this.inputVal.replace(/^\s+|\s+$/g, "");
+      // this.getMenuList(0);
+      // if (this.$refs.menu.currentActiveName !== -1)
+      //   this.$refs.menu.currentActiveName = -1;
+      // this.ck_current_index = "";
       if (this.tabName === "name1") {
         this.pageName1 = 1;
         this.getProductList(1);
@@ -968,9 +981,9 @@ export default {
           if (this.jbxx_data == "") {
             this.zkSum = 1;
           }
-          if(this.crk_data == ""){
-            this.crkSum = 1
-          }    
+          if (this.crk_data == "") {
+            this.crkSum = 1;
+          }
           this.$Message.success("查询成功！");
         } else {
           this.$Message.error("查询失败，请重试!");
@@ -985,11 +998,32 @@ export default {
     },
     changeRow(row) {
       this.inputVal = row.chbm;
+    },
+    goMenu(menu) {
+      let whId =
+        (this.menudata.find(m => m.wh_name === menu) || {}).wh_id || "";
+      this.$refs["menu"].currentActiveName =
+        this.menudata.findIndex(m => m.wh_id === whId) || 0;
+      this.completeValue = "";
+      this.$nextTick(() => {
+        this.ck_current_index =
+          this.menudata.findIndex(m => m.wh_id === whId) || 0;
+        let scroll =
+          this.$refs["menu"].$children[0].$children[this.ck_current_index + 2]
+            .$el.offsetTop - 200;
+        this.$refs["menu"].updateActiveName();
+        this.$refs["menu"].updateActiveName();
+        this.$refs["menuContainer"].scrollTo(0, scroll);
+        this.getProductList(1);
+      });
+    },
+    searchMenu() {
+      if (this.completeData.length > 0)
+        this.goMenu(this.completeData[0].wh_name);
     }
   },
   mounted() {
     this.selectClick(0);
-    this.tableHeight = document.body.scrollHeight - 300;
   },
   computed: {
     scrollHeight() {
@@ -997,6 +1031,19 @@ export default {
       // h = (window.screen.height-330)+'px'
       h = document.body.scrollHeight - 185 + "px";
       return h;
+    },
+    completeData() {
+      let data = [];
+      if (
+        this.menudata &&
+        this.menudata.length > 0 &&
+        this.completeValue !== ""
+      ) {
+        data = JSON.parse(JSON.stringify(this.menudata)).filter(
+          i => i.wh_name.indexOf(this.completeValue) !== -1
+        );
+      }
+      return data;
     }
   },
   watch: {
@@ -1004,6 +1051,10 @@ export default {
       if (nv === "name1") {
         this.selectedWhid = "";
         this.selectedProcode = "";
+        if (this.inputVal !== "") {
+          this.inputVal = "";
+          this.getProductList(1);
+        }
         this.pageName2 = 1;
       }
     }

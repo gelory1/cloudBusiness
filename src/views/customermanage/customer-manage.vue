@@ -1,8 +1,8 @@
 <template>
   <div class="customer" @click="customerClick('outside')">
     <Layout>
-      <Menu width="auto" size="small" style="padding-top:30px;">
-        <div class="tip" style="float:left;margin-top:10px;">
+      <Menu width="auto" size="small">
+        <div class="tip" style="float:left;margin-top:5px;">
           <p class="tooltip" @click.stop="customerClick('inside')">
             {{selectedCustomType.type}}
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
@@ -27,36 +27,14 @@
                 <Form ref="filterItem" :model="filterItem" :label-width="80">
                   <FormItem label="客户等级" prop="khdj">
                     <Select v-model="filterItem.nature" clearable filterable>
-                      <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
+                      <Option :value="item.index" v-for="(item,index) in natures" :key="item.index">{{item.val}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="授权资质" prop="sqzz">
-                    <Row>
-                      <Col span="12">
-                        <Select v-model="filterItem.empower_province" clearable filterable>
-                          <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                      <Col span="12">
-                        <Select v-model="filterItem.empower_city" clearable filterable>
-                          <Option :value="item.id" v-for="(item,index) in empowerCitys" :key="index">{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                    </Row>
+                    <el-cascader clearable v-model="filterItem.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name'}" size="small"></el-cascader>
                   </FormItem>
                   <FormItem label="省份/城市" prop="city">
-                    <Row>
-                      <Col span="12">
-                        <Select v-model="filterItem.province" clearable filterable>
-                          <Option :value="item.id" v-for="(item,index) in provinces" :key="index">{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                      <Col span="12">
-                        <Select v-model="filterItem.city" clearable filterable  :disabled="disabled">
-                          <Option :value="item.id" v-for="(item,index) in citys" :key="index">{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                    </Row>
+                    <el-cascader clearable v-model="filterItem.city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name'}" size="small"></el-cascader>
                   </FormItem>
                   <FormItem label="运营公司" prop="yygs">
                     <Select v-model="filterItem.manageCompany" clearable filterable>
@@ -69,11 +47,22 @@
                   <FormItem label="建档日期">
                     <Row>
                       <Col span="11">
-                        <DatePicker placement="bottom" type="date" v-model="filterItem.startTime" format="yyyy-MM-dd"></DatePicker>
+                        <DatePicker placement="bottom" type="date" :options="startOption"  v-model="filterItem.startTime" format="yyyy-MM-dd"></DatePicker>
                       </Col>
                       <Col span="2" style="text-align: center">-</Col>
                       <Col span="11">
-                        <DatePicker placement="bottom" type="date" v-model="filterItem.endTime" format="yyyy-MM-dd"></DatePicker>
+                        <DatePicker placement="bottom" type="date" :options="endOption" v-model="filterItem.endTime" format="yyyy-MM-dd"></DatePicker>
+                      </Col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="授权期限">
+                    <Row>
+                      <Col span="11">
+                        <DatePicker placement="bottom" type="date" :options="startOption1"  v-model="filterItem.sqstartTime" format="yyyy-MM-dd"></DatePicker>
+                      </Col>
+                      <Col span="2" style="text-align: center">-</Col>
+                      <Col span="11">
+                        <DatePicker placement="bottom" type="date" :options="endOption1" v-model="filterItem.sqendTime" format="yyyy-MM-dd"></DatePicker>
                       </Col>
                     </Row>
                   </FormItem>
@@ -93,16 +82,17 @@
               <!-- 更多 -->
               <div v-show="moreShow" class="more">
                 <p @click="addkpClick">新增开票信息</p>
-                <p>导出所选结果</p>
-                <p>导出全部客户</p>
+                <p @click="exportSelect">导出所选结果</p>
+                <p><a :href="exportUrl === ''||this.isFinance||this.isCooperative?'#':exportUrl" @click="exportAll" style="color:#495060">导出全部客户</a></p>
               </div>
             </span>
           </div>
-          <Button type="primary" size="large" icon="ios-plus-empty" class="addBut" @click="addClick">添加客户</Button>
         </Header>
+        <Button type="primary" icon="ios-plus-empty" class="addBut1" @click="addClick" style="margin-bottom:5px;">添加客户</Button>
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
         <Table
+          ref="table"
           @on-selection-change="selectChange"
           style="position:relative;"
           :columns="customList_columns"
@@ -116,6 +106,7 @@
           :total="customSum"
           size="small"
           show-elevator
+          show-total
           style="text-align:center;margin-top:20px;"
           @on-change="getCustomList"
         ></Page>
@@ -127,38 +118,6 @@
 <script>
 import dropDown from "../public-components/drop-down.vue";
 import Dropdown from "iview";
-const customerTypes= [
-  {
-    no:0,
-    type: "所有客户"
-  },
-  {
-    no:1,
-    type: "直销客户"
-  },
-  {
-    no:2,
-    type: "合作伙伴"
-  },
-  {
-    no:3,
-    type: "伙伴客户"
-  }
-]
-const natures = ['A级', 'B级','C级','D级','E级',]
-const levelMap = {
-  1: 'A级', 
-  2: 'B级',
-  3: 'C级',
-  4: 'D级',
-  5: 'E级',
-}
-const companyMap = {
-  1: '电能云',
-  2: '智慧能源',
-  3: '维智泰',
-  4: '康源'
-}
 export default {
   name: "customerManage",
   components: {
@@ -166,7 +125,7 @@ export default {
   },
   data() {
     return {
-      customerTypes: customerTypes,
+      customerTypes: this.$option.customer.types,
       customList_columns: [
         {
           type: "selection",
@@ -187,6 +146,10 @@ export default {
                           click: () => {
                                 this.$store.commit('selectedCustom',params.row);
                                 localStorage.setItem('customInfo',JSON.stringify(params.row));
+                                if(!this.$store.state.app.authority.find(a => a.id === 701)){
+                                  this.$Message.error('权限不足！');
+                                  return;
+                                }
                                 this.$router.push({ path: "/customermanage/see" });
                             }
                         }
@@ -209,12 +172,24 @@ export default {
                        if (value == "查看") {
                         this.$store.commit('selectedCustom',params.row);
                         localStorage.setItem('customInfo',JSON.stringify(params.row));
+                        if(!this.$store.state.app.authority.find(a => a.id === 701)){
+                          this.$Message.error('权限不足！');
+                          return;
+                        }
                         this.$router.push({ path: "/customermanage/see" });
                       } else if (value == "编辑") {
                         this.$store.commit('selectedCustom',params.row);
                         localStorage.setItem('customInfo',JSON.stringify(params.row));
+                        if(!this.$store.state.app.authority.find(a => a.id === 702)){
+                          this.$Message.error('权限不足！');
+                          return;
+                        }
                         this.$router.push({ path: "/customermanage/edit" });
                       } else if (value == "删除") {
+                        if(!this.$store.state.app.authority.find(a => a.id === 702)){
+                          this.$Message.error('权限不足！');
+                          return;
+                        }
                         this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
                           confirmButtonText: '确定',
                           cancelButtonText: '取消',
@@ -315,13 +290,41 @@ export default {
       filterItem: {
         manageCompany: 0,
         nature: 0,
-        city: 0,
+        city: [],
         salesman: "",
-        empower_province: 0,
-        empower_city: 0,
-        province: 0,
+        empower_city: [],
         startTime:'',
-        endTime:''
+        endTime:'',
+        sqstartTime:"",
+        sqendTime:""
+      },
+      startOption:{
+        disabledDate:time =>{
+          if(this.filterItem.endTime){
+            return time.getTime() > new Date(this.filterItem.endTime).getTime()
+          }
+        }
+      },
+      endOption:{
+        disabledDate:time =>{
+          if(this.filterItem.startTime){
+            return time.getTime() < new Date(this.filterItem.startTime).getTime()
+          }
+        }
+      },
+       startOption1:{
+        disabledDate:time =>{
+          if(this.filterItem.sqendTime){
+            return time.getTime() > new Date(this.filterItem.sqendTime).getTime()
+          }
+        }
+      },
+      endOption1:{
+        disabledDate:time =>{
+          if(this.filterItem.sqstartTime){
+            return time.getTime() < new Date(this.filterItem.sqstartTime).getTime()
+          }
+        }
       },
       khdjg: [
         {
@@ -335,7 +338,7 @@ export default {
       isShow: false,
       glShow: false,
       moreShow: false,
-      selectedCustomType:customerTypes[0],
+      selectedCustomType:this.$option.customer.types[0],
       customSum:0,
       selectedItems:[],
       inputVal:'',
@@ -344,10 +347,11 @@ export default {
       companys:[],
       provinces:[],
       citys:[],
-      natures,
+      natures:this.$option.customer.levels,
       empowerCitys:[],
       filterStatus:false,
       disabled:true,
+      exportUrl:''
     };
   },
   methods: {
@@ -361,7 +365,7 @@ export default {
     selectCustomer(index) {
       this.tooptipShow = false;
       this.pageNum = 1;
-      this.selectedCustomType = customerTypes[index];
+      this.selectedCustomType = this.customerTypes[index];
       this.getCustomList(1);
     },
     getCustomList(p){
@@ -384,11 +388,12 @@ export default {
             create_endtime:endTime,
             customer_level:this.filterItem.nature === ''?0:this.filterItem.nature,
             customer_nature:this.selectedCustomType.no,
-            province:this.filterItem.province === ''?0:this.filterItem.province,
-            city:this.filterItem.city === ''?0:this.filterItem.city,
+            province:this.filterItem.city[0]||0,
+            city:this.filterItem.city[1]||0,
+            area:this.filterItem.city[2]||0,
             manage_company:this.filterItem.manageCompany === ''?0:this.filterItem.manageCompany,
-            empowerProvince:this.filterItem.empower_province === ''?0:this.filterItem.empower_province,
-            empowerCity:this.filterItem.empower_city === ''?0:this.filterItem.empower_city,
+            empowerProvince:this.filterItem.empower_city[0]||0,
+            empowerCity:this.filterItem.empower_city[1]||0,
             saleName:this.filterItem.salesman,
             keyword:this.inputVal
           }
@@ -403,11 +408,11 @@ export default {
             let item = {};
             item.name = data.customer_name;
             item.nature = data.customer_nature === 0?'':this.customerTypes.find(t => t.no === data.customer_nature).type;
-            item.level = levelMap[data.customer_level];
-            item.city = (data.province_cn||'') + ' ' + (data.city_cn||'');
+            item.level = this.$option.customer.levelMap[data.customer_level];
+            item.city = (data.province_cn||'') + ' ' + (data.city_cn||'') + ' ' + (data.area_cn||'');
             item.time = data.create_date;
             item.salesman = data.sale_no;
-            item.company = companyMap[data.manage_company];
+            item.company = this.$option.contract.subjectNameMap[data.manage_company];
             item.data = data;
             this.customList_data.push(item);
           });
@@ -477,26 +482,30 @@ export default {
       if(!this.filterStatus) $(".cor").css({ color: "#000000" });
     },
     addkpClick() {
+      if(!this.$store.state.app.authority.find(a => a.id === 704)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$router.push({ path: "/customermanage/add-informat" });
     },
     selectChange(item){
       this.selectedItems = item;
+      this.customList_data.forEach(c=> {
+        if(this.selectedItems.find(s => s.data.customer_no === c.data.customer_no)){
+          c._checked = true;
+        }else{
+          c._checked = false;
+        }
+      })
     },
     addClick(){
+      if(!this.$store.state.app.authority.find(a => a.id === 703)){
+        this.$Message.error('权限不足！');
+        return;
+      }
       this.$store.commit('selectedCustom',{});
       localStorage.setItem('customInfo',JSON.stringify({}));
       this.$router.push({ path: "/customermanage/new" });
-    },
-    getProvinces(){
-      let request = {
-        typeid: 27002
-      };
-      this.$http.XLSELECT(request).then(response => {
-        let res = response.data.result.data;
-        this.provinces = res;
-        this.$store.commit('getProvinces',res);
-        localStorage.setItem('provinces',JSON.stringify(res));
-      });
     },
     getManagecompanys(){
       let request = {
@@ -504,53 +513,92 @@ export default {
       }
       this.$http.XLSELECT(request).then(response => {
         this.companys = response.data.result.data;
+        localStorage.setItem('companys',JSON.stringify(this.companys));
       })
-    },
-    getCitys(province,isEmpower){
-      let request = {
-        typeid: 27003,
-        data: [
-          {
-            province:province
-          }
-        ]
-      };
-      this.citys = [];
-      this.$http.XLSELECT(request).then(response => {
-        let res = response.data.result.data;
-        if(isEmpower){
-          this.empowerCitys = res;
-        }else{ 
-          this.citys = res;
-        }
-      });
     },
     search(){
       this.pageNum = 1;
       this.getCustomList(1);
     },
+    exportSelect(){
+      if(this.isFinance||this.isCooperative||this.isSaleMan){
+        this.$Message.error('权限不足！');
+        return;
+      }
+      if(this.customList_data.filter(data => data._checked === true).length === 0){
+        this.$Message.error('请先选择需要导出的数据！');
+        return;
+      }
+      this.$refs['table'].exportCsv({
+        filename: '客户信息列表',
+        columns: this.customList_columns.filter((col, index) => index !== 0&&index!==2),
+        data: this.customList_data.filter(data => data._checked === true)
+      })
+      this.moreClick();
+    },
+    exportAll(){
+      if(this.isFinance||this.isCooperative||this.isSaleMan){
+        this.$Message.error('权限不足！');
+        return;
+      }
+      if(this.exportUrl === ''){
+        this.$Message.error('导出失败，请稍后重试！');
+        return;
+      }
+      this.moreClick();
+    },
+    export(){
+      if(this.isFinance||this.isCooperative||this.isSaleMan){
+        return;
+      }
+      let request = {
+        data:[
+          {
+            account_id: this.$store.state.user.accountId
+          }
+        ]
+      };
+      this.$http.EXPORT(request).then(res => {
+        
+      },error => {
+        if(error.data.code === 0){
+          this.exportUrl = error.data.exportUrl;
+        }
+      })
+    }
   },
   mounted() {
     this.getCustomList(1);
-    this.getProvinces();
-    this.getManagecompanys();   
+    this.getManagecompanys(); 
+    this.export();  
+  },
+  computed:{
+    isFinance(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '财务');
+      }
+    },
+    isCooperative(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
+      }
+    },
+    isSaleManage(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
+      }
+    },
+    isSaleMan(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '销售人员');
+      }
+    },
+    regions() {
+      return JSON.parse(localStorage.getItem("regions")) || [];
+    },
   },
   watch:{
-    'filterItem.empower_province':function(nv){
-      if(nv !==0&&nv!=='') this.getCitys(nv,true);
-      if(this.filterItem.empower_province == ''){
-        this.filterItem.empower_city = ''
-      }
-    },
-    'filterItem.province':function(nv){
-      if(nv !==0&&nv!=='') this.getCitys(nv,false);
-      if(this.filterItem.province == ''){
-        this.filterItem.city = ''
-        this.disabled = true
-      }else{
-        this.disabled = false
-      }
-    },
+
   }
 };
 </script>

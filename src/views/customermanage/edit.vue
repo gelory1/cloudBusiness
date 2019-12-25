@@ -21,10 +21,10 @@
             </Col>
           </Row>
           <Row>
-            <Col span="6"  style="position:relative">
-            <span style="color:red;position:absolute;left:20px;top:8px;">*</span>
-              <FormItem label="客户性质" prop="nature" :label-width="90">  
-                <Select v-model="formValidate.nature.index" placeholder clearable filterable>
+            <Col span="6" style="position:relative">
+              <span style="color:red;position:absolute;left:20px;top:8px;">*</span>
+              <FormItem label="客户性质" prop="nature" :label-width="90">
+                <Select v-model="formValidate.nature" placeholder clearable filterable>
                   <Option
                     v-for="(item,index) in natures"
                     :value="item.index"
@@ -35,7 +35,7 @@
             </Col>
             <Col span="6">
               <FormItem label="客户等级" prop="level">
-                <Select v-model="formValidate.level.index" placeholder clearable filterable>
+                <Select v-model="formValidate.level" placeholder clearable filterable>
                   <Option
                     v-for="(item,index) in levels"
                     :value="item.index"
@@ -46,28 +46,7 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <Select
-                  v-model="formValidate.province.id"
-                  placeholder="请选择"
-                  style="width:174px;"
-                  clearable
-                  filterable
-                >
-                  <Option
-                    v-for="(item,index) in provinces"
-                    :value="item.id"
-                    :key="index"
-                  >{{item.name}}</Option>
-                </Select>
-                <Select
-                  v-model="formValidate.city.id"
-                  placeholder="请选择"
-                  clearable
-                  filterable
-                  style="width:173px;"
-                >
-                  <Option v-for="(item,index) in citys" :value="item.id" :key="index">{{item.name}}</Option>
-                </Select>
+                <el-cascader clearable v-model="formValidate.city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;" ></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -75,7 +54,7 @@
             <Col span="12">
               <FormItem label="行业" prop="industry" :label-width="90">
                 <!-- <Input v-model="formValidate.hy" placeholder="Enter your name"></Input> -->
-                <Select v-model="formValidate.industry.index" clearable filterable placeholder>
+                <Select v-model="formValidate.industry" clearable filterable placeholder>
                   <Option
                     v-for="(item,index) in industrys"
                     :value="item.index"
@@ -123,43 +102,77 @@
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="授权资质" prop="sqzz" class="con-right">
-                <Select
-                  v-model="formValidate.empower_province.id"
-                  placeholder="请选择"
-                  clearable
-                  filterable
-                  style="width:174px;"
-                >
-                  <Option
-                    v-for="(item,index) in provinces"
-                    :value="item.id"
-                    :key="index"
-                  >{{item.name}}</Option>
-                </Select>
-                <Select
-                  v-model="formValidate.empower_city.id"
-                  placeholder="请选择"
-                  clearable
-                  filterable
-                  style="width:173px;"
-                >
-                  <Option
-                    v-for="(item,index) in empower_citys"
-                    :value="item.id"
-                    :key="index"
-                  >{{item.name}}</Option>
-                </Select>
+                <el-cascader clearable v-model="formValidate.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
             </Col>
           </Row>
           <Row>
             <Col span="12">
               <FormItem label="销售负责人" prop="salesman" :label-width="90">
-                <!-- <Select v-model="formValidate.salesman" clearable filterable>
-                      <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
-                  </Select> -->
-                <Input v-model="formValidate.salesman" placeholder="Enter your name" readonly />
+                <el-cascader clearable v-model="formValidate.salesman" :options="salesList" filterable @expand-change="changeCompony" :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
+            </Col>
+            <Col span="12" v-if="isFriend">
+            <FormItem label="授权期限" class="con-right"  style="position:relative;">
+              <span style="color:red;position:absolute;left:-70px;top:2px;">*</span>
+                <Row>
+                  <Col span="11">
+                  
+                  <FormItem prop="sqstartTime">
+                    <DatePicker
+                      placement="bottom"
+                      type="date"
+                      :options="startOption1"
+                      v-model="formValidate.sqstartTime"
+                      format="yyyy-MM-dd"
+                    ></DatePicker>
+                  </FormItem>  
+                  </Col>
+                  <Col span="2" style="text-align: center">-</Col>
+                  <Col span="11">
+                  <FormItem prop="sqendTime" class="con-right">
+                    <DatePicker
+                      placement="bottom"
+                      type="date"
+                      :options="endOption1"
+                      v-model="formValidate.sqendTime"
+                      style="width:155px"
+                      format="yyyy-MM-dd"
+                    ></DatePicker>
+                    </FormItem>
+                  </Col>
+                </Row>
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <div class="select2" v-if="file.name !== ''">
+                <section style="width:90%;float:left;margin-bottom:10px">
+                  <p class="sele2">合作协议（附件）</p>
+                  <div>
+                    <div class="fj1">
+                      <section class="fj_img">
+                        <img :src="file.img" alt style="width:20px;height:20px;margin:20px 40px" />
+                      </section>
+                      <section class="fj_sec1" style="margin:10px 0">
+                        <p>{{file.name}}</p>
+                        <p class="fj_p1">
+                          <span>{{file.size}}</span> 来自
+                          <span>{{file.uploadMan}}</span> |
+                          <span>{{file.date}}</span>
+                        </p>
+                      </section>
+                        <Button style="margin-left:10px" @click="deleteFile">删除</Button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <p style="font-size:12px;color:#495060;margin-left:-10px;float:left;" v-if="!uploadLoading&&file.name === ''&&isFriend">合作协议（附件）</p>
+              <Upload ref="upload" action="/public/api/xlcontract/uploadFile" v-show="!uploadLoading&&file.name === ''&&isFriend" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
+                <Button type="text" icon="plus" style="color:#4a9af5;margin:-5px 0 0 -10px;;">添加附件</Button>
+              </Upload>
+              <!-- <p v-if="uploadLoading">上传中...</p> -->
             </Col>
           </Row>
         </div>
@@ -285,7 +298,7 @@
       </Form>
     </Modal>
     <!-- 添加开票信息 -->
-    <Modal v-model="addkpxxmodal" width="800" @on-ok="saveTicket()" @on-cancel="handleCancel()">
+    <Modal v-model="addkpxxmodal" width="800" @on-ok="saveTicket()" @on-cancel="handleCancel()" class="aa">
       <p style="margin:10px  0 20px 0;font-size:16px">添加开票信息</p>
       <Form
         ref="formAddkpxx"
@@ -306,6 +319,8 @@
             </FormItem>
           </Col>
         </Row>
+        <hr style="width:105%;border:1px dashed #e4e7ed;margin-bottom:25px;">
+        <p style="color:#8d8d8d;margin:-10px 0 10px 40px"><Icon type="information-circled"></Icon><span> 专用发票必须填写以下信息才为有效凭证</span></p>
         <Row>
           <Col span="12">
             <FormItem label="开票地址" prop="ticket_address">
@@ -342,10 +357,10 @@
             </FormItem>
           </Col>
         </Row>
-        <!-- <FormItem style="margin:40px 0">
-          <Button type="primary" @click="saveTicket()">确认并添加</Button>
+        <FormItem style="margin:40px 0">
+          <Button type="primary" @click="saveTicket('formAddkpxx')">确认并添加</Button>
           <Button @click="handleCancel('formAddkpxx')" style="margin-left: 8px">取消</Button>
-        </FormItem>-->
+        </FormItem>
       </Form>
     </Modal>
     <Modal v-model="addPlatShow" @on-ok="savePlat()">
@@ -385,84 +400,6 @@
 
 <script>
 import api from "@/api/axios";
-const natures = [
-  {
-    value: "直销客户",
-    index: 1
-  },
-  {
-    value: "合作伙伴",
-    index: 2
-  },
-  {
-    value: "伙伴客户",
-    index: 3
-  }
-];
-const levels = [
-  {
-    val: "A级",
-    index: 1
-  },
-  {
-    val: "B级",
-    index: 2
-  },
-  {
-    val: "C级",
-    index: 3
-  },
-  {
-    val: "D级",
-    index: 4
-  },
-  {
-    val: "E级",
-    index: 5
-  }
-];
-const industrys = [
-  {
-    val: "公共事业及管理组织",
-    index: 1
-  },
-  {
-    val: "工业",
-    index: 2
-  },
-  {
-    val: "商业住宿餐饮",
-    index: 3
-  },
-  {
-    val: "金融房地产及居民服务",
-    index: 4
-  },
-  {
-    val: "运输仓储邮政",
-    index: 5
-  },
-  {
-    val: "信息计算机和软件",
-    index: 6
-  },
-  {
-    val: "农林牧渔水利",
-    index: 7
-  },
-  {
-    val: "建筑业",
-    index: 8
-  },
-  {
-    val: "军工保密",
-    index: 9
-  },
-  {
-    val: "其他",
-    index: 10
-  }
-];
 
 export default {
   name: "edit",
@@ -481,9 +418,9 @@ export default {
     const validatePhone = (rule, value, callback) => {
       if (this.formAddlxr.phone !== "" || this.formAddkpxx.phone) {
         var mPhone = /^1(3|4|5|7|8)\d{9}$/;
-        var phone= /^(0[0-9]{2,3}(\-)?)([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$/;
+        var phone = /^(0[0-9]{2,3}(\-)?)([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$/;
         // var zj = /^(\d{3,4}-)\d{7,8}/;
-        if (mPhone.test(value) == false&&phone.test(value) === false) {
+        if (mPhone.test(value) == false && phone.test(value) === false) {
           callback(new Error("请输入正确的电话号码"));
         }
       } else {
@@ -507,28 +444,55 @@ export default {
       callback();
     };
     return {
+      options1:[],
+      options2:[],
       formValidate: {
         name: "",
         customer_abbreviation: "",
-        nature: natures[0],
-        level: levels[0],
-        industry: industrys[0],
+        nature: '',
+        level:"",
+        industry: '',
         registered_capital: 0,
         charge_person: "",
         bond_amount: "",
         mail_address: "",
         post_code: "",
-        salesman: "",
+        salesman: [],
         platformuser_list: [],
         contacts_list: [],
         ticket_list: [],
-        province: {},
-        city: {},
-        empower_province: "",
-        empower_city: "",
-        protocolNumber: ""
+        city: [],
+        empower_city: [],
+        protocolNumber: "",
+        sqstartTime: "",
+        sqendTime:"",
+        company:""
+      },
+      startOption1: {
+        disabledDate: time => {
+          if (this.formValidate.sqendTime) {
+            return (
+              time.getTime() > new Date(this.formValidate.sqendTime).getTime()
+            );
+          }
+        }
+      },
+      endOption1: {
+        disabledDate: time => {
+          if (this.formValidate.sqstartTime) {
+            return (
+              time.getTime() < new Date(this.formValidate.sqstartTime).getTime()
+            );
+          }
+        }
       },
       ruleValidate: {
+        sqstartTime: [
+          { required: true, type: 'date', message: '请选择授权期限', trigger: 'change' }
+        ],
+        sqendTime: [
+          { required: true, type: 'date', message: '请选择授权期限', trigger: 'change' }
+        ],
         name: [
           {
             required: true,
@@ -540,7 +504,7 @@ export default {
           {
             required: true,
             message: "请选择客户等级",
-            type: "object",
+            type: "number",
             trigger: "change"
           }
         ],
@@ -548,24 +512,23 @@ export default {
           {
             required: true,
             message: "请选择客户性质",
-            type: "object",
+            type: "number",
             trigger: "change"
-          }
-        ],
-        industry: [
-          {
-            required: true,
-            message: "请选择客户行业",
-            type: "object",
-            trigger: "change"
-            // trigger: "blur"
           }
         ],
         city: [
           {
             required: true,
             message: "请选择城市",
-            type: "object",
+            type: "array",
+            trigger: "change"
+          }
+        ],
+        empower_city: [
+          {
+            required: true,
+            message: "请选择城市",
+            type: "array",
             trigger: "change"
           }
         ],
@@ -603,7 +566,7 @@ export default {
             message: "请输入协议编号",
             trigger: "blur"
           }
-        ],
+        ]
       },
       addlxr_columns: [
         {
@@ -692,30 +655,8 @@ export default {
       ],
       contactIndex: 0,
       ticketIndex: 0,
-      addlxr_data: [
-        {
-          dh: "1563819"
-        }
-      ],
       kpxx: {
-        mc: "贾诩",
-        sh: "3241424324",
-        dh: "23443242424",
-        khyh: "中国银行",
-        yhzh: "2341222312432424",
-        kpdz: "南京雨花台",
-        yjdz: "南京江宁",
-        yjr: "司马懿",
-        yjdh: "21657890987"
       },
-      khxzf: [
-        {
-          val: "213"
-        },
-        {
-          val: "55"
-        }
-      ],
       formAddlxr: {
         contact_name: "",
         contact_id: "",
@@ -780,49 +721,6 @@ export default {
             trigger: "blur",
             validator: dutyparagraph
           }
-        ],
-        ticket_address: [
-          {
-            required: true,
-            message: "请输入开票地址",
-            trigger: "blur"
-          }
-        ],
-        phone: [
-          {
-            required: true,
-            trigger: "blur",
-            validator: validatePhone
-          }
-        ],
-        bank_name: [
-          {
-            required: true,
-            message: "请输入开户行",
-            trigger: "blur"
-          }
-        ],
-        bank_account: [
-          {
-            required: true,
-            message: "请输入银行账号",
-            trigger: "blur"
-            // validator: validateNum
-          }
-        ],
-        post_info: [
-          {
-            required: true,
-            message: "请输入邮寄地址",
-            trigger: "blur"
-          }
-        ],
-        ticket_contacts: [
-          {
-            required: true,
-            message: "请输入联系人及电话",
-            trigger: "blur"
-          }
         ]
       },
       khdjj: [],
@@ -834,11 +732,8 @@ export default {
       checkbox: "",
       addlxrmodal: false,
       addkpxxmodal: false,
-      natures: natures,
-      levels: levels,
-      industrys: industrys,
-      citys: [],
-      empower_citys: [],
+      levels: this.$option.customer.levels,
+      industrys: this.$option.customer.industrys,
       addPlatShow: false,
       plat: {
         platform_id: "",
@@ -856,10 +751,38 @@ export default {
       ticketStatus: "new",
       contactStatus: "new",
       customer_id: "",
-      newLocalData: {}
+      dd:"",
+      ddArea:"",
+      sqCascader:"",
+      sqArea:"",
+      newLocalData: {},
+      provinces_county: [],
+      salesList: [],
+      manageCompany:'',
+      uploadLoading:false,
+      file:{
+        name:'',
+        size:'',
+        date:'',
+        uploadMan:'',
+        address:'',
+        id:'',
+        img:''
+      },
+      postData:{
+        accountId:'',
+        customerNo:''
+      },
+      deleteStatus: false,
+      uploadStatus: false
     };
   },
   methods: {
+    changeCompony(value){
+      this.formValidate.salesman = [];
+      this.manageCompany = value[0];
+      this.getSales();
+    },
     inputChange() {
       this.formAddkpxx.bank_account = this.formAddkpxx.bank_account.replace(
         /[^\d]/g,
@@ -870,20 +793,57 @@ export default {
     handleSubmit(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
-          if(this.formValidate.level.index == '' || this.formValidate.province.id == '' || this.formValidate.city.id == '' || this.formValidate.nature.index == '' || this.formValidate.industry.index == ''){
+          if (
+            this.formValidate.level == "" ||
+            this.formValidate.city.length < 1 ||
+            (this.formValidate.nature === 2&&(this.formValidate.empower_city||[]).length < 1) ||
+            this.formValidate.nature == ""
+          ) {
             this.$Message.error("请将信息补充完整后再提交");
-          }else{
+          } else {
             this.editCustomer();
-          }      
+          }
         } else {
           this.$Message.error("请将信息补充完整后再提交");
         }
       });
     },
-    gohandleCancel(){
+    gohandleCancel() {
       this.$router.go(-1);
     },
     editCustomer() {
+      let startTime = '',endTime = '';
+      if(this.formValidate.sqstartTime){
+        startTime = this.formValidate.sqstartTime.getFullYear()+'-' + (this.formValidate.sqstartTime.getMonth() + 1) +'-' + this.formValidate.sqstartTime.getDate();
+      }
+      if(this.formValidate.sqendTime){
+        endTime = this.formValidate.sqendTime.getFullYear()+'-' + (this.formValidate.sqendTime.getMonth() + 1) +'-' + this.formValidate.sqendTime.getDate();
+      }
+      let empowerList = [];
+      this.formValidate.empower_city.forEach((e,index) => {
+        if(typeof(e) === 'object'){
+          empowerList.push({
+            empowerProvince:e[0],
+            empowerCity:e[1],
+            empowerArea:e[2]
+          })
+        }else{
+          if(empowerList.length === 0){
+            empowerList.push({
+              empowerProvince:-1,
+              empowerCity:-1,
+              empowerArea:-1
+            })
+          }
+          if(index === 1){
+            empowerList[0].empowerPrivince = e;
+          }else if(index === 2){
+            empowerList[0].empowerCity = e;
+          }else if(index === 3){
+            empowerList[0].empowerArea = e;
+          }
+        }
+      })
       let request = {
         typeid: this.isNewCreate ? 25002 : 25006,
         data: [
@@ -893,27 +853,31 @@ export default {
               ? undefined
               : ((this.data || {}).data || {}).customer_no,
             customerName: this.formValidate.name,
-            customerLevel: this.formValidate.level.index,
-            customerNature: this.formValidate.nature.index,
-            province: this.formValidate.province.id,
-            city: this.formValidate.city.id,
-            empowerProvince: this.formValidate.empower_province.id,
-            empowerCity: this.formValidate.empower_city.id,
-            manageCompany: 2,
-            industry: this.formValidate.industry.index,
+            customerLevel: this.formValidate.level,
+            customerNature: this.formValidate.nature,
+            province: this.formValidate.city[0],
+            city: this.formValidate.city[1]?this.formValidate.city[1]:0,
+            area: this.formValidate.city[2]?this.formValidate.city[2]:0,
+            empowerList:empowerList.length === 0?undefined:empowerList,
+            manageCompany: this.manageCompany,
+            saleNo: this.formValidate.salesman[1]?this.formValidate.salesman[1]:-1,
+            industry: this.formValidate.industry === ''?0:this.formValidate.industry,
             mailAddress: this.formValidate.mail_address,
             bondAmount: Number(this.formValidate.bond_amount),
             registeredCapital: Number(this.formValidate.registered_capital),
             customerAbbreviation: this.formValidate.customer_abbreviation,
             chargePerson: this.formValidate.charge_person,
             postCode: this.formValidate.post_code,
-            protocolNumber: this.formValidate.protocolNumber
+            protocolNumber: this.formValidate.protocolNumber,
+            empowerProvince:0,
+            empowerCity:0,
+            empowerStartTime: startTime===''?undefined:startTime,
+            empowerEndTime: endTime===''?undefined:endTime,
           }
         ]
       };
       if (this.isNewCreate) {
         api.SETCUSTOMER(request).then(response => {
-          if (response.data.code === 0) {
             this.customer_id = response.data.result.data.customerNo;
             this.ticketStatus = "new";
             this.contactStatus = "new";
@@ -941,22 +905,45 @@ export default {
               this.newLocalData.plat.data.platFormList.length > 0
             )
               api.SETCUSTOMER(this.newLocalData.plat);
+            if(this.file.name !== ''){
+              this.postData.accountId = this.$store.state.user.accountId;
+              this.postData.customerNo = this.customer_id;
+              this.$refs.upload.post(this.file.file);
+            }
             this.$Message.success("客户信息更新成功！");
             this.$router.push("/customermanage/customermanage");
-          }
         });
       } else {
-        api.UPDATECUSTOMER(request).then(response => {
-          if (response.data.code === 0) {
-            this.$Message.success("客户信息更新成功！");
-            this.$router.push("/customermanage/customermanage");
-          }
-        }).catch((e)=>{
-
-        });
+        api
+          .UPDATECUSTOMER(request)
+          .then(response => {
+            if(this.deleteStatus){
+              this.delete();
+            }else{
+              if(this.file.name !== ''&&this.uploadStatus){
+                this.postData.accountId = this.$store.state.user.accountId;
+                this.postData.customerNo = ((this.data||{}).data||{}).customer_no;
+                this.$refs.upload.post(this.file.file);
+              }
+            }
+              this.$Message.success("客户信息更新成功！");
+              this.$router.push("/customermanage/customermanage");
+          })
+          .catch(e => {});
       }
     },
-    saveTicket() {
+    saveTicket(name) {
+      let status = false;
+      this.$refs[name].validate((valid) => {
+          if (valid) {
+              this.$Message.success('Success!');
+              this.addkpxxmodal = false
+          } else {
+              this.$Message.error('请按照规定填写！');
+              status = true;
+          }
+      });
+      if(status) return;
       let request1 = {
         typeid: 25007,
         data: [
@@ -1047,7 +1034,8 @@ export default {
       this.ticketStatus = "new";
     },
     handleCancel(name) {
-      this.$Message.error("已取消");
+      // this.$Message.error("已取消");
+      this.addkpxxmodal = false
     },
     ok() {
       this.saveTicket();
@@ -1055,48 +1043,41 @@ export default {
     cancel() {
       this.addlxrmodal = false;
     },
-    getCitys() {
+    getSales() {
       let request = {
-        typeid: 27003,
+        typeid: 27008,
         data: [
           {
-            province: this.formValidate.province.id
+            companyID: this.manageCompany
           }
         ]
       };
-      this.citys = [];
-      // this.formValidate.city = {};
+      if(this.salesList.length === 0){
+          this.companys.forEach(p => {
+            let item = {
+              id:p.id,
+              name:p.name,
+              children:[],
+            }
+            this.salesList.push(item);
+          })
+        }
+      // this.salesList = [];
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
-        this.citys = res;
-        this.formValidate.city = JSON.parse(
-          JSON.stringify(
-            res.find(c => c.id === ((this.data || {}).data || {}).city) ||
-              res[0]
-          )
-        );
-      });
-    },
-    getEmpowerCitys() {
-      let request = {
-        typeid: 27003,
-        data: [
-          {
-            province: this.formValidate.empower_province.id
-          }
-        ]
-      };
-      this.empower_citys = [];
-      // this.formValidate.empower_city = {};
-      api.XLSELECT(request).then(response => {
-        let res = response.data.result.data;
-        this.empower_citys = res;
-        this.formValidate.empower_city = JSON.parse(
-          JSON.stringify(
-            res.find(c => c.id === ((this.data || {}).data || {}).city) ||
-              res[0]
-          )
-        );
+        if(this.salesList.find(p => p.id === this.manageCompany)){
+          this.$set(this.salesList.find(p => p.id === this.manageCompany),'children',res);
+        }
+        this.$nextTick(()=>{
+          let salesman = ((this.data || {}).data || {}).saleId;
+          let arr = [this.manageCompany,salesman];
+          this.formValidate.salesman = arr;
+        })
+      },error => {
+        if(this.salesList.find(p => p.id === this.manageCompany)){
+          this.$set(this.salesList.find(p => p.id === this.manageCompany),'children',[]);
+          this.formValidate.salesman = [];
+        }
       });
     },
     init() {
@@ -1105,23 +1086,9 @@ export default {
       this.formValidate.name = data.name || "";
       this.formValidate.customer_abbreviation =
         ((data || {}).data || {}).customer_abbreviation || "";
-      this.formValidate.nature = JSON.parse(
-        JSON.stringify(
-          this.natures.find(n => n.value === data.nature) || {}
-        )
-      );
-      this.formValidate.industry = JSON.parse(
-        JSON.stringify(
-          this.industrys.find(
-            n => n.val === ((data || {}).data || {}).industry || {}
-          )
-        )
-      );
-      this.formValidate.level = JSON.parse(
-        JSON.stringify(
-          this.levels.find(n => n.val === ((data || {}).data || {}).level || {})
-        )
-      );
+      this.formValidate.nature = ((data || {}).data || {}).customer_nature;
+      this.formValidate.industry = ((data || {}).data || {}).industry;
+      this.formValidate.level = ((data || {}).data || {}).customer_level;
       this.formValidate.registered_capital = (
         ((data || {}).data || {}).registered_capital || 0
       ).toString();
@@ -1135,7 +1102,6 @@ export default {
       this.formValidate.post_code = ((data || {}).data || {}).post_code || "";
       this.formValidate.protocolNumber =
         ((data || {}).data || {}).protocolNumber || "";
-      this.formValidate.salesman = data.salesman || "";
       this.formValidate.platformuser_list = JSON.parse(
         JSON.stringify(((data || {}).data || {}).platformuser_list || [])
       );
@@ -1150,21 +1116,53 @@ export default {
       this.formValidate.ticket_list = JSON.parse(
         JSON.stringify(((data || {}).data || {}).ticket_list || [])
       );
-      this.formValidate.province = JSON.parse(
-        JSON.stringify(
-          this.provinces.find(
-            p => p.id === ((data || {}).data || {}).province
-          ) || this.provinces[0]
-        )
-      );
-      this.formValidate.empower_province = JSON.parse(
-        JSON.stringify(
-          this.provinces.find(
-            p => p.id === ((data || {}).data || {}).empower_province
-          ) || this.provinces[0]
-        )
-      );
-      this.getCitys();
+      let city = [];
+      city.push(((data || {}).data || {}).province);
+      city.push(((data || {}).data || {}).city);
+      if(((data || {}).data || {}).area) city.push(((data || {}).data || {}).area);
+      this.formValidate.city = city;
+      let empowerCity = [];
+      if(((data || {}).data || {}).areaList&&((data || {}).data || {}).areaList.length>0){
+        if(((data || {}).data || {}).areaList.length === 1){
+          empowerCity.push(((data || {}).data || {}).areaList[0].empowerProvince);
+          empowerCity.push(((data || {}).data || {}).areaList[0].empowerCity);
+          if(((data || {}).data || {}).areaList[0].empowerArea) empowerCity.push(((data || {}).data || {}).areaList[0].empowerArea);
+        }else{
+          ((data || {}).data || {}).areaList.forEach(a => {
+              let arr = [];
+              arr.push(a.empowerProvince);
+              arr.push(a.empowerCity);
+              if(a.empowerArea) arr.push(a.empowerArea);
+              empowerCity.push(arr);
+          })
+        }
+      }
+      this.formValidate.empower_city = empowerCity;
+      this.manageCompany = ((data || {}).data || {}).manage_company;
+      this.getSales();
+      if(((data || {}).data || {}).enclosure){
+        this.file.name = ((data || {}).data || {}).enclosure.fileName;
+        this.file.size = ((data || {}).data || {}).enclosure.fileSize;
+        this.file.size = this.file.size >= 1024?((this.file.size/1024).toFixed(2) + ' KB'): this.file.size >= 1024*1024?((this.file.size/(1024*1024)).toFixed(2) + ' MB'):(this.file.size + ' B');
+        this.file.uploadMan = ((data || {}).data || {}).enclosure.accountName;
+        this.file.date = ((data || {}).data || {}).enclosure.uploadTime;
+        this.file.address = ((data || {}).data || {}).enclosure.enclosureAddress;
+        this.file.id = (((data || {}).data || {}).enclosure||{}).enclosureId;
+        let fileArr = this.file.name.split('.');
+        let fileType = fileArr[fileArr.length-1];
+        this.file.img = require('../../images/upload/wenjian.png');
+        if(/^pdf$/.test(fileType)){
+          this.file.img = require('../../images/upload/pdf.png');
+        }else if(/^(txt|doc(x)?)$/.test(fileType)){
+          this.file.img = require('../../images/upload/docx.png');
+        }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
+          this.file.img = require('../../images/upload/jpg.png');
+        }else if(/^xl(s|t|am)$/.test(fileType)){
+          this.file.img = require('../../images/upload/excel.png');
+        };
+      }
+      this.formValidate.sqstartTime = ((data || {}).data || {}).empowerStartTime;
+      this.formValidate.sqendTime = ((data || {}).data || {}).empowerEndTime;
     },
     newContact() {
       this.contactStatus = "new";
@@ -1215,7 +1213,9 @@ export default {
           };
           if (this.isNewCreate) {
             if (this.contactStatus === "edit") {
-              for (let key in this.formValidate.contacts_list[this.contactIndex]) {
+              for (let key in this.formValidate.contacts_list[
+                this.contactIndex
+              ]) {
                 this.$set(
                   this.formValidate.contacts_list[this.contactIndex],
                   key,
@@ -1258,10 +1258,12 @@ export default {
           } else {
             api.SETCUSTOMER(request2).then(response => {
               if (response.data.code === 0) {
-                this.formAddlxr.contact_id = (((response.data.result.data||{}).contractIdList||[])[0]||'');
+                this.formAddlxr.contact_id =
+                  ((response.data.result.data || {}).contractIdList || [])[0] ||
+                  "";
                 this.formValidate.contacts_list.push(this.formAddlxr);
                 this.addlxrmodal = false;
-              this.$Message.success("添加成功!");
+                this.$Message.success("添加成功!");
               }
             });
           }
@@ -1269,7 +1271,6 @@ export default {
           this.$Message.error("请填写正确的信息！");
         }
       });
-      
     },
     newTicket() {
       this.ticketStatus = "new";
@@ -1402,6 +1403,7 @@ export default {
       this.plat.list = [];
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
+        this.res = res;
         res.forEach(data => {
           if (!this.plat.list.find(d => d.platform_id === data.platId))
             this.plat.list.push({
@@ -1463,17 +1465,106 @@ export default {
           });
         }
       });
+    },
+    beforeUpload(file){
+      this.$Message.success('上传成功！');
+      this.file.name = file.name;
+      this.file.size = file.size >= 1024?((file.size/1024).toFixed(2) + ' KB'): file.size >= 1024*1024?((file.size/(1024*1024)).toFixed(2) + ' MB'):(file.size + ' B');
+      this.file.date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
+      this.file.uploadMan = this.$store.state.user.accountName;
+      this.file.file = file;
+      let fileArr = file.name.split('.');
+      let fileType = fileArr[fileArr.length-1];
+      this.file.img = require('../../images/upload/wenjian.png');
+      if(/^pdf$/.test(fileType)){
+        this.file.img = require('../../images/upload/pdf.png');
+      }else if(/^(txt|doc(x)?)$/.test(fileType)){
+        this.file.img = require('../../images/upload/docx.png');
+      }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
+        this.file.img = require('../../images/upload/jpg.png');
+      }else if(/^xl(s|t|am)$/.test(fileType)){
+        this.file.img = require('../../images/upload/excel.png');
+      };
+      this.uploadStatus = true;
+      return false;
+    },
+    delete(){
+      let request = {
+        "typeid": 26016,
+        "data": [
+          {
+            "enclosureId": (((this.data || {}).data || {}).enclosure||{}).enclosureId + ','
+          }
+        ]
+      };
+      this.$http.DELETECONTRACT(request).then(res => {
+        if(this.file.name !== ''){
+          this.postData.accountId = this.$store.state.user.accountId;
+          this.postData.customerNo = ((this.data||{}).data||{}).customer_no;
+          this.$refs.upload.post(this.file.file);
+        }
+      })
+    },
+    deleteFile(){
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(()=>{
+        if(this.isNewCreate){
+          
+        }else{
+          this.deleteStatus = true;
+        }
+        this.$Message.success('删除成功！');
+        for(let key in this.file){
+          this.file[key] = '';
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
     }
   },
   mounted() {
+    this.formValidate = {
+      name: "",
+      customer_abbreviation: "",
+      nature: '',
+      level:"",
+      industry: '',
+      registered_capital: 0,
+      charge_person: "",
+      bond_amount: "",
+      mail_address: "",
+      post_code: "",
+      salesman: [],
+      platformuser_list: [],
+      contacts_list: [],
+      ticket_list: [],
+      city: [],
+      empower_city: [],
+      protocolNumber: "",
+      sqstartTime: "",
+      sqendTime:"",
+      company:""
+    }
     this.init();
   },
   computed: {
     data() {
+      if (Object.keys(this.$store.state.user.customerInfo).length > 0) {
+        return this.$store.state.user.customerInfo;
+      }
       return JSON.parse(localStorage.getItem("customInfo")) || {};
     },
-    provinces() {
-      return JSON.parse(localStorage.getItem("provinces")) || {};
+    regions() {
+      return JSON.parse(localStorage.getItem("regions")) || [];
+    },
+    companys() {
+      return JSON.parse(localStorage.getItem("companys")) || {};
     },
     isNewCreate() {
       return (
@@ -1482,36 +1573,39 @@ export default {
       );
     },
     isCustom() {
-      return this.formValidate.nature.index === 1;
+      return this.formValidate.nature === 1;
     },
     isFriend() {
-      return this.formValidate.nature.index === 2;
-    }
+      return this.formValidate.nature === 2;
+    },
+    isCooperative(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
+      }
+    },
+    isSaleManage(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
+      }
+    },
+    isSaleMan(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '销售人员');
+      }
+    },
+    natures(){
+      let natureArr = [];
+      if(this.isCooperative){
+        natureArr = this.$option.customer.natures.filter(i =>i.index === 3);
+      }else if(this.isSaleMan){
+        natureArr = this.$option.customer.natures.filter(i =>i.index === 1);
+      }else{
+        natureArr = this.$option.customer.natures;
+      }
+      return natureArr;
+    },
   },
   watch: {
-    "formValidate.province.id": function() {
-      // this.formValidate.province.id = (this.provinces.find(p => p.name === this.formValidate.province.name)||{}).id;
-      this.getCitys();
-      if (this.formValidate.province.id == "") {
-        this.formValidate.city.id = "";
-      }
-    },
-    "formValidate.empower_province.id": function() {
-      // this.formValidate.empower_province.id = (this.provinces.find(p => p.name === this.formValidate.empower_province.name)||{}).id;
-      this.getEmpowerCitys();
-      if (this.formValidate.empower_province.id == "") {
-        this.formValidate.empower_city.id = "";
-      }
-    },
-    // 'formValidate.level.index':function(){
-    //   this.formValidate.level.index = (this.levels.find(p => p.val === this.formValidate.level.val)||{}).index;
-    // },
-    // 'formValidate.nature.index':function(){
-    //   this.formValidate.nature.index = (this.natures.find(p => p.value === this.formValidate.nature.value)||{}).index;
-    // },
-    // 'formValidate.industry.index':function(){
-    //   this.formValidate.industry.index = (this.industrys.find(p => p.val === this.formValidate.industry.val)||{}).index;
-    // },
     $route: function() {
       this.init();
     },
@@ -1527,5 +1621,7 @@ export default {
 
 <style>
 @import "./customer.css";
-
+.aa .ivu-modal-footer {
+    display: none;
+  }
 </style>

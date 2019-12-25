@@ -4,7 +4,7 @@
       <p style="font-size:16px;margin:20px 0 10px 0;">发货要求</p>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem label="发起人" prop="name">
-          <Input :value="$store.state.user.accountName" placeholder disabled style="width:325px;" />
+          <Input :value="$store.state.user.accountName" placeholder  disabled style="width:325px;" />
         </FormItem>
         <FormItem label="要求发货时间" prop="fhsj">
           <DatePicker
@@ -15,13 +15,16 @@
           ></DatePicker>之前
         </FormItem>
         <FormItem label="方案描述" prop="desc">
-          <Input
-            v-model="formValidate.desc"
+          <el-input
             type="textarea"
+            placeholder="请输入文字对方案进行描述"
+            v-model="formValidate.desc"
             :autosize="{minRows: 2,maxRows: 5}"
-            placeholder="Enter something..."
+            maxlength="1000"
+            show-word-limit
             style="width:500px;"
-          />
+          >
+          </el-input>
         </FormItem>
         <Row>
           <Col span="7">
@@ -40,8 +43,26 @@
             </FormItem>
           </Col>
         </Row>
+        <!-- <Row>
+          <Col span="12">
+            <FormItem label="客户" prop="costom">
+              <Select v-model="formValidate.costom" placeholder clearable filterable>
+                <Option :value="item" v-for="item in custom" :key="item">{{item}}</Option>
+              </Select>
+            </FormItem>
+          </Col>
+          </Row>
+          <Row>
+          <Col span="12">
+            <FormItem label="仓库" prop="house">
+              <Select v-model="formValidate.house" placeholder clearable filterable>
+                <Option :value="item" v-for="item in house" :key="item">{{item}}</Option>
+              </Select>
+            </FormItem>
+          </Col>
+        </Row> -->
         <content>
-          <div class="fa_co" style="border:none;margin-top:20px;">
+          <div class="fa_co" style="border:none;">
             <div class="fa_c">
               <span style="font-size:16px">出库设备</span>
             </div>
@@ -111,7 +132,7 @@
                   :columns="outdevice_columns"
                   :data="outcksb_data"
                   size="small"
-                  style="margin:0px 0 0 0;overflow:auto"
+                  style="margin:0px 0 0 0;overflow:auto;min-height:350px;"
                   class="ne_but"
                 ></Table>
               </div>
@@ -137,7 +158,7 @@
       <p class="tz_p">调整发货</p>
       <p class="tz_p1">
         对涉及型号为
-        <span style="color:#4a9af5">{{changeRowData.currentData.product_code}}</span>的订单进行发货调整
+        <span style="color:#4a9af5">{{changeRowData.currentData.product_models}}</span>的订单进行发货调整
       </p>
       <Input
         icon="ios-search"
@@ -148,10 +169,12 @@
         @on-click="changeCount(changeRowData.currentData)"
       />
       <Table
+        ref="table"
         :columns="tz_columns"
         :data="tz_data"
         :row-class-name="rowClassName"
         style="clear:both;margin-left:10px;"
+        @on-selection-change="changeCheck"
       ></Table>
       <div class="tz_i">
         <p class="left" style="color:#e6a23c">
@@ -201,6 +224,7 @@
         :page-size="10"
         @on-change="getOrderList"
         size="small"
+        show-total
         show-elevator
         style="text-align:center;margin:20px 0;"
       ></Page>
@@ -210,18 +234,6 @@
 
 <script>
 import silderInput from "../../public-components/silder-input.vue";
-
-const levelMap = {
-  1: "A级",
-  2: "B级",
-  3: "C级",
-  4: "D级",
-  5: "E级"
-};
-const orderMap = {
-  0: "合同订单",
-  1: "备货订单"
-};
 export default {
   name: "newbuild",
   components: {
@@ -234,12 +246,14 @@ export default {
         fhsj: "",
         desc: "",
         pcyq: "",
-        pcyq1: ""
+        pcyq1: "",
+        costom:"",
+        house:""
       },
       pageNum: 1,
       sum: 0,
-      levelMap,
-      orderMap,
+      levelMap: this.$option.customer.levelMap,
+      orderMap: this.$option.order.typeMap,
       currentRow: {},
       changeRowData: {
         data: {},
@@ -305,6 +319,16 @@ export default {
           }
         }
       ],
+      deliveryBatch:[
+          {
+            name:"仓库1",
+            value:"1"
+          },
+          {
+            name:"仓库2",
+            value:"2"
+          },
+      ],
       cksb_columns: [
         {
           title: "存货编码",
@@ -339,6 +363,28 @@ export default {
             ]);
           }
         },
+        // {
+        //   title:"发货批次",
+        //   key:"delivery_batch",
+        //   align:"center",      
+        //   render:(h,params)=>{
+        //       return h('Select',{
+        //         props:{
+        //           placeholder:"未设置",
+        //           size:"small"
+        //         }
+        //       },
+        //       this.deliveryBatch.map((item)=>{
+        //           return h('Option',{
+        //             props:{
+        //               placeholder:"未设置",
+        //               value:item.value,
+        //               label:item.name
+        //             }
+        //           })
+        //       }))
+        //     }
+        // },
         {
           title: "数量",
           key: "product_quantity",
@@ -452,7 +498,8 @@ export default {
                 size: "small",
                 value: params.row.sbsl,
                 min: 0,
-                max: params.row.sbsl
+                max: params.row.max||params.row.sbsl,
+                disabled: params.row._checked === false
               },
               on: {
                 "on-change": a => {
@@ -486,11 +533,13 @@ export default {
                     if (!this.changeRowData.data[product_code])
                       this.changeRowData.data[product_code] = {};
                     this.changeRowData.data[product_code][order_id] = a;
+                    let {repertory} = this.changeRowData.currentData;
                     this.changeRowData.currentData = this.outcksb_data.find(
                       c =>
                         c.product_code ===
                         this.changeRowData.currentData.product_code
                     );
+                    this.changeRowData.currentData.repertory = repertory;
                   }
                 }
               }
@@ -519,7 +568,7 @@ export default {
           title: "下单时间",
           key: "xdsj",
           align: "center",
-          sortable: true
+          // sortable: true
         },
         {
           title: "客户名称",
@@ -530,14 +579,14 @@ export default {
           title: "客户等级",
           key: "khdj",
           align: "center",
-          sortable: true
+          // sortable: true
         },
         {
           title: "设备数量",
           key: "sbsl",
           align: "center",
           width: 150,
-          sortable: true,
+          // sortable: true,
           render: (h, params) => {
             return h("div", [
               h(
@@ -582,13 +631,16 @@ export default {
       addAllData: [],
       selectionData: {},
       customShow: false,
-      times: []
+      times: [],
+      custom:[],
+      house:[]
     };
   },
   methods: {
     handleSubmit(name, status) {
       let list = [];
       let s = false;
+      let num = 0;
       this.outcksb_data1.forEach(o => {
         if (o.ddbh !== "汇总" && o.product_list) {
           o.product_list.forEach(p => {
@@ -605,18 +657,25 @@ export default {
               quantity_shipped:
                 p.product_quantity - p.issued_count || p.quantity_shipped || 0
             });
+            num += p.product_quantity - p.issued_count || p.quantity_shipped || 0;
           });
         }
       });
       if (s) return; //校验失败跳出
+      if (num === 0){
+        this.$Message.error('请确保存在至少一项数量大于零的产品！');
+        return;
+      }
       this.$refs[name].validate(valid => {
         if (valid) {
           if (this.outcksb_data.length > 0) {
+            let date = new Date(this.formValidate.fhsj);
+            let time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' 00:00:00';
             let request = {
               typeid: 23016,
               data: [
                 {
-                  shipments_time: this.formValidate.fhsj,
+                  shipments_time: time,
                   shipments_describe: this.formValidate.desc,
                   shipments_start_batch: this.formValidate.pcyq,
                   shipments_end_batch: this.formValidate.pcyq1,
@@ -643,6 +702,9 @@ export default {
                     this: this
                   });
                 }
+                this.$router.push({
+                  path: "/assetmanage/delivery-manage"
+                });
               },
               error => {
                 if (error.data.code === 0) {
@@ -655,6 +717,11 @@ export default {
                       this: this
                     });
                   }
+                  this.$router.push({
+                    path: "/assetmanage/delivery-manage"
+                  });
+                }else if(error.data.message){
+                  this.$Message.error(error.data.message + ',请稍后重试！');
                 }
               }
             );
@@ -681,7 +748,16 @@ export default {
       // return '';
     },
     remove(index) {
+      for(let key in this.selectionData){
+        this.selectionData[key] = this.selectionData[key].filter(s => s.ddbh !== this.outcksb_data1[index].ddbh);
+        this.getOrderList(1);
+      }
       this.outcksb_data1.splice(index, 1);
+      this.orderDataCache = JSON.parse(JSON.stringify(this.outcksb_data1));
+      this.$nextTick(() => {
+        this.$refs["cktable"].objData[0]._isHighlight = true;
+        this.changeRow(this.outcksb_data1[0]);
+      })
     },
     getOrderList(p) {
       let request = {
@@ -689,18 +765,38 @@ export default {
         data: [
           {
             account_id: this.$store.state.user.accountId,
-            page_num: p,
-            page_size: 10,
+            page_num: p==='orderInit'?undefined:p,
+            page_size: p==='orderInit'?undefined:10,
             product_code: "",
+            order_list: p==='orderInit'?JSON.parse(this.$route.query.order):undefined,
             keyword: this.addOrderInput
           }
         ]
       };
-      this.dd_data = [];
-      this.sum = 0;
-      this.$http.PostXLASSETS(request).then(response => {
+      if(p !== 'orderInit'){
         this.dd_data = [];
+        this.sum = 0;
+      }
+      this.$http.PostXLASSETS(request).then(response => {
         let { data } = response.data.result;
+        if(p === 'orderInit'){
+          data.forEach(d => {
+            let item = {};
+            item.data = d;
+            item.ddbh = d.order_no;
+            item.ywlx = this.orderMap[d.order_type];
+            item.xdsj = d.order_time;
+            item.khmc = d.customer_name;
+            item.khdj = this.levelMap[d.customer_level];
+            item.sbsl = d.quantity;
+            item.product_list = d.product_list;
+            this.outcksb_data1.push(item);
+          })
+          this.$refs["cktable"].objData[0]._isHighlight = true;
+          this.changeRow(this.outcksb_data1[0]);
+          return;
+        }
+        this.dd_data = [];
         this.sum = data[0].sum;
         data[0].order_list.forEach(d => {
           let item = {};
@@ -764,6 +860,7 @@ export default {
         });
       }
       this.outcksb_data1 = data;
+      this.orderDataCache = JSON.parse(JSON.stringify(this.outcksb_data1));
       this.$nextTick(() => {
         this.$refs["cktable"].objData[0]._isHighlight = true;
         this.changeRow(this.outcksb_data1[0]);
@@ -800,9 +897,11 @@ export default {
           item.xdsj = d.order_time;
           item.khmc = d.customer_name;
           item.khdj = this.levelMap[d.customer_level];
+          item.max = d.product_quantity - d.issued_count;
+          item._checked = false;
           if (
             this.changeRowData.data[product_code] &&
-            this.changeRowData.data[product_code][d.order_id]
+            this.changeRowData.data[product_code][d.order_id] !== undefined
           ) {
             item.sbsl = this.changeRowData.data[product_code][d.order_id];
           } else {
@@ -811,7 +910,7 @@ export default {
               d.product_list[0].issued_count;
           }
           item.ggxh = this.changeRowData.currentData.product_models;
-          this.changeRowData.currentData.repertory =
+          if(d.product_list[0].repertory !== undefined) this.changeRowData.currentData.repertory =
             d.product_list[0].repertory;
           this.tz_data.push(item);
         });
@@ -846,6 +945,7 @@ export default {
       if (name === "全部") {
         this.outcksb_data1 = JSON.parse(JSON.stringify(this.orderDataCache));
       } else {
+        this.outcksb_data1 = JSON.parse(JSON.stringify(this.orderDataCache));
         this.outcksb_data1 = this.outcksb_data1.filter(
           o => o.khmc === name || o.ddbh === "汇总"
         );
@@ -910,9 +1010,25 @@ export default {
           this.editInit();
         }
       });
+    },
+    changeCheck(selection){
+      this.tz_data.forEach((t,i) => {
+        let {product_code} = this.changeRowData.currentData;
+        if((this.changeRowData.data[product_code]||{})[t.data.order_id] !== undefined){
+          t.sbsl = (this.changeRowData.data[product_code]||{})[t.data.order_id];
+        }
+        if(selection.find(s =>s.ddbh === t.ddbh)&&t._checked === false){
+          t._checked = true;
+        }else if(!selection.find(s =>s.ddbh === t.ddbh)&&t._checked === true){
+          t._checked = false;
+        }
+      })
     }
   },
   mounted() {
+    if(this.$route.query.order){
+      this.getOrderList('orderInit');
+    }
     this.getOrderList(1);
     this.getTimes();
   },
@@ -998,6 +1114,16 @@ export default {
     },
     customList() {
       let customList = ["全部"];
+      if(this.orderDataCache&&this.orderDataCache.length>0){
+        this.orderDataCache.forEach(o => {
+          if(o.ddbh === '汇总') return;
+          let customer_name = o.khmc || "--";
+          if(customList.indexOf(customer_name) === -1){
+            customList.push(customer_name);
+          }
+        })
+        return customList;
+      }
       if (this.outcksb_data1 && this.outcksb_data1.length > 0) {
         this.outcksb_data1.forEach(o => {
           if (o.ddbh !== "汇总") {
@@ -1041,5 +1167,8 @@ export default {
 .del .ivu-table-cell {
   padding-left: 8px;
   padding-right: 0px;
+}
+.ivu-select-single .ivu-select-selection .ivu-select-placeholder{
+ color:orange
 }
 </style>
