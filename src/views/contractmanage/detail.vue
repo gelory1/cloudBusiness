@@ -223,7 +223,7 @@
                 <div v-for="(p,i) in item.paybackList" :key="i" class="payList">
                   <section>
                     <div>{{p.paybackId}}</div>
-                    <div>{{p.paymentWay}}</div>
+                    <div>{{paybackWayMap[p.paybackWay]}}</div>
                     <div>{{p.paybackTime}}</div>
                     <div>{{p.paybackSureTime}}</div>
                     <div>{{thousandNum(p.paybackAmount)}}</div>
@@ -404,6 +404,7 @@ export default {
       single:false,
       ticketType:"",
       subjectName:this.$option.contract.subjectNameMap,
+      paybackWayMap: this.$option.contract.paybackWayMap,
       zq: {
       },
       fj: [],

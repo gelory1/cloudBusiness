@@ -543,6 +543,10 @@ contract.subjectNameMap = {
     8: '新联能源',
     100: '其他'
 };
+contract.paybackWayMap = {
+    0: '线下支付',
+    1: '备货金抵扣'
+};
 workbench.typeMap = {
     1: ' 审批提醒',
     2: ' 签署提醒',
