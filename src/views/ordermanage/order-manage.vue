@@ -58,7 +58,7 @@
                     </Select>
                   </FormItem>
                   <FormItem label="销售人员" prop="saleName">
-                    <Input type="text" v-model="filterItem.saleName" />
+                    <Input type="text" v-model="filterItem.saleName" placeholder="请输入销售人员名称"/>
                   </FormItem>
                   <FormItem label="下单日期">
                     <Row>
