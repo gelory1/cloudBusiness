@@ -217,7 +217,7 @@
                 <section class="zq_c zq_se" style="color:#797979;">
                   <p class="zq_p" v-if="item.currentTicketAmount > 0">已开票（元）</p>
                   <div style="display:flex;justify-content: center;">
-                    <p class="cor_span" style="margin-right:10px" v-if="item.currentTicketAmount>0">{{thousandNum(item.currentTicketAmount)}}</p>
+                    <p class="cor_span" style="margin-right:10px" v-if="item.currentTicketAmount>0">{{thousandNum(item.currentTicketAmount)||0}}</p>
                     <!-- <p class="cor_span">
                       <Button size="small" @click="fpmodal = true" v-if="item.ticketButton">开发票</Button>
                     </p> -->
