@@ -342,7 +342,6 @@ export default {
                 }],
             };
             this.$http.XLORDER(param).then((res)=>{
-                debugger
                 let data = res.data.result.data[0]||{};
                 this.selectedOrder = {};
                 this.selectedOrder.orderNO = data.order_no;
