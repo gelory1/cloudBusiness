@@ -90,18 +90,27 @@ module.exports = {
             '@': resolve('../src'),
         }
     },
+    // devServer: {
+    //     proxy: {
+    //       '/public/api/': {
+    //         target: 'http://10.0.17.213:31380',
+    //         changeOrigin: true,
+    //         secure: false
+    //       },
+    //       '/api/': {
+    //         target: 'http://10.0.17.213:31380',
+    //         changeOrigin: true,
+    //         secure: false
+    //       }
+    //     }
+    // },
     devServer: {
         proxy: {
           '/public/api/': {
-            target: 'http://10.0.17.213:31380',
-            changeOrigin: true,
-            secure: false
-          },
-          '/api/': {
-            target: 'http://10.0.17.213:31380',
+            target: 'http://www.chinadny.com:8068',
             changeOrigin: true,
             secure: false
           }
         }
-    },
+    }  
 };

@@ -27,8 +27,13 @@
           transfer
           placeholder="搜索仓库"
           @keyup.enter.native="searchMenu"
-          :style="{width:180 + 'px',marginLeft:10+'px',marginBottom: 5+'px'}">
-          <Option v-for="item in completeData" :value="item.wh_name" :key="item.wh_id">{{ item.wh_name }}</Option>
+          :style="{width:180 + 'px',marginLeft:10+'px',marginBottom: 5+'px'}"
+        >
+          <Option
+            v-for="item in completeData"
+            :value="item.wh_name"
+            :key="item.wh_id"
+          >{{ item.wh_name }}</Option>
         </AutoComplete>
         <div :style="{height:scrollHeight,overflow:'auto'}" ref="menuContainer">
           <Menu
@@ -626,7 +631,7 @@ export default {
           title: "最新操作时间",
           key: "czsj",
           align: "center",
-          width:150
+          width: 150
         }
       ],
       crk_data: [],
@@ -671,17 +676,17 @@ export default {
         kssj: "",
         jssj: ""
       },
-      startOption:{
-        disabledDate:time =>{
-          if(this.filterItem.jssj){
-            return time.getTime() > new Date(this.filterItem.jssj).getTime()
+      startOption: {
+        disabledDate: time => {
+          if (this.filterItem.jssj) {
+            return time.getTime() > new Date(this.filterItem.jssj).getTime();
           }
         }
       },
-      endOption:{
-        disabledDate:time =>{
-          if(this.filterItem.kssj){
-            return time.getTime() < new Date(this.filterItem.kssj).getTime()
+      endOption: {
+        disabledDate: time => {
+          if (this.filterItem.kssj) {
+            return time.getTime() < new Date(this.filterItem.kssj).getTime();
           }
         }
       },
@@ -704,7 +709,7 @@ export default {
       pageName2: 1,
       filterStatus: false,
       tableHeight: "",
-      completeValue: ''
+      completeValue: ""
     };
   },
   methods: {
@@ -758,6 +763,12 @@ export default {
       this.ck_current_index = "";
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
+      if (this.jbxx_data == "") {
+        this.zkSum = 1;
+      }
+      if (this.crk_data == "") {
+        this.crkSum = 1;
+      }
     },
     getProductList(p) {
       let request = {
@@ -852,7 +863,10 @@ export default {
                   " 23:59:59", //结束名称
             device_status:
               this.filterItem.zt === "" ? undefined : this.filterItem.zt, //状态
-            keyword: this.inputVal === ""||this.inputVal === this.selectedProcode ? undefined : this.inputVal,
+            keyword:
+              this.inputVal === "" || this.inputVal === this.selectedProcode
+                ? undefined
+                : this.inputVal,
             page_num: p,
             page_size: 10
           }
@@ -893,6 +907,12 @@ export default {
       this.ck_current_index = index;
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
+      if (this.jbxx_data == "") {
+        this.zkSum = 1;
+      }
+      if (this.crk_data == "") {
+        this.crkSum = 1;
+      }
     },
     getMenuList(index) {
       if (index == "0") {
@@ -997,9 +1017,9 @@ export default {
           if (this.jbxx_data == "") {
             this.zkSum = 1;
           }
-          if(this.crk_data == ""){
-            this.crkSum = 1
-          }    
+          if (this.crk_data == "") {
+            this.crkSum = 1;
+          }
           this.$Message.success("查询成功！");
         } else {
           this.$Message.error("查询失败，请重试!");
@@ -1015,21 +1035,27 @@ export default {
     changeRow(row) {
       this.inputVal = row.chbm;
     },
-    goMenu(menu){
-      let whId = (this.menudata.find(m => m.wh_name === menu)||{}).wh_id||'';
-      this.$refs['menu'].currentActiveName = this.menudata.findIndex(m => m.wh_id === whId)||0;
-      this.completeValue = '';
+    goMenu(menu) {
+      let whId =
+        (this.menudata.find(m => m.wh_name === menu) || {}).wh_id || "";
+      this.$refs["menu"].currentActiveName =
+        this.menudata.findIndex(m => m.wh_id === whId) || 0;
+      this.completeValue = "";
       this.$nextTick(() => {
-        this.ck_current_index = this.menudata.findIndex(m => m.wh_id === whId)||0;
-        let scroll = this.$refs['menu'].$children[0].$children[this.ck_current_index + 2].$el.offsetTop - 200
-        this.$refs['menu'].updateActiveName();
-        this.$refs['menu'].updateActiveName();
-        this.$refs['menuContainer'].scrollTo(0,scroll);
+        this.ck_current_index =
+          this.menudata.findIndex(m => m.wh_id === whId) || 0;
+        let scroll =
+          this.$refs["menu"].$children[0].$children[this.ck_current_index + 2]
+            .$el.offsetTop - 200;
+        this.$refs["menu"].updateActiveName();
+        this.$refs["menu"].updateActiveName();
+        this.$refs["menuContainer"].scrollTo(0, scroll);
         this.getProductList(1);
-      })
+      });
     },
-    searchMenu(){
-      if(this.completeData.length>0) this.goMenu(this.completeData[0].wh_name);
+    searchMenu() {
+      if (this.completeData.length > 0)
+        this.goMenu(this.completeData[0].wh_name);
     }
   },
   mounted() {
@@ -1042,10 +1068,16 @@ export default {
       h = document.body.scrollHeight - 185 + "px";
       return h;
     },
-    completeData(){
+    completeData() {
       let data = [];
-      if(this.menudata && this.menudata.length>0 && this.completeValue !== ''){
-        data = JSON.parse(JSON.stringify(this.menudata)).filter(i => i.wh_name.indexOf(this.completeValue) !== -1);
+      if (
+        this.menudata &&
+        this.menudata.length > 0 &&
+        this.completeValue !== ""
+      ) {
+        data = JSON.parse(JSON.stringify(this.menudata)).filter(
+          i => i.wh_name.indexOf(this.completeValue) !== -1
+        );
       }
       return data;
     }
@@ -1055,8 +1087,8 @@ export default {
       if (nv === "name1") {
         this.selectedWhid = "";
         this.selectedProcode = "";
-        if(this.inputVal !== ''){
-          this.inputVal = '';
+        if (this.inputVal !== "") {
+          this.inputVal = "";
           this.getProductList(1);
         }
         this.pageName2 = 1;
