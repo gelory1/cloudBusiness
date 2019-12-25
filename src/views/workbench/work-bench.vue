@@ -27,7 +27,7 @@
               <Table height="700" :columns="fq_columns" :data="fq_data" :loading="loading"></Table>
             </TabPane>
           </Tabs>
-          <p class="gzadd" @click="newgzClick" v-if="isSuperAdmin||isFinance">
+          <p class="gzadd" @click="newgzClick" v-if="isSuperAdmin||isFinance||isSaleManage">
             <img src="../../images/workbench/add.png" alt />
           </p>
           <Input class="gz_input" icon="ios-search" v-model="inputVal" placeholder="请输入内容" style="margin-top:6px" @on-enter="getWorkbench" @on-click="getWorkbench"/>
@@ -149,8 +149,9 @@
           <p v-if="spinShow">上传中...</p>
         </div>
       </Upload>
-      <div style="display:flex;justify-content:center">
-        <img :src="imgUrl" v-if="imgUrl !== ''" :class="{fk_img:true,active:isActive}" @click="isActive = !isActive" />
+      <div style="display:flex;justify-content:center;position:relative" v-if="imgUrl !== ''">
+        <img :src="imgUrl" :class="{fk_img:true,active:isActive}" @click.stop="isActive = !isActive" />
+        <span style="position:relative;margin-left:5px;cursor:pointer;top:-10px" @click="closeImg" ><Icon type="close" /></span>
       </div>
       <Button class="zf_butt" type="primary" @click="sureClick" :disabled="buttonDisabled">确认已支付</Button>
     </Modal>
@@ -1137,6 +1138,7 @@ export default {
             this.fq_data.push(item);
           }else{
             item.fzr = this.$store.state.user.accountName;
+            item.duetime = d.handledTime;
             this.yb_data.push(item);
           }
         });
@@ -1224,7 +1226,7 @@ export default {
             contractNo: params.row.data.workBenchContentObj.contractNo,
             orderNo: params.row.data.workBenchContentObj.orderNo,
             lastWorkbenchId: params.row.data.workBenchContentObj.lastWorkbenchId,
-            payAmount: params.row.data.workBenchContentObj.payAmount||params.row.data.workBenchContentObj.orderAmount,
+            payAmount: params.row.data.workBenchContentObj.payAmount?parseFloat(params.row.data.workBenchContentObj.payAmount).toFixed(2):parseFloat(params.row.data.workBenchContentObj.orderAmount).toFixed(2),
             payTime: params.row.data.workBenchContentObj.payTime,
             payUnitName: params.row.data.workBenchContentObj.payUnitName,
             paymentPeriod: params.row.data.workBenchContentObj.paymentPeriod,
@@ -1770,6 +1772,24 @@ export default {
     beforeUpload(){
       this.spinShow = true;
       this.imgUrl = '';
+    },
+    closeImg(){
+      this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.imgUrl = '';
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
     }
   },
   mounted() {
@@ -1818,6 +1838,11 @@ export default {
         }
         this.tabName = 'name1';
         this.dbgzTableClick(this.$store.state.app.notifyData.data);
+      }
+    },
+    zfqrmodal(nv){
+      if(!nv){
+        this.imgUrl = '';
       }
     }
   },
@@ -1879,7 +1904,7 @@ export default {
       return customList;
     },
     buttonDisabled(){
-      return this.tabName !== 'name1'&&(this.fq_data[this.dataIndex]||{}).zt !== 1;
+      return (this.tabName === 'name3'&&(this.fq_data[this.dataIndex]||{}).zt !== 1)||this.tabName === 'name2';
     },
     hkhzDisabled(){
       return !(this.workBenchData.accountId === -1||this.workBenchData.accountId === this.$store.state.user.accountId||this.isSuperAdmin);
@@ -1892,6 +1917,11 @@ export default {
     isFinance(){
       if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
         return this.$store.state.app.authority[0].role.find(r => r === '财务');
+      }
+    },
+    isSaleManage(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '业务管控');
       }
     },
     reportDataLeft(){

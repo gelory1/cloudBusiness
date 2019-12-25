@@ -58,7 +58,7 @@
                     </Select>
                   </FormItem>
                   <FormItem label="销售人员" prop="saleName">
-                    <Input type="text" v-model="filterItem.saleName" placeholder="请输入销售人员名称"/>
+                    <Input type="text" placeholder="请输入销售人员姓名" v-model="filterItem.saleName" />
                   </FormItem>
                   <FormItem label="下单日期">
                     <Row>
@@ -700,7 +700,7 @@ export default {
       }
     },
     addOrder(){
-      if(!this.$store.state.app.authority.find(a => a.id === 901)||!(this.isCooperative||this.isSuper||this.isSale)){
+      if(!this.$store.state.app.authority.find(a => a.id === 901)||!(this.isCooperative||this.isSuper)){
         this.$Message.error('权限不足！');
         return;
       }

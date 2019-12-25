@@ -24,7 +24,7 @@
             <Col span="6" style="position:relative">
               <span style="color:red;position:absolute;left:20px;top:8px;">*</span>
               <FormItem label="客户性质" prop="nature" :label-width="90">
-                <Select v-model="formValidate.nature.index" placeholder clearable filterable>
+                <Select v-model="formValidate.nature" placeholder clearable filterable>
                   <Option
                     v-for="(item,index) in natures"
                     :value="item.index"
@@ -35,7 +35,7 @@
             </Col>
             <Col span="6">
               <FormItem label="客户等级" prop="level">
-                <Select v-model="formValidate.level.index" placeholder clearable filterable>
+                <Select v-model="formValidate.level" placeholder clearable filterable>
                   <Option
                     v-for="(item,index) in levels"
                     :value="item.index"
@@ -54,7 +54,7 @@
             <Col span="12">
               <FormItem label="行业" prop="industry" :label-width="90">
                 <!-- <Input v-model="formValidate.hy" placeholder="Enter your name"></Input> -->
-                <Select v-model="formValidate.industry.index" clearable filterable placeholder>
+                <Select v-model="formValidate.industry" clearable filterable placeholder>
                   <Option
                     v-for="(item,index) in industrys"
                     :value="item.index"
@@ -522,15 +522,14 @@ export default {
       callback();
     };
     return {
-      natures,
       options1:[],
       options2:[],
       formValidate: {
         name: "",
         customer_abbreviation: "",
-        nature: natures[0],
+        nature: '',
         level:"",
-        industry: industrys[0],
+        industry: '',
         registered_capital: 0,
         charge_person: "",
         bond_amount: "",
@@ -583,7 +582,7 @@ export default {
           {
             required: true,
             message: "请选择客户等级",
-            type: "object",
+            type: "number",
             trigger: "change"
           }
         ],
@@ -591,7 +590,7 @@ export default {
           {
             required: true,
             message: "请选择客户性质",
-            type: "object",
+            type: "number",
             trigger: "change"
           }
         ],
@@ -873,10 +872,10 @@ export default {
       this.$refs[name].validate(valid => {
         if (valid) {
           if (
-            this.formValidate.level.index == "" ||
+            this.formValidate.level == "" ||
             this.formValidate.city.length < 1 ||
-            (this.formValidate.nature.index === 2&&(this.formValidate.empower_city||[]).length < 1) ||
-            this.formValidate.nature.index == ""
+            (this.formValidate.nature === 2&&(this.formValidate.empower_city||[]).length < 1) ||
+            this.formValidate.nature == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
           } else {
@@ -932,15 +931,15 @@ export default {
               ? undefined
               : ((this.data || {}).data || {}).customer_no,
             customerName: this.formValidate.name,
-            customerLevel: this.formValidate.level.index,
-            customerNature: this.formValidate.nature.index,
+            customerLevel: this.formValidate.level,
+            customerNature: this.formValidate.nature,
             province: this.formValidate.city[0],
             city: this.formValidate.city[1]?this.formValidate.city[1]:0,
             area: this.formValidate.city[2]?this.formValidate.city[2]:0,
             empowerList:empowerList.length === 0?undefined:empowerList,
             manageCompany: this.manageCompany,
             saleNo: this.formValidate.salesman[1]?this.formValidate.salesman[1]:-1,
-            industry: this.formValidate.industry.index,
+            industry: this.formValidate.industry === ''?0:this.formValidate.industry,
             mailAddress: this.formValidate.mail_address,
             bondAmount: Number(this.formValidate.bond_amount),
             registeredCapital: Number(this.formValidate.registered_capital),
@@ -1165,21 +1164,9 @@ export default {
       this.formValidate.name = data.name || "";
       this.formValidate.customer_abbreviation =
         ((data || {}).data || {}).customer_abbreviation || "";
-      this.formValidate.nature = JSON.parse(
-        JSON.stringify(this.natures.find(n => n.value === data.nature) || {})
-      );
-      this.formValidate.industry = JSON.parse(
-        JSON.stringify(
-          this.industrys.find(
-            n => n.val === ((data || {}).data || {}).industry || {}
-          )
-        )
-      );
-      this.formValidate.level = JSON.parse(
-        JSON.stringify(
-          this.levels.find(n => n.val === ((data || {}).data || {}).level || {})
-        )
-      );
+      this.formValidate.nature = ((data || {}).data || {}).customer_nature;
+      this.formValidate.industry = ((data || {}).data || {}).industry;
+      this.formValidate.level = ((data || {}).data || {}).customer_level;
       this.formValidate.registered_capital = (
         ((data || {}).data || {}).registered_capital || 0
       ).toString();
@@ -1620,6 +1607,28 @@ export default {
     }
   },
   mounted() {
+    this.formValidate = {
+      name: "",
+      customer_abbreviation: "",
+      nature: '',
+      level:"",
+      industry: '',
+      registered_capital: 0,
+      charge_person: "",
+      bond_amount: "",
+      mail_address: "",
+      post_code: "",
+      salesman: [],
+      platformuser_list: [],
+      contacts_list: [],
+      ticket_list: [],
+      city: [],
+      empower_city: [],
+      protocolNumber: "",
+      sqstartTime: "",
+      sqendTime:"",
+      company:""
+    }
     this.init();
   },
   computed: {
@@ -1642,10 +1651,10 @@ export default {
       );
     },
     isCustom() {
-      return this.formValidate.nature.index === 1;
+      return this.formValidate.nature === 1;
     },
     isFriend() {
-      return this.formValidate.nature.index === 2;
+      return this.formValidate.nature === 2;
     },
     isCooperative(){
       if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){

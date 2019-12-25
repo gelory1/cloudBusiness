@@ -780,7 +780,7 @@ export default {
             wh_id:
               this.menudata &&
               this.menudata.length > 0 &&
-              this.ck_current_index !== ""
+              this.ck_current_index !== ""&&this.ck_current_index !==0
                 ? this.menudata[this.ck_current_index].wh_id
                 : undefined,
             keyword: this.inputVal === "" ? undefined : this.inputVal,
@@ -793,12 +793,13 @@ export default {
           }
         ]
       };
-      if (request.data[0].wh_id) {
-        this.inputVal = "";
-        request.data[0].keyword = undefined;
-      }
+      // if (request.data[0].wh_id) {
+      //   this.inputVal = "";
+      //   request.data[0].keyword = undefined;
+      // }
       this.jbxx_data = [];
       this.ckLoading = true;
+      this.zkSum = 0;
       this.$http.PostXLASSETS(request).then(
         response => {
           this.jbxx_data = [];
@@ -935,7 +936,7 @@ export default {
       };
       this.menudata = [];
       this.$http.PostXLASSETS(request).then(response => {
-        this.menudata = [];
+        this.menudata = [{wh_name:'所有仓库',wh_id:''}];
         let res = response.data.result;
         this.zkSum = res.sum;
         for (var i = 0; i < res.data.length; i++) {
@@ -949,11 +950,11 @@ export default {
     },
     search(val) {
       // if(this.inputVal === '') return;
-      this.inputVal = this.inputVal.replace(/^\s+|\s+$/g, "");
-      this.getMenuList(0);
-      if (this.$refs.menu.currentActiveName !== -1)
-        this.$refs.menu.currentActiveName = -1;
-      this.ck_current_index = "";
+      // this.inputVal = this.inputVal.replace(/^\s+|\s+$/g, "");
+      // this.getMenuList(0);
+      // if (this.$refs.menu.currentActiveName !== -1)
+      //   this.$refs.menu.currentActiveName = -1;
+      // this.ck_current_index = "";
       if (this.tabName === "name1") {
         this.pageName1 = 1;
         this.getProductList(1);

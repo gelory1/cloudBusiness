@@ -119,10 +119,10 @@
                 <Table :columns="device_columns" :data="device_data2" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
         </Tabs>
-        <div class="dd_div" v-if="selectedOrder.type == '备货订单'" style="float:right;margin:15px 30px 0 0;font-size:13px;">
+        <div class="dd_div" style="float:right;margin:15px 30px 0 0;font-size:13px;">
             <section>
               <span class="dd_span" style="width:100px;display:inline-block">货款总计（元）</span>
-              <span style="color:#000000;font-weight:bold">{{selectedOrder.order_little_amount.toLocaleString()}}</span>
+              <span style="color:#000000;font-weight:bold">{{(selectedOrder.order_little_amount||0).toLocaleString()}}</span>
             </section>
             <section>
               <span class="dd_span" style="width:100px;display:inline-block">大写</span>
@@ -185,9 +185,9 @@ const businessMap = {
   1: '备货订单'
 };
 const saleMap = {
-  0: '直销',
+  2: '直销',
   1: '渠道',
-  2: '其他'
+  3: '其他'
 };
 export default {
     name:'orderDetail',
@@ -469,7 +469,7 @@ export default {
             return index;
         },
         upperAmount(){
-            return this.$util.NumberToChinese(Number(this.selectedOrder.order_big_amount));
+            return this.$util.NumberToChinese(Number(this.selectedOrder.order_little_amount)||0);
         }
     },
     watch: {

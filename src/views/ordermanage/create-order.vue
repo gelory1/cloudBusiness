@@ -93,8 +93,8 @@
           </div>
         </div>
         <FormItem style="width:300px;margin:200px auto;margin-bottom:20px;">
-          <Button type="primary" @click="onSubmit('formValidate')">提交</Button>
-          <Button type="ghost" style="margin-left: 18px" @click="onCancel">取消</Button>
+          <Button type="primary" @click="onSubmit('formValidate')" :loading="subLoading">提交</Button>
+          <Button type="ghost" style="margin-left: 18px" @click="onCancel" :disabled="subLoading">取消</Button>
         </FormItem>
       </Form>
     </Layout>
@@ -460,7 +460,8 @@ export default {
       cahceData: [],
       addsbmodal: false,
       inputVal: "",
-      selData: []
+      selData: [],
+      subLoading: false
     };
   },
   methods: {
@@ -607,7 +608,7 @@ export default {
       if (this.formValidate.store.index != "") {
         if (this.formValidate.devices_list && this.formValidate.devices_list.length > 0) {
         } else {
-          this.$Message.error("无添加设备或发货数量为0");
+          this.$Message.error("无添加设备!");
           return;
         }
       } else {
@@ -626,6 +627,10 @@ export default {
             unit: data.unit
           });
       });
+      if(productList.length === 0){
+        this.$Message.error("设备数量不能为0!");
+        return;
+      }
       let myDate = new Date();
       let date =
         myDate.getFullYear() +
@@ -657,6 +662,7 @@ export default {
           }
         ]
       };
+      this.subLoading = true;
       this.$http.SETORDER(request).then(
         response => {
           if (response.data.code !== 0) return;
@@ -680,9 +686,11 @@ export default {
           };
           this.$set(this.formValidate.customer, "index", this.customs[0].index);
           this.$set(this.formValidate.customer, "value", this.customs[0].value);
+          this.subLoading = false;
           this.$router.push("/ordermanage/ordermanage");
         },
         error => {
+          this.subLoading = false;
           if (error.data.code === 0) {
             this.$Message.success("添加成功！");
             this.formValidate = {

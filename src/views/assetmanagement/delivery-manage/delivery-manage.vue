@@ -55,33 +55,33 @@
                   <FormItem label="订单数量级">
                     <Row>
                       <Col span="11">
-                        <InputNumber :min="0" v-model="filterItem.orderstart" style="width:140px"></InputNumber>
+                        <InputNumber :min="0" v-model="filterItem.orderstart" style="width:100%"></InputNumber>
                       </Col>
                       <Col span="2" style="text-align: center">至</Col>
                       <Col span="11">
-                        <InputNumber :min="filterItem.orderstart" v-model="filterItem.orderend" style="width:140px"></InputNumber>
+                        <InputNumber :min="filterItem.orderstart" v-model="filterItem.orderend" style="width:100%"></InputNumber>
                       </Col>
                     </Row>
                   </FormItem>
                   <FormItem label="设备数量级" prop>
                     <Row>
                       <Col span="11">
-                        <InputNumber :min="0" v-model="filterItem.setstart" style="width:140px"></InputNumber>
+                        <InputNumber :min="0" v-model="filterItem.setstart" style="width:100%"></InputNumber>
                       </Col>
                       <Col span="2" style="text-align: center">至</Col>
                       <Col span="11">
-                        <InputNumber :min="filterItem.setstart" v-model="filterItem.setend" style="width:140px"></InputNumber>
+                        <InputNumber :min="filterItem.setstart" v-model="filterItem.setend" style="width:100%"></InputNumber>
                       </Col>
                     </Row>
                   </FormItem>
                   <FormItem label="金额范围" prop>
                     <Row>
                       <Col span="11">
-                        <InputNumber :min="0" v-model="filterItem.moneystart" style="width:140px"></InputNumber>
+                        <InputNumber :min="0" v-model="filterItem.moneystart" style="width:100%"></InputNumber>
                       </Col>
                       <Col span="2" style="text-align: center">至</Col>
                       <Col span="11">
-                        <InputNumber :min="filterItem.moneystart" v-model="filterItem.moneyend" style="width:140px"></InputNumber>
+                        <InputNumber :min="filterItem.moneystart" v-model="filterItem.moneyend" style="width:100%"></InputNumber>
                       </Col>
                     </Row>
                   </FormItem>
