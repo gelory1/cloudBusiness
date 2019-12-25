@@ -326,8 +326,8 @@ export default {
       cktype_current_index: 0,
       crk_current_index: 0,
       ck_current_index: "",
-      zkSum: 1,
-      crkSum: 1,
+      zkSum: 0,
+      crkSum: 0,
       jbxx_columns: [
         {
           title: "存货编码",
@@ -728,10 +728,10 @@ export default {
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
       if (this.jbxx_data == "") {
-        this.zkSum = 1;
+        this.zkSum = 0;
       }
       if (this.crk_data == "") {
-        this.crkSum = 1;
+        this.crkSum = 0;
       }
     },
     getProductList(p) {
@@ -872,10 +872,10 @@ export default {
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
       if (this.jbxx_data == "") {
-        this.zkSum = 1;
+        this.zkSum = 0;
       }
       if (this.crk_data == "") {
-        this.crkSum = 1;
+        this.crkSum = 0;
       }
     },
     getMenuList(index) {
@@ -979,10 +979,10 @@ export default {
             this.getCrkList(1);
           }
           if (this.jbxx_data == "") {
-            this.zkSum = 1;
+            this.zkSum = 0;
           }
           if (this.crk_data == "") {
-            this.crkSum = 1;
+            this.crkSum = 0;
           }
           this.$Message.success("查询成功！");
         } else {

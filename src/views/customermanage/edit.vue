@@ -461,7 +461,7 @@ export default {
         platformuser_list: [],
         contacts_list: [],
         ticket_list: [],
-        city: [],
+        city: '',
         empower_city: [],
         protocolNumber: "",
         sqstartTime: "",
@@ -1117,10 +1117,10 @@ export default {
         JSON.stringify(((data || {}).data || {}).ticket_list || [])
       );
       let city = [];
-      city.push(((data || {}).data || {}).province);
-      city.push(((data || {}).data || {}).city);
+      if(((data || {}).data || {}).province) city.push(((data || {}).data || {}).province);
+      if(((data || {}).data || {}).city) city.push(((data || {}).data || {}).city);
       if(((data || {}).data || {}).area) city.push(((data || {}).data || {}).area);
-      this.formValidate.city = city;
+      if(city.length > 0)this.formValidate.city = city;
       let empowerCity = [];
       if(((data || {}).data || {}).areaList&&((data || {}).data || {}).areaList.length>0){
         if(((data || {}).data || {}).areaList.length === 1){
