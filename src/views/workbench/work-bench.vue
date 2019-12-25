@@ -416,80 +416,6 @@ import highchartsLine from './highcharts-line.vue';
 import { error } from 'highcharts';
 import XLSX from 'xlsx';
 
-const typeMap = {
-  1:' 审批提醒',
-  2:' 签署提醒',
-  3:'支付提醒',
-  4:'（财务）到款确认',
-  5:'下单提醒',
-  6:'发货提醒',
-  7:'收货提醒',
-  8:'上线审批',
-  9:'上线通知',
-  10: '回款核准',
-  11: '开票提醒',
-  12: '发货方案审批'
-}
-const rwlxs = [
-  // {
-  //   val: '审批提醒',
-  //   index: 1
-  // },
-  // {
-  //   val: '签署提醒',
-  //   index: 2
-  // },
-  // {
-  //   val: '支付提醒',
-  //   index: 3
-  // },
-  // {
-  //   val: '（财务）到款确认',
-  //   index: 4
-  // },
-  // {
-  //   val: '下单提醒',
-  //   index: 5
-  // },
-  // {
-  //   val: '发货提醒',
-  //   index: 6
-  // },
-  // {
-  //   val: '收货提醒',
-  //   index: 7
-  // },
-  // {
-  //   val: '上线审批',
-  //   index: 8
-  // },
-  // {
-  //   val: '上线通知',
-  //   index: 9
-  // },
-  {
-    val: '回款核准',
-    index: 10
-  },
-  // {
-  //   val: '开票提醒',
-  //   index: 11
-  // },
-  // {
-  //   val: '发货方案审批',
-  //   index: 12
-  // },
-]
-const statusMap = {
-  1:'待办',
-  2:'已办'
-}
-const deliveryMap = {
-  0:"草稿",
-  1:"审批中",
-  2:"已通过",
-  3:"被驳回",
-};
 export default {
   name: "work-bench",
   components:{
@@ -500,10 +426,10 @@ export default {
     return {
       textarea:"",
       refuseShow:false,
-      typeMap,
-      statusMap,
-      rwlxs,
-      deliveryMap,
+      typeMap:this.$option.workbench.typeMap,
+      statusMap:this.$option.workbench.statusMap,
+      rwlxs:this.$option.workbench.addTypes,
+      deliveryMap:this.$option.asset.deliveryStatusMap,
       inputVal: '',
       customName: '',
       loading: false,

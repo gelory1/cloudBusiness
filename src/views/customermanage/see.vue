@@ -290,18 +290,6 @@
 
 <script>
 import api from "@/api/axios";
-const industryMap = {
-  1: "公共事业及管理组织",
-  2: "工业",
-  3: "商业住宿餐饮",
-  4: "金融房地产及居民服务",
-  5: "运输仓储邮政",
-  6: "信息计算机和软件",
-  7: "农林牧渔水利",
-  8: "建筑业",
-  9: "军工保密",
-  10: "其他"
-};
 export default {
   name: "see",
   data() {
@@ -310,7 +298,7 @@ export default {
       eyeShow: true,
       kpxxShow: false,
       citys: [],
-      industryMap: industryMap
+      industryMap: this.$option.customer.industryMap
     };
   },
   methods: {

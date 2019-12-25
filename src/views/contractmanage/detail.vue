@@ -384,27 +384,6 @@
 
 <script>
 import orderDetail from '../ordermanage/order-detail';
-const subjectName = {
-  1: "电能云",
-  2: "智慧能源",
-  3: "维智泰",
-  4: "耀邦达",
-  5: "股份公司",
-  6: "志达",
-  7: "康源",
-  8: "新联能源",
-  100: "其他"
-};
-const contractContentMap = {
-  1: "配用电",
-  2: "环保设施智能监测系统",
-  3: "中央空调",
-  4: "油烟监测",
-  5: "工地扬尘",
-  6: "园区抄表",
-  7: "综合能源",
-  100: "其他"
-};
 export default {
   name: "detail",
   components:{
@@ -424,7 +403,7 @@ export default {
       }],
       single:false,
       ticketType:"",
-      subjectName,
+      subjectName:this.$option.contract.subjectNameMap,
       zq: {
       },
       fj: [],
@@ -497,7 +476,7 @@ export default {
       zkShow: true,
       showObj: {},
       checkbox: [],
-      contractContentMap,
+      contractContentMap:this.$option.contract.contentMap,
       orderDetailOpen: false,
       selectedOrder: '',
       selectAccountShow:false,

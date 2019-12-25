@@ -91,13 +91,7 @@ export default {
       };
       this.$http.AUTHORITY(request).then(() => {        
       },res => {
-        let roleMap = {
-          19:'超级管理员',
-          20:'业务管控',
-          18:'财务',
-          17:'合作伙伴',
-          22:'销售人员'
-        }
+        let roleMap = this.$option.role.roleMap;
         if(res.data.code === 0){
           let role = [];
           (res.data.role||[]).forEach(r => {

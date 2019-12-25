@@ -9,11 +9,11 @@
         <Menu width="auto" size="small">
           <div class="tip">
             <p class="tooltip" @click.stop="tooltipClick('inside')">
-              {{cpxhpz[cktype_current_index].mc}}
+              {{cpxhpz[cktype_current_index].name}}
               <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
             </p>
             <div class="tooltipslot" v-show="tooptipShow">
-              <p v-for="(item,index) in cpxhpz" @click="selectClick(index)" :key="index">{{item.mc}}</p>
+              <p v-for="(item,index) in cpxhpz" @click="selectClick(index)" :key="index">{{item.name}}</p>
             </div>
           </div>
         </Menu>
@@ -399,48 +399,6 @@
 
 <script>
 import sblbTale from "../../public-components/sblb_table.vue";
-const status = [
-  {
-    val: "销售出库",
-    index: -1
-  },
-  {
-    val: "出库中（针对仓库）",
-    index: 0
-  },
-  {
-    val: "待收货",
-    index: 1
-  },
-  {
-    val: "入库；已收货",
-    index: 10
-  },
-  {
-    val: "领用",
-    index: 20
-  },
-  {
-    val: "拆除",
-    index: 30
-  },
-  {
-    val: "安装",
-    index: 40
-  },
-  {
-    val: "丢失",
-    index: 50
-  },
-  {
-    val: "上线",
-    index: 60
-  },
-  {
-    val: "退货",
-    index: 70
-  }
-];
 export default {
   name: "deviceQuery",
   components: {
@@ -448,7 +406,7 @@ export default {
   },
   data() {
     return {
-      status,
+      status:this.$option.asset.issueStatus,
       zkSum: 1,
       crkSum: 1,
       sblbSum: 1,
@@ -920,24 +878,7 @@ export default {
         shsj: "2019-9-00",
         adress: ""
       },
-      cpxhpz: [
-        {
-          mc: "所有类型仓库",
-          id: undefined
-        },
-        {
-          mc: "成品库",
-          id: 0
-        },
-        {
-          mc: "工程物资库",
-          id: 1
-        },
-        {
-          mc: "固定资产库",
-          id: 2
-        }
-      ],
+      cpxhpz: this.$option.asset.query,
       rksbxq: [
         {
           val: "12"
@@ -1024,17 +965,7 @@ export default {
         }
       ],
       sblb_data: [],
-      mapStatus: {
-        0: "出库中（针对仓库）",
-        1: "待收货",
-        10: "入库；已收货",
-        20: "领用",
-        30: "拆除",
-        40: "安装",
-        50: "丢失",
-        60: "上线",
-        70: "退货"
-      },
+      mapStatus: this.$option.asset.deviceStatusMap,
       cusfilterItem: {
         djbh: "",
         // ddbh: "",

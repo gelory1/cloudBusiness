@@ -134,73 +134,18 @@
 </template>
 <script>
 let $ = require("jquery");
-const statusColorMap = {
-  '审批中':{
-    backgroundColor: '#FDF6EC',
-    color: '#E7A440'
-  },
-  '待支付':{
-    backgroundColor: '#F0F9EC',
-    color: '#78C950'
-  },
-  '已下单': {
-    backgroundColor: '#F4F4F5',
-    color: '#7D7F82'
-  },
-  '已发货':{
-    backgroundColor: '#EEEEFF',
-    color: '#7272D0'
-  },
-  '已到货':{
-    backgroundColor: '#EBF5FE',
-    color: '#54A3F6'
-  },
-  '被驳回':{
-    backgroundColor: '#F4F4F5',
-    color: '#7D7F82'
-  }
-};
-const statusMap3 = {
-  3:'下单',4: '出库',5:'到货'
-};
-const statusMap = {
-  0:'审批中',1: '待支付',2:'已下单',3:'已发货',4:'已到货',5:'被驳回'
-};
-const statusMap2 = {
-  0:'申请',1: '审批',2:'支付',3:'下单',4:'出库',5:'到货'
-};
-const subjectName = {
-  1:'电能云',
-  2:'智慧能源',
-  3:'维智泰',
-  4:'耀邦达',
-  5:'股份公司',
-  6:'志达',
-  7:'康源',
-  8:'新联能源',
-  100:'其他',
-};
-const businessMap = {
-  0: '合同订单',
-  1: '备货订单'
-};
-const saleMap = {
-  2: '直销',
-  1: '渠道',
-  3: '其他'
-};
 export default {
     name:'orderDetail',
     props:['orderNO'],
     data() {
         return {
-            statusColorMap,
-            statusMap,
-            statusMap2,
-            statusMap3,
-            subjectName,
-            businessMap,
-            saleMap,
+            statusColorMap:this.$option.order.statusColorMap,
+            statusMap:this.$option.order.statusMap,
+            statusMap2:this.$option.order.statusMap2,
+            statusMap3:this.$option.order.statusMap3,
+            subjectName:this.$option.contract.subjectNameMap,
+            businessMap:this.$option.order.typeMap,
+            saleMap:this.$option.contract.salesTypeMap,
             deviceTabName: 'name1',
             device_data: [],
             selectedOrder: {

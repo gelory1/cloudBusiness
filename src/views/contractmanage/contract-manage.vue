@@ -201,200 +201,14 @@
 </template>
 ``
 <script>
-const contractStatus = [
-  {
-    status: "所有合同状态",
-    index: -1
-  },
-  {
-    status: "审批签约中",
-    index: 0
-  },
-  {
-    status: "生效实施中",
-    index: 1
-  },
-  {
-    status: "上线试运行",
-    index: 2
-  },
-  {
-    status: "回款待确认",
-    index: 3
-  },
-  {
-    status: "财务开票中",
-    index: 4
-  },
-  {
-    status: "商务转运营",
-    index: 5
-  },
-  {
-    status: "到期待续签",
-    index: 6
-  }
-];
-const contractNatureMap = {
-  1: "新签",
-  2: "续签",
-  3: "补装",
-  4: "移点",
-  5: "减点",
-  6: "重签",
-  7: "作废",
-  8: "续费",
-  9: "其他"
-};
-const contractContentMap = {
-  1: "配用电",
-  2: "环保设施智能监测系统",
-  3: "中央空调",
-  4: "油烟监测",
-  5: "工地扬尘",
-  6: "园区抄表",
-  7: "综合能源",
-  100: "其他"
-};
-const contents = [
-  {
-    val: "配用电",
-    index: 1
-  },
-  {
-    val: "环保设施智能监测系统",
-    index: 2
-  },
-  {
-    val: "中央空调",
-    index: 3
-  },
-  {
-    val: "油烟监测",
-    index: 4
-  },
-  {
-    val: "工地扬尘",
-    index: 5
-  },
-  {
-    val: "园区抄表",
-    index: 6
-  },
-  {
-    val: "综合能源",
-    index: 7
-  },
-  {
-    val: "其他",
-    index: 100
-  }
-];
-const natures = [
-  {
-    val: "新签",
-    index: 1
-  },
-  {
-    val: "续签",
-    index: 2
-  },
-  {
-    val: "补装",
-    index: 3
-  },
-  {
-    val: "移点",
-    index: 4
-  },
-  {
-    val: "减点",
-    index: 5
-  },
-  {
-    val: "重签",
-    index: 6
-  },
-  {
-    val: "作废",
-    index: 7
-  },
-  {
-    val: "续费",
-    index: 8
-  },
-  {
-    val: "其他",
-    index: 9
-  }
-];
-const contractTypes = [
-  {
-    val:'非备货合同',
-    index:0
-  },
-  {
-    val:'备货合同',
-    index:1
-  },
-];
-const salesTypeMap = {
-  1: "渠道",
-  2: "直销",
-  3: "其他"
-};
-const salesTypes = [
-  {
-    val: "渠道",
-    index: 1
-  },
-  {
-    val: "直销",
-    index: 2
-  },
-  {
-    val: "其他",
-    index: 3
-  }
-];
-const statusColorMap = {
-  审批签约中: {
-    backgroundColor: "#FDF6EC",
-    color: "#E7A440"
-  },
-  生效实施中: {
-    backgroundColor: "#F0F9EC",
-    color: "#78C950"
-  },
-  上线试运行: {
-    backgroundColor: "#CCF5F5",
-    color: "#66E0E0"
-  },
-  回款待确认: {
-    backgroundColor: "#EBF5FE",
-    color: "#54A3F6"
-  },
-  财务开票中: {
-    backgroundColor: "#EEEEFF",
-    color: "#7272D0"
-  },
-  商务转运营: {
-    backgroundColor: "#F4F4F5",
-    color: "#7D7F82"
-  },
-  到期待续签: {
-    backgroundColor: "#F8EBEB",
-    color: "#F68C8C"
-  }
-};
 export default {
   name: "contract",
   data() {
     return {
-      contractStatus,
-      contractNatureMap,
-      salesTypeMap,
-      contractTypes,
+      contractStatus:this.$option.contract.status,
+      contractNatureMap:this.$option.contract.natureMap,
+      salesTypeMap:this.$option.contract.salesTypeMap,
+      contractTypes:this.$option.contract.types,
       contract_columns: [
         {
           type: "selection",
@@ -448,11 +262,11 @@ export default {
                   },
                   style: {
                     backgroundColor: params.row.contractStatus
-                      ? statusColorMap[params.row.contractStatus]
+                      ? this.$option.contract.statusColorMap[params.row.contractStatus]
                           .backgroundColor
                       : "white",
                     color: params.row.contractStatus
-                      ? statusColorMap[params.row.contractStatus].color
+                      ? this.$option.contract.statusColorMap[params.row.contractStatus].color
                       : "#7D7F82"
                   }
                 },
@@ -565,19 +379,19 @@ export default {
       moreShow: false,
       disabled: true,
       butZT: "XXX",
-      selectedStatus: contractStatus[0],
+      selectedStatus: this.$option.contract.status[0],
       sum: 0,
       inputVal: "",
       loading: false,
       pageNum: 1,
       filterStatus: false,
-      natures,
-      salesTypes,
+      natures:this.$option.contract.natures,
+      salesTypes:this.$option.contract.salesTypes,
       provinces: [],
       citys: [],
       companys: [],
-      contractContentMap,
-      contents
+      contractContentMap:this.$option.contract.contentMap,
+      contents:this.$option.contract.contents
     };
   },
   methods: {

@@ -234,18 +234,6 @@
 
 <script>
 import silderInput from "../../public-components/silder-input.vue";
-
-const levelMap = {
-  1: "A级",
-  2: "B级",
-  3: "C级",
-  4: "D级",
-  5: "E级"
-};
-const orderMap = {
-  0: "合同订单",
-  1: "备货订单"
-};
 export default {
   name: "newbuild",
   components: {
@@ -264,8 +252,8 @@ export default {
       },
       pageNum: 1,
       sum: 0,
-      levelMap,
-      orderMap,
+      levelMap: this.$option.customer.levelMap,
+      orderMap: this.$option.order.typeMap,
       currentRow: {},
       changeRowData: {
         data: {},

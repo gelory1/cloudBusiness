@@ -12,12 +12,14 @@ import 'jquery';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import api from '@/api/axios';
+import option from './libs/option';
 
 Vue.use(VueI18n);
 Vue.use(iView);
 Vue.use(ElementUI);
 Vue.prototype.$http = api;
 Vue.prototype.$util = util;
+Vue.prototype.$option = option;
 new Vue({
     el: '#app',
     router: router,
