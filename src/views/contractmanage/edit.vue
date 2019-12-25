@@ -291,7 +291,7 @@
                   </p>
                 </section>
                 <div style="float:right;color:#4a9af5">
-                  <!-- <a :href="` https://view.officeapps.live.com/op/view.aspx?src=${encodeURI(item.url)}`" target="_blank" rel="nofollow">查看</a> -->
+                  <span @click="see(item.url)" style="cursor:pointer">查看</span>
                   <span @click="deleteFj(item.data.enclosureId)" style="cursor:pointer" v-if="item.data.enclosureType !== 4&&item.data.enclosureType !== 5">删除</span>
                 </div>
               </div>
@@ -304,7 +304,9 @@
         <Modal v-model="orderDetailOpen" width="1000">
           <orderDetail :orderNO="selectedOrder"></orderDetail>
         </Modal>
-        
+        <Modal v-model="seeModal" width="1000">
+          <embed :src="seeUrl" type="application/pdf" width="100%" height="700">
+        </Modal>
       </content>
     </Layout>
   </div>
@@ -377,7 +379,9 @@ export default {
       fj:[],
       uploadLoading:false,
       selectedOrder:'',
-      orderDetailOpen:false
+      orderDetailOpen:false,
+      seeUrl: '',
+      seeModal: false
     };
   },
   methods: {
@@ -553,6 +557,10 @@ export default {
         return (sign + num + cents); 
       }
     },
+    see(url){
+      this.seeUrl = `http://view.xdocin.com/xdoc?_xdoc=${url}`;
+      this.seeModal = true;
+    }
   },
   beforeCreate(){
     if(Object.keys(JSON.parse(localStorage.getItem('contractInfo'))||{}).length === 0) this.$router.push({path:'/contractmanage/contractmanage'});
@@ -595,6 +603,11 @@ export default {
     }
   },
   watch:{
+    seeModal(nv){
+      if(!nv){
+        this.seeModal = false;
+      }
+    }
   }
 };
 </script>
