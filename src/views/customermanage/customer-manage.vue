@@ -412,7 +412,7 @@ export default {
             item.city = (data.province_cn||'') + ' ' + (data.city_cn||'') + ' ' + (data.area_cn||'');
             item.time = data.create_date;
             item.salesman = data.sale_no;
-            item.company = this.$option.contract.subjectNameMap[data.manage_company];
+            item.company = data.manage_company_cn;
             item.data = data;
             this.customList_data.push(item);
           });
