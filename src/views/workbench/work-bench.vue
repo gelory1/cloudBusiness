@@ -1161,7 +1161,8 @@ export default {
             url: params.row.data.photoUrl,
             workBenchType: params.row.data.workBenchType,
             ensure:'',
-            workBenchId: params.row.data.workbenchId
+            workBenchId: params.row.data.workbenchId,
+            data:params.row.data
           }
         }else if(params.row.data.workBenchType === 1){
           this.$alert(`您有一个${(params.row.data.workBenchContentObj||{}).orderNo?'备货流程':'合同'}待审批，${(params.row.data.workBenchContentObj||{}).orderNo?'订单':'合同'}号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||(params.row.data.workBenchContentObj||{}).orderNo }`, '审批提醒', {
@@ -1450,7 +1451,8 @@ export default {
               "accountId": this.$store.state.user.accountId,
               "workBenchId": this.ensurePayBack.workBenchId,
               "lastWorkbenchId": this.ensurePayBack.ensure === false?this.ensurePayBack.lastWorkbenchId:undefined,
-              "orderNo": this.ensurePayBack.orderNo === ''?undefined:this.ensurePayBack.orderNo
+              "orderNo": this.ensurePayBack.orderNo === ''?undefined:this.ensurePayBack.orderNo,
+              "orderAmount":this.ensurePayBack.orderNo?this.ensurePayBack.payAmount:undefined
             }
         ]
       }
