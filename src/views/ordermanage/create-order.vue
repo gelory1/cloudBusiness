@@ -592,7 +592,7 @@ export default {
             unit: d.product_unit,
             num: d.num,
             price: d.product_price,
-            tax: "17%",
+            tax: "6%",
             totalPrice: d.product_price * d.num
           });
         } else {
