@@ -101,7 +101,7 @@
               </FormItem>
             </Col>
             <Col span="12" v-if="isFriend">
-              <FormItem label="授权资质" prop="sqzz" class="con-right">
+              <FormItem label="授权资质" prop="empower_city" class="con-right">
                 <el-cascader clearable v-model="formValidate.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
             </Col>
