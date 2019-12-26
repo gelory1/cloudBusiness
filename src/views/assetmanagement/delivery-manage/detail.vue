@@ -1,6 +1,6 @@
 <template>
   <div class="fh_detial layout">
-    <Layout style="background:#ffffff;width:95%;minHeight:800px;">
+    <Layout style="background:#ffffff;minHeight:800px;">
       <div class="header_top" @click="goBack">
         <Icon type="ios-arrow-left"></Icon>
         <span>返回</span>

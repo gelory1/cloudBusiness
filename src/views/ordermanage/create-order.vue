@@ -467,10 +467,10 @@ export default {
   methods: {
     getCmonpanys() {
       let request = {
-        typeid: 23015
-        // "data":[{
-        //     "account_id": 520//this.$store.state.user.accountId
-        // }]
+        "typeid": 23015,
+        "data":[{
+            "account_id": this.$store.state.user.accountId
+        }]
       };
       if (this.cahceData.length > 0) return;
       this.$http.PostXLASSETS(request).then(response => {
