@@ -125,7 +125,6 @@ export default {
   },
   data() {
     return {
-      customerTypes: this.$option.customer.types,
       customList_columns: [
         {
           type: "selection",
@@ -338,7 +337,7 @@ export default {
       isShow: false,
       glShow: false,
       moreShow: false,
-      selectedCustomType:this.$option.customer.types[0],
+      selectedCustomType:{},
       customSum:0,
       selectedItems:[],
       inputVal:'',
@@ -596,6 +595,20 @@ export default {
     regions() {
       return JSON.parse(localStorage.getItem("regions")) || [];
     },
+    customerTypes(){
+      let types = [];
+      if(this.isCooperative){
+        types = this.$option.customer.types.filter(t => t.no === 3);
+      }else if(this.isSaleMan){
+        types = this.$option.customer.types.filter(t => t.no === 1);
+      }else{
+        types = this.$option.customer.types;
+      }
+      if(!this.selectedCustomType.type){
+        this.selectedCustomType = types[0];
+      }
+      return types;
+    }
   },
   watch:{
 
