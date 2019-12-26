@@ -207,7 +207,7 @@
                       v-if="item.currentTicketAmount>0"
                     >{{thousandNum(item.currentTicketAmount)}}</p>
                     <p class="cor_span">
-                      <Button size="small" @click="fpmodal = true" v-if="item.ticketButton">开发票</Button>
+                      <!-- <Button size="small" @click="fpmodal = true" v-if="item.ticketButton">开发票</Button> -->
                     </p>
                   </div>
                 </section>
