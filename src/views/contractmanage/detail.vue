@@ -205,17 +205,10 @@
                       class="cor_span"
                       style="margin-right:10px"
                       v-if="item.currentTicketAmount>0"
-<<<<<<< HEAD
-                    >{{thousandNum(item.currentTicketAmount)}}</p>
-                    <p class="cor_span">
-                      <!-- <Button size="small" @click="fpmodal = true" v-if="item.ticketButton">开发票</Button> -->
-                    </p>
-=======
                     >{{thousandNum(item.currentTicketAmount)||0}}</p>
                     <!-- <p class="cor_span">
                       <Button size="small" @click="fpmodal = true" v-if="item.ticketButton">开发票</Button>
                     </p> -->
->>>>>>> 4784b93dd59612dc491138cb9932afd2f404c150
                   </div>
                 </section>
               </div>
