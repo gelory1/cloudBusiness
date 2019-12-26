@@ -400,84 +400,6 @@
 
 <script>
 import api from "@/api/axios";
-const natures = [
-  {
-    value: "直销客户",
-    index: 1
-  },
-  {
-    value: "合作伙伴",
-    index: 2
-  },
-  {
-    value: "伙伴客户",
-    index: 3
-  }
-];
-const levels = [
-  {
-    val: "A级",
-    index: 1
-  },
-  {
-    val: "B级",
-    index: 2
-  },
-  {
-    val: "C级",
-    index: 3
-  },
-  {
-    val: "D级",
-    index: 4
-  },
-  {
-    val: "E级",
-    index: 5
-  }
-];
-const industrys = [
-  {
-    val: "公共事业及管理组织",
-    index: 1
-  },
-  {
-    val: "工业",
-    index: 2
-  },
-  {
-    val: "商业住宿餐饮",
-    index: 3
-  },
-  {
-    val: "金融房地产及居民服务",
-    index: 4
-  },
-  {
-    val: "运输仓储邮政",
-    index: 5
-  },
-  {
-    val: "信息计算机和软件",
-    index: 6
-  },
-  {
-    val: "农林牧渔水利",
-    index: 7
-  },
-  {
-    val: "建筑业",
-    index: 8
-  },
-  {
-    val: "军工保密",
-    index: 9
-  },
-  {
-    val: "其他",
-    index: 10
-  }
-];
 
 export default {
   name: "edit",
@@ -539,7 +461,7 @@ export default {
         platformuser_list: [],
         contacts_list: [],
         ticket_list: [],
-        city: [],
+        city: '',
         empower_city: [],
         protocolNumber: "",
         sqstartTime: "",
@@ -810,8 +732,8 @@ export default {
       checkbox: "",
       addlxrmodal: false,
       addkpxxmodal: false,
-      levels: levels,
-      industrys: industrys,
+      levels: this.$option.customer.levels,
+      industrys: this.$option.customer.industrys,
       addPlatShow: false,
       plat: {
         platform_id: "",
@@ -1195,10 +1117,10 @@ export default {
         JSON.stringify(((data || {}).data || {}).ticket_list || [])
       );
       let city = [];
-      city.push(((data || {}).data || {}).province);
-      city.push(((data || {}).data || {}).city);
+      if(((data || {}).data || {}).province) city.push(((data || {}).data || {}).province);
+      if(((data || {}).data || {}).city) city.push(((data || {}).data || {}).city);
       if(((data || {}).data || {}).area) city.push(((data || {}).data || {}).area);
-      this.formValidate.city = city;
+      if(city.length > 0)this.formValidate.city = city;
       let empowerCity = [];
       if(((data || {}).data || {}).areaList&&((data || {}).data || {}).areaList.length>0){
         if(((data || {}).data || {}).areaList.length === 1){
@@ -1674,11 +1596,11 @@ export default {
     natures(){
       let natureArr = [];
       if(this.isCooperative){
-        natureArr = natures.filter(i =>i.index === 3);
+        natureArr = this.$option.customer.natures.filter(i =>i.index === 3);
       }else if(this.isSaleMan){
-        natureArr = natures.filter(i =>i.index === 1);
+        natureArr = this.$option.customer.natures.filter(i =>i.index === 1);
       }else{
-        natureArr = natures;
+        natureArr = this.$option.customer.natures;
       }
       return natureArr;
     },

@@ -648,7 +648,7 @@ export default {
         typeid: 24006,
         data: [
           {
-            accountId: this.$store.state.user.accountId,
+            account_id: this.$store.state.user.accountId,
             orderTime: date,
             orderAmount: this.totalPrice + "",
             whId: this.formValidate.store.index,

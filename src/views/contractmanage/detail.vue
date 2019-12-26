@@ -192,11 +192,11 @@
                 </section>
                 <section class="zq_c zq_se" style="color:#797979;">
                   <p class="zq_p">本期应付（元）</p>
-                  <p>{{thousandNum(item.paymentAmount)}}</p>
+                  <p>{{thousandNum(item.paymentAmount)||0}}</p>
                 </section>
                 <section class="zq_c zq_se" style="color:#797979;">
                   <p class="zq_p">本期实付（元）</p>
-                  <p>{{thousandNum(item.currentAmount)}}</p>
+                  <p>{{thousandNum(item.currentAmount)||0}}</p>
                 </section>
                 <section class="zq_c zq_se" style="color:#797979;">
                   <p class="zq_p" v-if="item.currentTicketAmount > 0">已开票（元）</p>
@@ -205,10 +205,17 @@
                       class="cor_span"
                       style="margin-right:10px"
                       v-if="item.currentTicketAmount>0"
+<<<<<<< HEAD
                     >{{thousandNum(item.currentTicketAmount)}}</p>
                     <p class="cor_span">
                       <!-- <Button size="small" @click="fpmodal = true" v-if="item.ticketButton">开发票</Button> -->
                     </p>
+=======
+                    >{{thousandNum(item.currentTicketAmount)||0}}</p>
+                    <!-- <p class="cor_span">
+                      <Button size="small" @click="fpmodal = true" v-if="item.ticketButton">开发票</Button>
+                    </p> -->
+>>>>>>> 4784b93dd59612dc491138cb9932afd2f404c150
                   </div>
                 </section>
               </div>
@@ -223,7 +230,7 @@
                 <div v-for="(p,i) in item.paybackList" :key="i" class="payList">
                   <section>
                     <div>{{p.paybackId}}</div>
-                    <div>{{p.paymentWay}}</div>
+                    <div>{{paybackWayMap[p.paybackWay]}}</div>
                     <div>{{p.paybackTime}}</div>
                     <div>{{p.paybackSureTime}}</div>
                     <div>{{thousandNum(p.paybackAmount)}}</div>
@@ -384,27 +391,6 @@
 
 <script>
 import orderDetail from '../ordermanage/order-detail';
-const subjectName = {
-  1: "电能云",
-  2: "智慧能源",
-  3: "维智泰",
-  4: "耀邦达",
-  5: "股份公司",
-  6: "志达",
-  7: "康源",
-  8: "新联能源",
-  100: "其他"
-};
-const contractContentMap = {
-  1: "配用电",
-  2: "环保设施智能监测系统",
-  3: "中央空调",
-  4: "油烟监测",
-  5: "工地扬尘",
-  6: "园区抄表",
-  7: "综合能源",
-  100: "其他"
-};
 export default {
   name: "detail",
   components:{
@@ -424,7 +410,8 @@ export default {
       }],
       single:false,
       ticketType:"",
-      subjectName,
+      subjectName:this.$option.contract.subjectNameMap,
+      paybackWayMap: this.$option.contract.paybackWayMap,
       zq: {
       },
       fj: [],
@@ -497,7 +484,7 @@ export default {
       zkShow: true,
       showObj: {},
       checkbox: [],
-      contractContentMap,
+      contractContentMap:this.$option.contract.contentMap,
       orderDetailOpen: false,
       selectedOrder: '',
       selectAccountShow:false,

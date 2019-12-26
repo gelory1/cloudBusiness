@@ -27,7 +27,7 @@
                 <Form ref="filterItem" :model="filterItem" :label-width="80">
                   <FormItem label="客户等级" prop="khdj">
                     <Select v-model="filterItem.nature" clearable filterable>
-                      <Option :value="index+1" v-for="(item,index) in natures" :key="index">{{item}}</Option>
+                      <Option :value="item.index" v-for="(item,index) in natures" :key="item.index">{{item.val}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="授权资质" prop="sqzz">
@@ -118,38 +118,6 @@
 <script>
 import dropDown from "../public-components/drop-down.vue";
 import Dropdown from "iview";
-const customerTypes= [
-  {
-    no:0,
-    type: "所有客户"
-  },
-  {
-    no:1,
-    type: "直销客户"
-  },
-  {
-    no:2,
-    type: "合作伙伴"
-  },
-  {
-    no:3,
-    type: "伙伴客户"
-  }
-]
-const natures = ['A级', 'B级','C级','D级','E级',]
-const levelMap = {
-  1: 'A级', 
-  2: 'B级',
-  3: 'C级',
-  4: 'D级',
-  5: 'E级',
-}
-const companyMap = {
-  1: '电能云',
-  2: '智慧能源',
-  3: '维智泰',
-  4: '康源'
-}
 export default {
   name: "customerManage",
   components: {
@@ -157,7 +125,7 @@ export default {
   },
   data() {
     return {
-      customerTypes: customerTypes,
+      customerTypes: this.$option.customer.types,
       customList_columns: [
         {
           type: "selection",
@@ -370,7 +338,7 @@ export default {
       isShow: false,
       glShow: false,
       moreShow: false,
-      selectedCustomType:customerTypes[0],
+      selectedCustomType:this.$option.customer.types[0],
       customSum:0,
       selectedItems:[],
       inputVal:'',
@@ -379,7 +347,7 @@ export default {
       companys:[],
       provinces:[],
       citys:[],
-      natures,
+      natures:this.$option.customer.levels,
       empowerCitys:[],
       filterStatus:false,
       disabled:true,
@@ -397,7 +365,7 @@ export default {
     selectCustomer(index) {
       this.tooptipShow = false;
       this.pageNum = 1;
-      this.selectedCustomType = customerTypes[index];
+      this.selectedCustomType = this.customerTypes[index];
       this.getCustomList(1);
     },
     getCustomList(p){
@@ -440,11 +408,11 @@ export default {
             let item = {};
             item.name = data.customer_name;
             item.nature = data.customer_nature === 0?'':this.customerTypes.find(t => t.no === data.customer_nature).type;
-            item.level = levelMap[data.customer_level];
+            item.level = this.$option.customer.levelMap[data.customer_level];
             item.city = (data.province_cn||'') + ' ' + (data.city_cn||'') + ' ' + (data.area_cn||'');
             item.time = data.create_date;
             item.salesman = data.sale_no;
-            item.company = companyMap[data.manage_company];
+            item.company = data.manage_company_cn;
             item.data = data;
             this.customList_data.push(item);
           });

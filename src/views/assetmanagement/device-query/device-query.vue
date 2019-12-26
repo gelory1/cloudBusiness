@@ -9,11 +9,11 @@
         <Menu width="auto" size="small">
           <div class="tip">
             <p class="tooltip" @click.stop="tooltipClick('inside')">
-              {{cpxhpz[cktype_current_index].mc}}
+              {{cpxhpz[cktype_current_index].name}}
               <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
             </p>
             <div class="tooltipslot" v-show="tooptipShow">
-              <p v-for="(item,index) in cpxhpz" :key="index" @click="selectClick(index)">{{item.mc}}</p>
+              <p v-for="(item,index) in cpxhpz" :key="index" @click="selectClick(index)">{{item.name}}</p>
             </div>
           </div>
         </Menu>
@@ -320,33 +320,14 @@ export default {
   },
   data() {
     return {
-      status,
-      mapStatus: {
-        "-1": "销售出库",
-        0: "出库中（针对仓库）",
-        1: "待收货",
-        10: "入库；已收货",
-        20: "领用",
-        30: "拆除",
-        40: "安装",
-        50: "丢失",
-        60: "上线",
-        70: "退货"
-      },
-      mapType: {
-        0: "出库",
-        1: "入库",
-        2: "领用",
-        3: "拆除",
-        4: "安装",
-        5: "丢失",
-        6: "上线"
-      },
+      status:this.$option.asset.issueStatus,
+      mapStatus: this.$option.asset.deviceStatusMap,
+      mapType: this.$option.asset.deviceTypeMap,
       cktype_current_index: 0,
       crk_current_index: 0,
       ck_current_index: "",
-      zkSum: 1,
-      crkSum: 1,
+      zkSum: 0,
+      crkSum: 0,
       jbxx_columns: [
         {
           title: "存货编码",
@@ -647,24 +628,7 @@ export default {
       },
       yjjl_data: [],
       czjldata: [],
-      cpxhpz: [
-        {
-          mc: "所有类型仓库",
-          id: undefined
-        },
-        {
-          mc: "成品库",
-          id: 0
-        },
-        {
-          mc: "工程物资库",
-          id: 1
-        },
-        {
-          mc: "固定资产库",
-          id: 2
-        }
-      ],
+      cpxhpz: this.$option.asset.query,
       filterItem: {
         chbm: "",
         chmc: "",
@@ -764,10 +728,10 @@ export default {
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
       if (this.jbxx_data == "") {
-        this.zkSum = 1;
+        this.zkSum = 0;
       }
       if (this.crk_data == "") {
-        this.crkSum = 1;
+        this.crkSum = 0;
       }
     },
     getProductList(p) {
@@ -908,10 +872,10 @@ export default {
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
       if (this.jbxx_data == "") {
-        this.zkSum = 1;
+        this.zkSum = 0;
       }
       if (this.crk_data == "") {
-        this.crkSum = 1;
+        this.crkSum = 0;
       }
     },
     getMenuList(index) {
@@ -1015,10 +979,10 @@ export default {
             this.getCrkList(1);
           }
           if (this.jbxx_data == "") {
-            this.zkSum = 1;
+            this.zkSum = 0;
           }
           if (this.crk_data == "") {
-            this.crkSum = 1;
+            this.crkSum = 0;
           }
           this.$Message.success("查询成功！");
         } else {

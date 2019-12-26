@@ -152,130 +152,6 @@
 let $ = require("jquery");
 import api from "@/api/axios";
 import orderDetail from "./order-detail";
-const orderStatus1 = [
-  {
-    type: "全部",
-    name: "name1",
-    index: 0
-  },
-  {
-    type: "已下单",
-    name: "name8",
-    index: 3
-  },
-  {
-    type: "已发货",
-    name: "name9",
-    index: 4
-  },
-  {
-    type: "已到货",
-    name: "name10",
-    index: 5
-  }
-];
-const orderStatus2 = [
-  {
-    type: "全部",
-    name: "name1",
-    index: 0
-  },
-  {
-    type: "审批中",
-    name: "name2",
-    index: 1
-  },
-  {
-    type: "待支付",
-    name: "name3",
-    index: 2
-  },
-  {
-    type: "已下单",
-    name: "name4",
-    index: 3
-  },
-  {
-    type: "已发货",
-    name: "name5",
-    index: 4
-  },
-  {
-    type: "已到货",
-    name: "name6",
-    index: 5
-  },
-  {
-    type: "被驳回",
-    name: "name7",
-    index: 6
-  }
-];
-const orderTypes = [
-  {
-    type: "全部",
-    ids: [0, 1]
-  },
-  {
-    type: "合同订单",
-    ids: [0]
-  },
-  {
-    type: "备货订单",
-    ids: [1]
-  }
-];
-const businessMap = {
-  0: "合同订单",
-  1: "备货订单"
-};
-const saleMap = {
-  2: "直销",
-  1: "渠道",
-  3: "其他"
-};
-const statusMap = {
-  0: "审批中",
-  1: "待支付",
-  2: "已下单",
-  3: "已发货",
-  4: "已到货",
-  5: "被驳回"
-};
-const statusMap2 = {
-  0: "申请",
-  1: "审批",
-  2: "支付",
-  3: "下单",
-  4: "出库",
-  5: "到货"
-};
-const statusColorMap = {
-  审批中: {
-    backgroundColor: "#FDF6EC",
-    color: "#E7A440"
-  },
-  待支付: {
-    backgroundColor: "#F0F9EC",
-    color: "#78C950"
-  },
-  已下单: {
-    backgroundColor: "#F4F4F5",
-    color: "#7D7F82"
-  },
-  已发货: {
-    backgroundColor: "#EEEEFF",
-    color: "#7272D0"
-  },
-  已到货: {
-    backgroundColor: "#EBF5FE",
-    color: "#54A3F6"
-  },
-  被驳回: {
-    backgroundColor: "#F4F4F5",
-    color: "#7D7F82"
-  }
-};
 const deviceList_columns = [
   {
     title: "条码",
@@ -319,28 +195,13 @@ const deviceList_columns = [
     align: "center"
   }
 ];
-const salesTypes = [
-  {
-    val: "渠道",
-    index: 1
-  },
-  {
-    val: "直销",
-    index: 2
-  },
-  {
-    val: "其他",
-    index: 3
-  }
-];
-
 export default {
   name: "orderManage",
   components: { orderDetail },
   data() {
     return {
-      orderStatus1,
-      orderStatus2,
+      orderStatus1:this.$option.order.status,
+      orderStatus2:this.$option.order.status2,
       tabName: "name1",
       order_columns:[
         {
@@ -419,10 +280,10 @@ export default {
                   },
                   style: {
                     backgroundColor: params.row.status
-                      ? statusColorMap[params.row.status].backgroundColor
+                      ? this.$option.order.statusColorMap[params.row.status].backgroundColor
                       : "white",
                     color: params.row.status
-                      ? statusColorMap[params.row.status].color
+                      ? this.$option.order.statusColorMap[params.row.status].color
                       : "#7D7F82"
                   }
                 },
@@ -442,9 +303,9 @@ export default {
         6: []
       },
       tooptipShow: false,
-      businessMap,
-      saleMap,
-      statusMap,
+      businessMap:this.$option.order.typeMap,
+      saleMap:this.$option.contract.salesTypeMap,
+      statusMap:this.$option.order.statusMap,
       loading: false,
       orderDetailOpen: false,
       selectedOrder: "",
@@ -477,16 +338,16 @@ export default {
       deviceList_columns,
       deviceList_data: [],
       deviceSum: 0,
-      statusMap2,
+      statusMap2:this.$option.order.statusMap2,
       glShow: false,
       moreShow: false,
       sum: 0,
       inputVal: "",
       pageNum: 1,
-      orderTypes,
-      selectedType: orderTypes[0],
-      statusColorMap,
-      salesTypes,
+      orderTypes:this.$option.order.types,
+      selectedType: this.$option.order.types[0],
+      statusColorMap:this.$option.order.statusColorMap,
+      salesTypes:this.$option.contract.salesTypes,
       companys: [],
       filterStatus: false,
       deviceTabName: "name1",

@@ -161,38 +161,11 @@
 </template>
 
 <script>
-const fhStatus = [
-  {
-    type: "全部",
-    name: "name1",
-    index: 0
-  },
-  {
-    type: "草稿",
-    name: "name2",
-    index: 1
-  },
-  {
-    type: "审批中",
-    name: "name3",
-    index: 2
-  },
-  {
-    type: "已通过",
-    name: "name4",
-    index: 3
-  },
-  {
-    type: "被驳回",
-    name: "name5",
-    index: 4
-  }
-];
 export default {
   name: "deliveryManage",
   data() {
     return {
-      fhStatus,
+      fhStatus: this.$option.asset.deliveryStatus,
       inputVal: "",
       sum: 0,
       pageNum: 1,

@@ -217,7 +217,7 @@
                 <section class="zq_c zq_se" style="color:#797979;">
                   <p class="zq_p" v-if="item.currentTicketAmount > 0">已开票（元）</p>
                   <div style="display:flex;justify-content: center;">
-                    <p class="cor_span" style="margin-right:10px" v-if="item.currentTicketAmount>0">{{thousandNum(item.currentTicketAmount)}}</p>
+                    <p class="cor_span" style="margin-right:10px" v-if="item.currentTicketAmount>0">{{thousandNum(item.currentTicketAmount)||0}}</p>
                     <!-- <p class="cor_span">
                       <Button size="small" @click="fpmodal = true" v-if="item.ticketButton">开发票</Button>
                     </p> -->
@@ -291,7 +291,7 @@
                   </p>
                 </section>
                 <div style="float:right;color:#4a9af5">
-                  <!-- <a :href="` https://view.officeapps.live.com/op/view.aspx?src=${encodeURI(item.url)}`" target="_blank" rel="nofollow">查看</a> -->
+                  <!-- <span @click="see(item.url)" style="cursor:pointer">查看</span> -->
                   <span @click="deleteFj(item.data.enclosureId)" style="cursor:pointer" v-if="item.data.enclosureType !== 4&&item.data.enclosureType !== 5">删除</span>
                 </div>
               </div>
@@ -304,7 +304,9 @@
         <Modal v-model="orderDetailOpen" width="1000">
           <orderDetail :orderNO="selectedOrder"></orderDetail>
         </Modal>
-        
+        <Modal v-model="seeModal" width="1000">
+          <iframe :src="seeUrl" width="100%" height="700" ></iframe>
+        </Modal>
       </content>
     </Layout>
   </div>
@@ -312,27 +314,6 @@
 
 <script>
 import orderDetail from '../ordermanage/order-detail';
-const subjectName = {
-  1:'电能云',
-  2:'智慧能源',
-  3:'维智泰',
-  4:'耀邦达',
-  5:'股份公司',
-  6:'志达',
-  7:'康源',
-  8:'新联能源',
-  100:'其他',
-};
-const contractContentMap = {
-  1: '配用电',
-  2: '环保设施智能监测系统',
-  3: '中央空调',
-  4: '油烟监测',
-  5: '工地扬尘',
-  6: '园区抄表',
-  7: '综合能源',
-  100: '其他',
-}
 export default {
   name: "htedit",
   components:{
@@ -390,15 +371,17 @@ export default {
           },trigger : 'change'
         }]
       },
-      subjectName,
+      subjectName:this.$option.contract.subjectNameMap,
       showObj:{},
       companys:[],
       projectmen:[],
-      contractContentMap,
+      contractContentMap:this.$option.contract.contentMap,
       fj:[],
       uploadLoading:false,
       selectedOrder:'',
-      orderDetailOpen:false
+      orderDetailOpen:false,
+      seeUrl: '',
+      seeModal: false
     };
   },
   methods: {
@@ -574,6 +557,10 @@ export default {
         return (sign + num + cents); 
       }
     },
+    see(url){
+      this.seeUrl = `http://view.xdocin.com/xdoc?_xdoc=${encodeURIComponent(url)}`;
+      this.seeModal = true;
+    }
   },
   beforeCreate(){
     if(Object.keys(JSON.parse(localStorage.getItem('contractInfo'))||{}).length === 0) this.$router.push({path:'/contractmanage/contractmanage'});
@@ -616,6 +603,11 @@ export default {
     }
   },
   watch:{
+    seeModal(nv){
+      if(!nv){
+        this.seeModal = false;
+      }
+    }
   }
 };
 </script>
