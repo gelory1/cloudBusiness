@@ -291,7 +291,7 @@
                   </p>
                 </section>
                 <div style="float:right;color:#4a9af5">
-                  <span @click="see(item.url)" style="cursor:pointer">查看</span>
+                  <!-- <span @click="see(item.url)" style="cursor:pointer">查看</span> -->
                   <span @click="deleteFj(item.data.enclosureId)" style="cursor:pointer" v-if="item.data.enclosureType !== 4&&item.data.enclosureType !== 5">删除</span>
                 </div>
               </div>
@@ -305,7 +305,7 @@
           <orderDetail :orderNO="selectedOrder"></orderDetail>
         </Modal>
         <Modal v-model="seeModal" width="1000">
-          <embed :src="seeUrl" type="application/pdf" width="100%" height="700">
+          <iframe :src="seeUrl" width="100%" height="700" ></iframe>
         </Modal>
       </content>
     </Layout>
@@ -558,7 +558,7 @@ export default {
       }
     },
     see(url){
-      this.seeUrl = `http://view.xdocin.com/xdoc?_xdoc=${url}`;
+      this.seeUrl = `http://view.xdocin.com/xdoc?_xdoc=${encodeURIComponent(url)}`;
       this.seeModal = true;
     }
   },
