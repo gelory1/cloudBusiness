@@ -1090,6 +1090,11 @@ export default {
         this.hz1Loading = false;
         let { data } = response.data.result;
         this.sum = data.sum;
+        if(this.sum === 0){
+          this.customName = '';
+          this.getRebackAppr(1);
+          return;
+        }
         data.contractList.forEach(d => {
           let paymentList = JSON.parse(JSON.stringify(d.paymentList))||[];
           let allBack = 0;
@@ -1113,9 +1118,7 @@ export default {
           })
         })
         this.hz2_data = [];
-        let index = this.hz1_data.findIndex(h => h.htmc.indexOf(this.workBenchData.workBenchContentObj.payUnitName) !==-1);
-        if(index === -1) index = 0;
-        if(this.hz1_data.length>0) this.hz1Click(this.hz1_data[index],index);
+        if(this.hz1_data.length>0) this.hz1Click(this.hz1_data[0],0);
       },error => {
         this.hz1Loading = false;
       })
@@ -1147,6 +1150,7 @@ export default {
             dksj: params.row.data.workBenchContentObj.payTime
           }
           this.workBenchData = params.row.data;
+          this.customName = params.row.data.workBenchContentObj.payUnitName;
           this.getRebackAppr(1);
         }else if(params.row.data.workBenchType === 4){
           this.dkqrmodal = true;
@@ -1309,6 +1313,7 @@ export default {
             {
               "workBenchId": this.checkedData[0].data.workbenchId,
               "accountId": this.$store.state.user.accountId,
+              "orderNo": this.checkedData[0].data.workBenchContentObj.orderNo,
               "photoUrl": this.imgUrl
             }
           ]
@@ -1320,6 +1325,7 @@ export default {
             {
               "accountId": this.$store.state.user.accountId,
               "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
+              "contractNo": this.checkedData[0].data.workBenchContentObj.contractNo,
               "photoUrl": this.imgUrl
             }
           ]
