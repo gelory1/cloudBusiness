@@ -315,7 +315,7 @@ export default {
                         img = require('../../images/upload/excel.png');
                     };
                     this.selectedOrder.file = {
-                        name:data.order_enclosure[0].file_name,
+                        name:this.selectedOrder.orderNO + ' ' + this.selectedOrder.customName + '-'+ '申请备货协议',
                         size:file_size >= 1024?((file_size/1024).toFixed(2) + ' KB'): file_size >= 1024*1024?((file_size/(1024*1024)).toFixed(2) + ' MB'):(file_size + ' B'),
                         uploadMan:data.order_enclosure[0].account_name,
                         date:data.order_enclosure[0].upload_time,
