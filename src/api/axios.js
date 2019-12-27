@@ -132,7 +132,7 @@ const workflow = {
     },
     // 导出清单
     CONTRACTEXPORT (params) {
-        return axios.post('/public/api/xlcontract/export', params);
+        return axios.post('/public/api/xlcustomer/exportContract', params);
     }
 
 };
