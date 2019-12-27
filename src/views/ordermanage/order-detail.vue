@@ -152,7 +152,7 @@ export default {
                 data:{},
                 file:{}
             },
-            device_columns: [
+            columns: [
                 {
                 title: "序号",
                 key: "index",
@@ -224,15 +224,30 @@ export default {
                     }
                 },
                 {
-                title: "计量单位",
-                key: "unit",
-                align:"center"
+                    title: "计量单位",
+                    key: "unit",
+                    align:"center"
                 },
                 {
-                title: "数量",
-                key: "count",
-                align:"center"
-                }
+                    title: "数量",
+                    key: "count",
+                    align:"center"
+                },
+                {
+                    title: "单价（元）",
+                    key: "price",
+                    align:"center"
+                },
+                {
+                    title: "总价（元）",
+                    key: "totalPrice",
+                    align:"center"
+                },
+                {
+                    title: "税率",
+                    key: "tax",
+                    align:"center"
+                },
             ],
         }
     },
@@ -343,6 +358,11 @@ export default {
                     item.issued_count = p.issued_count;
                     item.unit = p.product_unit;
                     item.data = p;
+                    if(this.selectedOrder.type === '备货订单'){
+                        item.price = p.price||0;
+                        item.totalPrice = (p.price||0)*item.count;
+                        item.tax = '6%';
+                    }
                     this.device_data.push(item);
                 });
                 this.selectedOrder.count = allNum;
@@ -383,6 +403,9 @@ export default {
                 data = this.device_data.filter(d => d.issued_count !== 0);
                 data.forEach(d => {
                     d.count = d.issued_count;
+                    if(this.selectedOrder.type === '备货订单'){
+                        d.totalPrice = (d.price||0)*d.count;
+                    }
                 })
             }
             return data;
@@ -393,6 +416,9 @@ export default {
                 data = this.device_data.filter(d => d.count - d.issued_count !== 0);
                 data.forEach(d => {
                     d.count = d.count - d.issued_count;
+                    if(this.selectedOrder.type === '备货订单'){
+                        d.totalPrice = (d.price||0)*d.count;
+                    }
                 })
             }
             return data;
@@ -414,6 +440,15 @@ export default {
         },
         upperAmount(){
             return this.$util.NumberToChinese(Number(this.selectedOrder.order_little_amount)||0);
+        },
+        device_columns(){
+            let columns = [];
+            if(this.selectedOrder.type === '合同订单'){
+                columns = this.columns.filter(c => c.key !== 'price'&&c.key !== 'totalPrice'&&c.key !== 'tax');
+            }else{
+                columns = this.columns;
+            }
+            return columns;
         }
     },
     watch: {
