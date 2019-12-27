@@ -240,7 +240,7 @@ export default {
         $('.ivu-poptip-body-content-inner').css('color','#2d8cf0');
         $('.ivu-poptip-body-content-inner').css('cursor','pointer');
         $('.ivu-poptip-body').on('click',() => {
-            $('.ivu-poptip-body').css('display','none');
+            // $('.ivu-poptip-body').css('display','none');
             let request = {
                 "typeid": 28009,
                 "data": [

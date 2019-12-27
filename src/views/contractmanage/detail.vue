@@ -618,6 +618,9 @@ export default {
           item.data = data;
           let fileArr = item.wjm.split('.');
           let fileType = fileArr[fileArr.length-1];
+          if(data.enclosureType === 4){
+            item.fileName = this.data.data.contractNo + this.data.data.customerName + '.' + fileType;
+          }
           item.img = require('../../images/upload/wenjian.png');
           if(/^pdf$/.test(fileType)){
             item.img = require('../../images/upload/pdf.png');
