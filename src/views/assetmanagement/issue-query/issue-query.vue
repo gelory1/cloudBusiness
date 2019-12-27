@@ -1131,7 +1131,7 @@ export default {
             item.ddbh = String(data.order_no);
             item.khmc = data.customer_name;
             item.sbsl = data.product_count;
-            item.zt = this.stausMap[data.allocation_status];
+            item.zt = this.stausMap[1];
             item.data = data;
             if (this.tabName === "name1") {
               item.rklb = "成品入库";
