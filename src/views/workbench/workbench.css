@@ -116,8 +116,9 @@
     background: #F2F2F2;
 }
 .zf_sk{
-    color:#b2d3fc;
-    margin-left:200px;
+    color:#a4cafa;
+    float:right;
+    padding-right:40px;
 }
 .zf_sk b,.hk_div b{
     color:red;
