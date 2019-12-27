@@ -16,7 +16,13 @@
           </Col>
           <Col span="8">
             <FormItem label="销售类型" prop="saleType" class="con-right">
-              <Input class="col-m" value="渠道" disabled placeholder />
+              <Select v-model="formValidate.salesType" clearable filterable>
+                <Option
+                  :value="item.index"
+                  v-for="(item,index) in salesTypes"
+                  :key="index"
+                >{{item.val}}</Option>
+              </Select>
             </FormItem>
           </Col>
         </Row>
@@ -159,7 +165,8 @@ export default {
         adress: {
           index: "",
           value: ""
-        }
+        },
+        salesType:1
       },
       pageNum: 1,
       sum: 0,
@@ -655,7 +662,7 @@ export default {
             addressName: this.formValidate.adress.value,
             addressId: this.formValidate.adress.index,
             agentId: this.formValidate.customer.index,
-            saleType: 2,
+            saleType: this.formValidate.salesType,
             orderType: 1,
             orderNo: "",
             productList
@@ -828,6 +835,29 @@ export default {
     },
     upperTotalPrice() {
       return this.$util.NumberToChinese(Number(this.totalPrice));
+    },
+    isSale(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '销售人员');
+      }
+    },
+    isCooperative(){
+      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+        return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
+      }
+    },
+    selectSaleType(){
+      let type = '';
+      if(this.isSale){
+        type = '直销';
+      }else{
+        type = '渠道';
+      }
+      return type;
+    },
+    salesTypes(){
+      let types = this.$option.contract.salesTypes.filter(s => s.index ===1||s.index === 2);
+      return types;
     }
   },
   mounted() {
