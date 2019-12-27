@@ -288,6 +288,10 @@ const app = {
                                 let item = {
                                     data: d
                                 };
+                                if (!_this.$store.state.app.workBenchData.find(w => w.workbenchId === d.workbenchId)) {
+                                    _this.$Message.info('该待办已处理！');
+                                    return;
+                                }
                                 if (_this.$route.path !== '/home') {
                                     _this.$router.push({path: '/home', query: {notice: item}});
                                 } else {
