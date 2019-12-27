@@ -730,6 +730,7 @@ export default {
           item.paymentId = p.paymentId;
           item.paymentStatus = p.paymentStatus;
           item.paymentTime = p.paymentTime;
+          item.paymentTimes = p.paymentTimes;
           item.paymentWay = p.paymentWay;
           item.currentAmount = 0;
           //计算回款信息
@@ -826,6 +827,7 @@ export default {
           this.$set(this.showObj, index, false);
         });
       }
+      list.sort((a,b) => a.paymentTimes - b.paymentTimes);
       return list;
     },
     remainingMoney() {
