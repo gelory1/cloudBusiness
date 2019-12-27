@@ -1113,7 +1113,9 @@ export default {
           })
         })
         this.hz2_data = [];
-        if(this.hz1_data.length>0) this.hz1Click(this.hz1_data[0],0);
+        let index = this.hz1_data.findIndex(h => h.htmc.indexOf(this.workBenchData.workBenchContentObj.payUnitName) !==-1);
+        if(index === -1) index = 0;
+        if(this.hz1_data.length>0) this.hz1Click(this.hz1_data[index],index);
       },error => {
         this.hz1Loading = false;
       })
