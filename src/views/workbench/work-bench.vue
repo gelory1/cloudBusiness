@@ -90,11 +90,12 @@
       <p class="zf_p" v-show="dtzfShow">支付-确认</p>
       <p class="zf_p" v-show="morezfShow">支付-确认(批量操作)</p>
       <div class="zf_div">
-        <p>
+        <p v-if="((checkedData[0]||{}).data||{}).workBenchStatus !== 2">
           <Icon type="ios-information-outline"></Icon>
           <span v-if="zf.htbh">正在使用线下支付，请确认支付金额后点击【确认已支付】</span>
           <span v-if="zf.orderNo">正在进行备货支付，请确认支付金额后点击【确认】</span>
         </p>
+        <p v-else><span class="marl">支付方式：线下支付</span></p>
         <p>
           <span class="marl">收款方：</span>
           <span>新联电子</span>
