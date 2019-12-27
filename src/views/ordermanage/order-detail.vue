@@ -86,7 +86,7 @@
             </div>
         </div>
         <div style="margin-left:40px;"  v-if="this.selectedOrder.type == '备货订单'">
-              <section style="width:90%;float:left;">
+            <section style="width:90%;float:left;">
                 <p style="color:#8d8d8d;margin-top:10px;">备货申请协议（附件）：</p>
                 <div v-if="selectedOrder.file.id">
                   <div class="fj1">
@@ -104,8 +104,8 @@
                   </div>
                 </div>
                 <p v-else>暂无</p>
-              </section>
-            </div>
+            </section>
+        </div>
         <div style="clear:both;overflow: hidden;">
         <p class="djtitle">设备清单</p>
         <Tabs v-model="deviceTabName">
@@ -119,7 +119,7 @@
                 <Table :columns="device_columns" :data="device_data2" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
         </Tabs>
-        <div class="dd_div" style="float:right;margin:15px 30px 0 0;font-size:13px;">
+        <div class="dd_div" style="float:right;margin:15px 30px 0 0;font-size:13px;" v-if="this.selectedOrder.type == '备货订单'">
             <section>
               <span class="dd_span" style="width:100px;display:inline-block">货款总计（元）</span>
               <span style="color:#000000;font-weight:bold">{{(selectedOrder.order_little_amount||0).toLocaleString()}}</span>
