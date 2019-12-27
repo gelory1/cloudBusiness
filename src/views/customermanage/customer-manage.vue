@@ -560,7 +560,7 @@ export default {
       this.$http.EXPORT(request).then(res => {
         
       },error => {
-        if(error.data.code === 0){
+        if(error.data&&error.data.code === 0){
           this.exportUrl = error.data.exportUrl;
         }
       })
