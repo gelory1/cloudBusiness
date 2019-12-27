@@ -359,8 +359,8 @@ export default {
                     item.unit = p.product_unit;
                     item.data = p;
                     if(this.selectedOrder.type === '备货订单'){
-                        item.price = p.price||0;
-                        item.totalPrice = (p.price||0)*item.count;
+                        item.price = p.product_price||0;
+                        item.totalPrice = (p.product_price||0)*item.count;
                         item.tax = '6%';
                     }
                     this.device_data.push(item);
@@ -404,7 +404,7 @@ export default {
                 data.forEach(d => {
                     d.count = d.issued_count;
                     if(this.selectedOrder.type === '备货订单'){
-                        d.totalPrice = (d.price||0)*d.count;
+                        d.totalPrice = (d.product_price||0)*d.count;
                     }
                 })
             }
@@ -417,7 +417,7 @@ export default {
                 data.forEach(d => {
                     d.count = d.count - d.issued_count;
                     if(this.selectedOrder.type === '备货订单'){
-                        d.totalPrice = (d.price||0)*d.count;
+                        d.totalPrice = (d.product_price||0)*d.count;
                     }
                 })
             }
