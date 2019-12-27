@@ -856,7 +856,12 @@ export default {
       return type;
     },
     salesTypes(){
-      let types = this.$option.contract.salesTypes.filter(s => s.index ===1||s.index === 2);
+      let types = [];
+      if(this.isCooperative){
+        types = this.$option.contract.salesTypes.filter(s => s.index ===1);
+      }else{
+        types = this.$option.contract.salesTypes.filter(s => s.index ===1||s.index === 2);
+      }
       return types;
     }
   },
