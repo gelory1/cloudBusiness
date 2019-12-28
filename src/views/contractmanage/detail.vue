@@ -723,7 +723,8 @@ export default {
         this.data.data.paymentList &&
         this.data.data.paymentList.length > 0
       ) {
-        this.data.data.paymentList.forEach((p, index) => {
+        let paymentList = this.data.data.paymentList.sort((a,b) => a.paymentTimes - b.paymentTimes);
+        paymentList.forEach((p, index) => {
           let item = {};
           item.dueTime = p.dueTime;
           item.paymentAmount = Number(p.paymentAmount);
@@ -742,7 +743,7 @@ export default {
           let computeAmountEnd = "";
           for (let i = 1; i <= index; i++) {
             backAmount +=
-              this.data.data.paymentList[index - 1].paymentAmount || 0;
+              paymentList[index - 1].paymentAmount || 0;
           }
           if (
             this.data.data.paybackList &&
@@ -812,7 +813,7 @@ export default {
           let ticketAmount = 0;
           for (let i = 0; i < index; i++) {
             ticketAmount +=
-              this.data.data.paymentList[index].currentTicketAmount || 0;
+              paymentList[index].currentTicketAmount || 0;
           }
           if (allTicketAmount - ticketAmount > 0) {
             item.currentTicketAmount =
@@ -827,7 +828,6 @@ export default {
           this.$set(this.showObj, index, false);
         });
       }
-      list.sort((a,b) => a.paymentTimes - b.paymentTimes);
       return list;
     },
     remainingMoney() {
