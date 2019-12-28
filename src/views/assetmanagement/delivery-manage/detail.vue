@@ -37,7 +37,7 @@
       </header>
       <content>
         <div class="fa_p">
-          <p class="left">批次要求： {{detailData.shipments_start_batch}} - {{detailData.shipments_end_batch}}</p>
+          <!-- <p class="left">批次要求： {{detailData.shipments_start_batch}} - {{detailData.shipments_end_batch}}</p> -->
           <p>
             <span>
               金额

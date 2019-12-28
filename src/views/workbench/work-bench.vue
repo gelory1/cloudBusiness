@@ -342,9 +342,9 @@
       </header>
       <content>
         <div class="fa_p" style="margin-top:50px;">
-          <p class="left">批次要求： 
+          <!-- <p class="left">批次要求： 
             {{deliveryData.shipments_start_batch}} - {{deliveryData.shipments_end_batch}}
-            </p>
+            </p> -->
           <p>
             <span>
               金额
