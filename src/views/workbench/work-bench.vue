@@ -152,7 +152,7 @@
       </Upload>
       <div style="display:flex;justify-content:center;position:relative" v-if="imgUrl !== ''">
         <img :src="imgUrl" :class="{fk_img:true,active:isActive}" @click.stop="isActive = !isActive" />
-        <span style="position:relative;margin-left:5px;cursor:pointer;top:-10px" @click="closeImg" ><Icon type="close" /></span>
+        <span style="position:relative;margin-left:5px;cursor:pointer;top:-10px" @click="closeImg" v-if="((checkedData[0]||{}).data||{}).workBenchStatus !== 2"><Icon type="close" /></span>
       </div>
       <Button class="zf_butt" type="primary" @click="sureClick" :disabled="buttonDisabled">{{((checkedData[0]||{}).data||{}).workBenchStatus === 2?'已支付':'确认已支付'}}</Button>
     </Modal>
