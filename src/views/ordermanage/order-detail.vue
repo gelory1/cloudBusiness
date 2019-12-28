@@ -94,7 +94,7 @@
                       <img :src="selectedOrder.file.img" alt style="width:20px;height:20px;margin:20px 40px" />
                     </section>
                     <section class="fj_sec1" style="margin-top:15px">
-                      <a :href="selectedOrder.file.address"><p>{{selectedOrder.file.name}}</p></a>
+                      <a :href="selectedOrder.file.address" :download="selectedOrder.file.name"><p>{{selectedOrder.file.name}}</p></a>
                       <p class="fj_p1">
                         <span>{{selectedOrder.file.size}}</span> 来自
                         <span>{{selectedOrder.file.uploadMan}}</span> |
@@ -360,7 +360,7 @@ export default {
                     item.data = p;
                     if(this.selectedOrder.type === '备货订单'){
                         item.price = p.product_price||0;
-                        item.totalPrice = (p.product_price||0)*item.count;
+                        item.totalPrice = item.price*item.count;
                         item.tax = '6%';
                     }
                     this.device_data.push(item);
@@ -404,7 +404,7 @@ export default {
                 data.forEach(d => {
                     d.count = d.issued_count;
                     if(this.selectedOrder.type === '备货订单'){
-                        d.totalPrice = (d.product_price||0)*d.count;
+                        d.totalPrice = d.price*d.count;
                     }
                 })
             }
@@ -417,7 +417,7 @@ export default {
                 data.forEach(d => {
                     d.count = d.count - d.issued_count;
                     if(this.selectedOrder.type === '备货订单'){
-                        d.totalPrice = (d.product_price||0)*d.count;
+                        d.totalPrice = d.price*d.count;
                     }
                 })
             }
