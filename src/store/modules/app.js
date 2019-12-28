@@ -295,6 +295,7 @@ const app = {
                                 if (_this.$route.path !== '/home') {
                                     _this.$router.push({path: '/home', query: {notice: item}});
                                 } else {
+                                    _this.$router.push({query: {}});
                                     context.commit('setNotifyData', {status: true, data: {row: item}});
                                 }
                             },

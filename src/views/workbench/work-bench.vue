@@ -1801,6 +1801,7 @@ export default {
     zfqrmodal(nv){
       if(!nv){
         this.imgUrl = '';
+        this.checkedData = [];
       }
     }
   },
