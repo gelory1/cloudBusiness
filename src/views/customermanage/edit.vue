@@ -109,7 +109,8 @@
           <Row>
             <Col span="12">
               <FormItem label="销售负责人" prop="salesman" :label-width="90">
-                <el-cascader clearable v-model="formValidate.salesman" :options="salesList" filterable @expand-change="changeCompony" :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;"></el-cascader>
+                 <Cascader ref="cascader" v-model="formValidate.salesman" :data="salesList" @on-change="changeCompony" filterable :load-data="getSales" style="width:350px;"></Cascader>
+                <!-- <el-cascader clearable v-model="formValidate.salesman" :options="salesList" filterable @expand-change="changeCompony" :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;"></el-cascader> -->
               </FormItem>
             </Col>
             <Col span="12" v-if="isFriend">
@@ -400,6 +401,7 @@
 
 <script>
 import api from "@/api/axios";
+let $ = require("jquery");
 
 export default {
   name: "edit",
@@ -517,6 +519,14 @@ export default {
           }
         ],
         city: [
+          {
+            required: true,
+            message: "请选择城市",
+            type: "array",
+            trigger: "change"
+          }
+        ],
+        salesman: [
           {
             required: true,
             message: "请选择城市",
@@ -779,9 +789,7 @@ export default {
   },
   methods: {
     changeCompony(value){
-      this.formValidate.salesman = [];
-      this.manageCompany = value[0];
-      this.getSales();
+      // this.formValidate.salesman = [];
     },
     inputChange() {
       this.formAddkpxx.bank_account = this.formAddkpxx.bank_account.replace(
@@ -859,8 +867,8 @@ export default {
             city: this.formValidate.city[1]?this.formValidate.city[1]:0,
             area: this.formValidate.city[2]?this.formValidate.city[2]:0,
             empowerList:empowerList.length === 0?undefined:empowerList,
-            manageCompany: this.manageCompany,
-            saleNo: this.formValidate.salesman[1]?this.formValidate.salesman[1]:-1,
+            manageCompany: Number(this.formValidate.salesman[0]),
+            saleNo: Number(this.formValidate.salesman[1]?this.formValidate.salesman[1]:-1),
             industry: this.formValidate.industry === ''?0:this.formValidate.industry,
             mailAddress: this.formValidate.mail_address,
             bondAmount: Number(this.formValidate.bond_amount),
@@ -1043,41 +1051,55 @@ export default {
     cancel() {
       this.addlxrmodal = false;
     },
-    getSales() {
+    getSales(item,callback) {
       let request = {
         typeid: 27008,
         data: [
           {
-            companyID: this.manageCompany
+            companyID: parseInt(item.value)
           }
         ]
       };
       if(this.salesList.length === 0){
           this.companys.forEach(p => {
             let item = {
-              id:p.id,
-              name:p.name,
+              value:p.id + '',
+              label:p.name,
               children:[],
+              loading:false
             }
             this.salesList.push(item);
           })
         }
       // this.salesList = [];
+      item.loading = true;
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
-        if(this.salesList.find(p => p.id === this.manageCompany)){
-          this.$set(this.salesList.find(p => p.id === this.manageCompany),'children',res);
-        }
+        let children = [];
+        res.forEach(r => {
+          children.push({
+            value:r.id+'',
+            label:r.name
+          })
+        })
+        item.children = children;
         this.$nextTick(()=>{
           let salesman = ((this.data || {}).data || {}).saleId;
-          let arr = [this.manageCompany,salesman];
+          let arr = [item.value + '',salesman + ''];
           this.formValidate.salesman = arr;
         })
+        item.loading = false;
+         callback();
       },error => {
-        if(this.salesList.find(p => p.id === this.manageCompany)){
-          this.$set(this.salesList.find(p => p.id === this.manageCompany),'children',[]);
+        if(this.salesList.find(p => p.value === this.manageCompany)){
+          item.children = [];
           this.formValidate.salesman = [];
         }
+        if(item.label&&item.children.length === 0){
+          this.$Message.error('该运营下没有销售人员可选，请重新选择！');
+        }
+        item.loading = false;
+         callback();
       });
     },
     init() {
@@ -1139,7 +1161,7 @@ export default {
       }
       this.formValidate.empower_city = empowerCity;
       this.manageCompany = ((data || {}).data || {}).manage_company;
-      this.getSales();
+      this.getSales({value:this.manageCompany},()=>{});
       if(((data || {}).data || {}).enclosure){
         this.file.name = ((data || {}).data || {}).enclosure.fileName;
         this.file.size = ((data || {}).data || {}).enclosure.fileSize;
@@ -1614,6 +1636,16 @@ export default {
         this.plat.list.find(data => data.platform_id === nv) || {};
       this.plat.platform_name = selectedplatObj.platform_name;
       this.plat.platform_user_type = selectedplatObj.platform_user_type;
+    },
+    'formValidate.salesman'(nv){
+      if(nv.length === 1){
+        this.$refs['cascader'].visible = true;
+        let index = this.$refs['cascader'].data.findIndex(d => d.value === nv[0]);
+        let top = index * 30;
+        this.$nextTick(() => {
+          $('.ivu-cascader-menu')[0].scrollTo(0,top);
+        })
+      }
     }
   }
 };
