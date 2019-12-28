@@ -744,7 +744,7 @@ export default {
             wh_id:
               this.menudata &&
               this.menudata.length > 0 &&
-              this.ck_current_index !== ""&&this.ck_current_index !==0
+              this.ck_current_index !== ""
                 ? this.menudata[this.ck_current_index].wh_id
                 : undefined,
             keyword: this.inputVal === "" ? undefined : this.inputVal,
