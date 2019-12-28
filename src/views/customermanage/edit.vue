@@ -459,7 +459,7 @@ export default {
         bond_amount: "",
         mail_address: "",
         post_code: "",
-        salesman: [],
+        salesman: '',
         platformuser_list: [],
         contacts_list: [],
         ticket_list: [],
@@ -529,7 +529,7 @@ export default {
         salesman: [
           {
             required: true,
-            message: "请选择城市",
+            message: "请选择销售负责人",
             type: "array",
             trigger: "change"
           }
@@ -1086,7 +1086,7 @@ export default {
         this.$nextTick(()=>{
           let salesman = ((this.data || {}).data || {}).saleId;
           let arr = [item.value + '',salesman + ''];
-          this.formValidate.salesman = arr;
+          if(this.formValidate.salesman === ''&&salesman) this.formValidate.salesman = arr;
         })
         item.loading = false;
          callback();
