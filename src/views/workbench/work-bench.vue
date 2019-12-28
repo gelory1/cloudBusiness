@@ -102,7 +102,7 @@
           <!-- <span>{{zf.skf}}</span> -->
           <span class="zf_sk">
             应付
-            <b>{{zf.yf}}</b>元
+            <b>{{$util.thousandNum(zf.yf)}}</b>元
           </span>
         </p>
         <!-- --------------------单条展示 --------------------->
@@ -136,7 +136,7 @@
             <p v-for="item in morezf">
               <span class="underline">{{item.htbh}}</span>
               <span>{{item.dyzq}}</span>
-              <span>{{item.yf}}</span>
+              <span>{{$util.thousandNum(item.yf)}}</span>
             </p>
           </div>
         </section>
@@ -208,7 +208,7 @@
             <span class="marl">付款方：</span>
             <span>{{hkhz.skf}}</span>
             <span class="zf_sk">
-              <b>{{parseFloat(hkhz.yf).toFixed(2)}}</b>元
+              <b>{{$util.thousandNum(parseFloat(hkhz.yf).toFixed(2))}}</b>元
             </span>
           </p>
           <p class="hk_span">
@@ -256,7 +256,7 @@
         <div class="hk_div">
           <img src="../../images/workbench/rmb.png" alt />
           <p>
-            <b class="b">{{ensurePayBack.payAmount}}</b>
+            <b class="b">{{$util.thousandNum(ensurePayBack.payAmount)}}</b>
             <span style="color:#2e8ff4">元</span>
           </p>
         </div>
@@ -348,7 +348,7 @@
           <p>
             <span>
               金额
-              <b>{{deliveryData.amount||0}}</b>元
+              <b>{{$util.thousandNum(deliveryData.amount||0)}}</b>元
             </span>
             <span>
               订单数
