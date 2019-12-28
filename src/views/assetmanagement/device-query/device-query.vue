@@ -900,7 +900,7 @@ export default {
       };
       this.menudata = [];
       this.$http.PostXLASSETS(request).then(response => {
-        this.menudata = [{wh_name:'所有仓库',wh_id:''}];
+        this.menudata = [];
         let res = response.data.result;
         this.zkSum = res.sum;
         for (var i = 0; i < res.data.length; i++) {
