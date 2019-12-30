@@ -596,7 +596,7 @@ export default {
               (con.customerName || "") +
               "-" +
               this.contractContentMap[con.contractContent];
-            let cityObj = this.regions.find(c => c.id === con.customerProvince);
+            let cityObj = this.regions.find(c => c.id === con.customerProvince)||{};
             let areaObj = (cityObj.children || []).find(
               c => c.id === con.customerCity
             )||{};

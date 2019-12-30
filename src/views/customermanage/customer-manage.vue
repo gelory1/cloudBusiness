@@ -408,7 +408,7 @@ export default {
             item.name = data.customer_name;
             item.nature = data.customer_nature === 0?'':this.customerTypes.find(t => t.no === data.customer_nature).type;
             item.level = this.$option.customer.levelMap[data.customer_level];
-            let cityObj = this.regions.find(c => c.id === data.province);
+            let cityObj = this.regions.find(c => c.id === data.province)||{};
             let areaObj = (cityObj.children||[]).find(c => c.id === data.city)||{};
             if (cityObj){
               item.city =
