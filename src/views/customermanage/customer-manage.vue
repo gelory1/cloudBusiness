@@ -408,7 +408,14 @@ export default {
             item.name = data.customer_name;
             item.nature = data.customer_nature === 0?'':this.customerTypes.find(t => t.no === data.customer_nature).type;
             item.level = this.$option.customer.levelMap[data.customer_level];
-            item.city = (data.province_cn||'') + ' ' + (data.city_cn||'') + ' ' + (data.area_cn||'');
+            let cityObj = this.regions.find(c => c.id === data.province);
+            let areaObj = (cityObj.children||[]).find(c => c.id === data.city)||{};
+            if (cityObj){
+              item.city =
+                cityObj.name +
+                " " +
+                (areaObj.name||"") + ' ' + (((areaObj.children||[]).find(c => c.id === data.area)||{}).name||"");
+            }
             item.time = data.create_date;
             item.salesman = data.sale_no;
             item.company = data.manage_company_cn;
