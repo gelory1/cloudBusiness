@@ -71,7 +71,7 @@
             </div>
             <div v-if="selectedOrder.type==='合同订单'">
                 <span class="jbleft">合同主体：</span>
-                <span class="jbright">{{subjectName[selectedOrder.contract_subject]}}</span>
+                <span class="jbright">{{selectedOrder.contract_subject}}</span>
             </div>
             <div>
                 <span class="jbleft">设备数量：</span>
