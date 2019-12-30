@@ -170,8 +170,8 @@
                 </section>
               </div>
               <p style="font-size:12px;color:#495060;margin-left:-10px;float:left;" v-if="!uploadLoading&&file.name === ''&&isFriend">合作协议（附件）</p>
-              <Upload ref="upload" action="/public/api/xlcontract/uploadFile" v-show="!uploadLoading&&file.name === ''&&isFriend" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
-                <Button type="text" icon="plus" style="color:#4a9af5;margin:-5px 0 0 -10px;;">添加附件</Button>
+              <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
+                <Button type="text" icon="plus" style="color:#4a9af5;margin:-5px 0 0 -10px;;" v-show="!uploadLoading&&file.name === ''&&isFriend">添加附件</Button>
               </Upload>
               <!-- <p v-if="uploadLoading">上传中...</p> -->
             </Col>
@@ -268,8 +268,7 @@
     </Layout>
     <!-- 添加联系人 -->
     <Modal v-model="addlxrmodal" class="aa">
-      <p style="margin:10px  0 20px 0;font-size:16px" v-show="addShow">添加联系人</p>
-      <p style="margin:10px  0 20px 0;font-size:16px" v-show="editShow">编辑联系人</p>
+      <p style="margin:10px  0 20px 0;font-size:16px">添加联系人</p>
       <Form ref="formAddlxr" :model="formAddlxr" :rules="ruleAddlxr" :label-width="120">
         <FormItem label="姓名" prop="contact_name">
           <Input class="col-n" v-model="formAddlxr.contact_name" placeholder />
@@ -449,8 +448,6 @@ export default {
     return {
       options1:[],
       options2:[],
-      editShow:false,
-      addShow:false,
       formValidate: {
         name: "",
         customer_abbreviation: "",
@@ -630,8 +627,6 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.editShow = true;
-                      this.addShow = false;
                       this.formAddlxr = {
                         contact_name: params.row.contact_name,
                         contact_id: params.row.contact_id,
@@ -938,9 +933,9 @@ export default {
                 this.postData.customerNo = ((this.data||{}).data||{}).customer_no;
                 this.$refs.upload.post(this.file.file);
               }
-            }
               this.$Message.success("客户信息更新成功！");
               this.$router.push("/customermanage/customermanage");
+            }
           })
           .catch(e => {});
       }
@@ -1091,7 +1086,7 @@ export default {
         this.$nextTick(()=>{
           let salesman = ((this.data || {}).data || {}).saleId;
           let arr = [item.value + '',salesman + ''];
-          if(this.formValidate.salesman === ''&&salesman) this.formValidate.salesman = arr;
+          this.formValidate.salesman = arr;
         })
         item.loading = false;
          callback();
@@ -1192,8 +1187,6 @@ export default {
       this.formValidate.sqendTime = ((data || {}).data || {}).empowerEndTime;
     },
     newContact() {
-      this.addShow = true;
-      this.editShow = false;
       this.contactStatus = "new";
       this.formAddlxr = {
         contact_name: "",
@@ -1532,6 +1525,8 @@ export default {
           this.postData.customerNo = ((this.data||{}).data||{}).customer_no;
           this.$refs.upload.post(this.file.file);
         }
+        this.$Message.success("客户信息更新成功！");
+        this.$router.push("/customermanage/customermanage");
       })
     },
     deleteFile(){

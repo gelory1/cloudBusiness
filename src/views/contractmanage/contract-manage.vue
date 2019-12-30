@@ -602,7 +602,7 @@ export default {
             )||{};
             if (cityObj)
               item.city =
-                cityObj.name +
+                (cityObj.name||"") +
                 " " +
                 (areaObj.name||"") +
                 " " +

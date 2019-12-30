@@ -412,7 +412,7 @@ export default {
             let areaObj = (cityObj.children||[]).find(c => c.id === data.city)||{};
             if (cityObj){
               item.city =
-                cityObj.name +
+                (cityObj.name||"") +
                 " " +
                 (areaObj.name||"") + ' ' + (((areaObj.children||[]).find(c => c.id === data.area)||{}).name||"");
             }
