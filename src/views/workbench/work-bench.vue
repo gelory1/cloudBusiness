@@ -1655,7 +1655,7 @@ export default {
         typeid: 29001,
         data: [
           {
-            account_id: 1111//this.$store.state.user.accountId
+            account_id: this.$store.state.user.accountId
           }
         ]
       };
