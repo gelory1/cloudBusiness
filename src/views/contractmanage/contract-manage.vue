@@ -171,11 +171,11 @@
               <div v-show="moreShow" class="more">
                 <p @click="exportSelect">导出所选结果</p>
                 <p><a :href="exportUrl === ''||this.isFinance||this.isCooperative?'#':exportUrl" @click="exportAll" style="color:#495060">导出全部结果</a></p>
-                <p>
+                <!-- <p>
                   <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :data="postData" :before-upload="beforeUpload" :headers="{user:'x',key:'x'}">
                     上传合同附件
                   </Upload>
-                </p>
+                </p> -->
               </div>
             </span>
           </div>
