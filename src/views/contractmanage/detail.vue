@@ -213,20 +213,20 @@
                 </section>
               </div>
               <div class="zq_div2" v-show="showObj[index]&&item.paybackList.length>0">
-                <section class="zq_se2" style="word-spacing:-5px">
+                <section class="zq_se2">
                   <div style="width:30%">ID</div>
-                  <div style="width:17%">付款方式</div>
-                  <div style="width:17%">支付时间</div>
-                  <div style="width:17%">确认时间</div>
-                  <div style="width:17%">支付金额（元）</div>
+                  <div style="width:16%">付款方式</div>
+                  <div style="width:16%">支付时间</div>
+                  <div style="width:16%">确认时间</div>
+                  <div style="width:16%">支付金额（元）</div>
                 </section>
                 <div v-for="(p,i) in item.paybackList" :key="i" class="payList">
-                  <section style="word-spacing:-5px;">
+                  <section class="zq_se2">
                     <div style="width:30%">{{p.paybackId}}</div>
-                    <div style="width:17%">{{paybackWayMap[p.paybackWay]}}</div>
-                    <div style="width:17%">{{p.paybackTime}}</div>
-                    <div style="width:17%">{{p.paybackSureTime}}</div>
-                    <div style="width:17%">{{$util.thousandNum(p.paybackAmount)}}</div>
+                    <div style="width:16%">{{paybackWayMap[p.paybackWay]}}</div>
+                    <div style="width:16%">{{p.paybackTime}}</div>
+                    <div style="width:16%">{{p.paybackSureTime}}</div>
+                    <div style="width:16%">{{$util.thousandNum(p.paybackAmount)}}</div>
                   </section>
                 </div>
               </div>
