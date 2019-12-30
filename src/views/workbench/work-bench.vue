@@ -1801,7 +1801,13 @@ export default {
     zfqrmodal(nv){
       if(!nv){
         this.imgUrl = '';
+        this.isActive = false;
         this.checkedData = [];
+      }
+    },
+    dkqrmodal(nv){
+      if(!nv){
+        this.isActive = false;
       }
     }
   },
