@@ -268,7 +268,8 @@
     </Layout>
     <!-- 添加联系人 -->
     <Modal v-model="addlxrmodal" class="aa">
-      <p style="margin:10px  0 20px 0;font-size:16px">添加联系人</p>
+      <p style="margin:10px  0 20px 0;font-size:16px" v-show="addShow">添加联系人</p>
+      <p style="margin:10px  0 20px 0;font-size:16px" v-show="editShow">编辑联系人</p>
       <Form ref="formAddlxr" :model="formAddlxr" :rules="ruleAddlxr" :label-width="120">
         <FormItem label="姓名" prop="contact_name">
           <Input class="col-n" v-model="formAddlxr.contact_name" placeholder />
@@ -448,6 +449,8 @@ export default {
     return {
       options1:[],
       options2:[],
+      editShow:false,
+      addShow:false,
       formValidate: {
         name: "",
         customer_abbreviation: "",
@@ -627,6 +630,8 @@ export default {
                   },
                   on: {
                     click: () => {
+                      this.editShow = true;
+                      this.addShow = false;
                       this.formAddlxr = {
                         contact_name: params.row.contact_name,
                         contact_id: params.row.contact_id,
@@ -1187,6 +1192,8 @@ export default {
       this.formValidate.sqendTime = ((data || {}).data || {}).empowerEndTime;
     },
     newContact() {
+      this.addShow = true;
+      this.editShow = false;
       this.contactStatus = "new";
       this.formAddlxr = {
         contact_name: "",
