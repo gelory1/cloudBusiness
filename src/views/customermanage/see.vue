@@ -110,8 +110,8 @@
               </section>
               <section>
                 <p>授权资质：</p>
-                <p v-show="!empower_city||empower_city.length===0" style="color:#000000;">暂无</p>
-                <p>{{empower_city}}</p>
+                <p v-show="!((data||{}).data||{}).areaList||((data||{}).data||{}).areaList.length===0" style="color:#000000;">暂无</p>
+                <p v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span style="margin: 0 5px">{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
               </section>
             </div>
             <div class="select1" style="clear:both">
@@ -347,17 +347,6 @@ export default {
         return this.$store.state.user.customerInfo;
       }
       return JSON.parse(localStorage.getItem("customInfo")) || {};
-    },
-    empower_city() {
-      let province =
-        this.$store.state.app.provinces.find(
-          c => c.id === ((this.data || {}).data || {}).empower_province
-        ) || {};
-      let city =
-        this.citys.find(
-          c => c.id === ((this.data || {}).data || {}).empower_city
-        ) || {};
-      return (province.name || "") + " " + (city.name || "");
     },
     file(){
       let file = {};
