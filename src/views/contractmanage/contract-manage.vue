@@ -687,7 +687,7 @@ export default {
         this.$Message.error('导出失败，请稍后重试！');
         return;
       }
-      this.moreClick();
+      this.morehtztClick();
     },
     export(){
       if(this.isFinance||this.isCooperative||this.isSaleMan){
