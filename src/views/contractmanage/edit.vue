@@ -340,7 +340,7 @@ export default {
         {
           title: "序号",
           type: "index",
-          width: 60,
+          width: 80,
           align: "center"
         },
         {
