@@ -216,14 +216,7 @@
     width:150px;
     /* height:60px; */
     border:1px solid rgb(143, 134, 134);
-    vertical-align:text-top;  
-    transform: scale(1);
-    transition: all ease 0.5s;
-}
-.fk_img.active{
-    transform: scale(8);
-    position: absolute;
-    z-index: 100;
+    vertical-align:text-top;
 }
 .workbench .ivu-icon{
     display: none;

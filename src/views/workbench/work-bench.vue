@@ -150,8 +150,9 @@
           <p v-if="spinShow">上传中...</p>
         </div>
       </Upload>
-      <div style="display:flex;justify-content:center;position:relative" v-if="imgUrl !== ''">
-        <img :src="imgUrl" :class="{fk_img:true,active:isActive}" @click.stop="isActive = !isActive" />
+      <div style="display:flex;justify-content:center;position:relative" v-if="imgUrl !== ''" 
+        v-viewer="{inline: false, button: false, navbar: false, title: false, toolbar: false, tooltip: false, movable: true, zoomable: true, rotatable: true, scalable: true, transition: true, fullscreen: true, keyboard: true, url: 'data-source'}">
+        <img :src="imgUrl" class="fk_img" />
         <span style="position:relative;margin-left:5px;cursor:pointer;top:-10px" @click="closeImg" v-if="((checkedData[0]||{}).data||{}).workBenchStatus !== 2"><Icon type="close" /></span>
       </div>
       <Button class="zf_butt" type="primary" @click="sureClick" :disabled="buttonDisabled">{{((checkedData[0]||{}).data||{}).workBenchStatus === 2?'已支付':'确认已支付'}}</Button>
@@ -289,7 +290,7 @@
             <span>交易时间：</span>
             <i>{{ensurePayBack.payTime}}</i>
           </p>
-          <p>
+          <p v-viewer="{inline: false, button: false, navbar: false, title: false, toolbar: false, tooltip: false, movable: true, zoomable: true, rotatable: true, scalable: true, transition: true, fullscreen: true, keyboard: true, url: 'data-source'}">
             <span>付款凭证：</span>
             <img :src="ensurePayBack.url" alt :class="{fk_img:true,active:isActive}" @click="isActive = !isActive"  />
           </p>
