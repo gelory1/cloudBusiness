@@ -94,10 +94,10 @@
               </section>
               <section>
                 <p>注册资金：</p>
-                <p
+                <!-- <p
                   v-show="!((data||{}).data||{}).registered_capital||((data||{}).data||{}).registered_capital.length===0"
                   style="color:#000000;"
-                >暂无</p>
+                >暂无</p> -->
                 <p>{{((data||{}).data||{}).registered_capital}}</p>
               </section>
               <section>
@@ -111,11 +111,11 @@
               <section>
                 <p>授权资质：</p>
                 <p v-show="!((data||{}).data||{}).areaList||((data||{}).data||{}).areaList.length===0" style="color:#000000;">暂无</p>
-                <p v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span style="margin: 0 5px">{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
+                <p v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span>{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
               </section>
             </div>
-            <div class="select1" style="clear:both">
-              <section style="width:40.5%;">
+            <div class="select1">
+              <section style="width:46.5%;">
                 <p>通讯地址：</p>
                 <p
                   v-show="!((data||{}).data||{}).mail_address||((data||{}).data||{}).mail_address.length===0"
@@ -123,11 +123,15 @@
                 >暂无</p>
                 <p>{{((data||{}).data||{}).mail_address}}</p>
               </section>
-              <section style="width:20%">
+              <section style="width:23.2%">
                 <p>协议编号：</p>
+                <p
+                  v-show="!((data||{}).data||{}).protocolNumber||((data||{}).data||{}).protocolNumber.length===0"
+                  style="color:#000000;"
+                >暂无</p>
                 <p>{{((data||{}).data||{}).protocolNumber}}</p>
               </section>
-              <section style="width:20%;">
+              <section style="width:23%;">
                 <p>
                   保证金：
                   <span class="eye" @click="eyeClick">
@@ -138,8 +142,8 @@
                 <p v-show="eyeShow">********</p>
               </section>
             </div>
-            <div class="select2">
-              <section style="width:40.5%;float:left">
+            <div class="select1">
+              <section style="width:46.5%;float:left;margin-bottom:0px;">
                 <p class="sele2">关联平台账户：</p>
                 <p
                   v-show="(((data||{}).data||{}).platformuser_list||[]).length===0"
@@ -149,21 +153,21 @@
                   class="bg_p"
                   v-for="(item,index) in ((data||{}).data||{}).platformuser_list"
                   :key="index"
-                  style="margin:0 5px"
+                  style="margin:2px 0px"
                 >({{item.platform_id}}){{item.platform_name}}</span>
               </section>
-              <section style="width:20%;float:left" v-if="data.nature == '合作伙伴'">
+              <section style="width:23.2%;float:left" v-if="data.nature == '合作伙伴'">
                 <p class="sele2">授权期限</p>
                 <p  style="color:#000000;">{{((data||{}).data||{}).empowerStartTime}}-{{((data||{}).data||{}).empowerEndTime}}</p>
               </section>
-              <section style="width:20%;float:left">
+              <section style="width:23%;float:left">
                 <p class="sele2">邮政编码：</p>
                 <p v-show="!((data||{}).data||{}).post_code||((data||{}).data||{}).post_code.length===0" style="color:#000000;">暂无</p>
                 <p>{{((data||{}).data||{}).post_code}}</p>
               </section>
             </div>
             <div class="select2" v-if="data.nature == '合作伙伴'">
-              <section style="width:90%;float:left;margin-top:30px;">
+              <section style="width:90%;float:left;margin-top:15px;">
                 <p class="sele2">合作协议（附件）：</p>
                 <div>
                   <div class="fj1" v-if="file.name">
@@ -199,7 +203,7 @@
                 <p>{{item.ticket_customer}}</p>
                 <p>{{item.dutyparagraph}}</p>
                 <p
-                  style="width:20%;float:right"
+                  style="width:23%;float:right"
                   class="headP"
                   @click="shrinkClick"
                   v-if="kpxxShow == true"
@@ -210,7 +214,7 @@
                   </span>
                 </p>
                 <p
-                  style="width:20%;float:right"
+                  style="width:23%;float:right"
                   class="headP"
                   @click="shrinkClick"
                   v-if="kpxxShow == false"
