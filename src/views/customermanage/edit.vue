@@ -170,7 +170,7 @@
                 </section>
               </div>
               <p style="font-size:12px;color:#495060;margin-left:-10px;float:left;" v-if="!uploadLoading&&file.name === ''&&isFriend">合作协议（附件）</p>
-              <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
+              <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :on-success="uploadSuccess" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
                 <Button type="text" icon="plus" style="color:#4a9af5;margin:-5px 0 0 -10px;;" v-show="!uploadLoading&&file.name === ''&&isFriend">添加附件</Button>
               </Upload>
               <!-- <p v-if="uploadLoading">上传中...</p> -->
@@ -917,9 +917,10 @@ export default {
               this.postData.accountId = this.$store.state.user.accountId;
               this.postData.customerNo = this.customer_id;
               this.$refs.upload.post(this.file.file);
+            }else{
+              this.$Message.success("客户信息更新成功！");
+              this.$router.push("/customermanage/customermanage");  
             }
-            this.$Message.success("客户信息更新成功！");
-            this.$router.push("/customermanage/customermanage");
         });
       } else {
         api
@@ -932,13 +933,18 @@ export default {
                 this.postData.accountId = this.$store.state.user.accountId;
                 this.postData.customerNo = ((this.data||{}).data||{}).customer_no;
                 this.$refs.upload.post(this.file.file);
+              }else{
+                this.$Message.success("客户信息更新成功！");
+                this.$router.push("/customermanage/customermanage");  
               }
-              this.$Message.success("客户信息更新成功！");
-              this.$router.push("/customermanage/customermanage");
             }
           })
           .catch(e => {});
       }
+    },
+    uploadSuccess(){
+      this.$Message.success("客户信息更新成功！");
+      this.$router.push("/customermanage/customermanage");
     },
     saveTicket(name) {
       let status = false;
@@ -1524,9 +1530,10 @@ export default {
           this.postData.accountId = this.$store.state.user.accountId;
           this.postData.customerNo = ((this.data||{}).data||{}).customer_no;
           this.$refs.upload.post(this.file.file);
+        }else{
+          this.$Message.success("客户信息更新成功！");
+          this.$router.push("/customermanage/customermanage");  
         }
-        this.$Message.success("客户信息更新成功！");
-        this.$router.push("/customermanage/customermanage");
       })
     },
     deleteFile(){

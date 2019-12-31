@@ -66,7 +66,7 @@
               <Row>
                 <Col span="14">
                   <FormItem label="合同主体" prop="htzt" :label-width="90">
-                    <Input v-model="subjectName[data.data.contractSubject]" placeholder disabled></Input>
+                    <Input v-model="data.data.contractSubject" placeholder disabled></Input>
                   </FormItem>
                 </Col>
                 <Col span="8">

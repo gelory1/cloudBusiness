@@ -960,7 +960,8 @@ export default {
             "data": [
               {
                 "account_id": this.$store.state.user.accountId,
-                "shipments_id": this.deliveryData.shipmentsId
+                "shipments_id": this.deliveryData.shipmentsId,
+                "workBenchId": this.deliveryData.workBenchId,
               }     
             ]
           };
