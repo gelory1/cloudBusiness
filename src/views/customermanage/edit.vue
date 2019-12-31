@@ -171,7 +171,7 @@
               </div>
               <p style="font-size:12px;color:#495060;margin-left:-10px;float:left;" v-if="!uploadLoading&&file.name === ''&&isFriend">合作协议（附件）</p>
               <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
-                <Button type="text" icon="plus" style="color:#4a9af5;margin:-5px 0 0 -10px;;" v-show="!uploadLoading&&file.name === ''&&isFriend">添加附件</Button>
+                <Button type="text" icon="plus" style="color:#4a9af5;margin:-7px 0 0 -10px;;" v-show="!uploadLoading&&file.name === ''&&isFriend">添加附件</Button>
               </Upload>
               <!-- <p v-if="uploadLoading">上传中...</p> -->
             </Col>
