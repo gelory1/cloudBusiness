@@ -418,7 +418,16 @@ export default {
   },
   data() {
     return {
-      status:this.$option.asset.issueStatus,
+      status:[
+        {
+          index: 0,
+          val: '未审批'
+        },
+        {
+          index: 1,
+          val: '已审批'
+        }
+      ],
       zkSum: 1,
       crkSum: 1,
       sblbSum: 1,
