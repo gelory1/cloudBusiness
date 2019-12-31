@@ -114,7 +114,7 @@
                 <p v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span>{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
               </section>
             </div>
-            <div class="select1" style="clear:both;">
+            <div class="select1">
               <section style="width:46.5%;">
                 <p>通讯地址：</p>
                 <p
@@ -125,6 +125,10 @@
               </section>
               <section style="width:23.2%">
                 <p>协议编号：</p>
+                <p
+                  v-show="!((data||{}).data||{}).protocolNumber||((data||{}).data||{}).protocolNumber.length===0"
+                  style="color:#000000;"
+                >暂无</p>
                 <p>{{((data||{}).data||{}).protocolNumber}}</p>
               </section>
               <section style="width:23%;">

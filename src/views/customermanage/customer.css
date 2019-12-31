@@ -51,15 +51,15 @@
 .select section{
     width:23%;
     float:left;
-    margin-bottom:25px;
+    margin-bottom:20px;
 }
 .select section p:nth-of-type(1),.header_con .select1 section p:nth-of-type(1),.kpxx_sec section p:nth-of-type(1){
     color:#626262;
-    margin-bottom:7px;
+    margin-bottom:6px;
 }
 .select1 section{
     float:left;
-    margin-bottom:30px;
+    margin-bottom:20px;
 }
 .select,.select1,.select2{
     margin-left:10px;
