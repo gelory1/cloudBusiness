@@ -189,10 +189,10 @@
             </div>
           </content>
           <footer style="clear:both;padding-top:10px;">
-            <p class="header_p" style="border-bottom:1px solid #d2d2d2;">开票信息</p>
+            <p class="header_p" style="border-bottom:1px solid #d2d2d2;padding-bottom:5px;">开票信息</p>
             <p
               v-show="(((data||{}).data||{}).ticket_list||[]).length===0"
-              style="color:#8d8d8d;text-align:center;margin-top:40px;"
+              style="color:#8d8d8d;text-align:center;margin-top:30px;"
             >暂无开票信息</p>
             <div
               class="kpxx"
@@ -240,7 +240,7 @@
                     <p>{{item.phone}}</p>
                   </section>
                 </div>
-                <div class="kpxx_sec">
+                <div class="kpxx_sec"  style="clear:both;">
                   <section>
                     <p>开户银行：</p>
                     <p>{{item.bank_name}}</p>
@@ -269,7 +269,7 @@
           </footer>
         </div>
         <div class="lxr_right" style="minHeight:820px">
-          <div style="padding:10px;border-bottom:1px solid black;">联系人</div>
+          <div style="padding:10px;border-bottom:1px dashed #a3a0a0;">联系人</div>
           <p
             v-show="(((data||{}).data||{}).contacts_list||[]).length===0"
             style="color:#8d8d8d;text-align:center;margin-top:20px;"
