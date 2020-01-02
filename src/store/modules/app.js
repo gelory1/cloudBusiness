@@ -307,6 +307,10 @@ const app = {
                     }
                 });
                 if (updateStatus || data.length < context.state.workBenchData.length || !context.state.showNotice) context.commit('setWorkBenchData', data);
+            }, error => {
+                if (error.data.code === 0 && error.data.result === '') {
+                    if (context.state.workBenchData.length > 0) context.commit('resetWorkBenchData');
+                }
             });
         }
     }

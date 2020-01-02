@@ -1022,7 +1022,7 @@ export default {
           ]
       }
       this.loading = true;
-      if(request.data[0].workBenchStatus === 1&&this.$store.state.app.workBenchData.length>0&&this.inputVal === ''){
+      if(request.data[0].workBenchStatus === 1&&this.$store.state.app.workBenchData.length>=0&&this.inputVal === ''){
         this.parse(this.$store.state.app.workBenchData,request.data[0].workBenchStatus);
         return;
       }
