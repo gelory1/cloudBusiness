@@ -1174,6 +1174,8 @@ export default {
           this.customName = params.row.data.workBenchContentObj.payUnitName;
           if(params.row.data.workBenchStatus !== 2) this.getRebackAppr(1);
         }else if(params.row.data.workBenchType === 4){
+          $(".green").css({ color: "black" });
+          $(".red").css({ color: "black" });
           this.dkqrmodal = true;
           this.ensurePayBack = {
             contractNo: params.row.data.workBenchContentObj.contractNo,
