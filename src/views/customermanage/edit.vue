@@ -234,7 +234,7 @@
                 </section>
               </div>
               <div class="kpxx_sec">
-                <section>
+                <section style="clear:both">
                   <p>开户银行：</p>
                   <p>{{item.bank_name}}</p>
                 </section>
