@@ -127,7 +127,6 @@ export default {
         })
       }
       return menuList;
-      // return this.$store.state.app.menuList;
     },
     authority(){
       let authority = [];
@@ -161,7 +160,7 @@ export default {
   methods: {
     init() {
       let pathArr = util.setCurrentPath(this, this.$route.name);
-      // this.$store.commit("updateMenulist");
+      this.$store.commit("updateMenulist");
       if (pathArr.length >= 2) {
         this.$store.commit("addOpenSubmenu", pathArr[1].name);
       }
@@ -257,7 +256,7 @@ export default {
       // console.log(isFullScreen);
     },
     scrollBarResize() {
-      this.$refs.scrollBar.resize();
+      if(this.$refs.scrollBar) this.$refs.scrollBar.resize();
     },
     getRegions(){
       let request = {

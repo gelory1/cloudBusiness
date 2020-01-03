@@ -76,7 +76,7 @@ module.exports = merge(webpackBaseConfig, {
             ]
         }),
         new HtmlWebpackPlugin({
-            title: 'iView admin v' + package.version,
+            title: '新联云商务中心',
             favicon: './td_icon.ico',
             filename: '../index.html',
             template: '!!ejs-loader!./src/template/index.ejs',
