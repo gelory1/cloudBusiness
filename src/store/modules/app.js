@@ -288,9 +288,14 @@ const app = {
                                 let item = {
                                     data: d
                                 };
+                                if (!_this.$store.state.app.workBenchData.find(w => w.workbenchId === d.workbenchId)) {
+                                    _this.$Message.info('该待办已处理！');
+                                    return;
+                                }
                                 if (_this.$route.path !== '/home') {
                                     _this.$router.push({path: '/home', query: {notice: item}});
                                 } else {
+                                    _this.$router.push({query: {}});
                                     context.commit('setNotifyData', {status: true, data: {row: item}});
                                 }
                             },
@@ -302,6 +307,10 @@ const app = {
                     }
                 });
                 if (updateStatus || data.length < context.state.workBenchData.length || !context.state.showNotice) context.commit('setWorkBenchData', data);
+            }, error => {
+                if (error.data.code === 0 && error.data.result === '') {
+                    if (context.state.workBenchData.length > 0) context.commit('resetWorkBenchData');
+                }
             });
         }
     }

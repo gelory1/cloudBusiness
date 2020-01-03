@@ -326,8 +326,8 @@ export default {
       cktype_current_index: 0,
       crk_current_index: 0,
       ck_current_index: "",
-      zkSum: 1,
-      crkSum: 1,
+      zkSum: 0,
+      crkSum: 0,
       jbxx_columns: [
         {
           title: "存货编码",
@@ -728,10 +728,10 @@ export default {
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
       if (this.jbxx_data == "") {
-        this.zkSum = 1;
+        this.zkSum = 0;
       }
       if (this.crk_data == "") {
-        this.crkSum = 1;
+        this.crkSum = 0;
       }
     },
     getProductList(p) {
@@ -744,7 +744,7 @@ export default {
             wh_id:
               this.menudata &&
               this.menudata.length > 0 &&
-              this.ck_current_index !== ""&&this.ck_current_index !==0
+              this.ck_current_index !== ""
                 ? this.menudata[this.ck_current_index].wh_id
                 : undefined,
             keyword: this.inputVal === "" ? undefined : this.inputVal,
@@ -872,10 +872,10 @@ export default {
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
       if (this.jbxx_data == "") {
-        this.zkSum = 1;
+        this.zkSum = 0;
       }
       if (this.crk_data == "") {
-        this.crkSum = 1;
+        this.crkSum = 0;
       }
     },
     getMenuList(index) {
@@ -900,7 +900,7 @@ export default {
       };
       this.menudata = [];
       this.$http.PostXLASSETS(request).then(response => {
-        this.menudata = [{wh_name:'所有仓库',wh_id:''}];
+        this.menudata = [];
         let res = response.data.result;
         this.zkSum = res.sum;
         for (var i = 0; i < res.data.length; i++) {
@@ -979,10 +979,10 @@ export default {
             this.getCrkList(1);
           }
           if (this.jbxx_data == "") {
-            this.zkSum = 1;
+            this.zkSum = 0;
           }
           if (this.crk_data == "") {
-            this.crkSum = 1;
+            this.crkSum = 0;
           }
           this.$Message.success("查询成功！");
         } else {

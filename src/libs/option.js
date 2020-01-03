@@ -37,6 +37,24 @@ asset.deliveryStatusMap = {
     2: '已通过',
     3: '被驳回'
 };
+asset.deliveryStatusColorMap = {
+    '草稿': {
+        backgroundColor: '#FDF6EC',
+        color: '#E7A440'
+    },
+    '审批中': {
+        backgroundColor: '#F0F9EC',
+        color: '#78C950'
+    },
+    '已通过': {
+        backgroundColor: '#EBF5FE',
+        color: '#54A3F6'
+    },
+    '被驳回': {
+        backgroundColor: '#F4F4F5',
+        color: '#7D7F82'
+    }
+};
 asset.deviceStatusMap = {
     '-1': '销售出库',
     0: '出库中（针对仓库）',
@@ -542,6 +560,10 @@ contract.subjectNameMap = {
     7: '康源',
     8: '新联能源',
     100: '其他'
+};
+contract.paybackWayMap = {
+    0: '线下支付',
+    1: '备货金抵扣'
 };
 workbench.typeMap = {
     1: ' 审批提醒',

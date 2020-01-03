@@ -129,6 +129,10 @@ const workflow = {
     // 导出清单
     EXPORT (params) {
         return axios.post('/public/api/xlcustomer/export', params);
+    },
+    // 导出清单
+    CONTRACTEXPORT (params) {
+        return axios.post('/public/api/xlcustomer/exportContract', params);
     }
 
 };

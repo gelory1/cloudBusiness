@@ -90,18 +90,19 @@
       <p class="zf_p" v-show="dtzfShow">支付-确认</p>
       <p class="zf_p" v-show="morezfShow">支付-确认(批量操作)</p>
       <div class="zf_div">
-        <p>
+        <p v-if="((checkedData[0]||{}).data||{}).workBenchStatus !== 2">
           <Icon type="ios-information-outline"></Icon>
           <span v-if="zf.htbh">正在使用线下支付，请确认支付金额后点击【确认已支付】</span>
           <span v-if="zf.orderNo">正在进行备货支付，请确认支付金额后点击【确认】</span>
         </p>
+        <p v-else><span class="marl">支付方式：线下支付</span></p>
         <p>
           <span class="marl">收款方：</span>
           <span>新联电子</span>
           <!-- <span>{{zf.skf}}</span> -->
           <span class="zf_sk">
             应付
-            <b>{{zf.yf}}</b>元
+            <b>{{$util.thousandNum(zf.yf)}}</b>元
           </span>
         </p>
         <!-- --------------------单条展示 --------------------->
@@ -135,7 +136,7 @@
             <p v-for="item in morezf">
               <span class="underline">{{item.htbh}}</span>
               <span>{{item.dyzq}}</span>
-              <span>{{item.yf}}</span>
+              <span>{{$util.thousandNum(item.yf)}}</span>
             </p>
           </div>
         </section>
@@ -149,11 +150,12 @@
           <p v-if="spinShow">上传中...</p>
         </div>
       </Upload>
-      <div style="display:flex;justify-content:center;position:relative" v-if="imgUrl !== ''">
-        <img :src="imgUrl" :class="{fk_img:true,active:isActive}" @click.stop="isActive = !isActive" />
-        <span style="position:relative;margin-left:5px;cursor:pointer;top:-10px" @click="closeImg" ><Icon type="close" /></span>
+      <div style="display:flex;justify-content:center;position:relative" v-if="imgUrl !== ''" 
+        v-viewer="{inline: false, button: true, navbar: false, title: false, toolbar: false, tooltip: false, movable: true, zoomable: true, rotatable: true, scalable: true, transition: true, fullscreen: true, keyboard: true, url: 'data-source'}">
+        <img :src="imgUrl" class="fk_img" />
+        <span style="position:relative;margin-left:5px;cursor:pointer;top:-10px" @click="closeImg" v-if="((checkedData[0]||{}).data||{}).workBenchStatus !== 2"><Icon type="close" /></span>
       </div>
-      <Button class="zf_butt" type="primary" @click="sureClick" :disabled="buttonDisabled">确认已支付</Button>
+      <Button class="zf_butt" type="primary" @click="sureClick" :disabled="buttonDisabled">{{((checkedData[0]||{}).data||{}).workBenchStatus === 2?'已支付':'确认已支付'}}</Button>
     </Modal>
     <!-- 新建工作待办 -->
     <Modal v-model="newgzmodal" class="aa" width="800">
@@ -207,7 +209,7 @@
             <span class="marl">付款方：</span>
             <span>{{hkhz.skf}}</span>
             <span class="zf_sk">
-              <b>{{parseFloat(hkhz.yf).toFixed(2)}}</b>元
+              <b>{{$util.thousandNum(parseFloat(hkhz.yf).toFixed(2))}}</b>元
             </span>
           </p>
           <p class="hk_span">
@@ -217,12 +219,20 @@
             </span>
           </p>
         </header>
-        <section class="hk_s">
+        <section v-if="hkhz.status === 2">
+          <p>
+            <span>
+              已核入合同号：
+              <span>{{hkhz.contractNo}}</span>
+            </span>
+          </p>
+        </section>
+        <section class="hk_s" v-if="tabName !== 'name2'">
           <div class="hk_d">
             <Input icon="ios-search" placeholder="请输入内容" style="width: 200px;" v-model="customName" @on-enter="getRebackAppr(1)" @on-click="getRebackAppr(1)"/>
           </div>
         </section>
-        <section>
+        <section v-if="tabName !== 'name2'">
           <div class="hz1">
             <Table :row-class-name="rowClassName" :columns="hz1_columns" :loading="hz1Loading" :data="hz1_data" @on-row-click="hz1Click" height="400"></Table>
             <Page
@@ -238,7 +248,7 @@
           <div class="hz2"><Table :row-class-name="rowClassName1" :columns="hz2_columns" :data="hz2_data" @on-row-click="hz2Click"></Table></div>
         </section>
       </div>
-      <Button class="zf_butt" type="primary" style="margin-left:450px;" @click="surehrClick" :disabled="buttonDisabled||hkhzDisabled">确认核入</Button>
+      <Button class="zf_butt" type="primary" style="margin-left:450px;" @click="surehrClick" :disabled="buttonDisabled||hkhzDisabled">{{hkhz.status !== 2?"确认核入":"已核入"}}</Button>
     </Modal>
     <!-- 财务-到款确认 -->
     <Modal v-model="dkqrmodal" class="aa">
@@ -247,7 +257,7 @@
         <div class="hk_div">
           <img src="../../images/workbench/rmb.png" alt />
           <p>
-            <b class="b">{{ensurePayBack.payAmount}}</b>
+            <b class="b">{{$util.thousandNum(ensurePayBack.payAmount)}}</b>
             <span style="color:#2e8ff4">元</span>
           </p>
         </div>
@@ -280,13 +290,14 @@
             <span>交易时间：</span>
             <i>{{ensurePayBack.payTime}}</i>
           </p>
-          <p>
+          <p v-viewer="{inline: false, button: true, navbar: false, title: false, toolbar: false, tooltip: false, movable: true, zoomable: true, rotatable: true, scalable: true, transition: true, fullscreen: true, keyboard: true, url: 'data-source'}">
             <span>付款凭证：</span>
             <img :src="ensurePayBack.url" alt :class="{fk_img:true,active:isActive}" @click="isActive = !isActive"  />
           </p>
         </div>
       </div>
-      <RadioGroup v-model="sfdz" vertical class="radio" @on-change="radioClick">
+      <div v-if="ensurePayBack.status === 2" style="text-align:center"><span>已在财务系统核准，已到账</span></div>
+      <RadioGroup v-model="sfdz" vertical class="radio" @on-change="radioClick" v-if="ensurePayBack.status === 1">
         <Radio label="ydz">
           <span class="green">已在财务系统核准，确认已到账</span>
         </Radio>
@@ -294,7 +305,7 @@
           <span class="red">已在财务系统核准，款未到帐</span>
         </Radio>
       </RadioGroup>
-      <Button class="kh_but" type="primary" @click="ensurePayBackSub" :disabled="buttonDisabled">提交</Button>
+      <Button class="kh_but" type="primary" @click="ensurePayBackSub" :disabled="buttonDisabled"  v-if="ensurePayBack.status === 1">提交</Button>
     </Modal>
     <!-- 发货方案审批 -->
     <Modal v-model="refusemodal" width="1200" class="aa">
@@ -332,13 +343,13 @@
       </header>
       <content>
         <div class="fa_p" style="margin-top:50px;">
-          <p class="left">批次要求： 
+          <!-- <p class="left">批次要求： 
             {{deliveryData.shipments_start_batch}} - {{deliveryData.shipments_end_batch}}
-            </p>
+            </p> -->
           <p>
             <span>
               金额
-              <b>{{deliveryData.amount||0}}</b>元
+              <b>{{$util.thousandNum(deliveryData.amount||0)}}</b>元
             </span>
             <span>
               订单数
@@ -393,8 +404,8 @@
           </div>
         </div>
         <div class="agree_but">
-        <Button type="primary" :disabled="buttonDisabled" @click="agreeDelivery">同意</Button>
-        <Button type="ghost" @click="refuseShow = true" :disabled="buttonDisabled">拒绝</Button>
+        <Button type="primary" :disabled="buttonDisabled" @click="agreeDelivery">{{deliveryData.workStatus === 2?"已同意":"同意"}}</Button>
+        <Button type="ghost" @click="refuseShow = true" :disabled="buttonDisabled" v-if="deliveryData.workStatus !== 2">拒绝</Button>
         <div v-show="refuseShow" class="refuse">
           <p>拒绝理由<span style="float:right;cursor:pointer;color:#8d8d8d" @click="refuseShow = false">x</span></p>
           <Input v-model="textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请填写审批拒绝理由"></Input>
@@ -519,6 +530,8 @@ export default {
                     },
                     on: {
                         click: () => {
+                            this.dataIndex = params.index;
+                            this.checkedData = [params.row];
                             this.dbgzTableClick(params);
                           }
                       }
@@ -947,7 +960,8 @@ export default {
             "data": [
               {
                 "account_id": this.$store.state.user.accountId,
-                "shipments_id": this.deliveryData.shipmentsId
+                "shipments_id": this.deliveryData.shipmentsId,
+                "workBenchId": this.deliveryData.workBenchId,
               }     
             ]
           };
@@ -1008,7 +1022,7 @@ export default {
           ]
       }
       this.loading = true;
-      if(request.data[0].workBenchStatus === 1&&this.$store.state.app.workBenchData.length>0&&this.inputVal === ''){
+      if(request.data[0].workBenchStatus === 1&&this.$store.state.app.workBenchData.length>=0&&this.inputVal === ''){
         this.parse(this.$store.state.app.workBenchData,request.data[0].workBenchStatus);
         return;
       }
@@ -1033,7 +1047,7 @@ export default {
               item.gznr = status === 1?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，审批已完成`;
               break;
             case 10:
-              item.gznr = status === 1?`回款待核准，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款已核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
+              item.gznr = status === 1?`回款待核准，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 4:
               item.gznr = status === 1?`到账待确认，金额：${parseFloat(d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName||''})，请戳这里`:`到账已确认，金额：${d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount}(付款方：${d.workBenchContentObj.payUnitName||''})`;
@@ -1090,6 +1104,11 @@ export default {
         this.hz1Loading = false;
         let { data } = response.data.result;
         this.sum = data.sum;
+        if(this.sum === 0){
+          this.customName = '';
+          this.getRebackAppr(1);
+          return;
+        }
         data.contractList.forEach(d => {
           let paymentList = JSON.parse(JSON.stringify(d.paymentList))||[];
           let allBack = 0;
@@ -1136,17 +1155,27 @@ export default {
       this.$store.commit('setNotifyData', {status: false, data: []});
         if(params.row.data.workBenchType === 3){              
           this.workStatus = params.row.data.workBenchStatus
-          this.zfmodal = true;
+          if(params.row.data.workBenchStatus === 2){
+            this.imgUrl = params.row.data.photoUrl;
+            this.nextzfClick();
+          }else{
+            this.zfmodal = true;
+          }
         }else if(params.row.data.workBenchType === 10){
           this.hkhzmodal = true;
           this.hkhz = {
             skf: params.row.data.workBenchContentObj.payUnitName,
             yf: params.row.data.workBenchContentObj.payAmount,
-            dksj: params.row.data.workBenchContentObj.payTime
+            dksj: params.row.data.workBenchContentObj.payTime,
+            contractNo: params.row.data.workBenchContentObj.contractNo,
+            status: params.row.data.workBenchStatus
           }
           this.workBenchData = params.row.data;
-          this.getRebackAppr(1);
+          this.customName = params.row.data.workBenchContentObj.payUnitName;
+          if(params.row.data.workBenchStatus !== 2) this.getRebackAppr(1);
         }else if(params.row.data.workBenchType === 4){
+          $(".green").css({ color: "black" });
+          $(".red").css({ color: "black" });
           this.dkqrmodal = true;
           this.ensurePayBack = {
             contractNo: params.row.data.workBenchContentObj.contractNo,
@@ -1161,7 +1190,9 @@ export default {
             url: params.row.data.photoUrl,
             workBenchType: params.row.data.workBenchType,
             ensure:'',
-            workBenchId: params.row.data.workbenchId
+            workBenchId: params.row.data.workbenchId,
+            data:params.row.data,
+            status: params.row.data.workBenchStatus
           }
         }else if(params.row.data.workBenchType === 1){
           this.$alert(`您有一个${(params.row.data.workBenchContentObj||{}).orderNo?'备货流程':'合同'}待审批，${(params.row.data.workBenchContentObj||{}).orderNo?'订单':'合同'}号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||(params.row.data.workBenchContentObj||{}).orderNo }`, '审批提醒', {
@@ -1306,6 +1337,7 @@ export default {
             {
               "workBenchId": this.checkedData[0].data.workbenchId,
               "accountId": this.$store.state.user.accountId,
+              "orderNo": this.checkedData[0].data.workBenchContentObj.orderNo,
               "photoUrl": this.imgUrl
             }
           ]
@@ -1317,6 +1349,7 @@ export default {
             {
               "accountId": this.$store.state.user.accountId,
               "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
+              "contractNo": this.checkedData[0].data.workBenchContentObj.contractNo,
               "photoUrl": this.imgUrl
             }
           ]
@@ -1450,7 +1483,8 @@ export default {
               "accountId": this.$store.state.user.accountId,
               "workBenchId": this.ensurePayBack.workBenchId,
               "lastWorkbenchId": this.ensurePayBack.ensure === false?this.ensurePayBack.lastWorkbenchId:undefined,
-              "orderNo": this.ensurePayBack.orderNo === ''?undefined:this.ensurePayBack.orderNo
+              "orderNo": this.ensurePayBack.orderNo === ''?undefined:this.ensurePayBack.orderNo,
+              "orderAmount":this.ensurePayBack.orderNo?this.ensurePayBack.payAmount:undefined
             }
         ]
       }
@@ -1561,7 +1595,8 @@ export default {
         des:'',
         shipments_end_batch:'',
         shipments_start_batch:'',
-        orderList: []
+        orderList: [],
+        workStatus:(workData||{}).workBenchStatus
       };
       this.$http.PostXLASSETS(request).then(response => {
         this.orderData = [{
@@ -1575,7 +1610,8 @@ export default {
           des:'',
           shipments_end_batch:'',
           shipments_start_batch:'',
-          orderList: []
+          orderList: [],
+          workStatus:(workData||{}).workBenchStatus
         };
         let { data } = response.data.result;
         this.deliveryData.schemeNo = data[0].shipments_no;
@@ -1622,7 +1658,7 @@ export default {
         typeid: 29001,
         data: [
           {
-            account_id: 1111//this.$store.state.user.accountId
+            account_id: this.$store.state.user.accountId
           }
         ]
       };
@@ -1769,6 +1805,13 @@ export default {
     zfqrmodal(nv){
       if(!nv){
         this.imgUrl = '';
+        this.isActive = false;
+        this.checkedData = [];
+      }
+    },
+    dkqrmodal(nv){
+      if(!nv){
+        this.isActive = false;
       }
     }
   },

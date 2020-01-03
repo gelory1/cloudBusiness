@@ -26,7 +26,7 @@
           >
           </el-input>
         </FormItem>
-        <Row>
+        <!-- <Row>
           <Col span="7">
             <FormItem label="批次要求" prop="pcyq">
               <Select v-model="formValidate.pcyq" placeholder clearable filterable>
@@ -42,7 +42,7 @@
               </Select>
             </FormItem>
           </Col>
-        </Row>
+        </Row> -->
         <!-- <Row>
           <Col span="12">
             <FormItem label="客户" prop="costom">

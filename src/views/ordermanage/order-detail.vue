@@ -71,7 +71,7 @@
             </div>
             <div v-if="selectedOrder.type==='合同订单'">
                 <span class="jbleft">合同主体：</span>
-                <span class="jbright">{{subjectName[selectedOrder.contract_subject]}}</span>
+                <span class="jbright">{{selectedOrder.contract_subject}}</span>
             </div>
             <div>
                 <span class="jbleft">设备数量：</span>
@@ -86,7 +86,7 @@
             </div>
         </div>
         <div style="margin-left:40px;"  v-if="this.selectedOrder.type == '备货订单'">
-              <section style="width:90%;float:left;">
+            <section style="width:90%;float:left;">
                 <p style="color:#8d8d8d;margin-top:10px;">备货申请协议（附件）：</p>
                 <div v-if="selectedOrder.file.id">
                   <div class="fj1">
@@ -94,7 +94,7 @@
                       <img :src="selectedOrder.file.img" alt style="width:20px;height:20px;margin:20px 40px" />
                     </section>
                     <section class="fj_sec1" style="margin-top:15px">
-                      <a :href="selectedOrder.file.address"><p>{{selectedOrder.file.name}}</p></a>
+                      <a :href="selectedOrder.file.address" :download="selectedOrder.file.name"><p>{{selectedOrder.file.name}}</p></a>
                       <p class="fj_p1">
                         <span>{{selectedOrder.file.size}}</span> 来自
                         <span>{{selectedOrder.file.uploadMan}}</span> |
@@ -104,8 +104,8 @@
                   </div>
                 </div>
                 <p v-else>暂无</p>
-              </section>
-            </div>
+            </section>
+        </div>
         <div style="clear:both;overflow: hidden;">
         <p class="djtitle">设备清单</p>
         <Tabs v-model="deviceTabName">
@@ -119,7 +119,7 @@
                 <Table :columns="device_columns" :data="device_data2" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
         </Tabs>
-        <div class="dd_div" style="float:right;margin:15px 30px 0 0;font-size:13px;">
+        <div class="dd_div" style="float:right;margin:15px 30px 0 0;font-size:13px;" v-if="this.selectedOrder.type == '备货订单'">
             <section>
               <span class="dd_span" style="width:100px;display:inline-block">货款总计（元）</span>
               <span style="color:#000000;font-weight:bold">{{(selectedOrder.order_little_amount||0).toLocaleString()}}</span>
@@ -152,7 +152,7 @@ export default {
                 data:{},
                 file:{}
             },
-            device_columns: [
+            columns: [
                 {
                 title: "序号",
                 key: "index",
@@ -224,15 +224,30 @@ export default {
                     }
                 },
                 {
-                title: "计量单位",
-                key: "unit",
-                align:"center"
+                    title: "计量单位",
+                    key: "unit",
+                    align:"center"
                 },
                 {
-                title: "数量",
-                key: "count",
-                align:"center"
-                }
+                    title: "数量",
+                    key: "count",
+                    align:"center"
+                },
+                {
+                    title: "单价（元）",
+                    key: "price",
+                    align:"center"
+                },
+                {
+                    title: "总价（元）",
+                    key: "totalPrice",
+                    align:"center"
+                },
+                {
+                    title: "税率",
+                    key: "tax",
+                    align:"center"
+                },
             ],
         }
     },
@@ -240,7 +255,7 @@ export default {
         $('.ivu-poptip-body-content-inner').css('color','#2d8cf0');
         $('.ivu-poptip-body-content-inner').css('cursor','pointer');
         $('.ivu-poptip-body').on('click',() => {
-            $('.ivu-poptip-body').css('display','none');
+            // $('.ivu-poptip-body').css('display','none');
             let request = {
                 "typeid": 28009,
                 "data": [
@@ -315,7 +330,7 @@ export default {
                         img = require('../../images/upload/excel.png');
                     };
                     this.selectedOrder.file = {
-                        name:data.order_enclosure[0].file_name,
+                        name:this.selectedOrder.orderNO + ' ' + this.selectedOrder.customName + '-'+ '申请备货协议',
                         size:file_size >= 1024?((file_size/1024).toFixed(2) + ' KB'): file_size >= 1024*1024?((file_size/(1024*1024)).toFixed(2) + ' MB'):(file_size + ' B'),
                         uploadMan:data.order_enclosure[0].account_name,
                         date:data.order_enclosure[0].upload_time,
@@ -343,6 +358,11 @@ export default {
                     item.issued_count = p.issued_count;
                     item.unit = p.product_unit;
                     item.data = p;
+                    if(this.selectedOrder.type === '备货订单'){
+                        item.price = p.product_price||0;
+                        item.totalPrice = item.price*item.count;
+                        item.tax = '6%';
+                    }
                     this.device_data.push(item);
                 });
                 this.selectedOrder.count = allNum;
@@ -383,6 +403,9 @@ export default {
                 data = this.device_data.filter(d => d.issued_count !== 0);
                 data.forEach(d => {
                     d.count = d.issued_count;
+                    if(this.selectedOrder.type === '备货订单'){
+                        d.totalPrice = d.price*d.count;
+                    }
                 })
             }
             return data;
@@ -393,6 +416,9 @@ export default {
                 data = this.device_data.filter(d => d.count - d.issued_count !== 0);
                 data.forEach(d => {
                     d.count = d.count - d.issued_count;
+                    if(this.selectedOrder.type === '备货订单'){
+                        d.totalPrice = d.price*d.count;
+                    }
                 })
             }
             return data;
@@ -414,6 +440,15 @@ export default {
         },
         upperAmount(){
             return this.$util.NumberToChinese(Number(this.selectedOrder.order_little_amount)||0);
+        },
+        device_columns(){
+            let columns = [];
+            if(this.selectedOrder.type === '合同订单'){
+                columns = this.columns.filter(c => c.key !== 'price'&&c.key !== 'totalPrice'&&c.key !== 'tax');
+            }else{
+                columns = this.columns;
+            }
+            return columns;
         }
     },
     watch: {

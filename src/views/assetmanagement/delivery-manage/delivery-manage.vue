@@ -166,6 +166,7 @@ export default {
   data() {
     return {
       fhStatus: this.$option.asset.deliveryStatus,
+      statusColorMap: this.$option.asset.deliveryStatusColorMap,
       inputVal: "",
       sum: 0,
       pageNum: 1,
@@ -271,7 +272,30 @@ export default {
         {
           key: "zt",
           title: "状态",
-          align: "center"
+          align: "center",
+           render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "ghost",
+                    size: "small"
+                  },
+                  style: {
+                    backgroundColor: params.row.zt
+                      ? this.statusColorMap[params.row.zt]
+                          .backgroundColor
+                      : "white",
+                    color: params.row.zt
+                      ? this.statusColorMap[params.row.zt].color
+                      : "#7D7F82"
+                  }
+                },
+                params.row.zt
+              )
+            ]);
+          }
         }
       ],
       fh_data: [],

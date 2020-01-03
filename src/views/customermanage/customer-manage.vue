@@ -125,7 +125,6 @@ export default {
   },
   data() {
     return {
-      customerTypes: this.$option.customer.types,
       customList_columns: [
         {
           type: "selection",
@@ -338,7 +337,7 @@ export default {
       isShow: false,
       glShow: false,
       moreShow: false,
-      selectedCustomType:this.$option.customer.types[0],
+      selectedCustomType:{},
       customSum:0,
       selectedItems:[],
       inputVal:'',
@@ -409,10 +408,17 @@ export default {
             item.name = data.customer_name;
             item.nature = data.customer_nature === 0?'':this.customerTypes.find(t => t.no === data.customer_nature).type;
             item.level = this.$option.customer.levelMap[data.customer_level];
-            item.city = (data.province_cn||'') + ' ' + (data.city_cn||'') + ' ' + (data.area_cn||'');
+            let cityObj = this.regions.find(c => c.id === data.province)||{};
+            let areaObj = (cityObj.children||[]).find(c => c.id === data.city)||{};
+            if (cityObj){
+              item.city =
+                (cityObj.name||"") +
+                " " +
+                (areaObj.name||"") + ' ' + (((areaObj.children||[]).find(c => c.id === data.area)||{}).name||"");
+            }
             item.time = data.create_date;
             item.salesman = data.sale_no;
-            item.company = this.$option.contract.subjectNameMap[data.manage_company];
+            item.company = data.manage_company_cn;
             item.data = data;
             this.customList_data.push(item);
           });
@@ -561,7 +567,7 @@ export default {
       this.$http.EXPORT(request).then(res => {
         
       },error => {
-        if(error.data.code === 0){
+        if(error.data&&error.data.code === 0){
           this.exportUrl = error.data.exportUrl;
         }
       })
@@ -596,6 +602,20 @@ export default {
     regions() {
       return JSON.parse(localStorage.getItem("regions")) || [];
     },
+    customerTypes(){
+      let types = [];
+      if(this.isCooperative){
+        types = this.$option.customer.types.filter(t => t.no === 3);
+      }else if(this.isSaleMan){
+        types = this.$option.customer.types.filter(t => t.no === 1);
+      }else{
+        types = this.$option.customer.types;
+      }
+      if(!this.selectedCustomType.type){
+        this.selectedCustomType = types[0];
+      }
+      return types;
+    }
   },
   watch:{
 

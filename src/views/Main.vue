@@ -127,7 +127,6 @@ export default {
         })
       }
       return menuList;
-      // return this.$store.state.app.menuList;
     },
     authority(){
       let authority = [];
@@ -257,7 +256,7 @@ export default {
       // console.log(isFullScreen);
     },
     scrollBarResize() {
-      this.$refs.scrollBar.resize();
+      if(this.$refs.scrollBar) this.$refs.scrollBar.resize();
     },
     getRegions(){
       let request = {

@@ -50,7 +50,7 @@
               <Icon type="navigate"></Icon>
             </span>
             <span v-show="!data.salesman||data.salesman.length===0" style="color:#000000;">暂无</span>
-            <span style="color:#4a9af5;cursor:pointer" @click="seeAdress">查看{{}}条收货地址</span>
+            <span style="color:#4a9af5;cursor:pointer" @click="seeAdress">查看{{0}}条收货地址</span>
           </div>
         </div>
       </header>
@@ -94,10 +94,10 @@
               </section>
               <section>
                 <p>注册资金：</p>
-                <p
+                <!-- <p
                   v-show="!((data||{}).data||{}).registered_capital||((data||{}).data||{}).registered_capital.length===0"
                   style="color:#000000;"
-                >暂无</p>
+                >暂无</p> -->
                 <p>{{((data||{}).data||{}).registered_capital}}</p>
               </section>
               <section>
@@ -110,12 +110,12 @@
               </section>
               <section>
                 <p>授权资质：</p>
-                <p v-show="!empower_city||empower_city.length===0" style="color:#000000;">暂无</p>
-                <p>{{empower_city}}</p>
+                <p v-show="!((data||{}).data||{}).areaList||((data||{}).data||{}).areaList.length===0" style="color:#000000;">暂无</p>
+                <p v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span>{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
               </section>
             </div>
-            <div class="select1" style="clear:both">
-              <section style="width:40.5%;">
+            <div class="select1">
+              <section style="width:46.5%;">
                 <p>通讯地址：</p>
                 <p
                   v-show="!((data||{}).data||{}).mail_address||((data||{}).data||{}).mail_address.length===0"
@@ -123,11 +123,15 @@
                 >暂无</p>
                 <p>{{((data||{}).data||{}).mail_address}}</p>
               </section>
-              <section style="width:20%">
+              <section style="width:23.2%">
                 <p>协议编号：</p>
+                <p
+                  v-show="!((data||{}).data||{}).protocolNumber||((data||{}).data||{}).protocolNumber.length===0"
+                  style="color:#000000;"
+                >暂无</p>
                 <p>{{((data||{}).data||{}).protocolNumber}}</p>
               </section>
-              <section style="width:20%;">
+              <section style="width:23%;">
                 <p>
                   保证金：
                   <span class="eye" @click="eyeClick">
@@ -138,8 +142,8 @@
                 <p v-show="eyeShow">********</p>
               </section>
             </div>
-            <div class="select2">
-              <section style="width:40.5%;float:left">
+            <div class="select1">
+              <section style="width:46.5%;float:left;margin-bottom:0px;">
                 <p class="sele2">关联平台账户：</p>
                 <p
                   v-show="(((data||{}).data||{}).platformuser_list||[]).length===0"
@@ -149,21 +153,21 @@
                   class="bg_p"
                   v-for="(item,index) in ((data||{}).data||{}).platformuser_list"
                   :key="index"
-                  style="margin:0 5px"
+                  style="margin:2px 0px"
                 >({{item.platform_id}}){{item.platform_name}}</span>
               </section>
-              <section style="width:20%;float:left" v-if="data.nature == '合作伙伴'">
+              <section style="width:23.2%;float:left" v-if="data.nature == '合作伙伴'">
                 <p class="sele2">授权期限</p>
                 <p  style="color:#000000;">{{((data||{}).data||{}).empowerStartTime}}-{{((data||{}).data||{}).empowerEndTime}}</p>
               </section>
-              <section style="width:20%;float:left">
+              <section style="width:23%;float:left">
                 <p class="sele2">邮政编码：</p>
                 <p v-show="!((data||{}).data||{}).post_code||((data||{}).data||{}).post_code.length===0" style="color:#000000;">暂无</p>
                 <p>{{((data||{}).data||{}).post_code}}</p>
               </section>
             </div>
             <div class="select2" v-if="data.nature == '合作伙伴'">
-              <section style="width:90%;float:left;margin-top:30px;">
+              <section style="width:90%;float:left;margin-top:15px;">
                 <p class="sele2">合作协议（附件）：</p>
                 <div>
                   <div class="fj1" v-if="file.name">
@@ -185,10 +189,10 @@
             </div>
           </content>
           <footer style="clear:both;padding-top:10px;">
-            <p class="header_p" style="border-bottom:1px solid #d2d2d2;">开票信息</p>
+            <p class="header_p" style="border-bottom:1px solid #d2d2d2;padding-bottom:5px;">开票信息</p>
             <p
               v-show="(((data||{}).data||{}).ticket_list||[]).length===0"
-              style="color:#8d8d8d;text-align:center;margin-top:40px;"
+              style="color:#8d8d8d;text-align:center;margin-top:30px;"
             >暂无开票信息</p>
             <div
               class="kpxx"
@@ -199,7 +203,7 @@
                 <p>{{item.ticket_customer}}</p>
                 <p>{{item.dutyparagraph}}</p>
                 <p
-                  style="width:20%;float:right"
+                  style="width:23%;float:right"
                   class="headP"
                   @click="shrinkClick"
                   v-if="kpxxShow == true"
@@ -210,7 +214,7 @@
                   </span>
                 </p>
                 <p
-                  style="width:20%;float:right"
+                  style="width:23%;float:right"
                   class="headP"
                   @click="shrinkClick"
                   v-if="kpxxShow == false"
@@ -236,7 +240,7 @@
                     <p>{{item.phone}}</p>
                   </section>
                 </div>
-                <div class="kpxx_sec">
+                <div class="kpxx_sec"  style="clear:both;">
                   <section>
                     <p>开户银行：</p>
                     <p>{{item.bank_name}}</p>
@@ -265,7 +269,7 @@
           </footer>
         </div>
         <div class="lxr_right" style="minHeight:820px">
-          <div style="padding:10px;border-bottom:1px solid black;">联系人</div>
+          <div style="padding:10px;border-bottom:1px dashed #a3a0a0;">联系人</div>
           <p
             v-show="(((data||{}).data||{}).contacts_list||[]).length===0"
             style="color:#8d8d8d;text-align:center;margin-top:20px;"
@@ -347,17 +351,6 @@ export default {
         return this.$store.state.user.customerInfo;
       }
       return JSON.parse(localStorage.getItem("customInfo")) || {};
-    },
-    empower_city() {
-      let province =
-        this.$store.state.app.provinces.find(
-          c => c.id === ((this.data || {}).data || {}).empower_province
-        ) || {};
-      let city =
-        this.citys.find(
-          c => c.id === ((this.data || {}).data || {}).empower_city
-        ) || {};
-      return (province.name || "") + " " + (city.name || "");
     },
     file(){
       let file = {};

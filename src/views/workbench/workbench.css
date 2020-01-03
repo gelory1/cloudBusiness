@@ -116,8 +116,9 @@
     background: #F2F2F2;
 }
 .zf_sk{
-    color:#b2d3fc;
-    margin-left:200px;
+    color:#a4cafa;
+    float:right;
+    padding-right:40px;
 }
 .zf_sk b,.hk_div b{
     color:red;
@@ -215,14 +216,7 @@
     width:150px;
     /* height:60px; */
     border:1px solid rgb(143, 134, 134);
-    vertical-align:text-top;  
-    transform: scale(1);
-    transition: all ease 0.5s;
-}
-.fk_img.active{
-    transform: scale(10);
-    position: absolute;
-    z-index: 100;
+    vertical-align:text-top;
 }
 .workbench .ivu-icon{
     display: none;

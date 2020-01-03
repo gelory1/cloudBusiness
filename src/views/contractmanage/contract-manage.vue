@@ -169,9 +169,19 @@
               </span>
               <!-- 更多 -->
               <div v-show="moreShow" class="more">
-                <p>导出所选结果</p>
-                <p>导出全部结果</p>
-                <p>上传合同附件</p>
+                <p @click="exportSelect">导出所选结果</p>
+                <p>
+                  <a
+                    :href="exportUrl === ''||this.isFinance||this.isCooperative?'#':exportUrl"
+                    @click="exportAll"
+                    style="color:#495060"
+                  >导出全部结果</a>
+                </p>
+                <!-- <p>
+                  <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :data="postData" :before-upload="beforeUpload" :headers="{user:'x',key:'x'}">
+                    上传合同附件
+                  </Upload>
+                </p>-->
               </div>
             </span>
           </div>
@@ -179,6 +189,8 @@
       </Menu>
       <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
         <Table
+          ref="table"
+          @on-selection-change="selectChange"
           style="position:relative;"
           :columns="contract_columns"
           :loading="loading"
@@ -205,10 +217,10 @@ export default {
   name: "contract",
   data() {
     return {
-      contractStatus:this.$option.contract.status,
-      contractNatureMap:this.$option.contract.natureMap,
-      salesTypeMap:this.$option.contract.salesTypeMap,
-      contractTypes:this.$option.contract.types,
+      contractStatus: this.$option.contract.status,
+      contractNatureMap: this.$option.contract.natureMap,
+      salesTypeMap: this.$option.contract.salesTypeMap,
+      contractTypes: this.$option.contract.types,
       contract_columns: [
         {
           type: "selection",
@@ -262,11 +274,14 @@ export default {
                   },
                   style: {
                     backgroundColor: params.row.contractStatus
-                      ? this.$option.contract.statusColorMap[params.row.contractStatus]
-                          .backgroundColor
+                      ? this.$option.contract.statusColorMap[
+                          params.row.contractStatus
+                        ].backgroundColor
                       : "white",
                     color: params.row.contractStatus
-                      ? this.$option.contract.statusColorMap[params.row.contractStatus].color
+                      ? this.$option.contract.statusColorMap[
+                          params.row.contractStatus
+                        ].color
                       : "#7D7F82"
                   }
                 },
@@ -320,7 +335,7 @@ export default {
       filterItem: {
         customerName: "",
         contractNature: "",
-        contractType:'',
+        contractType: "",
         contractContent: "",
         province: "",
         city: "",
@@ -332,31 +347,39 @@ export default {
         dueStarttime: "",
         dueEndtime: ""
       },
-      startOption:{
-        disabledDate:time =>{
-          if(this.filterItem.signEndtime){
-            return time.getTime() > new Date(this.filterItem.signEndtime).getTime()
+      startOption: {
+        disabledDate: time => {
+          if (this.filterItem.signEndtime) {
+            return (
+              time.getTime() > new Date(this.filterItem.signEndtime).getTime()
+            );
           }
         }
       },
-      endOption:{
-        disabledDate:time =>{
-          if(this.filterItem.signStarttime){
-            return time.getTime() < new Date(this.filterItem.signStarttime).getTime()
+      endOption: {
+        disabledDate: time => {
+          if (this.filterItem.signStarttime) {
+            return (
+              time.getTime() < new Date(this.filterItem.signStarttime).getTime()
+            );
           }
         }
       },
-      startOption1:{
-        disabledDate:time =>{
-          if(this.filterItem.dueEndtime){
-            return time.getTime() > new Date(this.filterItem.dueEndtime).getTime()
+      startOption1: {
+        disabledDate: time => {
+          if (this.filterItem.dueEndtime) {
+            return (
+              time.getTime() > new Date(this.filterItem.dueEndtime).getTime()
+            );
           }
         }
       },
-      endOption1:{
-        disabledDate:time =>{
-          if(this.filterItem.dueStarttime){
-            return time.getTime() < new Date(this.filterItem.dueStarttime).getTime()
+      endOption1: {
+        disabledDate: time => {
+          if (this.filterItem.dueStarttime) {
+            return (
+              time.getTime() < new Date(this.filterItem.dueStarttime).getTime()
+            );
           }
         }
       },
@@ -385,13 +408,19 @@ export default {
       loading: false,
       pageNum: 1,
       filterStatus: false,
-      natures:this.$option.contract.natures,
-      salesTypes:this.$option.contract.salesTypes,
+      natures: this.$option.contract.natures,
+      salesTypes: this.$option.contract.salesTypes,
       provinces: [],
       citys: [],
       companys: [],
-      contractContentMap:this.$option.contract.contentMap,
-      contents:this.$option.contract.contents
+      contractContentMap: this.$option.contract.contentMap,
+      contents: this.$option.contract.contents,
+      selectedItems: [],
+      postData: {
+        accountId: "",
+        contractNo: ""
+      },
+      exportUrl: ""
     };
   },
   methods: {
@@ -409,8 +438,8 @@ export default {
       this.getContracts(1);
     },
     openDetail(data) {
-      if(!this.$store.state.app.authority.find(a => a.id === 801)){
-        this.$Message.error('权限不足！');
+      if (!this.$store.state.app.authority.find(a => a.id === 801)) {
+        this.$Message.error("权限不足！");
         return;
       }
       this.$store.commit("selectedContract", JSON.parse(JSON.stringify(data)));
@@ -555,7 +584,9 @@ export default {
             let item = {};
             item.contractNo = con.contractNo;
             item.contractNature = this.contractNatureMap[con.contractNature];
-            item.contractType = (this.contractTypes.find(c => c.index === con.contractType)||{}).val;
+            item.contractType = (
+              this.contractTypes.find(c => c.index === con.contractType) || {}
+            ).val;
             item.contractStatus = this.contractStatus.find(
               s => s.index === con.contractStatus
             ).status;
@@ -565,10 +596,21 @@ export default {
               (con.customerName || "") +
               "-" +
               this.contractContentMap[con.contractContent];
-            item.city =
-              (con.customerProvince_cn || "--") +
-              " " +
-              (con.customerCity_cn || "--");
+            let cityObj = this.regions.find(c => c.id === con.customerProvince)||{};
+            let areaObj = (cityObj.children || []).find(
+              c => c.id === con.customerCity
+            )||{};
+            if (cityObj)
+              item.city =
+                (cityObj.name||"") +
+                " " +
+                (areaObj.name||"") +
+                " " +
+                ((
+                  (areaObj.children || []).find(
+                    c => c.id === con.customerArea
+                  ) || {}
+                ).name || "");
             item.saleType = this.salesTypeMap[con.saleType];
             item.saleName = con.saleManName;
             item.manageCompany = con.manageCompanyName;
@@ -619,12 +661,92 @@ export default {
       this.$http.XLSELECT(request).then(response => {
         this.companys = response.data.result.data;
       });
+    },
+    selectChange(item) {
+      this.selectedItems = item;
+      this.contract_data.forEach(c => {
+        if (this.selectedItems.find(s => s.contractNo === c.contractNo)) {
+          c._checked = true;
+        } else {
+          c._checked = false;
+        }
+      });
+    },
+    exportSelect() {
+      if (this.isFinance || this.isCooperative || this.isSaleMan) {
+        this.$Message.error("权限不足！");
+        return;
+      }
+      if (
+        this.contract_data.filter(data => data._checked === true).length === 0
+      ) {
+        this.$Message.error("请先选择需要导出的合同！");
+        return;
+      }
+      this.$refs["table"].exportCsv({
+        filename: "合同信息列表",
+        columns: this.contract_columns.filter((col, index) => index !== 0),
+        data: this.contract_data.filter(data => data._checked === true)
+      });
+      this.morehtztClick();
+    },
+    beforeUpload(file) {
+      let data = this.selectedItems;
+      if (data.length === 0) {
+        this.$Message.error("请先选择需要上传附件的合同！");
+        return;
+      }
+      this.$nextTick(() => {
+        if (data.length === 0) {
+        } else {
+          data.forEach(d => {
+            this.postData.accountId = this.$store.state.user.accountId;
+            this.postData.contractNo = d.data.contractNo;
+            this.$refs.upload.post(file);
+          });
+          this.morehtztClick();
+          this.$Message.success("上传成功！");
+        }
+      });
+      return false;
+    },
+    exportAll() {
+      if (this.isFinance || this.isCooperative || this.isSaleMan) {
+        this.$Message.error("权限不足！");
+        return;
+      }
+      if (this.exportUrl === "") {
+        this.$Message.error("导出失败，请稍后重试！");
+        return;
+      }
+      this.morehtztClick();
+    },
+    export() {
+      if (this.isFinance || this.isCooperative || this.isSaleMan) {
+        return;
+      }
+      let request = {
+        data: [
+          {
+            account_id: this.$store.state.user.accountId
+          }
+        ]
+      };
+      this.$http.CONTRACTEXPORT(request).then(
+        res => {},
+        error => {
+          if (error.data.code === 0) {
+            this.exportUrl = error.data.exportUrl;
+          }
+        }
+      );
     }
   },
   mounted() {
     this.getContracts(1);
     this.getProvinces();
     this.getManagecompanys();
+    this.export();
   },
   watch: {
     "filterItem.province": function(nv) {
@@ -635,6 +757,53 @@ export default {
       } else {
         this.disabled = false;
       }
+    }
+  },
+  computed: {
+    isFinance() {
+      if (
+        this.$store.state.app.authority &&
+        this.$store.state.app.authority.length > 0 &&
+        this.$store.state.app.authority[0].role
+      ) {
+        return this.$store.state.app.authority[0].role.find(r => r === "财务");
+      }
+    },
+    isCooperative() {
+      if (
+        this.$store.state.app.authority &&
+        this.$store.state.app.authority.length > 0 &&
+        this.$store.state.app.authority[0].role
+      ) {
+        return this.$store.state.app.authority[0].role.find(
+          r => r === "合作伙伴"
+        );
+      }
+    },
+    isSaleManage() {
+      if (
+        this.$store.state.app.authority &&
+        this.$store.state.app.authority.length > 0 &&
+        this.$store.state.app.authority[0].role
+      ) {
+        return this.$store.state.app.authority[0].role.find(
+          r => r === "业务管控"
+        );
+      }
+    },
+    isSaleMan() {
+      if (
+        this.$store.state.app.authority &&
+        this.$store.state.app.authority.length > 0 &&
+        this.$store.state.app.authority[0].role
+      ) {
+        return this.$store.state.app.authority[0].role.find(
+          r => r === "销售人员"
+        );
+      }
+    },
+    regions() {
+      return JSON.parse(localStorage.getItem("regions")) || [];
     }
   }
 };

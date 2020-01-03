@@ -81,25 +81,37 @@
                 <span @click="closeglClick" class="gl_p1">X</span>
                 <Form ref="cusfilterItem" :model="cusfilterItem" :label-width="80">
                   <FormItem label="单据编号" prop="djbh">
-                    <Input type="text" v-model="cusfilterItem.djbh" />
+                    <Input type="text" v-model="cusfilterItem.djbh" placeholder="请输入单据编号" />
                   </FormItem>
-                  <!-- <FormItem label="订单编号" prop="ddbh">
-                    <Input type="text" v-model="cusfilterItem.ddbh" />
-                  </FormItem>-->
+                  <FormItem label="订单编号" prop="ddbh">
+                    <Input type="text" v-model="cusfilterItem.ddbh" placeholder="请输入订单编号" />
+                  </FormItem>
                   <FormItem label="客户名称" prop="khmc">
-                    <Input type="text" v-model="cusfilterItem.khmc" />
+                    <Input type="text" v-model="cusfilterItem.khmc" placeholder="请输入客户名称" />
                   </FormItem>
                   <FormItem label="出库类别" prop="cklb" v-if="this.tabName == 'name2'">
-                    <Input type="text" v-model="cusfilterItem.cklb" />
+                    <Select v-model="cusfilterItem.cklb" clearable filterable>
+                      <Option
+                        :value="item"
+                        v-for="item in ['出库发货']"
+                        :key="item"
+                      >{{item}}</Option>
+                    </Select>
                   </FormItem>
                   <FormItem label="入库类别" prop="rklb" v-if="this.tabName == 'name1'">
-                    <Input type="text" v-model="cusfilterItem.cklb" />
+                    <Select v-model="cusfilterItem.rklb" clearable filterable>
+                      <Option
+                        :value="item"
+                        v-for="item in ['成品入库']"
+                        :key="item"
+                      >{{item}}</Option>
+                    </Select>
                   </FormItem>
                   <FormItem label="规格型号" prop="ggxh">
-                    <Input type="text" v-model="cusfilterItem.ggxh" />
+                    <Input type="text" v-model="cusfilterItem.ggxh" placeholder="请输入规格型号" />
                   </FormItem>
                   <FormItem label="合同编号" prop="htbh">
-                    <Input type="text" v-model="cusfilterItem.htbh" />
+                    <Input type="text" v-model="cusfilterItem.htbh" placeholder="请输入合同编号" />
                   </FormItem>
                   <FormItem label="状态" prop="zt">
                     <Select v-model="cusfilterItem.zt" clearable filterable>
@@ -406,7 +418,16 @@ export default {
   },
   data() {
     return {
-      status:this.$option.asset.issueStatus,
+      status:[
+        {
+          index: 0,
+          val: '未审批'
+        },
+        {
+          index: 1,
+          val: '已审批'
+        }
+      ],
       zkSum: 1,
       crkSum: 1,
       sblbSum: 1,
@@ -1101,7 +1122,27 @@ export default {
             agent_name:
               this.cusfilterItem.khmc === ""
                 ? undefined
-                : this.cusfilterItem.khmc
+                : this.cusfilterItem.khmc,
+            // product_models:
+            //   this.cusfilterItem.ggxh === ''
+            //     ? undefined
+            //     : this.cusfilterItem.ggxh,
+            // contract_no:
+            //   this.cusfilterItem.htbh === ''
+            //     ? undefined
+            //     : this.cusfilterItem.htbh,
+            // status:
+            //   this.cusfilterItem.zt === ''
+            //     ? undefined
+            //     : this.cusfilterItem.zt,
+            // start_time:
+            //   this.cusfilterItem.startTime === ''
+            //     ? undefined
+            //     : this.cusfilterItem.startTime,
+            // end_time:
+            //   this.cusfilterItem.endTime === ''
+            //     ? undefined
+            //     : this.cusfilterItem.endTime,
           }
         ]
       };
@@ -1131,7 +1172,7 @@ export default {
             item.ddbh = String(data.order_no);
             item.khmc = data.customer_name;
             item.sbsl = data.product_count;
-            item.zt = this.stausMap[data.allocation_status];
+            item.zt = this.stausMap[1];
             item.data = data;
             if (this.tabName === "name1") {
               item.rklb = "成品入库";

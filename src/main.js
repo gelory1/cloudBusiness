@@ -13,10 +13,13 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import api from '@/api/axios';
 import option from './libs/option';
+import 'viewerjs/dist/viewer.css';
+import Viewer from 'v-viewer';
 
 Vue.use(VueI18n);
 Vue.use(iView);
 Vue.use(ElementUI);
+Vue.use(Viewer);
 Vue.prototype.$http = api;
 Vue.prototype.$util = util;
 Vue.prototype.$option = option;
