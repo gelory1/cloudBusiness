@@ -115,7 +115,14 @@ export default {
                 return true
               }
             });
-            menuList.push({
+            let address = 'f';
+            if(menu.path === '/setting'){
+              address = 'fs';
+              if(this.authority.find(a => a.path === 'addressManage')){
+                address = 't';
+              }
+            }
+            if(address === 'f' || address === 't') menuList.push({
               component:menu.component,
               icon:menu.icon,
               name:menu.name,
