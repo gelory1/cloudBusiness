@@ -22,7 +22,6 @@
           </Row>
           <Row>
             <Col span="6" style="position:relative">
-              <span style="color:red;position:absolute;left:20px;top:8px;">*</span>
               <FormItem label="客户性质" prop="nature" :label-width="90">
                 <Select v-model="formValidate.nature" placeholder clearable filterable>
                   <Option

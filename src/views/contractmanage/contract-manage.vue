@@ -219,7 +219,7 @@ export default {
       contract_columns: [
         {
           type: "selection",
-          width: 40,
+          width: 50,
           align: "center"
         },
         {
@@ -813,4 +813,7 @@ export default {
 @import "../assetmanagement/assetmanage.css";
 @import "../customermanage/customer.css";
 @import "./contract.css";
+.ivu-table-cell {
+  text-overflow: unset;
+}
 </style>
