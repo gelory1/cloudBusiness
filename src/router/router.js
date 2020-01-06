@@ -155,17 +155,18 @@ export const appRouter = [
             // { path: 'model-config', title: '产品型号配置', name: 'model-config', icon: 'gear-a', component: () => import('@/views/assetmanagement/model-config/model-config.vue')},
         ]
     },
-    // // 报表
-    // {
-    //     path: '/tables',
-    //     icon: 'android-list',
-    //     name: 'tables',
-    //     title: '表格',
-    //     component: Main,
-    //     children: [
-    //         { path: 'dragableTable', title: '报表', name: 'dragable-table', icon: 'android-list', component: () => import('@/views/tables/dragable-table.vue') }
-    //     ]
-    // },
+    // 报表
+    {
+        path: '/reportform',
+        icon: 'android-list',
+        name: 'reportform',
+        title: '报表',
+        component: Main,
+        children: [
+            { path: 'inventory', title: '库存统计', name: 'inventory', component: () => import('@/views/reportform/inventory.vue') },
+            { path: 'stock', title: '备货统计', name: 'stock', component: () => import('@/views/reportform/stock.vue') }
+        ]
+    },
     // 报表
     {
         path: '/tables',

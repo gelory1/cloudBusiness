@@ -56,7 +56,7 @@ util.getRouterObjByName = function (routers, name) {
     let routerObj = null;
     for (let item of routers) {
         if (item.name === name) {
-            if (!(name === 'home' || name === 'home_index' || name === 'dragable-table' || name === 'setting' || name === 'address-manage')) {
+            if (!(name === 'home' || name === 'home_index' || name === 'dragable-table' || name === 'inventory' || name === 'stock' || name === 'setting' || name === 'address-manage')) {
                 item.access = true;
             }
             return item;
