@@ -163,8 +163,8 @@ export const appRouter = [
         title: '报表',
         component: Main,
         children: [
-            { path: 'inventory', title: '库存统计', name: 'inventory', component: () => import('@/views/reportform/inventory.vue') },
-            { path: 'stock', title: '备货统计', name: 'stock', component: () => import('@/views/reportform/stock.vue') }
+            { path: '/reportform/inventory', title: '库存统计', name: 'inventory', component: () => import('@/views/reportform/inventory.vue') },
+            { path: '/reportform/stock', title: '备货统计', name: 'stock', component: () => import('@/views/reportform/stock.vue') }
         ]
     },
     // 报表
