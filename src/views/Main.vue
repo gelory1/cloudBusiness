@@ -106,7 +106,7 @@ export default {
       let menuList = [];
       if(this.authority&&this.authority.length>0){
         this.$store.state.app.menuList.forEach(menu => {
-          let whiteList = ['/','/setting','/reportform'];
+          let whiteList = ['/','/setting'];
           if(this.authority.find(a => (a.path).toUpperCase() === (menu.path).toUpperCase())||whiteList.indexOf(menu.path)!==-1){
             let children = [];
             children = menu.children.filter((m,i) => {
@@ -119,12 +119,6 @@ export default {
             if(menu.path === '/setting'){
               address = 'fs';
               if(this.authority.find(a => a.path === 'addressManage')){
-                address = 't';
-              }
-            }
-            if(menu.path === '/reportform'){
-              address = 'fs';
-              if(children.length > 0){
                 address = 't';
               }
             }

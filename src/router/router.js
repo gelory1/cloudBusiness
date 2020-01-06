@@ -175,7 +175,7 @@ export const appRouter = [
         title: '预投管理',
         component: Main,
         children: [
-            { path: 'dragableTable', title: '设备统计', name: 'dragable-table', component: () => import('@/views/tables/dragable-table.vue') }
+            { path: '/tables/dragableTable', title: '设备统计', name: 'dragable-table', component: () => import('@/views/tables/dragable-table.vue') }
         ]
     },
     // 设置
