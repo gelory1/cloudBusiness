@@ -170,13 +170,7 @@
               <!-- 更多 -->
               <div v-show="moreShow" class="more">
                 <p @click="exportSelect">导出所选结果</p>
-                <p>
-                  <a
-                    :href="exportUrl === ''||this.isFinance||this.isCooperative?'#':exportUrl"
-                    @click="exportAll"
-                    style="color:#495060"
-                  >导出全部结果</a>
-                </p>
+                <p @click="exportAll">导出全部结果</p>
                 <!-- <p>
                   <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :data="postData" :before-upload="beforeUpload" :headers="{user:'x',key:'x'}">
                     上传合同附件
@@ -207,6 +201,7 @@
           show-elevator
           style="text-align:center;margin-top:20px;"
         ></Page>
+        <a ref="downloadLink" :href="exportUrl === ''?'#':exportUrl" download="合同列表"></a>
       </Content>
     </Layout>
   </div>
@@ -683,12 +678,13 @@ export default {
         this.$Message.error("请先选择需要导出的合同！");
         return;
       }
-      this.$refs["table"].exportCsv({
-        filename: "合同信息列表",
-        columns: this.contract_columns.filter((col, index) => index !== 0),
-        data: this.contract_data.filter(data => data._checked === true)
-      });
-      this.morehtztClick();
+      let exportList = '';
+      this.contract_data.forEach(c => {
+        if(c._checked === true){
+          exportList += c.contractNo + ','
+        }
+      })
+      this.export(exportList);
     },
     beforeUpload(file) {
       let data = this.selectedItems;
@@ -715,38 +711,42 @@ export default {
         this.$Message.error("权限不足！");
         return;
       }
-      if (this.exportUrl === "") {
-        this.$Message.error("导出失败，请稍后重试！");
-        return;
-      }
-      this.morehtztClick();
+      this.export();
     },
-    export() {
+    export(list) {
       if (this.isFinance || this.isCooperative || this.isSaleMan) {
         return;
       }
       let request = {
         data: [
           {
-            account_id: this.$store.state.user.accountId
+            account_id: this.$store.state.user.accountId,
+            contractList: list
           }
         ]
       };
+      this.$Message.info('导出中...');
       this.$http.CONTRACTEXPORT(request).then(
         res => {},
         error => {
           if (error.data.code === 0) {
             this.exportUrl = error.data.exportUrl;
+            this.$nextTick(() => {
+              this.$refs.downloadLink.click();
+              this.exportUrl = '';
+            })
+            this.morehtztClick();
+          }else{
+            this.$Message.error("导出失败，请稍后重试！");
           }
         }
-      );
+      )
     }
   },
   mounted() {
     this.getContracts(1);
     this.getProvinces();
     this.getManagecompanys();
-    this.export();
   },
   watch: {
     "filterItem.province": function(nv) {
