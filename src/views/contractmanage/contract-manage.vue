@@ -219,7 +219,7 @@ export default {
       contract_columns: [
         {
           type: "selection",
-          width: 50,
+          width: 40,
           align: "center"
         },
         {
