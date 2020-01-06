@@ -816,4 +816,7 @@ export default {
 .ivu-table-cell {
   text-overflow: unset;
 }
+.ivu-table td, .ivu-table th{
+  text-overflow: unset;
+}
 </style>
