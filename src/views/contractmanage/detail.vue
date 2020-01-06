@@ -519,9 +519,8 @@ export default {
       this.$router.push({
         path: "/contractmanage/edit",
         query: {
-          paymentList: this.paymentList,
-          remainingMoney: this.remainingMoney,
-          fj:this.fj
+          paymentList: JSON.stringify(this.paymentList),
+          remainingMoney: this.remainingMoney
         }
       });
     },

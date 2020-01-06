@@ -291,7 +291,7 @@
                   </p>
                 </section>
                 <div style="float:right;color:#4a9af5">
-                  <!-- <span @click="see(item.url)" style="cursor:pointer">查看</span> -->
+                  <span @click="see(item.url)" style="cursor:pointer">查看</span>
                   <span @click="deleteFj(item.data.enclosureId)" style="cursor:pointer" v-if="item.data.enclosureType !== 4&&item.data.enclosureType !== 5">删除</span>
                 </div>
               </div>
@@ -527,7 +527,12 @@ export default {
       });
     },
     see(url){
-      this.seeUrl = `http://view.xdocin.com/xdoc?_xdoc=${encodeURIComponent(url)}`;
+      let reg = /.pdf$/;
+      if(reg.test(url)){
+        this.seeUrl = `http://view.xdocin.com/xdoc?_xdoc=${encodeURIComponent(url)}`;
+      }else{
+        this.seeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${url}`;
+      }
       this.seeModal = true;
     }
   },
@@ -544,15 +549,20 @@ export default {
   },
   computed: {
     data(){
-      return JSON.parse(localStorage.getItem('contractInfo'))||{};
+      if (Object.keys(this.$store.state.user.contractInfo).length > 0) {
+        return this.$store.state.user.contractInfo;
+      }
+      return JSON.parse(localStorage.getItem("contractInfo")) || {};
     },
     paymentList(){
-      if(this.$route.query.paymentList&&this.$route.query.paymentList.length>0){
-        this.$route.query.paymentList.forEach((p,index) => {
+      let paymentList = [];
+      if(this.$route.query&&this.$route.query.paymentList){
+        paymentList = JSON.parse(this.$route.query.paymentList)||[];
+        paymentList.forEach((p,index) => {
           this.$set(this.showObj,index,false);
         })
       }
-      return this.$route.query.paymentList;
+      return paymentList;
     },
     remainingMoney(){
       return this.$route.query.remainingMoney;
@@ -575,6 +585,7 @@ export default {
     seeModal(nv){
       if(!nv){
         this.seeModal = false;
+        this.seeUrl = '';
       }
     }
   }
