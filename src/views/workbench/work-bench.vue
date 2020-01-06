@@ -178,7 +178,7 @@
             <el-upload action="/" :on-change="importExcel" :auto-upload="false" :show-file-list="false">
               <Button class="but_change" type="ghost" icon="ios-cloud-upload-outline">批量导入</Button>
             </el-upload>
-            <span style="white-space: normal;color:#bbbec4">请上传excel文件,表格中三列名称分别为:到款时间,金额,付款方</span>(<a href="http://www.chinadny.com:9010/front/userfiles/xlcloud/paybackAmount.xls">点击下载模板</a>)
+            <span style="white-space: normal;color:#bbbec4">请上传excel文件,表格中三列名称分别为:到款时间,金额,付款方</span>(<a href="http://9010.chinadny.com/front/userfiles/xlcloud/paybackAmount.xls">点击下载模板</a>)
           </div>
           <Table :columns="add_columns" :data="newgzForm.add_data" class="gztable"></Table>
         </FormItem>
