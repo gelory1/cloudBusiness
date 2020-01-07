@@ -106,10 +106,26 @@
             </Col>
           </Row>
           <Row>
-            <Col span="12">
-              <FormItem label="销售负责人" prop="salesman" :label-width="90">
-                 <Cascader ref="cascader" v-model="formValidate.salesman" :data="salesList" @on-change="changeCompony" filterable :load-data="getSales" style="width:350px;"></Cascader>
-                <!-- <el-cascader clearable v-model="formValidate.salesman" :options="salesList" filterable @expand-change="changeCompony" :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;"></el-cascader> -->
+            <Col span="6" style="position:relative">
+              <FormItem label="运营公司" prop="manageCompany" :label-width="90">
+                <Select v-model="formValidate.manageCompany" @on-change="changeCompony" clearable filterable placeholder>
+                  <Option
+                    v-for="(item) in companys"
+                    :value="item.id"
+                    :key="item.id"
+                  >{{item.name}}</Option>
+                </Select>
+              </FormItem>
+            </Col>
+            <Col span="6">
+              <FormItem label="销售负责人" prop="salesman" class="con-right">
+                <Select v-model="formValidate.salesman" clearable filterable placeholder>
+                  <Option
+                    v-for="(item) in salesList"
+                    :value="item.id"
+                    :key="item.id"
+                  >{{item.name}}</Option>
+                </Select>
               </FormItem>
             </Col>
             <Col span="12" v-if="isFriend">
@@ -459,6 +475,7 @@ export default {
         mail_address: "",
         post_code: "",
         salesman: '',
+        manageCompany: '',
         platformuser_list: [],
         contacts_list: [],
         ticket_list: [],
@@ -525,11 +542,11 @@ export default {
             trigger: "change"
           }
         ],
-        salesman: [
+        manageCompany: [
           {
             required: true,
-            message: "请选择销售负责人",
-            type: "array",
+            message: "请选择运营公司",
+            type: "number",
             trigger: "change"
           }
         ],
@@ -767,7 +784,6 @@ export default {
       newLocalData: {},
       provinces_county: [],
       salesList: [],
-      manageCompany:'',
       uploadLoading:false,
       file:{
         name:'',
@@ -788,7 +804,8 @@ export default {
   },
   methods: {
     changeCompony(value){
-      // this.formValidate.salesman = [];
+      this.formValidate.salesman === '';
+      this.getSales();
     },
     inputChange() {
       this.formAddkpxx.bank_account = this.formAddkpxx.bank_account.replace(
@@ -866,8 +883,8 @@ export default {
             city: this.formValidate.city[1]?this.formValidate.city[1]:0,
             area: this.formValidate.city[2]?this.formValidate.city[2]:0,
             empowerList:empowerList.length === 0?undefined:empowerList,
-            manageCompany: Number(this.formValidate.salesman[0]),
-            saleNo: Number(this.formValidate.salesman[1]?this.formValidate.salesman[1]:-1),
+            manageCompany: Number(this.formValidate.manageCompany),
+            saleNo: Number(this.formValidate.salesman?this.formValidate.salesman:-1),
             industry: this.formValidate.industry === ''?0:this.formValidate.industry,
             mailAddress: this.formValidate.mail_address,
             bondAmount: Number(this.formValidate.bond_amount),
@@ -1056,55 +1073,29 @@ export default {
     cancel() {
       this.addlxrmodal = false;
     },
-    getSales(item,callback) {
+    getSales() {
+      if(!this.formValidate.manageCompany) return;
       let request = {
         typeid: 27008,
         data: [
           {
-            companyID: parseInt(item.value)
+            companyID: parseInt(this.formValidate.manageCompany)
           }
         ]
       };
-      if(this.salesList.length === 0){
-          this.companys.forEach(p => {
-            let item = {
-              value:p.id + '',
-              label:p.name,
-              children:[],
-              loading:false
-            }
-            this.salesList.push(item);
-          })
-        }
-      // this.salesList = [];
-      item.loading = true;
+      this.salesList = [];
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
-        let children = [];
-        res.forEach(r => {
-          children.push({
-            value:r.id+'',
-            label:r.name
-          })
-        })
-        item.children = children;
-        this.$nextTick(()=>{
-          let salesman = ((this.data || {}).data || {}).saleId;
-          let arr = [item.value + '',salesman + ''];
-          this.formValidate.salesman = arr;
-        })
-        item.loading = false;
-         callback();
+        this.salesList = res;
+        // this.$nextTick(()=>{
+          if(this.formValidate.salesman === ''){
+            this.formValidate.salesman = (this.salesList.find(s => s.id === ((this.data||{}).data||{}).saleId)||{}).id||this.salesList[0].id;
+          }
+        // })
       },error => {
-        if(this.salesList.find(p => p.value === this.manageCompany)){
-          item.children = [];
-          this.formValidate.salesman = [];
+        if(this.companys.find(p => p.id === this.formValidate.manageCompany)){
+          this.formValidate.salesman = '';
         }
-        if(item.label&&item.children.length === 0){
-          this.$Message.error('该运营下没有销售人员可选，请重新选择！');
-        }
-        item.loading = false;
-         callback();
       });
     },
     init() {
@@ -1165,8 +1156,8 @@ export default {
         }
       }
       this.formValidate.empower_city = empowerCity;
-      this.manageCompany = ((data || {}).data || {}).manage_company;
-      this.getSales({value:this.manageCompany},()=>{});
+      this.formValidate.manageCompany = ((data || {}).data || {}).manage_company;
+      this.formValidate.salesman = ((this.data || {}).data || {}).saleId;
       if(((data || {}).data || {}).enclosure){
         this.file.name = ((data || {}).data || {}).enclosure.fileName;
         this.file.size = ((data || {}).data || {}).enclosure.fileSize;
@@ -1570,7 +1561,8 @@ export default {
       bond_amount: "",
       mail_address: "",
       post_code: "",
-      salesman: [],
+      salesman: '',
+      manageCompany: '',
       platformuser_list: [],
       contacts_list: [],
       ticket_list: [],
@@ -1645,14 +1637,9 @@ export default {
       this.plat.platform_name = selectedplatObj.platform_name;
       this.plat.platform_user_type = selectedplatObj.platform_user_type;
     },
-    'formValidate.salesman'(nv){
-      if(nv.length === 1){
-        this.$refs['cascader'].visible = true;
-        let index = this.$refs['cascader'].data.findIndex(d => d.value === nv[0]);
-        let top = index * 30;
-        this.$nextTick(() => {
-          $('.ivu-cascader-menu')[0].scrollTo(0,top);
-        })
+    'formValidate.manageCompany': function(nv) {
+      if(!nv){
+        this.salesList = [];
       }
     }
   }

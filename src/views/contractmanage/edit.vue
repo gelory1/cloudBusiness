@@ -291,7 +291,7 @@
                   </p>
                 </section>
                 <div style="float:right;color:#4a9af5">
-                  <span @click="see(item.url)" style="cursor:pointer">查看</span>
+                  <!-- <span @click="see(item.url)" style="cursor:pointer">查看</span> -->
                   <span @click="deleteFj(item.data.enclosureId)" style="cursor:pointer" v-if="item.data.enclosureType !== 4&&item.data.enclosureType !== 5">删除</span>
                 </div>
               </div>
