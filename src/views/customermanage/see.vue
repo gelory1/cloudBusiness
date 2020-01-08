@@ -111,7 +111,9 @@
               <section>
                 <p>授权资质：</p>
                 <p v-show="!((data||{}).data||{}).areaList||((data||{}).data||{}).areaList.length===0" style="color:#000000;">暂无</p>
-                <p v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span>{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
+                <div style="height:100px;overflow:auto;border:1px solid #ccc;">
+                  <p v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span>{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
+                </div>
               </section>
             </div>
             <div class="select1">

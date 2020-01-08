@@ -101,7 +101,7 @@
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="授权资质" prop="empower_city" class="con-right">
-                <el-cascader clearable v-model="formValidate.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
+                <el-cascader clearable v-model="formValidate.empower_city" :options="regions" filterable collapse-tags show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -276,7 +276,7 @@
           </div>
         </footer>
         <FormItem class="form_but">
-          <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+          <Button type="primary" @click="handleSubmit('formValidate')" :loading="submitLoading">提交</Button>
           <Button type="ghost" @click="gohandleCancel('formValidate')" style="margin-left: 20px">取消</Button>
         </FormItem>
       </Form>
@@ -799,7 +799,8 @@ export default {
         customerNo:''
       },
       deleteStatus: false,
-      uploadStatus: false
+      uploadStatus: false,
+      submitLoading: false
     };
   },
   methods: {
@@ -900,6 +901,7 @@ export default {
           }
         ]
       };
+      this.submitLoading = true;
       if (this.isNewCreate) {
         api.SETCUSTOMER(request).then(response => {
             this.customer_id = response.data.result.data.customerNo;
