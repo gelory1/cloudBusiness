@@ -40,7 +40,7 @@
           </Col>
         </Row>
         <Row>
-          <Col span="8">
+          <Col span="12">
             <FormItem label="仓库" prop="store" :label-width="90">
               <Select v-model="formValidate.store.index" placeholder filterable clearable>
                 <Option
@@ -86,6 +86,7 @@
             :columns="devices_columns"
             :data="formValidate.devices_list"
             style="margin-left:10px;"
+            height="300"
           ></Table>
           <div class="dd_div">
             <section>
@@ -98,7 +99,7 @@
             </section>
           </div>
         </div>
-        <FormItem style="width:300px;margin:200px auto;margin-bottom:20px;">
+        <FormItem style="width:300px;margin:110px auto;margin-bottom:10px;">
           <Button type="primary" @click="onSubmit('formValidate')" :loading="subLoading">提交</Button>
           <Button type="ghost" style="margin-left: 18px" @click="onCancel" :disabled="subLoading">取消</Button>
         </FormItem>
@@ -224,9 +225,8 @@ export default {
       devices_columns: [
         {
           type: "selection",
-          width: 60,
+          width: 40,
           align: "center",
-          align: "center"
         },
         {
           title: "存货编码",
@@ -284,7 +284,7 @@ export default {
         {
           title: "发货数量",
           key: "num",
-          width: 150,
+          width: 120,
           align: "center",
           render: (h, params) => {
             return h("InputNumber", {
@@ -305,21 +305,25 @@ export default {
         },
         {
           title: "单价",
-          width: '80',
-          key: "price"
+          width: '70',
+          key: "price",
+          align: "center"
         },
         {
           title: "总价",
-          key: "totalPrice"
+          width: '70',
+          key: "totalPrice",
+          align: "center"
         },
         {
           title: "税率",
-          width: '60',
-          key: "tax"
+          width: '70',
+          key: "tax",
+          align: "center"
         },
         {
           title:'操作',
-          width: '90',
+          width: '60',
           key: 'action',
           align: "center",
           render:(h,params) => {
@@ -339,11 +343,17 @@ export default {
                 h('Button',{
                   props:{
                     size: 'small'
-                  }
+                  },
                 },'删除')
               ]
             )
           }
+        },
+        {
+          title: " ",
+          key: "aa",
+          width: '1',
+          align: 'center'
         }
       ],
       addsb_columns: [
@@ -462,7 +472,7 @@ export default {
               })
             ]);
           }
-        }
+        },
       ],
       addsb_data: [],
       addData: {},

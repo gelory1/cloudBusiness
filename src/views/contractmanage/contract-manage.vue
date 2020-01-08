@@ -247,12 +247,12 @@ export default {
         {
           title: "合同性质",
           key: "contractNature",
-          align: "center"
+          align: "center",
         },
         {
           title: "合同类型",
           key: "contractType",
-          align: "center"
+          align: "center",
         },
         {
           title: "合同状态",
@@ -299,7 +299,31 @@ export default {
         {
           title: "合同名称",
           key: "customerName",
-          align: "center"
+          align: "center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.customerName !== null) {
+                if (params.row.customerName.length > 20) {
+                  texts = params.row.customerName.substring(0, 20) + '...'
+                } else {
+                  texts = params.row.customerName
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.customerName)
+              ])
+            }
         },
         {
           title: "省份城市",

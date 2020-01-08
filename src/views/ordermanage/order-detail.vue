@@ -42,7 +42,7 @@
         </div>
         <div style="clear:both;">
             <p class="djtitle">单据信息</p>
-            <div style="line-height:40px;width:40%;float:left">
+            <div style="line-height:30px;width:35%;float:left;">
             <div>
                 <span class="jbleft">业务类型：</span>
                 <span class="jbright">{{selectedOrder.type}}</span>
@@ -60,10 +60,10 @@
                 <span class="jbright">{{selectedOrder.customName}}</span>
             </div>
             </div>
-            <div style="line-height:40px;width:50%;float:right">
+            <div style="line-height:30px;width:60%;float:right;">
             <div v-if="selectedOrder.type !=='合同订单'">
                 <span class="jbleft">客户名称：</span>
-                <span class="jbright">{{selectedOrder.customName}}</span>
+                <span class="jbright" style="width:80%;">{{selectedOrder.customName}}</span>
             </div>
             <div v-if="selectedOrder.type==='合同订单'">
                 <span class="jbleft">合同编号：</span>
@@ -81,7 +81,7 @@
             </div>
             <div>
                 <span class="jbleft">收货地址：</span>
-                <span style="color:#8D8D8D">{{selectedOrder.address_detail}}</span>
+                <span class="jbright" style="color:#8D8D8D;word-wrap: break-word;word-break: break-all;vertical-align: text-top;line-height:18px;width:80%">{{selectedOrder.address_detail}}</span>
             </div>
             </div>
         </div>

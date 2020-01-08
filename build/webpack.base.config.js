@@ -93,12 +93,12 @@ module.exports = {
     devServer: {
         proxy: {
           '/public/api/': {
-            target: 'http://10.0.17.213:31380',
+            target: 'http://8068.chinadny.com/',
             changeOrigin: true,
             secure: false
           },
           '/api/': {
-            target: 'http://10.0.17.213:31380',
+            target: 'http://8068.chinadny.com/',
             changeOrigin: true,
             secure: false
           }
