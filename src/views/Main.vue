@@ -347,4 +347,8 @@ export default {
 .main .layout-text{
   font-size:16px;
 }
+.ivu-table-cell{
+  padding-left: 5px;
+  padding-right: 5px;
+}
 </style>
