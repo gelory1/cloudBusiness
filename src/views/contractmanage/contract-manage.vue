@@ -303,7 +303,7 @@ export default {
           render: (h, params) => {
               let texts = ''
               if (params.row.customerName !== null) {
-                if (params.row.customerName.length > 20) {
+                if ((params.row.customerName||'').length > 20) {
                   texts = params.row.customerName.substring(0, 20) + '...'
                 } else {
                   texts = params.row.customerName
