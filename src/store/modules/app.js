@@ -66,22 +66,15 @@ const app = {
             state.authority = list;
         },
         updateMenulist (state) {
-            let accessCode = parseInt(Cookies.get('access'));
             let menuList = [];
-            appRouter.forEach((item, index) => {
+            appRouter.forEach((item) => {
                 if (item.children.length === 1) {
                     menuList.push(item);
                 } else {
                     let len = menuList.push(item);
                     let childrenArr = [];
                     childrenArr = item.children.filter(child => {
-                        if (child.access !== undefined) {
-                            if (Util.showThisRoute(child.access, accessCode)) {
-                                return child;
-                            }
-                        } else {
-                            return child;
-                        }
+                        return child;
                     });
                     if (childrenArr === undefined || childrenArr.length === 0) {
                         menuList.splice(len - 1, 1);
