@@ -111,9 +111,10 @@
               <section>
                 <p>授权资质：</p>
                 <p v-show="!((data||{}).data||{}).areaList||((data||{}).data||{}).areaList.length===0" style="color:#000000;">暂无</p>
-                <div style="height:100px;overflow:auto;border:1px solid #ccc;">
+                <div style="height:100px;overflow:auto;border:1px solid #ccc;" v-if="(((data||{}).data||{}).areaList||[]).length>4">
                   <p v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span>{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
                 </div>
+                <p v-else v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span>{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
               </section>
             </div>
             <div class="select1">
