@@ -277,6 +277,7 @@ export default {
         },
         {
           title: "主计量",
+          width: '72',
           key: "unit",
           align: "center"
         },
@@ -304,6 +305,7 @@ export default {
         },
         {
           title: "单价",
+          width: '80',
           key: "price"
         },
         {
@@ -312,18 +314,20 @@ export default {
         },
         {
           title: "税率",
+          width: '60',
           key: "tax"
         },
         {
           title:'操作',
-          width: '200',
+          width: '90',
           key: 'action',
           align: "center",
           render:(h,params) => {
             return h('Poptip',{
                 props:{
                   title:'是否确定删除？',
-                  confirm:true
+                  confirm:true,
+                  width: 200,
                 },
                 on:{
                   'on-ok':() =>{
