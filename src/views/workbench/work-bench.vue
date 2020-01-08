@@ -1195,11 +1195,11 @@ export default {
             status: params.row.data.workBenchStatus
           }
         }else if(params.row.data.workBenchType === 1){
-          this.$alert(`您有一个${(params.row.data.workBenchContentObj||{}).orderNo?'备货流程':'合同'}待审批，${(params.row.data.workBenchContentObj||{}).orderNo?'订单':'合同'}号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||(params.row.data.workBenchContentObj||{}).orderNo }`, '审批提醒', {
+          this.$alert(`您有一个${(params.row.data.workBenchContentObj||{}).orderNo?'备货流程':'合同'}${params.row.data.workBenchStatus === 1?'待审批':'已审批'}，${(params.row.data.workBenchContentObj||{}).orderNo?'订单':'合同'}号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||(params.row.data.workBenchContentObj||{}).orderNo }`, '审批提醒', {
             confirmButtonText: '确定',
             callback: action => {
               if(action === 'confirm'){
-                if(this.tabName !== 'name1'){
+                if(params.row.data.workBenchStatus !== 1){
                   return;
                 }
                 let request = {
@@ -1700,7 +1700,6 @@ export default {
     },
     selectReport(index,val){
       let obj = (index === 0?this.reportData[1]:this.reportData[index]).find(r => r.report_id === val);
-      if(index === 0) console.log(obj);
       let data = index === 0?this.selectReportData0:index === 1?this.selectReportData:index === 2?this.selectReportData2:this.selectReportData3;
       for(let key in obj){
         if(typeof(obj[key]) === 'object'&&(index === 1||index === 0)){
