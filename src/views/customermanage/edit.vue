@@ -101,7 +101,7 @@
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="授权资质" prop="empower_city" class="con-right">
-                <el-cascader clearable v-model="formValidate.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
+                <el-cascader clearable v-model="formValidate.empower_city" :options="regions" filterable collapse-tags show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -184,8 +184,8 @@
                   </div>
                 </section>
               </div>
-              <p style="font-size:12px;color:#495060;margin-left:-10px;float:left;" v-if="!uploadLoading&&file.name === ''&&isFriend">合作协议（附件）</p>
-              <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :on-success="uploadSuccess" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
+              <p style="font-size:12px;color:#495060;margin-left:10px;float:left;" v-if="!uploadLoading&&file.name === ''&&isFriend">合作协议（附件）</p>
+              <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :on-success="uploadSuccess" :on-error="uploadError" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
                 <Button type="text" icon="plus" style="color:#4a9af5;margin:-7px 0 0 -10px;;" v-show="!uploadLoading&&file.name === ''&&isFriend">添加附件</Button>
               </Upload>
               <!-- <p v-if="uploadLoading">上传中...</p> -->
@@ -276,7 +276,7 @@
           </div>
         </footer>
         <FormItem class="form_but">
-          <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+          <Button type="primary" @click="handleSubmit('formValidate')" :loading="submitLoading">提交</Button>
           <Button type="ghost" @click="gohandleCancel('formValidate')" style="margin-left: 20px">取消</Button>
         </FormItem>
       </Form>
@@ -799,7 +799,8 @@ export default {
         customerNo:''
       },
       deleteStatus: false,
-      uploadStatus: false
+      uploadStatus: false,
+      submitLoading: false
     };
   },
   methods: {
@@ -900,6 +901,7 @@ export default {
           }
         ]
       };
+      this.submitLoading = true;
       if (this.isNewCreate) {
         api.SETCUSTOMER(request).then(response => {
             this.customer_id = response.data.result.data.customerNo;
@@ -937,7 +939,7 @@ export default {
               this.$Message.success("客户信息更新成功！");
               this.$router.push("/customermanage/customermanage");  
             }
-        });
+        }).catch(e => {this.submitLoading = false;});
       } else {
         api
           .UPDATECUSTOMER(request)
@@ -955,12 +957,16 @@ export default {
               }
             }
           })
-          .catch(e => {});
+          .catch(e => {this.submitLoading = false;});
       }
     },
     uploadSuccess(){
       this.$Message.success("客户信息更新成功！");
       this.$router.push("/customermanage/customermanage");
+    },
+    uploadError(){
+      this.submitLoading = false;
+      this.$Message.error("上传附件异常，请重试！");
     },
     saveTicket(name) {
       let status = false;
@@ -1485,7 +1491,6 @@ export default {
       });
     },
     beforeUpload(file){
-      this.$Message.success('上传成功！');
       this.file.name = file.name;
       this.file.size = file.size >= 1024?((file.size/1024).toFixed(2) + ' KB'): file.size >= 1024*1024?((file.size/(1024*1024)).toFixed(2) + ' MB'):(file.size + ' B');
       this.file.date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();

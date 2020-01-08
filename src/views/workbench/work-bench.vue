@@ -1195,7 +1195,7 @@ export default {
             status: params.row.data.workBenchStatus
           }
         }else if(params.row.data.workBenchType === 1){
-          this.$alert(`您有一个${(params.row.data.workBenchContentObj||{}).orderNo?'备货流程':'合同'}待审批，${(params.row.data.workBenchContentObj||{}).orderNo?'订单':'合同'}号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||(params.row.data.workBenchContentObj||{}).orderNo }`, '审批提醒', {
+          this.$alert(`您有一个${(params.row.data.workBenchContentObj||{}).orderNo?'备货流程':'合同'}${params.row.data.workBenchStatus === 1?'待审批':'审批完成'}，${(params.row.data.workBenchContentObj||{}).orderNo?'订单':'合同'}号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||(params.row.data.workBenchContentObj||{}).orderNo }`, '审批提醒', {
             confirmButtonText: '确定',
             callback: action => {
               if(action === 'confirm'){

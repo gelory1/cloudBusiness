@@ -5,7 +5,7 @@
   <div class="main" :class="{'main-hide-text': shrink}">
     <div
       class="sidebar-menu-con"
-      :style="{width: shrink?'60px':'250px', overflow: shrink ? 'visible' : 'auto'}"
+      :style="{width: shrink?'60px':'220px', overflow: shrink ? 'visible' : 'auto'}"
     >
       <scroll-bar ref="scrollBar">
         <shrinkable-menu
@@ -35,7 +35,7 @@
                 </div>
             </div>
     </div> -->
-    <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'250px'}">
+    <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'220px'}">
       <div style="height:70px;background:#528DFF;">
         <div class="header-avator-con">
           <div class="user-dropdown-menu-con">
@@ -60,7 +60,7 @@
       </div>
     </div>
     <!-- 右侧内容页 -->
-    <div class="single-page-con" :style="{left: shrink?'60px':'250px'}" ref="content">
+    <div class="single-page-con" :style="{left: shrink?'60px':'220px'}" ref="content">
       <div class="single-page">
         <keep-alive :include="cachePage">
           <router-view></router-view>
@@ -346,5 +346,9 @@ export default {
 }
 .main .layout-text{
   font-size:16px;
+}
+.ivu-table-cell{
+  padding-left: 5px;
+  padding-right: 5px;
 }
 </style>
