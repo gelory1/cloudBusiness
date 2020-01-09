@@ -370,7 +370,7 @@ contract.status = [
         index: -1
     },
     {
-        status: '审批签约中',
+        status: '签约审批中',
         index: 0
     },
     {
@@ -521,7 +521,7 @@ contract.salesTypes = [
     }
 ];
 contract.statusColorMap = {
-    审批签约中: {
+    签约审批中: {
         backgroundColor: '#FDF6EC',
         color: '#E7A440'
     },

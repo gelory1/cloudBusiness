@@ -119,7 +119,7 @@
             </Col>
             <Col span="6">
               <FormItem label="销售负责人" prop="salesman" class="con-right">
-                <Select v-model="formValidate.salesman" clearable filterable placeholder>
+                <Select v-model="formValidate.salesman" ref="selectSales" clearable filterable placeholder>
                   <Option
                     v-for="(item) in salesList"
                     :value="item.id"
@@ -1093,6 +1093,10 @@ export default {
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
         this.salesList = res;
+        this.salesList.unshift({
+          id:-1,
+          name:'（清除选择）'
+        })
         // this.$nextTick(()=>{
           if(this.formValidate.salesman === ''){
             this.formValidate.salesman = (this.salesList.find(s => s.id === ((this.data||{}).data||{}).saleId)||{}).id||this.salesList[0].id;
@@ -1645,6 +1649,13 @@ export default {
     'formValidate.manageCompany': function(nv) {
       if(!nv){
         this.salesList = [];
+      }
+    },
+    'formValidate.salesman': function(nv){
+      if(nv === -1){
+        this.$nextTick(() => {
+          this.formValidate.salesman = '';
+        })
       }
     }
   }
