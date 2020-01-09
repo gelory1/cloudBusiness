@@ -1044,24 +1044,23 @@ export default {
           let item = {};
           switch (d.workBenchType) {
             case 1:
-              item.gznr = status === 1?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，审批已完成`;
+              item.gznr = d.workBenchStatus === 1?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，审批已完成`;
               break;
             case 10:
-              item.gznr = status === 1?`回款待核准，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
+              item.gznr = d.workBenchStatus === 1?`回款待核准，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 4:
-              item.gznr = status === 1?`到账待确认，金额：${parseFloat(d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName||''})，请戳这里`:`到账已确认，金额：${d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount}(付款方：${d.workBenchContentObj.payUnitName||''})`;
+              item.gznr = d.workBenchStatus === 1?`到账待确认，金额：${parseFloat(d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName||''})，请戳这里`:`到账已确认，金额：${d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount}(付款方：${d.workBenchContentObj.payUnitName||''})`;
               break;
             case 3:
               if (d.workBenchContentObj.contractNo) {
-                item.gznr = status === 1?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
+                item.gznr = d.workBenchStatus === 1?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
               } else if (d.workBenchContentObj.orderNo) {
-                  item.gznr = `${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。点击直接处理`;
-                  item.gznr = status === 1?`${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.orderNo}备货订单已签署完毕。`;
+                  item.gznr = d.workBenchStatus === 1?`${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.orderNo}备货订单已签署完毕。`;
               }
               break;
             case 12:
-              item.gznr = status === 1?`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`:`发货方案审批提醒，审批完成。`;
+              item.gznr = d.workBenchStatus === 1?`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`:`发货方案审批提醒，审批完成。`;
               break;
           }
           item.type = this.typeMap[d.workBenchType];
