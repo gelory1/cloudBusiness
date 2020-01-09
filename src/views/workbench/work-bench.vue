@@ -1077,7 +1077,7 @@ export default {
           }else if(status === 3){
             this.fq_data.push(item);
           }else{
-            item.fzr = this.$store.state.user.accountName;
+            // item.fzr = this.$store.state.user.accountName;
             item.duetime = d.handledTime;
             this.yb_data.push(item);
           }
@@ -1206,7 +1206,8 @@ export default {
                   typeid: 28008,
                   data: [
                     {
-                      workBenchId: params.row.data.workbenchId
+                      workBenchId: params.row.data.workbenchId,
+                      "accountId": this.$store.state.user.accountId,
                     }
                   ]
                 };
