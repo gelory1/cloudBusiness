@@ -124,6 +124,7 @@
                     v-for="(item) in salesList"
                     :value="item.id"
                     :key="item.id"
+                    :style="{color:item.id === -1?'#aaa':'#495060'}"
                   >{{item.name}}</Option>
                 </Select>
               </FormItem>
