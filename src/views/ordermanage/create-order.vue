@@ -16,7 +16,7 @@
           </Col>
           <Col span="8">
             <FormItem label="销售类型" prop="saleType" class="con-right">
-              <Select v-model="formValidate.salesType" clearable filterable>
+              <Select v-model="formValidate.salesType" filterable>
                 <Option
                   :value="item.index"
                   v-for="(item,index) in salesTypes"
@@ -167,7 +167,7 @@ export default {
           index: "",
           value: ""
         },
-        salesType:1
+        salesType:''
       },
       pageNum: 1,
       sum: 0,
@@ -189,7 +189,13 @@ export default {
           {
             required: true,
             message: "请选择客户行业"
-            // trigger: "blur"
+          }
+        ],
+        saleType: [
+          {
+            required: true,
+            message: "请选择客户行业",
+            trigger: "blur",
           }
         ],
         city: [
@@ -626,7 +632,7 @@ export default {
       });
     },
     onSubmit(name) {
-      if (this.formValidate.store.index != "") {
+      if (this.formValidate.store.index != ""&&this.formValidate.salesType!=='') {
         if (this.formValidate.devices_list && this.formValidate.devices_list.length > 0) {
         } else {
           this.$Message.error("无添加设备!");
@@ -875,6 +881,9 @@ export default {
         types = this.$option.contract.salesTypes.filter(s => s.index ===1);
       }else{
         types = this.$option.contract.salesTypes.filter(s => s.index ===1||s.index === 2);
+      }
+      if(this.formValidate.salesType === ''){
+        this.formValidate.salesType = types[0].index;
       }
       return types;
     }
