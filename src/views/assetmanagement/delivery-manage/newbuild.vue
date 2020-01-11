@@ -217,6 +217,7 @@
         :data="dd_data"
         @on-selection-change="changeSelect"
         style="clear:both;margin-left:10px;"
+        :loading="orderLoading"
       ></Table>
       <Page
         :current.sync="pageNum"
@@ -633,7 +634,8 @@ export default {
       customShow: false,
       times: [],
       custom:[],
-      house:[]
+      house:[],
+      orderLoading: false
     };
   },
   methods: {
@@ -773,6 +775,7 @@ export default {
           }
         ]
       };
+      this.orderLoading = true;
       if(p !== 'orderInit'){
         this.dd_data = [];
         this.sum = 0;
@@ -794,6 +797,7 @@ export default {
           })
           this.$refs["cktable"].objData[0]._isHighlight = true;
           this.changeRow(this.outcksb_data1[0]);
+          this.orderLoading = false;
           return;
         }
         this.dd_data = [];
@@ -826,6 +830,12 @@ export default {
           }
           this.dd_data.push(item);
         });
+        this.orderLoading = false;
+      },error => {
+        this.orderLoading = false;
+        if(error.data.code !== 0){
+          this.$Message.error('请求失败，请重试！');
+        }
       });
     },
     changeSelect(data) {
@@ -987,7 +997,9 @@ export default {
             item.product_list = [];
             item.product_list.push(p);
             this.outcksb_data1.push(item);
-            if (!this.selectionData.edit) this.selectionData.edit = [];
+            if (!this.selectionData.edit){
+              this.selectionData.edit = [];
+            }
             this.selectionData.edit.push(item);
           }
           if (!this.changeRowData.data[p.product_code])
@@ -1028,8 +1040,10 @@ export default {
   mounted() {
     if(this.$route.query.order){
       this.getOrderList('orderInit');
+    }else{
+      this.getOrderList(1);
     }
-    this.getOrderList(1);
+    
     this.getTimes();
   },
   computed: {
@@ -1139,7 +1153,7 @@ export default {
   },
   watch: {
     ddmodal(nv) {
-      if (!nv) {
+      if (nv) {
         this.pageNum = 1;
         this.addOrderInput = "";
         this.getOrderList(1);
