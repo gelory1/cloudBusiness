@@ -400,7 +400,7 @@ export default {
         device_data1(){
             let data = [];
             if(this.device_data&&this.device_data.length>0){
-                data = this.device_data.filter(d => d.issued_count !== 0);
+                data = JSON.parse(JSON.stringify(this.device_data.filter(d => d.issued_count !== 0)));
                 data.forEach(d => {
                     d.count = d.issued_count;
                     if(this.selectedOrder.type === '备货订单'){
@@ -413,7 +413,7 @@ export default {
         device_data2(){
             let data = [];
             if(this.device_data&&this.device_data.length>0){
-                data = this.device_data.filter(d => d.count - d.issued_count !== 0);
+                data = JSON.parse(JSON.stringify(this.device_data.filter(d => d.count - d.issued_count !== 0)));
                 data.forEach(d => {
                     d.count = d.count - d.issued_count;
                     if(this.selectedOrder.type === '备货订单'){
