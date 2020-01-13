@@ -965,8 +965,7 @@ export default {
           if(error.data.code !== 0 && error.data.message){
             this.$Message.error(error.data.message);
           }
-        })
-          .catch(e => {this.submitLoading = false;});
+        }).catch(e => {this.submitLoading = false;});
       }
     },
     uploadSuccess(){
