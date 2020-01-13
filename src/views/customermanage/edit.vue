@@ -940,6 +940,10 @@ export default {
               this.$Message.success("客户信息更新成功！");
               this.$router.push("/customermanage/customermanage");  
             }
+        },error => {
+          if(error.data.code !== 0 && error.data.message){
+            this.$Message.error(error.data.message);
+          }
         }).catch(e => {this.submitLoading = false;});
       } else {
         api
@@ -957,7 +961,11 @@ export default {
                 this.$router.push("/customermanage/customermanage");  
               }
             }
-          })
+          },error => {
+          if(error.data.code !== 0 && error.data.message){
+            this.$Message.error(error.data.message);
+          }
+        })
           .catch(e => {this.submitLoading = false;});
       }
     },
