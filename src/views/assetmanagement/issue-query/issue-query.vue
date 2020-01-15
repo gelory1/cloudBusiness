@@ -259,6 +259,10 @@
             <span class="jbleft">收货地址：</span>
             <span class="wid shdz">{{djxx.address}}</span>
           </div>
+          <div>
+            <span class="jbleft">ERP入库单号：</span>
+            <span class="wid shdz">{{djxx.ioBillId}}</span>
+          </div>
         </div>
         <div style="clear:both;padding-top:10px;">
           <span class="jbleft">订单编号：</span>
@@ -356,6 +360,10 @@
           <div>
             <span class="jbleft">审核时间：</span>
             <span class="jbright wid">{{djxx.shsj}}</span>
+          </div>
+          <div>
+            <span class="jbleft">ERP出库单号：</span>
+            <span class="wid shdz">{{djxx.ioBillId}}</span>
           </div>
         </div>
         <div style="clear:both;padding-top:10px;">
@@ -562,7 +570,8 @@ export default {
                         shsj: params.row.data.auditor_time,
                         zt: params.row.zt,
                         allocation_id: params.row.data.allocation_id,
-                        address: params.row.data.delivery_address
+                        address: params.row.data.delivery_address,
+                        ioBillId: params.row.data.ioBillId
                       };
                       this.selectedWhid = params.row.data.wh_id;
                       this.indevice_data1 = [];
@@ -722,7 +731,8 @@ export default {
                         shr: params.row.data.auditor_name,
                         shsj: params.row.data.auditor_time,
                         zt: params.row.zt,
-                        allocation_id: params.row.data.allocation_id
+                        allocation_id: params.row.data.allocation_id,
+                        ioBillId: params.row.data.ioBillId
                         // adress: params.row.data.adress,
                       };
                       this.outdevice_data1 = [];
@@ -897,7 +907,8 @@ export default {
         sbsl: "",
         shr: "",
         shsj: "2019-9-00",
-        adress: ""
+        adress: "",
+        ioBillId: ''
       },
       cpxhpz: this.$option.asset.query,
       rksbxq: [
