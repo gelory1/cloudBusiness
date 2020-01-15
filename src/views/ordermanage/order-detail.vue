@@ -19,7 +19,7 @@
                 </Button>
             </Poptip>
           
-            <div style="position:relative;">
+            <div style="position:relative;" v-if="selectedOrder.status !== '被驳回'">
                 <div :style="{
                 height: 28 + 'px',
                 position:'absolute',
@@ -35,8 +35,26 @@
                 <div style="display:flex;padding:5px;background-color:#F2F2F2;border-radius:20px">
                     <div v-for="(item,index) in statuses" :style="{width:`${(100/statuses.length)}%`,textAlign:'center'}" :key="index">{{item.value}}</div>
                 </div>
-                <div style="display:flex;padding:5px;;border-radius:20px;">
+                <div style="display:flex;padding:5px;border-radius:20px;">
                     <div :style="{textAlign:'center',width:`${(100/statuses.length)}%` }" v-for="(item,index) in (selectedOrder.data||{}).order_log" :key="index">{{item.orderlog_time}}</div>
+                </div>
+            </div>
+            <div style="position:relative;" v-else>
+                <div :style="{
+                height: 28 + 'px',
+                position:'absolute',
+                zIndex:0,
+                backgroundColor:'#49D790',
+                color:'white',
+                borderRadius: 20+'px',
+                display:'flex',
+                padding: 5+'px',
+                width: `40%`}">
+                    <div :style="{textAlign:'center',width:'100%' }" >申请</div>
+                    <div :style="{textAlign:'center',width:'100%' }" >驳回</div>
+                </div>
+                <div style="display:flex;padding:5px;border-radius:20px;">
+                    <!-- <div :style="{textAlign:'center',width:`20%` }" v-for="(item,index) in (selectedOrder.data||{}).order_log" :key="index">{{item.orderlog_time}}</div> -->
                 </div>
             </div>
         </div>
