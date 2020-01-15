@@ -2,8 +2,8 @@
   <div class="address layout">
     <Layout style="background:#fff;min-height:900px">
       <p class="ad_p">收货地址列表</p>
-      <div>
-        <el-card v-for="(item,index) in shdzData" :key="index" shadow='hover' class="ad_div" style="overflow:inherit;">
+      <div style="display: flex;flex-wrap: wrap;">
+        <el-card v-for="(item,index) in shdzData" :key="index" shadow='hover' class="ad_div" style="overflow:inherit;width:460px">
           <p class="p_span">
             <b>{{item.company}}</b>
             <!--  -->
