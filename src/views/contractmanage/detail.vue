@@ -83,7 +83,7 @@
               <section>
                 <p>签约点数：</p>
                 <p>
-                  <span>{{kcmxSum}}</span>(
+                  <span>{{data.data.signPoint||0}}</span>(
                   <span class="cor_span" @click="kcmxmodal = true">查看勘查明细</span>)
                 </p>
               </section>
@@ -277,7 +277,7 @@
       <p style="font-size:16px;margin:20px 5px;">采集点位数量</p>
       <p class="kc_p">
         采集点位数量（含基站）
-        <span style>{{kcmxSum}}</span>
+        <span style>{{data.data.signPoint||0}}</span>
       </p>
     </Modal>
     <!-- 发票 -->
