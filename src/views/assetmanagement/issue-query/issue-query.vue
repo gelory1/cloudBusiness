@@ -241,6 +241,17 @@
             <span class="jbleft">客户名称：</span>
             <span class="jbright wid">{{djxx.khmc}}</span>
           </div>
+          <Tooltip>
+            <div slot="content">
+              <p v-for="(item,index) in djxx.ddbh.split(',')" :key="index">{{item}}</p>
+            </div>
+            <div style="width:350px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color:#8D8D8D;">
+              <span class="jbleft">订单编号：</span>
+                <span
+                  class="wid"
+                >{{djxx.ddbh}}</span>
+            </div>
+          </Tooltip>
         </div>
         <div style="line-height:40px;width:50%;float:right">
           <div>
@@ -263,13 +274,6 @@
             <span class="jbleft">ERP入库单号：</span>
             <span class="wid shdz">{{djxx.ioBillId}}</span>
           </div>
-        </div>
-        <div style="clear:both;padding-top:10px;">
-          <span class="jbleft">订单编号：</span>
-          <span
-            class="jbright"
-            style="width:700px;word-wrap: break-word;word-break: break-all;overflow: hidden;vertical-align: top;"
-          >{{djxx.ddbh}}</span>
         </div>
       </div>
       <div style="clear:both;overflow: hidden;margin-top:20px;">
@@ -366,13 +370,17 @@
             <span class="wid shdz">{{djxx.ioBillId}}</span>
           </div>
         </div>
-        <div style="clear:both;padding-top:10px;">
-          <span class="jbleft">订单编号：</span>
-          <span
-            class="jbright"
-            style="width:700px;word-wrap: break-word;word-break: break-all;overflow: hidden;vertical-align: text-top;"
-          >{{djxx.ddbh}}</span>
-        </div>
+        <Tooltip>
+            <div slot="content">
+              <p v-for="(item,index) in djxx.ddbh.split(',')" :key="index">{{item}}</p>
+            </div>
+            <div style="width:700px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color:#8D8D8D;padding-top:10px">
+              <span class="jbleft">订单编号：</span>
+                <span
+                  class="wid"
+                >{{djxx.ddbh}}</span>
+            </div>
+          </Tooltip>
       </div>
       <div style="clear:both;overflow: hidden;margin-top:20px;">
         <Tabs v-model="tabDeviceName2">
