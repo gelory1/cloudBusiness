@@ -378,5 +378,12 @@ util.NumberToChinese = function (n) {
         .replace(/(零.)+/g, '零')
         .replace(/^整$/, '零元整');
 };
+util.Date = function (n) {
+    let date = new Date(n);
+    if (!date) return '';
+    let newDate = '';
+    newDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    return newDate;
+};
 
 export default util;

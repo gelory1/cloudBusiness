@@ -80,7 +80,8 @@ import themeSwitch from "./main-components/theme-switch/theme-switch.vue";
 import Cookies from "js-cookie";
 import util from "@/libs/util.js";
 import scrollBar from "@/views/my-components/scroll-bar/vue-scroller-bars";
-import axios from "../api/axios"
+import axios from "../api/axios";
+import regions from '../libs/citys';
 
 export default {
   components: {
@@ -183,7 +184,7 @@ export default {
       if(this.$store.state.app.authority.length === 0){
         this.$store.commit('setAutority',this.authority);
       }
-      this.getRegions();
+      localStorage.setItem('regions',JSON.stringify(regions));
       // var websocaket =null;
 		 	// if('WebSocket' in window){
 			// 	 websocaket = new WebSocket("ws://localhost:8080/WebSockt/WebSocketTest");//用于创建 WebSocket 对象。WebSocketTest对应的是java类的注解值
@@ -264,38 +265,6 @@ export default {
     },
     scrollBarResize() {
       if(this.$refs.scrollBar) this.$refs.scrollBar.resize();
-    },
-    getRegions(){
-      let request = {
-        typeid: 27012,
-        data:[{}]
-      }
-      this.$http.XLSELECT(request).then(res => {
-        let regions = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 1);
-        let arr2 = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 2);
-        let arr3 = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 3);
-        regions.forEach(a1 => {
-          a1.children = arr2.filter(a2 => a2.id - a1.id>0&&a2.id-a1.id<10000);
-          (a1.children||[]).forEach(a2 => {
-            a2.children = arr3.filter(a3 => a3.id - a2.id>0&&a3.id-a2.id<100);
-            a2.name = a2.name.replace(/\s+/g,'|');
-            let arr = a2.name.split('|');
-            a2.name = arr[arr.length - 1];
-            (a2.children||[]).forEach(a3 => {
-              a3.name = a3.name.replace(/\s+/g,'|');
-              let arr2 = a3.name.split('|');
-              a3.name = arr2[arr2.length -1];
-            })
-            if(a2.children.length === 0){
-              a2.children = undefined;
-            }
-          })
-          if(a1.children.length === 0){
-              a1.children = undefined;
-            }
-        })
-        localStorage.setItem('regions',JSON.stringify(regions));
-      });
     }
   },
   watch: {

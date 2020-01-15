@@ -108,14 +108,6 @@
                 >暂无</p>
                 <p>{{((data||{}).data||{}).charge_person}}</p>
               </section>
-              <section>
-                <p>授权资质：</p>
-                <p v-show="!((data||{}).data||{}).areaList||((data||{}).data||{}).areaList.length===0" style="color:#000000;">暂无</p>
-                <div style="height:100px;overflow:auto;border:1px solid #ccc;" v-if="(((data||{}).data||{}).areaList||[]).length>4">
-                  <p v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span>{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
-                </div>
-                <p v-else v-for="(item,index) in ((data||{}).data||{}).areaList" :key="index"><span>{{item.empowerProvince_cn}} {{item.empowerCity_cn}} {{item.empowerArea_cn}}</span></p>
-              </section>
             </div>
             <div class="select1">
               <section style="width:46.5%;">
@@ -125,14 +117,6 @@
                   style="color:#000000;"
                 >暂无</p>
                 <p>{{((data||{}).data||{}).mail_address}}</p>
-              </section>
-              <section style="width:23.2%">
-                <p>协议编号：</p>
-                <p
-                  v-show="!((data||{}).data||{}).protocolNumber||((data||{}).data||{}).protocolNumber.length===0"
-                  style="color:#000000;"
-                >暂无</p>
-                <p>{{((data||{}).data||{}).protocolNumber}}</p>
               </section>
               <section style="width:23%;">
                 <p>
@@ -159,10 +143,6 @@
                   style="margin:2px 0px"
                 >({{item.platform_id}}){{item.platform_name}}</span>
               </section>
-              <section style="width:23.2%;float:left" v-if="data.nature == '合作伙伴'">
-                <p class="sele2">授权期限</p>
-                <p  style="color:#000000;">{{((data||{}).data||{}).empowerStartTime}}-{{((data||{}).data||{}).empowerEndTime}}</p>
-              </section>
               <section style="width:23%;float:left">
                 <p class="sele2">邮政编码：</p>
                 <p v-show="!((data||{}).data||{}).post_code||((data||{}).data||{}).post_code.length===0" style="color:#000000;">暂无</p>
@@ -173,23 +153,45 @@
               <section style="width:90%;float:left;margin-top:15px;">
                 <p class="sele2">合作协议（附件）：</p>
                 <div>
-                  <div class="fj1" v-if="file.name">
-                    <section class="fj_img">
-                        <img :src="file.img" alt style="width:20px;height:20px;margin:20px 40px" />
-                      </section>
-                      <section class="fj_sec1" style="margin:10px 0">
-                        <a :href="file.address"><p>{{file.name}}</p></a>
-                        <p class="fj_p1">
-                          <span>{{file.size}}</span> 来自
-                          <span>{{file.uploadMan}}</span> |
-                          <span>{{file.date}}</span>
-                        </p>
-                      </section>
-                  </div>
+                  <div style="border:1px solid #ccc;padding:10px;border-radius:5px" v-if="data.nature == '合作伙伴'&&((data.data||{}).areaList||[]).length>0">
+                    <div style="margin-bottom:10px">
+                      <span style="font-weight:200;color:black;margin-right:10px">相关授权协议</span>
+                    </div>
+                    <ul>
+                      <li v-for="item in contracts" :key="item.id">
+                        <div style="display:flex;justify-content: space-between;align-items:baseline;padding:10px;background-color: #F7F7F7;margin-top:5px">
+                          <div style="margin-right:20px">
+                            <Icon type="ios-list-outline" size="18"></Icon>
+                          </div>
+                          <div style="flex:1;text-align:center">
+                            <span style="vertical-align: text-bottom;">{{item.contact_no}}</span>
+                          </div>
+                          <div style="flex:1;text-align:center">
+                            <span style="vertical-align: text-bottom;">{{item.startTime.split(' ')[0]}} 至 {{item.endTime.split(' ')[0]}}</span>
+                          </div>
+                          <div style="flex:1;text-align:center">
+                            <Tooltip placement="top">
+                            <span style="vertical-align: text-bottom;">{{(item.city[0][0]+' '+(item.city[0][1]||"") +' '+ (item.city[0][2]||''))+(item.city.length>1?'...':'')}}</span>
+                              <div slot="content">
+                                <p v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</p>
+                              </div>
+                            </Tooltip>
+                          </div>
+                          <div style="flex:1;text-align:center">
+                            <a :href="item.url">
+                              <Icon type="ios-download-outline" size="18"></Icon>
+                              <span style="vertical-align: text-bottom;">下载协议</span>
+                            </a>
+                          </div>
+                </div>
+              </li>
+            </ul>
+          </div>
                   <p v-else>暂无</p>
                 </div>
               </section>
             </div>
+            
           </content>
           <footer style="clear:both;padding-top:10px;">
             <p class="header_p" style="border-bottom:1px solid #d2d2d2;padding-bottom:5px;">开票信息</p>
@@ -304,8 +306,8 @@ export default {
       eye1Show: false,
       eyeShow: true,
       kpxxShow: false,
-      citys: [],
-      industryMap: this.$option.customer.industryMap
+      industryMap: this.$option.customer.industryMap,
+      contracts:[]
     };
   },
   methods: {
@@ -322,20 +324,6 @@ export default {
     goBack() {
       this.$router.push("/customermanage/customermanage");
     },
-    getCity() {
-      let request = {
-        typeid: 27003,
-        data: [
-          {
-            province: (this.data.data || {}).empower_province
-          }
-        ]
-      };
-      api.XLSELECT(request).then(response => {
-        let res = response.data.result.data;
-        this.citys = res;
-      });
-    },
     goEdit(){
       if(!this.$store.state.app.authority.find(a => a.id === 702)){
         this.$Message.error('权限不足！');
@@ -345,8 +333,26 @@ export default {
     }
   },
   mounted() {
-    this.getCity();
-
+    (((this.data || {}).data || {}).areaList||[]).forEach(a => {
+        let item = {};
+        item.name = a.fileName;
+        item.contact_no = a.protocolNumber;
+        item.url = a.fileAddress;
+        if(!this.contracts.find(c => c.contact_no === item.contact_no )){
+          item.city = [];
+          item.city.push([
+            a.empowerProvince,a.empowerCity,a.empowerArea
+          ])
+        }else{
+          let obj = this.contracts.find(c => c.contact_no === item.contact_no );
+          obj.city.push([
+            a.empowerProvince,a.empowerCity,a.empowerArea
+          ])
+        }
+        item.startTime = a.empowerStartTime;
+        item.endTime = a.empowerEndTime;
+        if(!this.contracts.find(c => c.contact_no === item.contact_no )) this.contracts.push(item);
+      })
   },
   computed: {
     data() {
@@ -354,31 +360,6 @@ export default {
         return this.$store.state.user.customerInfo;
       }
       return JSON.parse(localStorage.getItem("customInfo")) || {};
-    },
-    file(){
-      let file = {};
-      if(this.data&&this.data.data&&this.data.data.enclosure){
-        file.name = ((this.data || {}).data || {}).enclosure.fileName;
-        file.size = ((this.data || {}).data || {}).enclosure.fileSize;
-        file.size = file.size >= 1024?((file.size/1024).toFixed(2) + ' KB'): file.size >= 1024*1024?((file.size/(1024*1024)).toFixed(2) + ' MB'):(file.size + ' B');
-        file.uploadMan = ((this.data || {}).data || {}).enclosure.accountName;
-        file.date = ((this.data || {}).data || {}).enclosure.uploadTime;
-        file.address = ((this.data || {}).data || {}).enclosure.enclosureAddress;
-        file.id = (((this.data || {}).data || {}).enclosure||{}).enclosureId;
-        let fileArr = file.name.split('.');
-        let fileType = fileArr[fileArr.length-1];
-        file.img = require('../../images/upload/wenjian.png');
-        if(/^pdf$/.test(fileType)){
-          file.img = require('../../images/upload/pdf.png');
-        }else if(/^(txt|doc(x)?)$/.test(fileType)){
-          file.img = require('../../images/upload/docx.png');
-        }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
-          file.img = require('../../images/upload/jpg.png');
-        }else if(/^xl(s|t|am)$/.test(fileType)){
-          file.img = require('../../images/upload/excel.png');
-        };
-      }
-      return file;
     }
   }
 };

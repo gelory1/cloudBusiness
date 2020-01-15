@@ -65,27 +65,8 @@
                       >{{item.val}}</Option>
                     </Select>
                   </FormItem>
-                  <FormItem label="省份/城市" prop="city">
-                    <Row>
-                      <Col span="12">
-                        <Select v-model="filterItem.province" clearable filterable>
-                          <Option
-                            :value="item.id"
-                            v-for="(item,index) in provinces"
-                            :key="index"
-                          >{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                      <Col span="12">
-                        <Select v-model="filterItem.city" clearable filterable :disabled="disabled">
-                          <Option
-                            :value="item.id"
-                            v-for="(item,index) in citys"
-                            :key="index"
-                          >{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                    </Row>
+                   <FormItem label="省份/城市" prop="city">
+                    <el-cascader clearable v-model="filterItem.city" :options="regions" filterable show-all-levels :props="{ value: 'name', label: 'name',checkStrictly: true}" size="small"></el-cascader>
                   </FormItem>
                   <FormItem label="运营公司" prop="manageCompany">
                     <Select v-model="filterItem.manageCompany" clearable filterable>
@@ -430,7 +411,6 @@ export default {
       natures: this.$option.contract.natures,
       salesTypes: this.$option.contract.salesTypes,
       provinces: [],
-      citys: [],
       companys: [],
       contractContentMap: this.$option.contract.contentMap,
       contents: this.$option.contract.contents,
@@ -576,9 +556,9 @@ export default {
                 ? 0
                 : this.filterItem.contractContent,
             customerProvince:
-              this.filterItem.province === "" ? 0 : this.filterItem.province,
+              this.filterItem.city[1]||'',
             customerCity:
-              this.filterItem.city === "" ? 0 : this.filterItem.city,
+              this.filterItem.city[0]||'',
             manageCompany:
               this.filterItem.manageCompany === ""
                 ? 0
@@ -615,9 +595,9 @@ export default {
               (con.customerName || "") +
               "-" +
               this.contractContentMap[con.contractContent];
-            let cityObj = this.regions.find(c => c.id === con.customerProvince)||{};
+            let cityObj = this.regions.find(c => (con.customerProvince||"").indexOf(c.name)!==-1)||{};
             let areaObj = (cityObj.children || []).find(
-              c => c.id === con.customerCity
+              c => c.name === con.customerCity
             )||{};
             if (cityObj)
               item.city =
@@ -627,7 +607,7 @@ export default {
                 " " +
                 ((
                   (areaObj.children || []).find(
-                    c => c.id === con.customerArea
+                    c => c.name === con.customerArea
                   ) || {}
                 ).name || "");
             item.saleType = this.salesTypeMap[con.saleType];
@@ -655,22 +635,6 @@ export default {
         let res = response.data.result.data;
         this.provinces = res;
         this.$store.commit("getProvinces", res);
-      });
-    },
-    getCitys() {
-      if (this.filterItem.province === "") this.filterItem.province = 0;
-      let request = {
-        typeid: 27003,
-        data: [
-          {
-            province: this.filterItem.province
-          }
-        ]
-      };
-      this.citys = [];
-      this.$http.XLSELECT(request).then(response => {
-        let res = response.data.result.data;
-        this.citys = res;
       });
     },
     getManagecompanys() {
@@ -773,15 +737,6 @@ export default {
     this.getManagecompanys();
   },
   watch: {
-    "filterItem.province": function(nv) {
-      if (nv !== 0 && nv !== "") this.getCitys();
-      if (this.filterItem.province == "") {
-        this.filterItem.city = "";
-        this.disabled = true;
-      } else {
-        this.disabled = false;
-      }
-    }
   },
   computed: {
     isFinance() {

@@ -211,7 +211,7 @@
       </Layout>
     </Layout>
     <!-- 入库详情页面 -->
-    <Modal v-model="rkxqmodal" width="1000" :styles="{top: '5px'}">
+    <Modal v-model="rkxqmodal" width="1000" class-name="vertical-center-modal">
       <div>
         <div style="float:left;margin:30px  20px;">
           <h3>入库单详情</h3>
@@ -280,7 +280,7 @@
                 highlight-row
                 @on-current-change="rkbhClick"
                 size="small"
-                style="margin:10px 0 0 20px;overflow:auto;min-height:400px;"
+                style="margin:10px 0 0 20px;overflow:auto;min-height:200px;"
               ></Table>
             </div>
             <div style="width:83%;float:right;">
@@ -288,12 +288,12 @@
                 :columns="device_columns"
                 :data="indevice_data"
                 size="small"
-                style="margin:10px 0 0 0;overflow:auto;min-height:400px;"
+                style="margin:10px 0 0 0;overflow:auto;min-height:200px;"
               ></Table>
             </div>
           </TabPane>
           <TabPane label="设备列表" name="name2">
-            <Table :columns="sblb_columns" :data="sblb_data" size="small" height="400"></Table>
+            <Table :columns="sblb_columns" :data="sblb_data" size="small" height="200"></Table>
             <Page
               :current.sync="devicePageNum"
               :total="sblbSum"
@@ -309,7 +309,7 @@
       </div>
     </Modal>
     <!-- 出库详情页面 -->
-    <Modal v-model="ckxqmodal" width="1000" :styles="{top: '5px'}">
+    <Modal v-model="ckxqmodal" width="1000" class-name="vertical-center-modal">
       <div>
         <div style="float:left;margin:30px  20px;">
           <h3>出库单详情</h3>
@@ -378,7 +378,7 @@
                 disabled-hover
                 highlight-row
                 @on-row-click="ckbhClick"
-                style="margin:10px 0 0 20px;overflow:auto;min-height:400px;"
+                style="margin:10px 0 0 20px;overflow:auto;min-height:200px;"
               ></Table>
             </div>
             <div style="width:83%;float:right;">
@@ -387,12 +387,12 @@
                 :columns="device_columns"
                 :data="outdevice_data"
                 size="small"
-                style="margin:10px 0 0 0;overflow:auto;min-height:400px;"
+                style="margin:10px 0 0 0;overflow:auto;min-height:200px;"
               ></Table>
             </div>
           </TabPane>
           <TabPane label="设备列表" name="name2">
-            <Table :columns="sblb_columns" :data="sblb_data" size="small" height="400"></Table>
+            <Table :columns="sblb_columns" :data="sblb_data" size="small" height="200"></Table>
             <Page
               :current.sync="devicePageNum"
               :total="sblbSum"
@@ -1413,5 +1413,13 @@ export default {
 }
 .ivu-select-single .ivu-select-selection .ivu-select-placeholder{
  color:orange
+}
+.vertical-center-modal{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vertical-center-modal .ivu-modal{
+  top: 0;
 }
 </style>
