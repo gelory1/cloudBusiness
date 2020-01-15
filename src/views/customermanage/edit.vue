@@ -880,7 +880,6 @@ export default {
       this.$router.go(-1);
     },
     editCustomer() {
-      console.log(1111);
       let empowerList = [];
       this.contracts.forEach((e,index) => {
         e.city.forEach(c => {
@@ -926,7 +925,6 @@ export default {
           }
         ]
       };
-      console.log(request);
       this.submitLoading = true;
       if (this.isNewCreate) {
         api.SETCUSTOMER(request).then(response => {
@@ -959,9 +957,11 @@ export default {
               api.SETCUSTOMER(this.newLocalData.plat);
               this.$Message.success("客户信息更新成功！");
               this.$router.push("/customermanage/customermanage");  
+              this.submitLoading = false;
         },error => {
           if(error.data.code !== 0 && error.data.message){
             this.$Message.error(error.data.message);
+            this.submitLoading = false;
           }
         }).catch(e => {this.submitLoading = false;});
       } else {
