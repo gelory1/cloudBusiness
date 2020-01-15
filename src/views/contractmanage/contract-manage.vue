@@ -556,9 +556,9 @@ export default {
                 ? 0
                 : this.filterItem.contractContent,
             customerProvince:
-              this.filterItem.city[1]||'',
-            customerCity:
               this.filterItem.city[0]||'',
+            customerCity:
+              this.filterItem.city[1]||'',
             manageCompany:
               this.filterItem.manageCompany === ""
                 ? 0
