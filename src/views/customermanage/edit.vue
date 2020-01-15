@@ -64,7 +64,7 @@
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="注册资金" prop="registered_capital" class="con-right">
-                <Input style="width:313px" v-model="formValidate.registered_capital" placeholder />人民币
+                <Input style="width:313px" v-model="formValidate.registered_capital" placeholder /> 人民币
               </FormItem>
             </Col>
           </Row>
@@ -77,7 +77,7 @@
 
             <Col span="12" v-if="isFriend">
               <FormItem label="保证金" prop="bond_amount" class="con-right">
-                <Input style="width:313px" v-model="formValidate.bond_amount" placeholder />人民币
+                <Input style="width:313px" v-model="formValidate.bond_amount" placeholder /> 人民币
               </FormItem>
             </Col>
           </Row>
@@ -584,6 +584,7 @@ export default {
           {
             required: true,
             message: "请输入注册资金",
+            type:'number',
             trigger: "blur"
           }
         ],
@@ -591,6 +592,7 @@ export default {
           {
             required: true,
             message: "请输入保证金",
+            type:'number',
             trigger: "blur"
           }
         ],
@@ -1674,6 +1676,12 @@ export default {
           this.formValidate.salesman = '';
         })
       }
+    },
+    'formValidate.registered_capital': function(nv){
+      this.formValidate.registered_capital = parseFloat(nv);
+    },
+    'formValidate.bond_amount': function(nv){
+      this.formValidate.bond_amount = parseFloat(nv);
     },
     serviceConModal(nv){
       if(!nv){
