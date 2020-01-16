@@ -136,12 +136,12 @@
                     <span style="vertical-align: text-bottom;">{{item.startTime.split(' ')[0]}} 至 {{item.endTime.split(' ')[0]}}</span>
                   </div>
                   <div style="flex:1;text-align:center">
-                    <Tooltip placement="top">
+                    <el-tooltip placement="top">
                      <span style="vertical-align: text-bottom;">{{(item.city[0][0]+' '+(item.city[0][1]||"") +' '+ (item.city[0][2]||''))+(item.city.length>1?'...':'')}}</span>
                       <div slot="content">
                         <p v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</p>
                       </div>
-                    </Tooltip>
+                    </el-tooltip>
                   </div>
                   <div style="flex:1;text-align:center">
                     <a :href="item.url">

@@ -169,16 +169,16 @@
                           <div style="flex:1;text-align:center">
                             <span style="vertical-align: text-bottom;">{{item.startTime.split(' ')[0]}} 至 {{item.endTime.split(' ')[0]}}</span>
                           </div>
+                          <el-tooltip placement="top">
+                            <div slot="content">
+                                  <p v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</p>
+                                </div>
+                            <div style="flex:1;text-align:center">
+                              <span style="vertical-align: text-bottom;">{{(item.city[0][0]+' '+(item.city[0][1]||"") +' '+ (item.city[0][2]||''))+(item.city.length>1?'...':'')}}</span>
+                            </div>
+                          </el-tooltip>
                           <div style="flex:1;text-align:center">
-                            <Tooltip placement="top">
-                            <span style="vertical-align: text-bottom;">{{(item.city[0][0]+' '+(item.city[0][1]||"") +' '+ (item.city[0][2]||''))+(item.city.length>1?'...':'')}}</span>
-                              <div slot="content">
-                                <p v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</p>
-                              </div>
-                            </Tooltip>
-                          </div>
-                          <div style="flex:1;text-align:center">
-                            <a :href="item.url">
+                            <a :href="item.url||'#'">
                               <Icon type="ios-download-outline" size="18"></Icon>
                               <span style="vertical-align: text-bottom;">下载协议</span>
                             </a>
