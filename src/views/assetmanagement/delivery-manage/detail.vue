@@ -58,7 +58,7 @@
             <span style="font-size:16px">出库设备</span>
             <p class="right">
               <span>整体完成度</span>
-              <Progress class="pro" :percent="25"></Progress>
+              <Progress class="pro" :percent="(detailData.data||{}).degreeOfCompletion||0"></Progress>
             </p>
           </div>
           <div style="clear:both;overflow: hidden;">
