@@ -91,10 +91,7 @@
                 <Col span="7">
                   <FormItem label="省份/城市" prop="city" :label-width="90">
                     <Select v-model="formValidate.province" placeholder class="col-f" disabled>
-                      <Option :value="data.data.customerProvince">{{data.data.customerProvince_cn}}</Option>
-                    </Select>
-                    <Select v-model="formValidate.city" placeholder class="col-f" disabled>
-                      <Option :value="data.data.customerCity">{{data.data.customerCity_cn}}</Option>
+                      <Option :value="data.data.customerProvince">{{data.data.customerProvince_cn}} {{data.data.customerCity_cn}}</Option>
                     </Select>
                   </FormItem>
                 </Col>
