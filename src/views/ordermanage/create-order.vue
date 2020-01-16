@@ -1,7 +1,7 @@
 <template>
   <div class="edit layout">
-    <Layout class style="width:95%;min-height:800px;padding-left:20px;background:#fff">
-      <p class="div_p">订单信息</p>
+    <Layout class style="width:95%;padding-left:20px;background:#fff">
+      <p class="div_p" style="margin-top:10px">订单信息</p>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
         <Row>
           <Col span="8">
@@ -99,14 +99,14 @@
             </section>
           </div>
         </div>
-        <FormItem style="width:300px;margin:110px auto;margin-bottom:10px;">
+        <FormItem style="width:300px;margin:80px auto;margin-bottom:10px;">
           <Button type="primary" @click="onSubmit('formValidate')" :loading="subLoading">提交</Button>
           <Button type="ghost" style="margin-left: 18px" @click="onCancel" :disabled="subLoading">取消</Button>
         </FormItem>
       </Form>
     </Layout>
     <!-- 添加设备 -->
-    <Modal v-model="addsbmodal" width="800" @on-ok="ok">
+    <Modal v-model="addsbmodal" width="800" @on-ok="ok" class-name="vertical-center-modal">
       <p style="font-size:18px;">添加设备</p>
       <Input
         placeholder="请输入内容"
@@ -910,7 +910,7 @@ export default {
 @import "../customermanage/customer.css";
 .dd_div {
   float: right;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 .dd_div section {
   margin-right: 30px;
@@ -935,5 +935,13 @@ export default {
 }
 .sb_p span {
   color: #3896f5;
+}
+.vertical-center-modal{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vertical-center-modal .ivu-modal{
+  top: 0;
 }
 </style>
