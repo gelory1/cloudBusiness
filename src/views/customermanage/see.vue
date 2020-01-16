@@ -49,8 +49,8 @@
             <span class="icon">
               <Icon type="navigate"></Icon>
             </span>
-            <span v-show="!data.salesman||data.salesman.length===0" style="color:#000000;">暂无</span>
-            <span style="color:#4a9af5;cursor:pointer" @click="seeAdress">查看{{0}}条收货地址</span>
+            <span v-show="!((data||{}).data||{}).wareHouseAddressCount" style="color:#000000;">暂无</span>
+            <span style="color:#4a9af5;cursor:pointer" v-show="((data||{}).data||{}).wareHouseAddressCount>0" @click="seeAdress">查看{{((data||{}).data||{}).wareHouseAddressCount}}条收货地址</span>
           </div>
         </div>
       </header>
@@ -312,7 +312,7 @@ export default {
   },
   methods: {
     seeAdress(){
-      this.$router.push({ path: "/setting/addressManage" });
+      this.$router.push({ path: "/setting/addressManage",query:{name:(this.data||{}).name,no:((this.data||{}).data||{}).customer_no} });
     },
     shrinkClick() {
       this.kpxxShow = !this.kpxxShow;

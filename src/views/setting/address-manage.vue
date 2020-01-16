@@ -1,7 +1,7 @@
 <template>
-  <div class="address layout">
+  <div class="address layout" v-loading="loading">
     <Layout style="background:#fff;min-height:900px">
-      <p class="ad_p">收货地址列表</p>
+      <p class="ad_p">收货地址列表<span>{{($route.query||{}).name?`（客户：${($route.query||{}).name}）`:''}}</span><a style="font-size:12px" v-if="($route.query||{}).no" @click="seeAll">查看所有地址</a></p>
       <div style="display: flex;flex-wrap: wrap;">
         <el-card v-for="(item,index) in shdzData" :key="index" shadow='hover' class="ad_div" style="overflow:inherit;width:460px">
           <p class="p_span">
@@ -29,7 +29,7 @@
           <p style="padding-top:20px;color:#3896f5">创建人：<span>{{item.creador}}</span></p>
         </el-card>
       </div>
-      <div class="add_adress">
+      <div class="add_adress" v-if="!($route.query||{}).no">
         <p @click="createNewAddr" style="cursor:pointer">+&#x3000;添加新地址</p>
       </div>
     </Layout>
@@ -144,7 +144,8 @@ export default {
       },
       selectItem:{},
       status:'new',
-      whData: []
+      whData: [],
+      loading: false
     };
   },
   methods: {
@@ -154,10 +155,12 @@ export default {
         data: [
           {
             account_id: this.$store.state.user.accountId,
+            customer_no: (this.$route.query||{}).no||''
           }
         ]
       };
       this.shdzData = [];
+      this.loading = true;
       this.$http.PostXLASSETS(request).then(response => {
         let { data } = response.data.result;
         data.forEach(d => {
@@ -172,7 +175,12 @@ export default {
             creador:d.user_name
           })
         });
-        
+        this.loading = false;
+      },error => {
+        this.loading = false;
+        if((error.data||{}).message){
+          this.$Message.error(error.data.message);
+        }
       })
     },
     getWhs(){
@@ -312,6 +320,10 @@ export default {
     createNewAddr(){
       this.status = 'new';
       this.addadressmodal = true;
+    },
+    seeAll(){
+      this.$router.push({path:'/setting/addressManage'});
+      this.getAddresses();
     }
   },
   mounted() {
