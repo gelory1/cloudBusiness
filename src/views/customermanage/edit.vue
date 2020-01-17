@@ -118,7 +118,7 @@
               </FormItem>
             </Col>
           </Row>
-          <div style="border:1px solid #ccc;padding:10px;border-radius:5px" v-if="isFriend">
+          <div style="border:1px solid #ccc;padding:10px;border-radius:5px;margin-bottom:10px" v-if="isFriend">
             <div style="margin-bottom:10px">
               <span style="font-weight:200;color:black;margin-right:10px">相关授权协议</span>
               <span style="color:#528DFF;cursor:pointer" @click="serviceConModal = true">+添加服务授权</span>
@@ -158,7 +158,7 @@
             </ul>
           </div>
         </div>
-        <Row v-if="isCustom">
+        <Row v-if="isCustom||formValidate.nature === 3">
           <Col class="changeinput">
             <FormItem label="关联平台账户" prop="glzh" :label-width="90" style="color: #409eff;">
               <Tag

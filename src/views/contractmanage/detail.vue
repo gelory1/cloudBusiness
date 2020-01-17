@@ -45,7 +45,7 @@
           <section>
             <img src="../../images/htgl/暂无.png" alt />
             <div>
-              <span>{{data.data.upTime||'暂无'}}</span>
+              <span>{{!data.data.upTime||data.data.upTime === '1900-01-01'?'暂无':data.data.upTime}}</span>
               <br />
               <span class="cor_s">上线时间</span>
             </div>
