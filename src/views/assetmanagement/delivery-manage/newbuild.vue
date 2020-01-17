@@ -197,7 +197,7 @@
       </div>
     </Modal>
     <!-- 添加订单 -->
-    <Modal v-model="ddmodal" width="900" @on-ok="ok">
+    <Modal v-model="ddmodal" width="900" @on-ok="ok" class-name="vertical-center-modal">
       <p class="tz_p">添加订单</p>
       <p class="tz_p1">
         选择
@@ -215,6 +215,7 @@
       <Table
         :columns="dd_columns"
         :data="dd_data"
+        height="450"
         @on-selection-change="changeSelect"
         style="clear:both;margin-left:10px;"
         :loading="orderLoading"
@@ -579,6 +580,7 @@ export default {
         {
           title: "客户等级",
           key: "khdj",
+          width: 80,
           align: "center",
           // sortable: true
         },
@@ -589,7 +591,12 @@ export default {
           width: 150,
           // sortable: true,
           render: (h, params) => {
-            return h("div", [
+            return h("div",{
+              style: {
+                    textAlign: 'right',
+                    marginRight: '60px'
+                  }
+            }, [
               h(
                 "span",
                 {
@@ -597,7 +604,7 @@ export default {
                     color: "red"
                   }
                 },
-                params.row.data.issued_count > 0 ? "(剩余待发)" : ""
+                params.row.data.issued_count > 0 ? "(剩余待发) " : ""
               ),
               h(
                 "span",
