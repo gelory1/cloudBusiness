@@ -144,10 +144,11 @@
                     </el-tooltip>
                   </div>
                   <div style="flex:1;text-align:center">
-                    <a :href="item.url">
+                    <a :href="item.url" v-if="item.url">
                       <Icon type="ios-list-outline" size="18"></Icon>
                       <span style="vertical-align: text-bottom;">{{item.name}}</span>
                     </a>
+                    <span v-else>无协议</span>
                   </div>
                   <div>
                     <span style="vertical-align: text-bottom;color:#F56C6C;cursor:pointer" @click="deleteCon(item)">删除</span>
