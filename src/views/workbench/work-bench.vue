@@ -1111,6 +1111,9 @@ export default {
         }
         data.contractList.forEach(d => {
           let paymentList = JSON.parse(JSON.stringify(d.paymentList))||[];
+          paymentList.sort((a,b) => {
+            return a.paymentTimes - b.paymentTimes
+          });
           let allBack = 0;
           let backAmount = 0;
           (d.paybackList||[]).forEach(p => {
@@ -1123,6 +1126,7 @@ export default {
               p.paybackAmount = allBack - backAmount;
             }
             backAmount += p.paybackAmount;
+            p._checked = false
           })
           this.hz1_data.push({
             htbh:d.contractNo,
@@ -1360,11 +1364,16 @@ export default {
     },
     hz1Click(val,index){
       this.indexStyle = index;
+      this.indexStyle1 = '';
       // this.hz1_data[index]._checked = true
       this.hz2_data = val.paymentList||[];
     },
     hz2Click(val,index){
-      this.indexStyle1 = index
+      if(this.indexStyle1 === index){
+        this.indexStyle1 = '';
+      }else{
+        this.indexStyle1 = index;
+      }
     },
     radioClick(val) {
       if (val == "ydz") {
