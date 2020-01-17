@@ -366,7 +366,7 @@
             <span style="font-size:16px">出库设备</span>
             <p class="right">
               <span>整体完成度</span>
-              <Progress class="pro" :percent="25"></Progress>
+              <Progress class="pro" :percent="deliveryData.degreeOfCompletion||0"></Progress>
             </p>
           </div>
           <div style="clear:both;overflow: hidden;">
@@ -890,7 +890,8 @@ export default {
         des:'',
         shipments_end_batch:'',
         shipments_start_batch:'',
-        orderList: []
+        orderList: [],
+        degreeOfCompletion:0
       },
       selectedCustom: '全部',
       orderDataCache: [],
@@ -1596,6 +1597,7 @@ export default {
         shipments_end_batch:'',
         shipments_start_batch:'',
         orderList: [],
+        degreeOfCompletion:0,
         workStatus:(workData||{}).workBenchStatus
       };
       this.$http.PostXLASSETS(request).then(response => {
@@ -1611,6 +1613,7 @@ export default {
           shipments_end_batch:'',
           shipments_start_batch:'',
           orderList: [],
+          degreeOfCompletion:0,
           workStatus:(workData||{}).workBenchStatus
         };
         let { data } = response.data.result;
@@ -1622,6 +1625,7 @@ export default {
         this.deliveryData.shipments_start_batch = data[0].shipments_start_batch;
         this.deliveryData.shipments_end_batch = data[0].shipments_end_batch;
         this.deliveryData.status = data[0].shipments_status;
+        this.deliveryData.degreeOfCompletion = data[0].degreeOfCompletion||0;
         this.deliveryData.amount = (workData||{}).workBenchContentObj.shipmentsAmount;
         this.deliveryData.workBenchId = workData.workbenchId;
         this.deliveryData.shipmentsId = (workData||{}).workBenchContentObj.shipmentsId;
