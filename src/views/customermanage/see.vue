@@ -184,10 +184,10 @@
                             </a>
                             <span v-else>无协议</span>
                           </div>
-                </div>
-              </li>
-            </ul>
-          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
                   <p v-else>暂无</p>
                 </div>
               </section>
