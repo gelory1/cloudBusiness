@@ -41,7 +41,7 @@
           <p>
             <span>
               金额
-              <b>{{($route.query||{}).jexj||0}}</b>元
+              <b>{{$util.thousandNum(($route.query||{}).jexj||0)}}</b>元
             </span>
             <span>
               订单数
