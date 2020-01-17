@@ -1199,24 +1199,7 @@ export default {
             confirmButtonText: '确定',
             callback: action => {
               if(action === 'confirm'){
-                if(this.tabName !== 'name1'){
-                  return;
-                }
-                let request = {
-                  typeid: 28008,
-                  data: [
-                    {
-                      workBenchId: params.row.data.workbenchId,
-                      "accountId": this.$store.state.user.accountId,
-                    }
-                  ]
-                };
-                this.$http.UPDATEWORKBENCH(request).then(res =>{
-                  this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
-                  if(this.tabName === 'name3'){
-                    this.getWorkbench();
-                  }
-                })
+                
               }
             }
           });
