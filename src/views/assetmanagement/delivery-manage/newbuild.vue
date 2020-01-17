@@ -593,15 +593,17 @@ export default {
           render: (h, params) => {
             return h("div",{
               style: {
-                    textAlign: 'right',
-                    marginRight: '60px'
+                    textAlign: 'center',
+                    position: 'relative'
                   }
             }, [
               h(
                 "span",
                 {
                   style: {
-                    color: "red"
+                    color: "red",
+                    position:'absolute',
+                    left: '3px'
                   }
                 },
                 params.row.data.issued_count > 0 ? "(剩余待发) " : ""
