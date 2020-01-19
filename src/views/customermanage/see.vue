@@ -1,15 +1,11 @@
 <template>
   <div class="see">
     <Layout class="layout" style="color:black;font-size:15px">
-      <div class="header_top">
-        <Icon type="ios-arrow-left" @click="goBack"></Icon>
-        <span @click="goBack">返回</span>
-        <Button
-          type="primary"
-          size="large"
-          style="float:right;width:80px;"
-          @click="goEdit"
-        >编辑</Button>
+      <div style="margin:10px 0 30px 0;display:flex;justify-content:space-between;align-items:center">
+        <span @click="goBack" style="cursor:pointer;"><Icon type="ios-arrow-left"></Icon> 返回</span>
+        <span @click="goEdit" style="cursor:pointer;background-color: #EBF5FE;padding:2px 6px;border-radius:5px" >
+          <Icon  type="compose" size="22" style="color: #54A3F6"></Icon>
+        </span>
       </div>
 
       <header class="header_mid">

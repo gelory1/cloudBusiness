@@ -1,12 +1,13 @@
 <template>
   <div class="fh_detial layout">
     <Layout style="background:#ffffff;minHeight:800px;">
-      <div class="header_top" @click="goBack">
-        <Icon type="ios-arrow-left"></Icon>
-        <span>返回</span>
+      <div style="margin:10px 0 30px 0;display:flex;justify-content:space-between;align-items:center">
+        <span @click="goBack" style="cursor:pointer;"><Icon type="ios-arrow-left"></Icon> 返回</span>
+        <span @click="editClick" style="cursor:pointer;background-color: #EBF5FE;padding:2px 6px;border-radius:5px" v-if="$route.query.zt == '草稿'||$route.query.zt == '被驳回'">
+          <Icon  type="compose" size="22" style="color: #54A3F6"></Icon>
+        </span>
       </div>
       <header class="fa_mid">
-        <Button v-if="$route.query.zt == '草稿'||$route.query.zt == '被驳回'" type="ghost" class="right fa_b1" @click="editClick">编辑</Button>
         <Button type="ghost" class="right fa_b">{{$route.query.zt}}</Button>
         <h2>发货方案详情</h2>
 

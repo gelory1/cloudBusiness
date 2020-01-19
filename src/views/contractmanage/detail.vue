@@ -1,12 +1,11 @@
 <template>
   <div class="detail">
     <Layout class="layout" style="min-height:800px;">
-      <div class="header_top">
-        <div class="con-left" @click="goback">
-          <Icon type="ios-arrow-left"></Icon>
-          <span>返回</span>
-        </div>
-        <Button type="ghost" size="small" style="float:right;width:80px;" @click="bjbuttClick">编辑</Button>
+      <div style="margin:10px 0 30px 0;display:flex;justify-content:space-between;align-items:center">
+        <span @click="goback" style="cursor:pointer;"><Icon type="ios-arrow-left"></Icon> 返回</span>
+        <span @click="bjbuttClick" style="cursor:pointer;background-color: #EBF5FE;padding:2px 6px;border-radius:5px" >
+          <Icon  type="compose" size="22" style="color: #54A3F6"></Icon>
+        </span>
       </div>
       <header class="header_mid" style="border:none">
         <h2 style="position:relative">
