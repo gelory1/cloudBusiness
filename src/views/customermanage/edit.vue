@@ -186,7 +186,7 @@
           <Table ref="selection" :columns="addlxr_columns" :data="formValidate.contacts_list"></Table>
         </div>
         <!-- footer-->
-        <footer>
+        <div style="margin-top:10px">
           <p class="div_p">开票信息</p>
           <Button type="primary" @click="newTicket()">+ 添加开票信息</Button>
           <div class="kpxx" v-for="(item,index) in formValidate.ticket_list" :key="index">
@@ -240,7 +240,7 @@
               <div style="clear:both"></div>
             </div>
           </div>
-        </footer>
+        </div>
         <FormItem class="form_but">
           <Button type="primary" @click="handleSubmit('formValidate')" :loading="submitLoading">提交</Button>
           <Button type="ghost" @click="gohandleCancel('formValidate')" style="margin-left: 20px">取消</Button>

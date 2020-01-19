@@ -88,7 +88,7 @@
                 >暂无</p>
                 <p>{{industryMap[((data||{}).data||{}).industry]}}</p>
               </section>
-              <section>
+              <section v-if="data.nature == '合作伙伴'">
                 <p>注册资金：</p>
                 <!-- <p
                   v-show="!((data||{}).data||{}).registered_capital||((data||{}).data||{}).registered_capital.length===0"
@@ -114,7 +114,7 @@
               </section>
             </div>
             <div class="select1">
-              <section style="width:46.5%;">
+              <section style="width:23%;">
                 <p>通讯地址：</p>
                 <p
                   v-show="!((data||{}).data||{}).mail_address||((data||{}).data||{}).mail_address.length===0"
@@ -122,7 +122,7 @@
                 >暂无</p>
                 <p>{{((data||{}).data||{}).mail_address}}</p>
               </section>
-              <section style="width:23%;">
+              <section style="width:23%;" v-if="data.nature == '合作伙伴'">
                 <p>
                   保证金：
                   <span class="eye" @click="eyeClick">
@@ -134,7 +134,7 @@
               </section>
             </div>
             <div class="select1">
-              <section style="width:46.5%;float:left;margin-bottom:0px;">
+              <section style="width:23%;float:left;margin-bottom:0px;" v-if="data.nature !== '合作伙伴'">
                 <p class="sele2">关联平台账户：</p>
                 <p
                   v-show="(((data||{}).data||{}).platformuser_list||[]).length===0"
