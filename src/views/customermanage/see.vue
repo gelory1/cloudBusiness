@@ -120,7 +120,11 @@
                   v-show="!((data||{}).data||{}).mail_address||((data||{}).data||{}).mail_address.length===0"
                   style="color:#000000;"
                 >暂无</p>
-                <p>{{((data||{}).data||{}).mail_address}}</p>
+                <el-tooltip effect="dark" :content="((data||{}).data||{}).mail_address" placement="top">
+                  <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                    <span>{{((data||{}).data||{}).mail_address}}</span>
+                  </div>
+                </el-tooltip>
               </section>
               <section style="width:23%;" v-if="data.nature == '合作伙伴'">
                 <p>

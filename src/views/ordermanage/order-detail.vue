@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div style="postion:relative">
+        <div>
             <div style="margin:30px  20px;">
                 <h3>订单详情</h3>
                 <p style="font-size:11px;">
@@ -197,7 +197,8 @@ export default {
                     }
                     return h('Tooltip', {
                         props: {
-                            placement: 'top'
+                            placement: 'top',
+                            transfer: true
                         }
                     }, [
                             texts,
@@ -227,7 +228,8 @@ export default {
                     }
                     return h('Tooltip', {
                         props: {
-                            placement: 'top'
+                            placement: 'top',
+                            transfer: true
                         }
                     }, [
                         texts,

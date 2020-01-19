@@ -1209,8 +1209,10 @@ export default {
         error => {
           if (this.tabName === "name1") {
             this.inLoading = false;
+            this.zkSum = 0;
           } else {
             this.outLoading = false;
+            this.crkSum = 0;
           }
         }
       );
