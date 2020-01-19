@@ -404,8 +404,8 @@
           </div>
         </div>
         <div class="agree_but">
-        <Button type="primary" :disabled="buttonDisabled" @click="agreeDelivery">{{deliveryData.workStatus === 2?"已同意":"同意"}}</Button>
-        <Button type="ghost" @click="refuseShow = true" :disabled="buttonDisabled" v-if="deliveryData.workStatus !== 2">拒绝</Button>
+        <Button type="primary" :disabled="buttonDisabled" :loading="refuseLoading" @click="agreeDelivery">{{deliveryData.workStatus === 2?"已同意":"同意"}}</Button>
+        <Button type="ghost" @click="refuseShow = true" :disabled="buttonDisabled||refuseLoading" v-if="deliveryData.workStatus !== 2">拒绝</Button>
         <div v-show="refuseShow" class="refuse">
           <p>拒绝理由<span style="float:right;cursor:pointer;color:#8d8d8d" @click="refuseShow = false">x</span></p>
           <Input v-model="textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请填写审批拒绝理由"></Input>
@@ -446,6 +446,7 @@ export default {
       loading: false,
       hz1Loading: false,
       isActive: false,
+      refuseLoading: false,
       newgzForm: {
         rwlx: 10,
         fzr: "",
@@ -939,6 +940,7 @@ export default {
       this.currentRow = JSON.parse(JSON.stringify(data));
     },
     updateDelivery(no){
+      this.refuseLoading = true;
       let request = {
         "typeid": 28007,
         "data": [
@@ -952,9 +954,8 @@ export default {
         ]
       };
       this.$http.UPDATEWORKBENCH(request).then(response => {
-        this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
         this.textarea = '';
-        this.refusemodal = false;
+        
         if(no === 2){
           let request = {
             "typeid": 23006,
@@ -967,8 +968,14 @@ export default {
             ]
           };
           this.$http.SETXLASSETS(request).then(response => {
+            this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
+            this.refusemodal = false;
+            this.refuseLoading = false;
           },error => {
               if(error.data.code === 0){
+                this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
+                this.refusemodal = false;
+                this.refuseLoading = false;
                 let {allocationList,billTime} = error.data;
                 let request = {
                 "typeid": 23007,
@@ -983,8 +990,22 @@ export default {
                 this.$http.SETXLASSETS(request).then(res => {
 
                 })
+              }else if(error.data.code === -1){
+                this.$alert(error.data.message||'审批失败，请重新发起改该方案！', '审批失败提醒', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                    if(action === 'confirm'){
+                      this.refuseLoading = false;
+                      this.refusemodal = false;
+                    }
+                  }
+                });
               }
             });
+        }else{
+          this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
+          this.refusemodal = false;
+          this.refuseLoading = false;
         }
         this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
         if(this.tabName === 'name3'){
@@ -1230,7 +1251,7 @@ export default {
         }
       }
       let newDate = new Date(this.workBenchData.workBenchContentObj.payTime);
-      let date = newDate.getFullYear() + '-' + (Number(newDate.getMonth())+1) + '-' + newDate.getDay();
+      let date = newDate.getFullYear() + '-' + (Number(newDate.getMonth())+1) + '-' + newDate.getDate();
       let request = {
         "typeid": 26004,
         "data": [
