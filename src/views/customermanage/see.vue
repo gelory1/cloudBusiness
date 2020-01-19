@@ -104,6 +104,14 @@
                 >暂无</p>
                 <p>{{((data||{}).data||{}).charge_person}}</p>
               </section>
+              <section>
+                <p>运营公司：</p>
+                <p
+                  v-show="!((data||{}).data||{}).manage_company_cn"
+                  style="color:#000000;"
+                >暂无</p>
+                <p>{{((data||{}).data||{}).manage_company_cn}}</p>
+              </section>
             </div>
             <div class="select1">
               <section style="width:46.5%;">
