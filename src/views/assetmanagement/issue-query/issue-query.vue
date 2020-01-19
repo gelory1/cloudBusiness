@@ -271,7 +271,7 @@
             <span class="wid shdz">{{djxx.address}}</span>
           </div>
           <div>
-            <span class="jbleft">ERP入库单号：</span>
+            <span class="jbleft">调拨单号：</span>
             <span class="wid shdz">{{djxx.ioBillId}}</span>
           </div>
         </div>
@@ -366,7 +366,7 @@
             <span class="jbright wid">{{djxx.shsj}}</span>
           </div>
           <div>
-            <span class="jbleft">ERP出库单号：</span>
+            <span class="jbleft">调拨单号：</span>
             <span class="wid shdz">{{djxx.ioBillId}}</span>
           </div>
         </div>
