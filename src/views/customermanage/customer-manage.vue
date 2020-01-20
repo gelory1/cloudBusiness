@@ -88,9 +88,9 @@
             </span>
           </div>
         </Header>
-        <Button type="primary" icon="ios-plus-empty" class="addBut1" @click="addClick" style="margin-bottom:5px;">添加客户</Button>
+        <Button type="primary" icon="ios-plus-empty" class="addBut1" @click="addClick" style="margin-bottom:10px;">添加客户</Button>
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
+      <Content :style="{background: '#fff', minHeight: '720px'}" style="padding:0 20px">
         <Table
           ref="table"
           @on-selection-change="selectChange"

@@ -167,7 +167,7 @@
         </Header>
         <Content
           :style="{background: '#fff', minHeight: scrollHeight}"
-          style="padding-left:10px;margin-top:-20px;"
+          style="padding:0 10px;margin-top:-20px;"
         >
           <Tabs ref="tab" v-model="tabName" @on-click="changeTab">
             <TabPane label="入库单据" name="name1">

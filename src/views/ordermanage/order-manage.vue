@@ -112,8 +112,8 @@
         >申请备货</Button>
       </Menu>
       <Content
-        :style="{background: '#fff', minHeight: '800px'}"
-        style="padding-left:20px;margin-top:0px;"
+        :style="{background: '#fff', minHeight: '750px'}"
+        style="padding:0 20px;margin-top:0px;"
       >
         <Tabs ref="tab" v-model="tabName">
           <TabPane

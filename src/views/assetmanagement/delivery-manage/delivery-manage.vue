@@ -126,7 +126,7 @@
       </Menu>
       <Content
         :style="{background: '#fff', minHeight: scrollHeight}"
-        style="padding-left:20px;margin-top:00px;"
+        style="padding:0 20px;margin-top:0px;"
       >
         <Tabs ref="tab" v-model="tabName" @on-change="changeTab">
           <TabPane

@@ -162,7 +162,7 @@
           </div>
         </Header>
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
+      <Content :style="{background: '#fff', minHeight: '760px',paddingTop: '20px'}" style="padding:20px 20px 0">
         <Table
           ref="table"
           @on-selection-change="selectChange"
@@ -187,7 +187,6 @@
     </Layout>
   </div>
 </template>
-``
 <script>
 export default {
   name: "contract",
