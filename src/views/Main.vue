@@ -17,9 +17,9 @@
           :menu-list="menuList"
         >
           <div slot="top" class="logo-style" style="background:#528DFF;height:70px;">
-            <img src="../images/xllogo.png" alt style="text-align:left;width:50px;margin-top:10px;" />
+            <img src="../images/xllogo.png" alt class="logoImg" />
             <p
-              style="color:#ffffff;padding:8px 0 0 0;font-size:20px;display:inline-block;vertical-align:top;margin-top:14px"
+              class="logoP"
             >新联云商务中心</p>
           </div>
         </shrinkable-menu>
@@ -320,7 +320,20 @@ export default {
   padding-left: 5px;
   padding-right: 5px;
 }
-@media screen and (max-width: 300px) {
-  
+.logoImg{
+  text-align:left;width:50px;margin-top:10px;
+}
+.logoP{
+  color:#ffffff;padding:8px 0 0 0;font-size:20px;display:inline-block;vertical-align:top;margin-top:14px
+}
+@media screen and (max-width: 1300px){
+  .logoImg{
+    width:40px;
+    margin-top:18px;
+  }
+  .logoP{
+    font-size:18px;
+    margin-top:18px;
+  }
 }
 </style>

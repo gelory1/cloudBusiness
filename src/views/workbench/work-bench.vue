@@ -1639,7 +1639,7 @@ export default {
         this.deliveryData.shipments_end_batch = data[0].shipments_end_batch;
         this.deliveryData.status = data[0].shipments_status;
         this.deliveryData.degreeOfCompletion = data[0].degreeOfCompletion||0;
-        this.deliveryData.amount = (workData||{}).workBenchContentObj.shipmentsAmount;
+        this.deliveryData.amount = parseFloat((workData||{}).workBenchContentObj.shipmentsAmount);
         this.deliveryData.workBenchId = workData.workbenchId;
         this.deliveryData.shipmentsId = (workData||{}).workBenchContentObj.shipmentsId;
         data[0].product_list.forEach(p => {
