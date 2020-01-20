@@ -793,7 +793,11 @@ export default {
         data: [
           {
             account_id: this.$store.state.user.accountId,
-            wh_id: this.selectedWhid === "" ? undefined : this.selectedWhid,
+            wh_id: this.menudata &&
+              this.menudata.length > 0 &&
+              this.ck_current_index !== ""
+                ? this.menudata[this.ck_current_index].wh_id
+                : undefined,
             wh_type: this.cpxhpz[this.cktype_current_index].id,
             product_code:
               this.selectedProcode === ""
@@ -859,6 +863,7 @@ export default {
         },
         error => {
           this.crkLoading = false;
+          this.crkSum = 0;
         }
       );
     },
