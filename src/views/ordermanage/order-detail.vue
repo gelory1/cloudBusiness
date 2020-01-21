@@ -281,7 +281,7 @@ export default {
                 "data": [
                     {
                         "orderNo": this.orderNO,
-                        "orderAmount": this.selectedOrder.data.order_little_amount,
+                        "orderAmount": this.selectedOrder.data.order_little_amount + '',
                         "accountId": this.$store.state.user.accountId
                     }	
                 ]
