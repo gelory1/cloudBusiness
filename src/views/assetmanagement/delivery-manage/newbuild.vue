@@ -399,7 +399,7 @@ export default {
                 {
                   style: {
                     color:
-                      params.row.product_quantity - params.row.repertory > 0
+                      (params.row.product_quantity - params.row.repertory > 0)&&params.row.repertory !== ''
                         ? "red"
                         : "#495060"
                   }
@@ -413,7 +413,7 @@ export default {
                     color: "red"
                   }
                 },
-                params.row.product_quantity - params.row.repertory > 0
+                (params.row.product_quantity - params.row.repertory > 0)&&params.row.repertory !== ''
                   ? `（库存：${params.row.repertory}）`
                   : ""
               )
@@ -521,18 +521,27 @@ export default {
                   if (index2 !== -1) {
                     let num = this.outcksb_data1[index].product_list[index2]
                       .issued_count;
-                    if (!this.isEdit)
+                    if (!this.isEdit){
                       this.$set(
                         this.outcksb_data1[index].product_list[index2],
                         "product_quantity",
                         a + num
                       );
-                    if (this.isEdit)
-                      this.$set(
-                        this.outcksb_data1[index].product_list[index2],
-                        "quantity_shipped",
-                        a
-                      );
+                    }else{
+                      if(this.outcksb_data1[index].product_list[index2].product_quantity){
+                        this.$set(
+                          this.outcksb_data1[index].product_list[index2],
+                          "product_quantity",
+                          a + num
+                        );
+                      }else{
+                        this.$set(
+                          this.outcksb_data1[index].product_list[index2],
+                          "quantity_shipped",
+                          a
+                        );
+                      }
+                    }
                     if (!this.changeRowData.data[product_code])
                       this.changeRowData.data[product_code] = {};
                     this.changeRowData.data[product_code][order_id] = a;
@@ -1080,10 +1089,18 @@ export default {
                   data[index].product_quantity +=
                     p.product_quantity - p.issued_count || p.quantity_shipped || 0;
                   (data[index].ids || []).push(d.data.order_id);
+                  data[index].repertory = '';
+                  if(p.repertory){
+                    data[index].repertory = p.repertory;
+                  }
                 } else {
                   let item = JSON.parse(JSON.stringify(p)) || {};
                   item.ids = [];
                   item.ids.push(d.data.order_id);
+                  item.repertory = '';
+                  if(p.repertory){
+                    item.repertory = p.repertory;
+                  }
                   item.product_quantity =
                     item.product_quantity - item.issued_count ||
                     p.quantity_shipped || 0;
