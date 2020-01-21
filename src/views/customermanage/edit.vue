@@ -129,24 +129,35 @@
                   <div style="margin-right:20px">
                     <Icon type="ios-list-outline" size="18"></Icon>
                   </div>
-                  <div style="flex:1;text-align:center">
-                    <span style="vertical-align: text-bottom;">{{item.contact_no}}</span>
+                  <div style="width:180px;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                    <el-tooltip placement="top">
+                     <span style="vertical-align: text-bottom">{{item.contact_no}}</span>
+                      <div slot="content">
+                        <p>{{item.contact_no}}</p>
+                      </div>
+                    </el-tooltip>
                   </div>
-                  <div style="flex:1;text-align:center">
+                  <div style="width:170px;text-align:center">
                     <span style="vertical-align: text-bottom;">{{item.startTime.split(' ')[0]}} 至 {{item.endTime.split(' ')[0]}}</span>
                   </div>
-                  <div style="flex:1;text-align:center">
+                  <div style="width:140px;text-align:center;">
                     <el-tooltip placement="top">
-                     <span style="vertical-align: text-bottom;">{{(item.city[0][0]+' '+(item.city[0][1]||"") +' '+ (item.city[0][2]||''))+(item.city.length>1?'...':'')}}</span>
+                     <p style="overflow:hidden;white-space: nowrap;text-overflow: ellipsis;"><span v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</span></p>
                       <div slot="content">
                         <p v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</p>
                       </div>
                     </el-tooltip>
                   </div>
-                  <div style="flex:1;text-align:center">
+                  <div style="width:180px;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
                     <a :href="item.url" v-if="item.url">
                       <Icon type="ios-list-outline" size="18"></Icon>
-                      <span style="vertical-align: text-bottom;">{{item.name}}</span>
+                      <el-tooltip placement="top">
+                        <span style="vertical-align: text-bottom;">{{item.name}}</span>
+                        <div slot="content">
+                          <p>{{item.name}}</p>
+                        </div>
+                      </el-tooltip>
+                      
                     </a>
                     <span v-else>无协议</span>
                   </div>
@@ -252,10 +263,11 @@
       <p style="margin:10px 0 20px 0;font-size:16px">添加服务授权</p>
       <Form ref="formAddservice" :model="formAddservice" :rules="ruleAddservice" :label-width="80">
         <FormItem label="协议编号" prop="contact_no">
-          <Input class="col-n" v-model="formAddservice.contact_no" placeholder />
+          <Input class="col-n" v-model="formAddservice.contact_no" placeholder @on-change="filter" />
+          <p style="margin-bottom: -20px;color:'#C0C4CC">（暂不支持!@#$%^&*()_...等持特殊字符）</p>
         </FormItem>
         <FormItem label="授权区域" prop="empower_city">
-          <el-cascader clearable v-model="formAddservice.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'name', label: 'name',multiple: true,checkStrictly: true}" size="small" style="width:350px;"></el-cascader>
+          <el-cascader clearable v-model="formAddservice.empower_city" :options="regions" collapse-tags filterable show-all-levels :props="{ value: 'name', label: 'name',multiple: true,checkStrictly: true}" size="small" style="width:350px;"></el-cascader>
         </FormItem>
         <FormItem label="授权期限" style="position:relative;" prop="time">
           <Row>
@@ -956,25 +968,29 @@ export default {
               this.newLocalData.plat.data.platFormList.length > 0
             )
               api.SETCUSTOMER(this.newLocalData.plat);
+              this.submitLoading = false;
               this.$Message.success("客户信息更新成功！");
               this.$router.push("/customermanage/customermanage");  
-              this.submitLoading = false;
+              
         },error => {
           if(error.data.code !== 0 && error.data.message){
             this.$Message.error(error.data.message);
             this.submitLoading = false;
           }
+          this.submitLoading = false;
         }).catch(e => {this.submitLoading = false;});
       } else {
         api
           .UPDATECUSTOMER(request)
           .then(response => {
+              this.submitLoading = false;
               this.$Message.success("客户信息更新成功！");
               this.$router.push("/customermanage/customermanage");
           },error => {
           if(error.data.code !== 0 && error.data.message){
             this.$Message.error(error.data.message);
           }
+          this.submitLoading = false;
         }).catch(e => {this.submitLoading = false;});
       }
     },
@@ -1576,6 +1592,13 @@ export default {
           message: '已取消删除'
         });          
       });
+    },
+    filter(){
+      let pattern=/[`~!@#$^&%*()=|{}':;',\\\[\]\.<>\/?~！@#￥……&*（）——|{}【】'；：""'。，、？]/g;
+      let contact_no = (this.formAddservice.contact_no||'').replace(pattern,"");
+      this.$nextTick(() => {
+        this.formAddservice.contact_no = contact_no;
+      })
     }
   },
   mounted() {

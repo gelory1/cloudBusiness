@@ -252,7 +252,31 @@ export default {
         {
           key: "fqms",
           title: "方案描述",
-          align: "center"
+          align: "center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.fqms !== null) {
+                if ((params.row.fqms||'').length > 20) {
+                  texts = params.row.fqms.substring(0, 20) + '...'
+                } else {
+                  texts = params.row.fqms
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  transfer: true
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.fqms)
+              ])
+            }
         },
         {
           key: "ddsl",

@@ -1019,6 +1019,7 @@ export default {
         this.$refs["menu"].updateActiveName();
         this.$refs["menu"].updateActiveName();
         this.$refs["menuContainer"].scrollTo(0, scroll);
+        this.tabName = 'name1';
         this.getProductList(1);
       });
     },

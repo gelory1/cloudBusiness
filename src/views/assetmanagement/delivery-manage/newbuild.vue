@@ -15,6 +15,7 @@
           ></DatePicker>之前
         </FormItem>
         <FormItem label="方案描述" prop="desc">
+          <!-- <textarea class="coolscrollbar" rows="3" maxlength="1000" v-model="formValidate.desc"></textarea> -->
           <el-input
             type="textarea"
             placeholder="请输入文字对方案进行描述"
@@ -22,7 +23,7 @@
             :autosize="{minRows: 2,maxRows: 5}"
             maxlength="1000"
             show-word-limit
-            style="width:500px;"
+            style="width:550px;"
           >
           </el-input>
         </FormItem>
@@ -149,7 +150,7 @@
     <!-- 调整弹框 -->
     <Modal
       v-model="tzmodal"
-      width="900"
+      :width="900"
       class="hz1"
       @on-cancel="changeCountCancel"
       :mask-closable="false"
@@ -588,7 +589,7 @@ export default {
           title: "设备数量",
           key: "sbsl",
           align: "center",
-          width: 150,
+          // width: 150,
           // sortable: true,
           render: (h, params) => {
             return h("div",{
@@ -610,7 +611,11 @@ export default {
               ),
               h(
                 "span",
-                {},
+                {
+                  style: {
+                    paddingLeft: '30px'
+                  }
+                },
                 params.row.data.product_quantity - params.row.data.issued_count
               )
             ]);
@@ -655,7 +660,7 @@ export default {
       this.outcksb_data1.forEach(o => {
         if (o.ddbh !== "汇总" && o.product_list) {
           o.product_list.forEach(p => {
-            if (p.product_quantity > p.repertory) {
+            if ((p.product_quantity - p.issued_count) > p.repertory) {
               this.$Message.error(
                 `请依据库存量调整该产品 ${p.product_code}的发货数量！`
               );
@@ -1193,5 +1198,9 @@ export default {
 }
 .ivu-select-single .ivu-select-selection .ivu-select-placeholder{
  color:orange
+}
+.el-textarea .el-input__count {
+  right: 20px;
+  opacity: 0.6;
 }
 </style>

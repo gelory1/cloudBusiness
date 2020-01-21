@@ -171,24 +171,35 @@
                           <div style="margin-right:20px">
                             <Icon type="ios-list-outline" size="18"></Icon>
                           </div>
-                          <div style="flex:1;text-align:center">
-                            <span style="vertical-align: text-bottom;">{{item.contact_no}}</span>
+                          <div style="width:180px;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                            <el-tooltip placement="top">
+                            <span style="vertical-align: text-bottom">{{item.contact_no}}</span>
+                              <div slot="content">
+                                <p>{{item.contact_no}}</p>
+                              </div>
+                            </el-tooltip>
                           </div>
-                          <div style="flex:1;text-align:center">
+                          <div style="width:170px;text-align:center">
                             <span style="vertical-align: text-bottom;">{{item.startTime.split(' ')[0]}} 至 {{item.endTime.split(' ')[0]}}</span>
                           </div>
-                          <el-tooltip placement="top">
-                            <div slot="content">
-                                  <p v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</p>
-                                </div>
-                            <div style="flex:1;text-align:center">
-                              <span style="vertical-align: text-bottom;">{{(item.city[0][0]+' '+(item.city[0][1]||"") +' '+ (item.city[0][2]||''))+(item.city.length>1?'...':'')}}</span>
-                            </div>
-                          </el-tooltip>
-                          <div style="flex:1;text-align:center">
+                          <div style="width:140px;text-align:center;">
+                            <el-tooltip placement="top">
+                            <p style="overflow:hidden;white-space: nowrap;text-overflow: ellipsis;"><span v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</span></p>
+                              <div slot="content">
+                                <p v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</p>
+                              </div>
+                            </el-tooltip>
+                          </div>
+                         <div style="width:180px;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
                             <a :href="item.url" v-if="item.url">
                               <Icon type="ios-download-outline" size="18"></Icon>
-                              <span style="vertical-align: text-bottom;">下载协议</span>
+                              <el-tooltip placement="top">
+                                <span style="vertical-align: text-bottom;">{{item.name}}</span>
+                                <div slot="content">
+                                  <p>{{item.name}}</p>
+                                </div>
+                              </el-tooltip>
+                              
                             </a>
                             <span v-else>无协议</span>
                           </div>

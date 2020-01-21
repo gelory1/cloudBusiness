@@ -180,7 +180,7 @@
             </el-upload>
             <span style="white-space: normal;color:#bbbec4">请上传excel文件,表格中三列名称分别为:到款时间,金额,付款方</span>(<a href="http://9010.chinadny.com/front/userfiles/xlcloud/paybackAmount.xls">点击下载模板</a>)
           </div>
-          <Table :columns="add_columns" :data="newgzForm.add_data" class="gztable"></Table>
+          <Table :columns="add_columns" :height="300" :width="667" :data="newgzForm.add_data" class="gztable"></Table>
         </FormItem>
         <FormItem label="负责人" prop="fzr">
           <Select v-model="newgzForm.company" clearable filterable style="width:250px;">
@@ -404,7 +404,7 @@
           </div>
         </div>
         <div class="agree_but">
-        <Button type="primary" :disabled="buttonDisabled" :loading="refuseLoading" @click="agreeDelivery">{{deliveryData.workStatus === 2?"已同意":"同意"}}</Button>
+        <Button type="primary" :disabled="buttonDisabled" :loading="refuseLoading" @click="agreeDelivery">{{deliveryData.workStatus === 2?(deliveryData.reject?"已驳回":'已同意'):"同意"}}</Button>
         <Button type="ghost" @click="refuseShow = true" :disabled="buttonDisabled||refuseLoading" v-if="deliveryData.workStatus !== 2">拒绝</Button>
         <div v-show="refuseShow" class="refuse">
           <p>拒绝理由<span style="float:right;cursor:pointer;color:#8d8d8d" @click="refuseShow = false">x</span></p>
@@ -704,7 +704,7 @@ export default {
         },
         {
           title:'操作',
-          width: '100',
+          width: '15%',
           key: 'action',
           align: "center",
           render:(h,params) => {
@@ -892,7 +892,8 @@ export default {
         shipments_end_batch:'',
         shipments_start_batch:'',
         orderList: [],
-        degreeOfCompletion:0
+        degreeOfCompletion:0,
+        reject:''
       },
       selectedCustom: '全部',
       orderDataCache: [],
@@ -940,7 +941,7 @@ export default {
       this.currentRow = JSON.parse(JSON.stringify(data));
     },
     updateDelivery(no){
-      this.refuseLoading = true;
+      if(no === 2) this.refuseLoading = true;
       let request = {
         "typeid": 28007,
         "data": [
@@ -1429,17 +1430,23 @@ export default {
         return;
       }
       let workBenchContentList = [];
+      let status = true;
       this.newgzForm.add_data.forEach(d => {
+        if(!status) return;
         if(d.dksj === ''){
+          status = false;
           this.$Message.error('请选择到款时间！');
           return;
         }else if(d.fkf === ''){
+          status = false;
           this.$Message.error('请输入付款方！');
           return;
         }else if(d.je === ''||isNaN(Number(d.je))){
+          status = false;
           this.$Message.error('请输入正确金额！');
           return;
         }
+        if(!status) return;
         workBenchContentList.push({
           payTime: d.dksj,
           payUnitName: d.fkf,
@@ -1611,7 +1618,8 @@ export default {
         shipments_start_batch:'',
         orderList: [],
         degreeOfCompletion:0,
-        workStatus:(workData||{}).workBenchStatus
+        workStatus:(workData||{}).workBenchStatus,
+        reject:''
       };
       this.$http.PostXLASSETS(request).then(response => {
         this.orderData = [{
@@ -1627,7 +1635,8 @@ export default {
           shipments_start_batch:'',
           orderList: [],
           degreeOfCompletion:0,
-          workStatus:(workData||{}).workBenchStatus
+          workStatus:(workData||{}).workBenchStatus,
+          reject: ''
         };
         let { data } = response.data.result;
         this.deliveryData.schemeNo = data[0].shipments_no;
@@ -1642,6 +1651,7 @@ export default {
         this.deliveryData.amount = parseFloat((workData||{}).workBenchContentObj.shipmentsAmount);
         this.deliveryData.workBenchId = workData.workbenchId;
         this.deliveryData.shipmentsId = (workData||{}).workBenchContentObj.shipmentsId;
+        this.deliveryData.reject = (workData||{}).workBenchContentObj.isReject;
         data[0].product_list.forEach(p => {
           if(!this.deliveryData.orderList.find(o => o.order_id === p.order_id)){
             this.deliveryData.orderList.push({
