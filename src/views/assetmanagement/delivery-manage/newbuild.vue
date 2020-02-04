@@ -959,6 +959,13 @@ export default {
           (this.outcksb_data1[index] || {}).product_list || []
         ).findIndex(d => d.product_code === product_code);
         if (index2 !== -1) {
+          if(this.outcksb_data1[index].product_list[index2].quantity_shipped !== undefined){
+            this.$set(
+              this.outcksb_data1[index].product_list[index2],
+              "quantity_shipped",
+              params.sbsl
+            );
+          }
           this.$set(
             this.outcksb_data1[index].product_list[index2],
             "product_quantity",
