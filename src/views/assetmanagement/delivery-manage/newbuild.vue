@@ -1097,7 +1097,7 @@ export default {
                     p.product_quantity - p.issued_count || p.quantity_shipped || 0;
                   (data[index].ids || []).push(d.data.order_id);
                   data[index].repertory = '';
-                  if(p.repertory){
+                  if(p.repertory !== undefined){
                     data[index].repertory = p.repertory;
                   }
                 } else {
@@ -1105,7 +1105,7 @@ export default {
                   item.ids = [];
                   item.ids.push(d.data.order_id);
                   item.repertory = '';
-                  if(p.repertory){
+                  if(p.repertory !== undefined){
                     item.repertory = p.repertory;
                   }
                   item.product_quantity =

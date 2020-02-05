@@ -62,9 +62,9 @@
     <!-- 右侧内容页 -->
     <div class="single-page-con" :style="{left: shrink?'60px':'14%'}" ref="content">
       <div class="single-page">
-        <keep-alive :include="cachePage">
+        <!-- <keep-alive :include="cachePage"> -->
           <router-view></router-view>
-        </keep-alive>
+        <!-- </keep-alive> -->
       </div>
     </div>
   </div>
