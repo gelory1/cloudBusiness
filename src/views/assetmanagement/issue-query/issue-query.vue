@@ -444,9 +444,9 @@ export default {
           val: '已审批'
         }
       ],
-      zkSum: 1,
-      crkSum: 1,
-      sblbSum: 1,
+      zkSum: 0,
+      crkSum: 0,
+      sblbSum: 0,
       menudata: [],
       rkdj_columns: [
         {
@@ -1265,10 +1265,11 @@ export default {
         ]
       };
       this.sblb_data = [];
+      this.sblbSum = 0;
       this.$http.PostXLASSETS(request).then(response => {
         let { data } = response.data.result;
         this.sblb_data = [];
-        this.sblbSum = data[0].sum;
+        this.sblbSum = data[0].sum||0;
         data[0].devicelist.forEach(d => {
           let crk_item = {};
           crk_item.tm = d.device_address;
