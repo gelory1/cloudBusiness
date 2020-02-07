@@ -413,6 +413,7 @@
               :current.sync="devicePageNum"
               :total="sblbSum"
               :page-size="10"
+              show-total
               @on-change="getDevicesList"
               size="small"
               show-elevator
