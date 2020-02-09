@@ -224,19 +224,19 @@
               </div>
               <div class="zq_div2" v-show="showObj[index]&&item.paybackList.length>0">
                 <section class="zq_se2">
-                  <div>ID</div>
-                  <div>付款方式</div>
-                  <div>支付时间</div>
-                  <div>确认时间</div>
-                  <div>支付金额（元）</div>
+                  <div style="width:30%">ID</div>
+                  <div style="width:16%">付款方式</div>
+                  <div style="width:16%">支付时间</div>
+                  <div style="width:16%">确认时间</div>
+                  <div style="width:16%">支付金额（元）</div>
                 </section>
                 <div v-for="(p,i) in item.paybackList" :key="i" class="payList">
-                  <section>
-                    <div>{{p.paybackId}}</div>
-                    <div>{{p.paymentWay}}</div>
-                    <div>{{p.paybackTime}}</div>
-                    <div>{{p.paybackSureTime}}</div>
-                    <div>{{p.paybackAmount}}</div>
+                  <section class="zq_se2">
+                    <div style="width:30%">{{p.paybackId}}</div>
+                    <div style="width:16%">{{paybackWayMap[p.paybackWay]}}</div>
+                    <div style="width:16%">{{p.paybackTime}}</div>
+                    <div style="width:16%">{{p.paybackSureTime}}</div>
+                    <div style="width:16%">{{p.paybackAmount}}</div>
                   </section>
                 </div>
                 
@@ -373,6 +373,7 @@ export default {
       companys:[],
       projectmen:[],
       contractContentMap:this.$option.contract.contentMap,
+      paybackWayMap: this.$option.contract.paybackWayMap,
       fj:[],
       uploadLoading:false,
       selectedOrder:'',
