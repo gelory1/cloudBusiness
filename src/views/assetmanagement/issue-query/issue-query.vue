@@ -438,7 +438,7 @@ export default {
       status:[
         {
           index: 0,
-          val: '未审批'
+          val: '待审批'
         },
         {
           index: 1,
