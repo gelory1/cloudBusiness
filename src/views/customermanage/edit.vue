@@ -175,15 +175,10 @@
               <Tag
                 closable
                 color="blue"
-                v-show="formValidate.platformuser_list.length>0"
                 v-for="(item,index) in formValidate.platformuser_list"
                 :key="index"
                 @on-close="deletePlatForm(index)"
               >({{item.platform_id}}){{item.platform_name}}</Tag>
-              <P
-                v-show="formValidate.platformuser_list.length===0"
-                style="color:#495060;display:inline"
-              >暂未关联账户平台</P>
               <Button type="ghost" class="butt" @click="platFormShow()">+</Button>
             </FormItem>
           </Col>
