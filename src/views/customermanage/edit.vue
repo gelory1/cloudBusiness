@@ -421,14 +421,14 @@
         <Row>
           <Col span="20">
             <FormItem label="账户：">
-              <Input v-model="plat.platform_id" placeholder />
+              <Input v-model="plat.platform_id" placeholder disabled/>
             </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="20">
             <FormItem label="名称：">
-              <Input v-model="plat.platform_name" placeholder />
+              <Input v-model="plat.platform_name" placeholder disabled/>
             </FormItem>
           </Col>
         </Row>
