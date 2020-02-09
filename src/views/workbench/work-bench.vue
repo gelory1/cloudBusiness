@@ -954,7 +954,6 @@ export default {
           }
         ]
       };
-      this.$http.UPDATEWORKBENCH(request).then(response => {
         this.textarea = '';
         
         if(no === 2){
@@ -972,11 +971,19 @@ export default {
             this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
             this.refusemodal = false;
             this.refuseLoading = false;
+            this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+            if(this.tabName === 'name3'){
+              this.getWorkbench();
+            }
           },error => {
               if(error.data.code === 0){
                 this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
                 this.refusemodal = false;
                 this.refuseLoading = false;
+                this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+                if(this.tabName === 'name3'){
+                  this.getWorkbench();
+                }
                 let {allocationList,billTime} = error.data;
                 let request = {
                 "typeid": 23007,
@@ -998,21 +1005,26 @@ export default {
                     if(action === 'confirm'){
                       this.refuseLoading = false;
                       this.refusemodal = false;
+                      this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+                      if(this.tabName === 'name3'){
+                        this.getWorkbench();
+                      }
                     }
                   }
                 });
               }
             });
         }else{
-          this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
-          this.refusemodal = false;
-          this.refuseLoading = false;
+          this.$http.UPDATEWORKBENCH(request).then(response => {
+            this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
+            this.refusemodal = false;
+            this.refuseLoading = false;
+            this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+            if(this.tabName === 'name3'){
+              this.getWorkbench();
+            }
+          })
         }
-        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
-        if(this.tabName === 'name3'){
-          this.getWorkbench();
-        }
-      })
     },
     refuseSure(){
       this.refuseShow = false;
