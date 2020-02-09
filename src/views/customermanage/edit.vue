@@ -991,7 +991,7 @@ export default {
     },
     uploadSuccess(res){
       this.uploadStatus = false;
-      this.formAddservice.url = res.result.address;
+      this.formAddservice.url = (res.result||{}).address||'';
     },
     uploadError(){
       this.uploadStatus = false;
