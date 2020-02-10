@@ -424,6 +424,7 @@ export default {
       };
       this.fh_data = [];
       this.loading = true;
+      this.sum = 0;
       this.$http.PostXLASSETS(request).then(
         response => {
           this.loading = false;
