@@ -1347,7 +1347,7 @@ export default {
       this.checkIndex = data.length;
     },
     sureClick() {
-      if(this.imgUrl === ''){
+      if(this.imgUrl === ''&&this.checkedData[0].data.workBenchContentObj.saleType !== 2){
         this.$Message.error('请先上传付款截图！');
         return;
       }
