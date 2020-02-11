@@ -1372,7 +1372,7 @@ export default {
               "accountId": this.$store.state.user.accountId,
               "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
               "contractNo": this.checkedData[0].data.workBenchContentObj.contractNo,
-              "photoUrl": this.imgUrl
+              "photoUrl": this.imgUrl === ''?undefined:this.imgUrl
             }
           ]
         }
