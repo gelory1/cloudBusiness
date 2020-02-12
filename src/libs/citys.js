@@ -7603,6 +7603,9 @@ var provinceList = [
                         'name': '滨湖区'
                     },
                     {
+                        'name': '新吴区'
+                    },
+                    {
                         'name': '江阴市'
                     },
                     {
