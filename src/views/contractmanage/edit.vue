@@ -211,6 +211,10 @@
                   <p class="zq_p">本期实付（元）</p>
                   <p>{{$util.thousandNum(item.currentAmount)||0}}</p>
                 </section>
+                <section class="zq_c zq_se" style="color:#2d8cf0">
+                  <span style="cursor:pointer" @click="editPayment(item)">编辑</span>
+                  <span style="margin-left:10px;cursor:pointer" v-if="index === paymentList.length - 1" @click="editPayment">添加账期</span>
+                </section>
                 <section class="zq_c zq_se" style="color:#797979;">
                   <p class="zq_p" v-if="item.currentTicketAmount > 0">已开票（元）</p>
                   <div style="display:flex;justify-content: center;">
@@ -225,18 +229,20 @@
               <div class="zq_div2" v-show="showObj[index]&&item.paybackList.length>0">
                 <section class="zq_se2">
                   <div style="width:30%">ID</div>
-                  <div style="width:16%">付款方式</div>
-                  <div style="width:16%">支付时间</div>
-                  <div style="width:16%">确认时间</div>
-                  <div style="width:16%">支付金额（元）</div>
+                  <div style="width:13%">付款方式</div>
+                  <div style="width:13%">支付时间</div>
+                  <div style="width:13%">确认时间</div>
+                  <div style="width:13%">支付金额（元）</div>
+                  <div style="width:13%;color:#2d8cf0;cursor:pointer" @click="editPayback">添加回款</div>
                 </section>
                 <div v-for="(p,i) in item.paybackList" :key="i" class="payList">
                   <section class="zq_se2">
                     <div style="width:30%">{{p.paybackId}}</div>
-                    <div style="width:16%">{{paybackWayMap[p.paybackWay]}}</div>
-                    <div style="width:16%">{{p.paybackTime}}</div>
-                    <div style="width:16%">{{p.paybackSureTime}}</div>
-                    <div style="width:16%">{{p.paybackAmount}}</div>
+                    <div style="width:13%">{{paybackWayMap[p.paybackWay]}}</div>
+                    <div style="width:13%">{{p.paybackTime}}</div>
+                    <div style="width:13%">{{p.paybackSureTime}}</div>
+                    <div style="width:13%">{{p.paybackAmount}}</div>
+                    <div style="width:13%;color:#2d8cf0;cursor:pointer" @click="editPayback(p)">编辑</div>
                   </section>
                 </div>
                 
@@ -303,6 +309,89 @@
         </Modal>
         <Modal v-model="seeModal" width="1000">
           <iframe :src="seeUrl" width="100%" height="700" ></iframe>
+        </Modal>
+        <Modal v-model="paymentShow" class="aa">
+          <p class="ad_p" v-if="!paymentData.paymentId">添加账期</p>
+          <p class="ad_p" v-else>编辑账期</p>
+          <Form
+            ref="paymentData"
+            :model="paymentData"
+            :rules="paymentRule"
+            :label-width="150"
+            class="formTop"
+          >
+            <Row>
+              <Col span="15">
+                <FormItem label="开始时间" prop="paymentTime">
+                  <DatePicker type="date" v-model="paymentData.paymentTime" style="width: 200px"></DatePicker>
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="15">
+                <FormItem label="结束时间" prop="dueTime">
+                  <DatePicker type="date" v-model="paymentData.dueTime" style="width: 200px"></DatePicker>
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="15">
+                <FormItem label="账期金额（元）" prop="paymentAmount">
+                  <Input v-model="paymentData.paymentAmount" placeholder/>
+                </FormItem>
+              </Col>
+            </Row>
+            <FormItem style="margin:40px 0 30px 160px;">
+              <Button type="primary" @click="savePayment('paymentData')">保存</Button>
+              <Button type="primary" @click="closePayment" style="margin-left:20px">取消</Button>
+            </FormItem>
+          </Form>
+        </Modal>
+        <Modal v-model="paybackShow" class="aa">
+           <p class="ad_p" v-if="!paybackData.paymentId">添加回款</p>
+          <p class="ad_p" v-else>编辑回款</p>
+          <Form
+            ref="paybackData"
+            :model="paybackData"
+            :rules="paybackRule"
+            :label-width="150"
+            class="formTop"
+          >
+            <Row>
+              <Col span="15">
+                <FormItem label="付款方式" prop="paybackTime">
+                  <Select v-model="paybackData.paybackWay" placeholder class="col-f">
+                    <Option v-for="i in paybackWays" :value="i.val" :key="i.val">{{i.val}}</Option>
+                  </Select>
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="15">
+                <FormItem label="支付时间" prop="paybackTime">
+                  <DatePicker type="date" v-model="paybackData.paybackTime" style="width: 200px"></DatePicker>
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="15">
+                <FormItem label="确认时间" prop="paybackTime">
+                  <DatePicker type="date" v-model="paybackData.paybackSureTime" style="width: 200px"></DatePicker>
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="15">
+                <FormItem label="账期金额（元）" prop="paybackAmount">
+                  <Input v-model="paybackData.paybackAmount" placeholder/>
+                </FormItem>
+              </Col>
+            </Row>
+            <FormItem style="margin:40px 0 30px 160px;">
+              <Button type="primary" @click="savePayback('paybackData')">保存</Button>
+              <Button type="primary" @click="closePayback" style="margin-left:20px">取消</Button>
+            </FormItem>
+          </Form>
         </Modal>
       </content>
     </Layout>
@@ -379,7 +468,78 @@ export default {
       selectedOrder:'',
       orderDetailOpen:false,
       seeUrl: '',
-      seeModal: false
+      seeModal: false,
+      paymentList: [],
+      paymentShow: false,
+      paybackShow: false,
+      paymentData: {
+        paymentId: '',
+        paymentTime:'',
+        dueTime:'',
+        paymentAmount:'',
+      },
+      paybackData: {
+        paybackId:'',
+        paybackTime:'',
+        paybackSureTime:'',
+        paybackAmount: '',
+        paybackWay:''
+      },
+      paymentRule:{
+        paymentTime: [
+          {
+            required: true,
+            message: "请选择时间",
+            trigger: "blur"
+          }
+        ],
+        dueTime: [
+          {
+            required: true,
+            message: "请选择时间",
+            trigger: "blur"
+          }
+        ],
+        paymentAmount: [
+          {
+            required: true,
+            message: "请输入金额",
+            trigger: "blur"
+          }
+        ],
+      },
+      paybackRule:{
+        paybackTime: [
+          {
+            required: true,
+            message: "请选择时间",
+            trigger: "blur"
+          }
+        ],
+        paybackSureTime: [
+          {
+            required: true,
+            message: "请选择时间",
+            trigger: "blur"
+          }
+        ],
+        paybackAmount: [
+          {
+            required: true,
+            message: "请输入金额",
+            trigger: "blur"
+          }
+        ],
+        paybackWay: [
+          {
+            required: true,
+            message: "请选择付款方式",
+            trigger: "change"
+          }
+        ],
+
+      },
+      paybackWays: this.$option.contract.paybackWays,
     };
   },
   methods: {
@@ -532,6 +692,130 @@ export default {
         this.seeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${url}`;
       }
       this.seeModal = true;
+    },
+    editPayment(item){
+      this.paymentShow = true;
+      if(item){
+        this.paymentData.paymentTime = item.paymentTime;
+        this.paymentData.dueTime = item.dueTime;
+        this.paymentData.paymentAmount = item.paymentAmount;
+        this.paymentData.paymentId = item.paymentId;
+      }
+    },
+    editPayback(item){
+      this.paybackShow = true;
+    },
+    savePayment(name){
+      if(this.paymentData.paymentTime === ''||this.paymentData.dueTime === ''||this.paymentData.paymentAmount===''){
+        this.$Message.error('请按规定填写内容！');
+        return;
+      }
+      if(this.paymentData.paymentId === ''){
+        let request = {
+          "typeid":26019,
+          "data":
+          [
+            {
+              "contractNo":this.data.contractNo,
+              "accountId":this.$store.state.user.accountId,
+              "paymentAmount":this.paymentData.paymentAmount,
+              "paymentTime":this.$util.Date(this.paymentData.paymentTime),
+              "dueTime":this.$util.Date(this.paymentData.dueTime),
+              "paymentWay":"",
+              "paymentStatus":0,
+              "paymentTimes":1
+            }
+          ]
+        };
+        this.$http.SETCONTRACT(request).then(res => {
+
+        })
+      }else{
+        let request = {
+          "typeid":26020,
+          "data":
+          [
+            {
+              "contractNo":this.data.contractNo,
+              "accountId":this.$store.state.user.accountId,
+              "paymentAmount":this.paymentData.paymentAmount,
+              "paymentTime":this.$util.Date(this.paymentData.paymentTime),
+              "dueTime":this.$util.Date(this.paymentData.dueTime),
+              "paymentId":this.paymentData.paymentId,
+              "paymentWay":"",
+              "paymentStatus":0,
+              "paymentTimes":1
+            }
+          ]
+        };
+        this.$http.UPDATECONTRACT(request).then(res => {
+          
+        })
+      }
+    },
+    closePayment(){
+      this.paymentShow = false;
+      this.paymentData.paymentTime = '';
+      this.paymentData.dueTime = '';
+      this.paymentData.paymentAmount = '';
+      this.paymentData.paymentId = '';
+    },
+    savePayback(name){
+      this.paybackData.paybackWay = '';
+      if(this.paybackData.paybackTime === ''||this.paybackData.paybackSureTime === ''||this.paybackData.paybackAmount===''||this.paybackData.paybackWay===''){
+        this.$Message.error('请按规定填写内容！');
+        return;
+      }
+      if(this.paybackData.paybackId === ''){
+        // let request = {
+        //   "typeid":26019,
+        //   "data":
+        //   [
+        //     {
+        //       "contractNo":this.data.contractNo,
+        //       "accountId":this.$store.state.user.accountId,
+        //       "paymentAmount":this.paymentData.paymentAmount,
+        //       "paymentTime":this.$util.Date(this.paymentData.paymentTime),
+        //       "dueTime":this.$util.Date(this.paymentData.dueTime),
+        //       "paymentWay":"",
+        //       "paymentStatus":0,
+        //       "paymentTimes":1
+        //     }
+        //   ]
+        // };
+        this.$http.SETCONTRACT(request).then(res => {
+
+        })
+      }else{
+        // let request = {
+        //   "typeid":26020,
+        //   "data":
+        //   [
+        //     {
+        //       "contractNo":this.data.contractNo,
+        //       "accountId":this.$store.state.user.accountId,
+        //       "paymentAmount":this.paymentData.paymentAmount,
+        //       "paymentTime":this.$util.Date(this.paymentData.paymentTime),
+        //       "dueTime":this.$util.Date(this.paymentData.dueTime),
+        //       "paymentId":this.paymentData.paymentId,
+        //       "paymentWay":"",
+        //       "paymentStatus":0,
+        //       "paymentTimes":1
+        //     }
+        //   ]
+        // };
+        this.$http.UPDATECONTRACT(request).then(res => {
+          
+        })
+      }
+    },
+    closePayback(){
+      this.paybackShow = false;
+      this.paybackData.paybackTime = '';
+      this.paybackData.paybackSureTime = '';
+      this.paybackData.paybackAmount = '';
+      this.paybackData.paybackId = '';
+      this.paybackData.paybackWay = '';
     }
   },
   beforeCreate(){
@@ -544,6 +828,12 @@ export default {
     this.formValidate.platList = JSON.parse(JSON.stringify(this.data.data.platformuserList));
     this.formValidate.projectManager = this.data.data.projectManager;
     this.getfiles();
+    if(this.$route.query&&this.$route.query.paymentList){
+      this.paymentList = JSON.parse(this.$route.query.paymentList)||[];
+      this.paymentList.forEach((p,index) => {
+        this.$set(this.showObj,index,false);
+      })
+    }
   },
   computed: {
     data(){
@@ -551,16 +841,6 @@ export default {
         return this.$store.state.user.contractInfo;
       }
       return JSON.parse(localStorage.getItem("contractInfo")) || {};
-    },
-    paymentList(){
-      let paymentList = [];
-      if(this.$route.query&&this.$route.query.paymentList){
-        paymentList = JSON.parse(this.$route.query.paymentList)||[];
-        paymentList.forEach((p,index) => {
-          this.$set(this.showObj,index,false);
-        })
-      }
-      return paymentList;
     },
     remainingMoney(){
       return this.$route.query.remainingMoney;
@@ -604,5 +884,12 @@ export default {
 }
 .ivu-input-number-handler-wrap{
     opacity: 100;
+}
+.aa .ivu-modal-footer {
+  display: none;
+}
+.ad_p{
+    font-size:16px;
+    margin:20px;
 }
 </style>

@@ -565,6 +565,16 @@ contract.paybackWayMap = {
     0: '线下支付',
     1: '备货金抵扣'
 };
+contract.paybackWays = [
+    {
+        index:0,
+        val:'线下支付'
+    },
+    {
+        index:1,
+        val:'备货金抵扣'
+    }
+]
 workbench.typeMap = {
     1: ' 审批提醒',
     2: ' 签署提醒',
