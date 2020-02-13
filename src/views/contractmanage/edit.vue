@@ -211,10 +211,10 @@
                   <p class="zq_p">本期实付（元）</p>
                   <p>{{$util.thousandNum(item.currentAmount)||0}}</p>
                 </section>
-                <section class="zq_c zq_se" style="color:#2d8cf0">
+                <!-- <section class="zq_c zq_se" style="color:#2d8cf0">
                   <span style="cursor:pointer" @click="editPayment(item)">编辑</span>
                   <span style="margin-left:10px;cursor:pointer" v-if="index === paymentList.length - 1" @click="editPayment">添加账期</span>
-                </section>
+                </section> -->
                 <section class="zq_c zq_se" style="color:#797979;">
                   <p class="zq_p" v-if="item.currentTicketAmount > 0">已开票（元）</p>
                   <div style="display:flex;justify-content: center;">
@@ -233,7 +233,7 @@
                   <div style="width:13%">支付时间</div>
                   <div style="width:13%">确认时间</div>
                   <div style="width:13%">支付金额（元）</div>
-                  <div style="width:13%;color:#2d8cf0;cursor:pointer" @click="editPayback">添加回款</div>
+                  <!-- <div style="width:13%;color:#2d8cf0;cursor:pointer" @click="editPayback" v-if="item.currentAmount<item.paymentAmount">添加回款</div> -->
                 </section>
                 <div v-for="(p,i) in item.paybackList" :key="i" class="payList">
                   <section class="zq_se2">
@@ -242,7 +242,7 @@
                     <div style="width:13%">{{p.paybackTime}}</div>
                     <div style="width:13%">{{p.paybackSureTime}}</div>
                     <div style="width:13%">{{p.paybackAmount}}</div>
-                    <div style="width:13%;color:#2d8cf0;cursor:pointer" @click="editPayback(p)">编辑</div>
+                    <!-- <div style="width:13%;color:#2d8cf0;cursor:pointer" @click="editPayback(p)">编辑</div> -->
                   </section>
                 </div>
                 
@@ -361,7 +361,7 @@
               <Col span="15">
                 <FormItem label="付款方式" prop="paybackTime">
                   <Select v-model="paybackData.paybackWay" placeholder class="col-f">
-                    <Option v-for="i in paybackWays" :value="i.val" :key="i.val">{{i.val}}</Option>
+                    <Option v-for="i in paybackWays" :value="i.index" :key="i.val">{{i.val}}</Option>
                   </Select>
                 </FormItem>
               </Col>
@@ -469,7 +469,6 @@ export default {
       orderDetailOpen:false,
       seeUrl: '',
       seeModal: false,
-      paymentList: [],
       paymentShow: false,
       paybackShow: false,
       paymentData: {
@@ -477,6 +476,7 @@ export default {
         paymentTime:'',
         dueTime:'',
         paymentAmount:'',
+        paymentTimes:'',
       },
       paybackData: {
         paybackId:'',
@@ -695,22 +695,36 @@ export default {
     },
     editPayment(item){
       this.paymentShow = true;
-      if(item){
+      if(item.paymentId){
         this.paymentData.paymentTime = item.paymentTime;
         this.paymentData.dueTime = item.dueTime;
         this.paymentData.paymentAmount = item.paymentAmount;
         this.paymentData.paymentId = item.paymentId;
+        this.paymentData.paymentTimes = item.paymentTimes;
+      }else{
+        this.paymentData.paymentTimes = this.paymentList.length+1;
       }
     },
     editPayback(item){
       this.paybackShow = true;
+      if(item.paybackId){
+        this.paybackData.paybackTime = item.paybackTime;
+        this.paybackData.paybackSureTime = item.paybackSureTime;
+        this.paybackData.paybackWay = item.paybackWay;
+        this.paybackData.paybackId = item.paybackId;
+        this.paybackData.paybackAmount = item.paybackAmount;
+      }
     },
     savePayment(name){
       if(this.paymentData.paymentTime === ''||this.paymentData.dueTime === ''||this.paymentData.paymentAmount===''){
         this.$Message.error('请按规定填写内容！');
         return;
       }
-      if(this.paymentData.paymentId === ''){
+      let paymentTime = this.$util.Date(this.paymentData.paymentTime).split(' ')[0];
+      let dueTime = this.$util.Date(this.paymentData.dueTime).split(' ')[0];
+      this.paymentData.paymentTime = paymentTime;
+      this.paymentData.dueTime = dueTime;
+      if(!this.paymentData.paymentId){
         let request = {
           "typeid":26019,
           "data":
@@ -719,16 +733,17 @@ export default {
               "contractNo":this.data.contractNo,
               "accountId":this.$store.state.user.accountId,
               "paymentAmount":this.paymentData.paymentAmount,
-              "paymentTime":this.$util.Date(this.paymentData.paymentTime),
-              "dueTime":this.$util.Date(this.paymentData.dueTime),
+              "paymentTime":paymentTime,
+              "dueTime":dueTime,
               "paymentWay":"",
               "paymentStatus":0,
-              "paymentTimes":1
+              "paymentTimes":this.paymentData.paymentTimes
             }
           ]
         };
         this.$http.SETCONTRACT(request).then(res => {
-
+          this.closePayment();
+          this.$store.state.user.contractInfo.data.paymentList.push({...this.paymentData});
         })
       }else{
         let request = {
@@ -739,83 +754,81 @@ export default {
               "contractNo":this.data.contractNo,
               "accountId":this.$store.state.user.accountId,
               "paymentAmount":this.paymentData.paymentAmount,
-              "paymentTime":this.$util.Date(this.paymentData.paymentTime),
-              "dueTime":this.$util.Date(this.paymentData.dueTime),
+              "paymentTime":paymentTime,
+              "dueTime":dueTime,
               "paymentId":this.paymentData.paymentId,
               "paymentWay":"",
               "paymentStatus":0,
-              "paymentTimes":1
+              "paymentTimes":this.paymentData.paymentTimes
             }
           ]
         };
         this.$http.UPDATECONTRACT(request).then(res => {
-          
+          this.closePayment();
+          let obj = this.$store.state.user.contractInfo.data.paymentList.find(l => l.paymentId === this.paymentData.paymentId);
+          this.$set(obj,'paymentAmount',this.paymentData.paymentAmount);
+          this.$set(obj,'paymentTime',paymentTime);
+          this.$set(obj,'dueTime',dueTime);
         })
       }
     },
     closePayment(){
       this.paymentShow = false;
-      this.paymentData.paymentTime = '';
-      this.paymentData.dueTime = '';
-      this.paymentData.paymentAmount = '';
-      this.paymentData.paymentId = '';
     },
     savePayback(name){
-      this.paybackData.paybackWay = '';
       if(this.paybackData.paybackTime === ''||this.paybackData.paybackSureTime === ''||this.paybackData.paybackAmount===''||this.paybackData.paybackWay===''){
         this.$Message.error('请按规定填写内容！');
         return;
       }
-      if(this.paybackData.paybackId === ''){
-        // let request = {
-        //   "typeid":26019,
-        //   "data":
-        //   [
-        //     {
-        //       "contractNo":this.data.contractNo,
-        //       "accountId":this.$store.state.user.accountId,
-        //       "paymentAmount":this.paymentData.paymentAmount,
-        //       "paymentTime":this.$util.Date(this.paymentData.paymentTime),
-        //       "dueTime":this.$util.Date(this.paymentData.dueTime),
-        //       "paymentWay":"",
-        //       "paymentStatus":0,
-        //       "paymentTimes":1
-        //     }
-        //   ]
-        // };
+      let paybackTime = this.$util.Date(this.paybackData.paybackTime);
+      let paybackSureTime = this.$util.Date(this.paybackData.paybackSureTime);
+      this.paybackData.paybackTime = paybackTime;
+      this.paybackData.paybackSureTime = paybackSureTime;
+      if(!this.paybackData.paybackId){
+        let request = {
+          "typeid": 26004,
+          "data": [
+            {
+              "account_id": this.$store.state.user.accountId,
+              "contractNo": this.data.contractNo,
+              "paybackAmount": this.paybackData.paybackAmount,
+              "paybackTime": this.paybackData.paybackTime,
+              // "paymentId": this.hz2_data[this.indexStyle1]
+            }
+          ]
+        }
         this.$http.SETCONTRACT(request).then(res => {
-
+          this.paybackData.paybackId = res.data.paybackId;
+          this.$store.state.user.contractInfo.data.paybackList.push({...this.paybackData});
+          this.closePayback();
         })
       }else{
-        // let request = {
-        //   "typeid":26020,
-        //   "data":
-        //   [
-        //     {
-        //       "contractNo":this.data.contractNo,
-        //       "accountId":this.$store.state.user.accountId,
-        //       "paymentAmount":this.paymentData.paymentAmount,
-        //       "paymentTime":this.$util.Date(this.paymentData.paymentTime),
-        //       "dueTime":this.$util.Date(this.paymentData.dueTime),
-        //       "paymentId":this.paymentData.paymentId,
-        //       "paymentWay":"",
-        //       "paymentStatus":0,
-        //       "paymentTimes":1
-        //     }
-        //   ]
-        // };
+        let request = {
+          "typeid": 26021,
+          "data": [
+            {
+              "accountId": this.$store.state.user.accountId,
+              "contractNo": this.data.contractNo,
+              "paybackAmount": this.paybackData.paybackAmount,
+              "paybackTime": this.paybackData.paybackTime,
+              "paybackId": this.paybackData.paybackId,
+              paybackSureTime: this.paybackData.paybackSureTime,
+              paybackWay:this.paybackData.paybackWay
+            }
+          ]
+        }
         this.$http.UPDATECONTRACT(request).then(res => {
-          
+          this.closePayback();
+          let obj = this.$store.state.user.contractInfo.data.paybackList.find(l => l.paybackId === this.paybackData.paybackId);
+          this.$set(obj,'paybackAmount',this.paybackData.paybackAmount);
+          this.$set(obj,'paybackWay',this.paybackData.paybackWay);
+          this.$set(obj,'paybackTime',paybackTime);
+          this.$set(obj,'paybackSureTime',paybackSureTime);
         })
       }
     },
     closePayback(){
       this.paybackShow = false;
-      this.paybackData.paybackTime = '';
-      this.paybackData.paybackSureTime = '';
-      this.paybackData.paybackAmount = '';
-      this.paybackData.paybackId = '';
-      this.paybackData.paybackWay = '';
     }
   },
   beforeCreate(){
@@ -828,12 +841,6 @@ export default {
     this.formValidate.platList = JSON.parse(JSON.stringify(this.data.data.platformuserList));
     this.formValidate.projectManager = this.data.data.projectManager;
     this.getfiles();
-    if(this.$route.query&&this.$route.query.paymentList){
-      this.paymentList = JSON.parse(this.$route.query.paymentList)||[];
-      this.paymentList.forEach((p,index) => {
-        this.$set(this.showObj,index,false);
-      })
-    }
   },
   computed: {
     data(){
@@ -841,6 +848,124 @@ export default {
         return this.$store.state.user.contractInfo;
       }
       return JSON.parse(localStorage.getItem("contractInfo")) || {};
+    },
+    paymentList() {
+      let list = [];
+      if (
+        this.$store.state.user.contractInfo &&
+        this.$store.state.user.contractInfo.data &&
+        this.$store.state.user.contractInfo.data.paymentList &&
+        this.$store.state.user.contractInfo.data.paymentList.length > 0
+      ) {
+        let paymentList = this.$store.state.user.contractInfo.data.paymentList.sort((a,b) => a.paymentTimes - b.paymentTimes);
+        paymentList.forEach((p, index) => {
+          let item = {};
+          item.dueTime = p.dueTime;
+          item.paymentAmount = Number(p.paymentAmount);
+          item.paymentId = p.paymentId;
+          item.paymentStatus = p.paymentStatus;
+          item.paymentTime = p.paymentTime;
+          item.paymentTimes = p.paymentTimes;
+          item.paymentWay = p.paymentWay;
+          item.currentAmount = 0;
+          //计算回款信息
+          let allAmount = 0;
+          let backAmount = 0;
+          let payIndex = "";
+          let payEndIndex = "";
+          let computeAmountStart = "";
+          let computeAmountEnd = "";
+          for (let i = 1; i <= index; i++) {
+            backAmount +=
+              paymentList[index - 1].paymentAmount || 0;
+          }
+          if (
+            this.$store.state.user.contractInfo &&
+            this.$store.state.user.contractInfo.data &&
+            this.$store.state.user.contractInfo.data.paybackList &&
+            this.$store.state.user.contractInfo.data.paybackList.length > 0
+          ) {
+            this.$store.state.user.contractInfo.data.paybackList.forEach((b, i) => {
+              allAmount += Number(b.paybackAmount);
+              if (allAmount > backAmount && payIndex === "") {
+                payIndex = i;
+                computeAmountStart =
+                  allAmount - backAmount - item.paymentAmount > 0
+                    ? item.paymentAmount
+                    : allAmount - backAmount;
+              }
+              if (
+                allAmount - backAmount - item.paymentAmount >= 0 &&
+                payEndIndex === ""
+              ) {
+                payEndIndex = i;
+                computeAmountEnd =
+                  Number(b.paybackAmount) -
+                    item.paymentAmount +
+                    (allAmount - Number(b.paybackAmount) - backAmount) >
+                  0
+                    ? item.paymentAmount -
+                      (allAmount - Number(b.paybackAmount) - backAmount)
+                    : Number(b.paybackAmount);
+              }
+            });
+            if (payEndIndex === "")
+              payEndIndex = this.$store.state.user.contractInfo.data.paybackList.length - 1;
+          }
+          if (allAmount - backAmount > 0) {
+            item.currentAmount =
+              allAmount - backAmount - item.paymentAmount > 0
+                ? item.paymentAmount
+                : allAmount - backAmount > 0
+                ? allAmount - backAmount
+                : 0;
+          }
+          if (payIndex === "") {
+            item.paybackList = [];
+          } else {
+            item.paybackList = JSON.parse(
+              JSON.stringify(
+                (this.$store.state.user.contractInfo.data.paybackList || []).filter(
+                  (a, i) => i >= payIndex && i <= payEndIndex
+                )
+              )
+            );
+          }
+          (item.paybackList[0] || {}).paybackAmount = computeAmountStart;
+          if (item.paybackList.length > 1 && computeAmountEnd !== "")
+            (
+              item.paybackList[item.paybackList.length - 1] || {}
+            ).paybackAmount = computeAmountEnd;
+          //计算发票信息
+          let allTicketAmount = 0;
+          if (
+            this.$store.state.user.contractInfo.data &&
+            this.$store.state.user.contractInfo.data.ticketList &&
+            this.$store.state.user.contractInfo.data.ticketList.length > 0
+          ) {
+            this.$store.state.user.contractInfo.data.ticketList.forEach(t => {
+              allTicketAmount += Number(t.ticketAmount);
+            });
+          }
+          let ticketAmount = 0;
+          for (let i = 0; i < index; i++) {
+            ticketAmount +=
+              paymentList[index].currentTicketAmount || 0;
+          }
+          if (allTicketAmount - ticketAmount > 0) {
+            item.currentTicketAmount =
+              allTicketAmount - ticketAmount - item.paymentAmount > 0
+                ? item.paymentAmount
+                : allTicketAmount - ticketAmount > 0
+                ? allTicketAmount - ticketAmount
+                : 0;
+          }
+          item.ticketButton = item.currentTicketAmount !== item.paymentAmount;
+          list.push(item);
+          this.$set(this.showObj, index, false);
+        });
+      }
+      return list;
     },
     remainingMoney(){
       return this.$route.query.remainingMoney;
@@ -864,6 +989,24 @@ export default {
       if(!nv){
         this.seeModal = false;
         this.seeUrl = '';
+      }
+    },
+    paymentShow(nv){
+      if(!nv){
+        this.paymentData.paymentTime = '';
+        this.paymentData.dueTime = '';
+        this.paymentData.paymentAmount = '';
+        this.paymentData.paymentId = '';
+        this.paymentData.paymentTimes = '';
+      }
+    },
+    paybackShow(nv){
+      if(!nv){
+        this.paybackData.paybackTime = '';
+        this.paybackData.paybackSureTime = '';
+        this.paybackData.paybackAmount = '';
+        this.paybackData.paybackId = '';
+        this.paybackData.paybackWay = '';
       }
     }
   }
