@@ -13,7 +13,11 @@
               <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
             </p>
             <div class="tooltipslot" v-show="tooptipShow">
-              <p v-for="(item,index) in cpxhpz" :key="index" @click="selectClick(index)">{{item.name}}</p>
+              <p
+                v-for="(item,index) in cpxhpz"
+                :key="index"
+                @click="selectClick(index)"
+              >{{item.name}}</p>
             </div>
           </div>
         </Menu>
@@ -320,7 +324,7 @@ export default {
   },
   data() {
     return {
-      status:this.$option.asset.issueStatus,
+      status: this.$option.asset.issueStatus,
       mapStatus: this.$option.asset.deviceStatusMap,
       mapType: this.$option.asset.deviceTypeMap,
       cktype_current_index: 0,
@@ -793,11 +797,12 @@ export default {
         data: [
           {
             account_id: this.$store.state.user.accountId,
-            wh_id: this.menudata &&
+            wh_id:
+              (this.menudata &&
               this.menudata.length > 0 &&
               this.ck_current_index !== ""
                 ? this.menudata[this.ck_current_index].wh_id
-                : undefined,
+                : undefined) || this.selectedWhid,
             wh_type: this.cpxhpz[this.cktype_current_index].id,
             product_code:
               this.selectedProcode === ""
@@ -1019,7 +1024,7 @@ export default {
         this.$refs["menu"].updateActiveName();
         this.$refs["menu"].updateActiveName();
         this.$refs["menuContainer"].scrollTo(0, scroll);
-        this.tabName = 'name1';
+        this.tabName = "name1";
         this.getProductList(1);
       });
     },
