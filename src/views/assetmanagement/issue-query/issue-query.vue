@@ -13,7 +13,11 @@
               <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
             </p>
             <div class="tooltipslot" v-show="tooptipShow">
-              <p v-for="(item,index) in cpxhpz" @click="selectClick(index)" :key="index">{{item.name}}</p>
+              <p
+                v-for="(item,index) in cpxhpz"
+                @click="selectClick(index)"
+                :key="index"
+              >{{item.name}}</p>
             </div>
           </div>
         </Menu>
@@ -91,20 +95,12 @@
                   </FormItem>
                   <FormItem label="出库类别" prop="cklb" v-if="this.tabName == 'name2'">
                     <Select v-model="cusfilterItem.cklb" clearable filterable>
-                      <Option
-                        :value="item"
-                        v-for="item in ['出库发货']"
-                        :key="item"
-                      >{{item}}</Option>
+                      <Option :value="item" v-for="item in ['出库发货']" :key="item">{{item}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="入库类别" prop="rklb" v-if="this.tabName == 'name1'">
                     <Select v-model="cusfilterItem.rklb" clearable filterable>
-                      <Option
-                        :value="item"
-                        v-for="item in ['成品入库']"
-                        :key="item"
-                      >{{item}}</Option>
+                      <Option :value="item" v-for="item in ['成品入库']" :key="item">{{item}}</Option>
                     </Select>
                   </FormItem>
                   <FormItem label="规格型号" prop="ggxh">
@@ -139,7 +135,7 @@
                           type="date"
                           placeholder="结束日期"
                           v-model="cusfilterItem.endTime"
-                           placement="bottom-end"
+                          placement="bottom-end"
                           :options="endOption"
                         ></DatePicker>
                       </Col>
@@ -171,12 +167,7 @@
         >
           <Tabs ref="tab" v-model="tabName" @on-click="changeTab">
             <TabPane label="入库单据" name="name1">
-              <Table
-                :columns="rkdj_columns"
-                :data="rkdj_data"
-                size="small"
-                :loading="inLoading"
-              ></Table>
+              <Table :columns="rkdj_columns" :data="rkdj_data" size="small" :loading="inLoading"></Table>
               <Page
                 :current.sync="inPageNum"
                 :total="zkSum"
@@ -189,12 +180,7 @@
               ></Page>
             </TabPane>
             <TabPane label="出库单据" name="name2">
-              <Table
-                :columns="ckdj_columns"
-                :data="ckdj_data"
-                size="small"
-                :loading="outLoading"
-              ></Table>
+              <Table :columns="ckdj_columns" :data="ckdj_data" size="small" :loading="outLoading"></Table>
               <Page
                 :current.sync="outPageNum"
                 :total="crkSum"
@@ -245,11 +231,11 @@
             <div slot="content">
               <p v-for="(item,index) in djxx.ddbh.split(',')" :key="index">{{item}}</p>
             </div>
-            <div style="width:350px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color:#8D8D8D;">
+            <div
+              style="width:350px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color:#8D8D8D;"
+            >
               <span class="jbleft">订单编号：</span>
-                <span
-                  class="wid"
-                >{{djxx.ddbh}}</span>
+              <span class="wid">{{djxx.ddbh}}</span>
             </div>
           </Tooltip>
         </div>
@@ -371,16 +357,16 @@
           </div>
         </div>
         <Tooltip>
-            <div slot="content">
-              <p v-for="(item,index) in djxx.ddbh.split(',')" :key="index">{{item}}</p>
-            </div>
-            <div style="width:700px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color:#8D8D8D;padding-top:10px">
-              <span class="jbleft">订单编号：</span>
-                <span
-                  class="wid"
-                >{{djxx.ddbh}}</span>
-            </div>
-          </Tooltip>
+          <div slot="content">
+            <p v-for="(item,index) in djxx.ddbh.split(',')" :key="index">{{item}}</p>
+          </div>
+          <div
+            style="width:700px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color:#8D8D8D;padding-top:10px"
+          >
+            <span class="jbleft">订单编号：</span>
+            <span class="wid">{{djxx.ddbh}}</span>
+          </div>
+        </Tooltip>
       </div>
       <div style="clear:both;overflow: hidden;margin-top:20px;">
         <Tabs v-model="tabDeviceName2">
@@ -435,14 +421,14 @@ export default {
   },
   data() {
     return {
-      status:[
+      status: [
         {
           index: 0,
-          val: '待审批'
+          val: "待审批"
         },
         {
           index: 1,
-          val: '已审批'
+          val: "已审批"
         }
       ],
       zkSum: 0,
@@ -862,12 +848,12 @@ export default {
         {
           title: "计量单位",
           key: "jldw",
-          align: "center",
+          align: "center"
         },
         // {
         //   title:"发货批次",
         //   key:"delivery_batch",
-        //   align:"center",      
+        //   align:"center",
         //   render:(h,params)=>{
         //       return h('Select',{
         //         props:{
@@ -917,7 +903,7 @@ export default {
         shr: "",
         shsj: "2019-9-00",
         adress: "",
-        ioBillId: ''
+        ioBillId: ""
       },
       cpxhpz: this.$option.asset.query,
       rksbxq: [
@@ -960,15 +946,15 @@ export default {
       },
       selectedprocode: "",
       selectedWhid: "",
-      deliveryBatch:[
-          {
-            name:"仓库1",
-            value:"1"
-          },
-          {
-            name:"仓库2",
-            value:"2"
-          },
+      deliveryBatch: [
+        {
+          name: "仓库1",
+          value: "1"
+        },
+        {
+          name: "仓库2",
+          value: "2"
+        }
       ],
       sblb_columns: [
         {
@@ -1012,7 +998,7 @@ export default {
         // ddbh: "",
         khmc: "",
         cklb: "",
-        rklb:"",
+        rklb: "",
         ggxh: "",
         htbh: "",
         zt: "",
@@ -1106,7 +1092,7 @@ export default {
     selecttwoClick(index) {
       this.ck_current_index = index;
       this.getProductList(1);
-      if (this.tabName !== "name1") this.tabName = "name1";
+      // if (this.tabName !== "name1") this.tabName = "name1";
     },
     rkbhClick(p) {
       if (p.ddbh !== "") this.getDevices(p.ddbh);
@@ -1151,10 +1137,8 @@ export default {
             //   this.cusfilterItem.htbh === ''
             //     ? undefined
             //     : this.cusfilterItem.htbh,
-            // status:
-            //   this.cusfilterItem.zt === ''
-            //     ? undefined
-            //     : this.cusfilterItem.zt,
+            approval_status:
+              this.cusfilterItem.zt === "" ? undefined : this.cusfilterItem.zt
             // start_time:
             //   this.cusfilterItem.startTime === ''
             //     ? undefined
@@ -1270,7 +1254,7 @@ export default {
       this.$http.PostXLASSETS(request).then(response => {
         let { data } = response.data.result;
         this.sblb_data = [];
-        this.sblbSum = data[0].sum||0;
+        this.sblbSum = data[0].sum || 0;
         data[0].devicelist.forEach(d => {
           let crk_item = {};
           crk_item.tm = d.device_address;
@@ -1434,15 +1418,15 @@ export default {
 .ivu-select-dropdown.ivu-select-dropdown-transfer.ivu-auto-complete {
   max-height: 400px;
 }
-.ivu-select-single .ivu-select-selection .ivu-select-placeholder{
- color:orange
+.ivu-select-single .ivu-select-selection .ivu-select-placeholder {
+  color: orange;
 }
-.vertical-center-modal{
+.vertical-center-modal {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.vertical-center-modal .ivu-modal{
+.vertical-center-modal .ivu-modal {
   top: 0;
 }
 </style>
