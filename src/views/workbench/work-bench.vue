@@ -573,6 +573,9 @@ export default {
           key: "gznr",
           align: "center",
           render: (h, params) => {
+            if(params.row.type === '回款核准') {
+              return h('span', params.row.gznr)
+            }
             return h('div', [
                 h('a', {
                     props: {
@@ -1141,7 +1144,7 @@ export default {
         if(this.sum === 0){
           this.customName = '';
           this.getRebackAppr(1);
-          return;
+          return
         }
         data.contractList.forEach(d => {
           let paymentList = JSON.parse(JSON.stringify(d.paymentList))||[];
@@ -1550,10 +1553,20 @@ export default {
         this.$Message.error('格式错误，请重新导入！');
         return;
       }
-      this.$Message.info('导入成功，处理中...');
       this.file2Xce(file).then(tabJson => {
         if (tabJson && tabJson.length > 0) {
-          tabJson[0].sheet.forEach((d) => {
+          if(tabJson[0].sheet.length === 0) {
+            this.$Message.error('请填写模板后，重新导入!');
+            return false
+          }else {
+            const row = tabJson[0].sheet[0]
+            const keys = Object.keys(row)
+            if(!keys.includes('到款时间') || !keys.includes('金额') || !keys.includes('付款方')) {
+              this.$Message.error('格式错误，请下载模板重新导入！');
+              return false
+            }
+            this.$Message.info('导入成功，处理中...');
+            tabJson[0].sheet.forEach((d) => {
             let newDate = new Date(d.到款时间);
             let date = newDate.getFullYear() + '-' + (Number(newDate.getMonth())+1) + '-' + newDate.getDay();
             this.addStore.push({
@@ -1563,6 +1576,7 @@ export default {
             })
             this.newgzForm.add_data = JSON.parse(JSON.stringify(this.addStore));
           })
+          }
         }
       })
     },
