@@ -4,16 +4,11 @@
       <Row>
         <div class="tip" style="float:left;margin-top:10px;margin-bottom: 10px">
           <p class="tooltip" @click.stop="contractClick('inside')">
-            按业务公司
+            {{this.filterItem.sort_order === 1 ? '按业务公司' : '按业务类型'}}
             <Icon type="ios-arrow-down" style="margin-left:5px;"></Icon>
           </p>
           <div class="tooltipslot" v-show="tooptipShow">
-            <p>按业务类型</p>
-            <!-- <p
-                v-for="(item,index) in contractStatus"
-                @click="changeStatus(index)"
-                :key="index"
-            >{{item.status}}</p>-->
+            <p @click="changeStatus">{{this.filterItem.sort_order === 2 ? '按业务公司' : '按业务类型'}}</p>
           </div>
         </div>
 
@@ -63,101 +58,104 @@
             </Col>
           </Row>
         </FormItem>
-        <div v-if="showMore">
-          <el-divider></el-divider>
-          <FormItem label="业务公司" prop="ywgs">
+        <el-collapse-transition>
+          <div v-show="showMore">
             <Row>
-              <Col :span="12">
-                <Select v-model="filterItem.ywgs" clearable filterable multiple>
-                  <Option
-                    :value="item.id"
-                    v-for="(item,index) in companys"
-                    :key="index"
-                  >{{item.name}}</Option>
-                </Select>
-              </Col>
+              <el-divider></el-divider>
             </Row>
-          </FormItem>
-          <FormItem label="区域" prop="qy">
-            <Row>
-              <Col :span="12">
-                <el-cascader
-                  style="width: 100%"
-                  clearable
-                  v-model="filterItem.qy"
-                  :options="regions"
-                  filterable
-                  show-all-levels
-                  :props="{ value: 'name', label: 'name',checkStrictly: true, multiple: true}"
-                  size="small"
-                ></el-cascader>
-              </Col>
-            </Row>
-          </FormItem>
-          <FormItem label="销售模式">
-            <el-radio-group v-model="filterItem.xsms" size="small">
-              <el-radio-button :label="0">全部</el-radio-button>
-              <el-radio-button label="2">自营</el-radio-button>
-              <el-radio-button label="1">渠道</el-radio-button>
-            </el-radio-group>
-          </FormItem>
-          <FormItem label="监测点数" prop="jcds">
-            <Row>
-              <Col :span="6">
-                <el-radio-group v-model="filterItem.jcds" size="small">
-                  <el-radio-button :label="0">全部</el-radio-button>
-                  <el-radio-button :label="1">10点以下</el-radio-button>
-                  <el-radio-button :label="2">10点以上20点以下</el-radio-button>
-                  <el-radio-button :label="3">20点以上</el-radio-button>
-                </el-radio-group>
-              </Col>
-              <Col :span="18">
-                <Input-number v-model="filterItem.jcdsks"></Input-number>-
-                <Input-number v-model="filterItem.jcdsjs"></Input-number>
-              </Col>
-            </Row>
-          </FormItem>
-          <FormItem label="设备状态" prop="sbzt">
-            <el-checkbox-group v-model="filterItem.sbzt">
-              <el-checkbox :label="1">勘察未审核</el-checkbox>
-              <el-checkbox :label="2">勘察已审核</el-checkbox>
-              <el-checkbox :label="3">全部已勘察</el-checkbox>
-              <el-checkbox :label="4">安装未上线</el-checkbox>
-              <el-checkbox :label="5">安装已上线</el-checkbox>
-              <el-checkbox :label="6">全部已安装</el-checkbox>
-            </el-checkbox-group>
-          </FormItem>
-          <FormItem label="设备分类" prop="sbfl">
-            <el-radio-group v-model="filterItem.sbfl" size="small">
-              <el-radio-button :label="1">设备数</el-radio-button>
-              <el-radio-button :label="2">分路数</el-radio-button>
-            </el-radio-group>
-          </FormItem>
-          <FormItem label="设备型号" prop="sbxh">
-            <Row>
-              <Col :span="12">
-                <Select v-model="filterItem.sbxh" clearable filterable multiple>
-                  <Option
-                    :value="item.device_model"
-                    v-for="(item,index) in devices"
-                    :key="index"
-                  >{{item.device_model_name}}</Option>
-                </Select>
-              </Col>
-              <Col span="12" style="text-align:right">
-                <span
-                  style="cursor: pointer;color: #4a9af5"
-                  @click="showMore = false"
-                  v-if="showMore"
-                >
-                  基本筛选
-                  <Icon type="chevron-up"></Icon>
-                </span>
-              </Col>
-            </Row>
-          </FormItem>
-        </div>
-
+            <FormItem label="业务公司" prop="ywgs">
+              <Row>
+                <Col :span="12">
+                  <Select v-model="filterItem.ywgs" clearable filterable>
+                    <Option
+                      :value="item.id"
+                      v-for="(item,index) in companys"
+                      :key="index"
+                    >{{item.name}}</Option>
+                  </Select>
+                </Col>
+              </Row>
+            </FormItem>
+            <FormItem label="区域" prop="qy">
+              <Row>
+                <Col :span="12">
+                  <el-cascader
+                    style="width: 100%"
+                    clearable
+                    v-model="filterItem.qy"
+                    :options="regions"
+                    filterable
+                    show-all-levels
+                    :props="{ value: 'name', label: 'name',checkStrictly: true, multiple: true}"
+                    size="small"
+                  ></el-cascader>
+                </Col>
+              </Row>
+            </FormItem>
+            <FormItem label="销售模式">
+              <el-radio-group v-model="filterItem.xsms" size="small">
+                <el-radio-button :label="0">全部</el-radio-button>
+                <el-radio-button :label="2">自营</el-radio-button>
+                <el-radio-button :label="1">渠道</el-radio-button>
+              </el-radio-group>
+            </FormItem>
+            <FormItem label="监测点数" prop="jcds">
+              <Row>
+                <Col :span="6">
+                  <el-radio-group v-model="filterItem.jcds" size="small" @change="changeMonitor">
+                    <el-radio-button :label="0">全部</el-radio-button>
+                    <el-radio-button :label="1">10点以下</el-radio-button>
+                    <el-radio-button :label="2">10点以上20点以下</el-radio-button>
+                    <el-radio-button :label="3">20点以上</el-radio-button>
+                  </el-radio-group>
+                </Col>
+                <Col :span="18">
+                  <Input-number v-model="filterItem.jcdsks" @input="emptyRadioMonitor"></Input-number>-
+                  <Input-number v-model="filterItem.jcdsjs" @input="emptyRadioMonitor"></Input-number>
+                </Col>
+              </Row>
+            </FormItem>
+            <FormItem label="设备状态" prop="sbzt">
+              <el-radio-group v-model="filterItem.sbzt" size="small" @change="changeMonitor">
+                <el-radio-button :label="1">勘察未审核</el-radio-button>
+                <el-radio-button :label="2">勘察已审核</el-radio-button>
+                <el-radio-button :label="3">全部已勘察</el-radio-button>
+                <el-radio-button :label="4">安装未上线</el-radio-button>
+                <el-radio-button :label="5">安装已上线</el-radio-button>
+                <el-radio-button :label="6">全部已安装</el-radio-button>
+              </el-radio-group>
+            </FormItem>
+            <FormItem label="设备分类" prop="sbfl">
+              <el-radio-group v-model="filterItem.sbfl" size="small">
+                <el-radio-button :label="1">设备数</el-radio-button>
+                <el-radio-button :label="2">分路数</el-radio-button>
+              </el-radio-group>
+            </FormItem>
+            <FormItem label="设备型号" prop="sbxh">
+              <Row>
+                <Col :span="12">
+                  <Select v-model="filterItem.sbxh" clearable filterable multiple>
+                    <Option
+                      :value="item.device_model"
+                      v-for="(item,index) in devices"
+                      :key="index"
+                    >{{item.device_model_name}}</Option>
+                  </Select>
+                </Col>
+                <Col span="12" style="text-align:right">
+                  <span
+                    style="cursor: pointer;color: #4a9af5"
+                    @click="showMore = false"
+                    v-if="showMore"
+                  >
+                    基本筛选
+                    <Icon type="chevron-up"></Icon>
+                  </span>
+                </Col>
+              </Row>
+            </FormItem>
+          </div>
+        </el-collapse-transition>
         <FormItem>
           <Button @click="handleReset('filterItem')" style="margin-left: 8px">重置</Button>
           <Button type="primary" @click="handleSubmit('filterItem')">确定</Button>
@@ -169,96 +167,73 @@
       style="padding:20px 20px 0"
     >
       <el-table
-        ref="table"
+        :show-header="true"
         style="position:relative;"
-        :columns="columns"
         :span-method="objectSpanMethod"
-        :loading="loading"
-        :data="data1"
+        :row-class-name="tableRowClassName"
+        v-loading="loading"
+        :data="data"
         size="small"
-        row-class-name="statistics"
-        :row-style="{background: '#F0F9EB', height: '100px', color: '#67C23A'}"
       >
-        <el-table-column property="index" label="序号1" width="35">
+        <el-table-column property="index" label="序号" width="38" class-name="result">
           <template slot="header" slot-scope="scope">
-            <span @click="setting">
+            <span>
               <i class="el-icon-setting" style="cursor:pointer"></i>
             </span>
           </template>
           <template slot-scope="scope">
-            <i class="el-icon-s-marketing" style=" font-size: 20px"></i>
-            <span>预测分析</span>
+            <span v-if="scope.$index === 0" style="color: #67c23a; font-weight: bold; font-size: 14px;">
+              <i class="el-icon-s-marketing" style=" font-size: 30px; "></i> 预测分析
+            </span>
+            <span v-if="scope.$index === 1" style="color: #4A99FF">查询结果</span>
           </template>
         </el-table-column>
-        <el-table-column property="contractNature" label="序号" width="50"></el-table-column>
-        <el-table-column property="contractNature" label="业务公司">
+        <el-table-column type="index" label="序号" width="50">
           <template slot-scope="scope">
-            <span style="padding-left: 30px; font-size: 16px">{{scope.row.contractNature}}</span>
+            <span v-if="scope.$index === 0" style="color: #67c23a">
+            </span>
+            <span v-else>{{scope.$index}}</span>
           </template>
         </el-table-column>
-        <el-table-column property="contractNature1" label="业务类型">
+        <el-table-column :property="baseTypeColumns[0].key" :label="baseTypeColumns[0].title" :width="baseTypeColumns[0].width">
           <template slot-scope="scope">
-            <span style="font-size: 14px;color: #000">{{scope.row.contractNature1}}</span>
-            <br />
-            <span style="font-size: 14px">{{scope.row.contractNature2}}</span>
+            <span v-if="scope.$index === 0" style="color: #67c23a !important; text-align: right">
+              本次查询结果：用户数 {{scope.row.unit_num}}, 设备数 {{scope.row.device_num}}。
+            </span>
+            <span v-else>{{scope.row[baseTypeColumns[0].key]}}</span>
           </template>
         </el-table-column>
-        <el-table-column property="contractNature2" label="销售方式">
+        <el-table-column :property="baseTypeColumns[1].key" :label="baseTypeColumns[1].title" :width="baseTypeColumns[1].width">
+        </el-table-column>   
+        <el-table-column property="sale_type_name" label="销售方式" width="80">
+        </el-table-column>
+        <el-table-column property="area" label="区域" width="150">
+        </el-table-column>
+        <el-table-column property="unit_id" label="用户ID" width="80">
+        </el-table-column>
+        <el-table-column property="unit_name" label="用户名称" width="200">
+        </el-table-column>
+        <el-table-column property="gateway_count" label="网关数" width="80">
+        </el-table-column>
+        <el-table-column property="monitor_count" label="监测点数" width="80">
           <template slot-scope="scope">
-            <span style="font-size: 14px;color: #000">{{scope.row.contractNature3}}</span>
-            <br />
-            <span style="font-size: 14px">{{scope.row.contractNature4}}</span>
+            <span v-if="scope.$index === 0" style="color: #000 !important; text-align: right">
+              户均
+            </span>
+            <span v-else>{{scope.row.monitor_count}}</span>
           </template>
         </el-table-column>
-        <el-table-column property="contractNature3" label="区域">
-          <template slot-scope="scope">
-            <span style="font-size: 14px; color: #000">{{scope.row.contractNature5}}</span>
-            <br />
-            <span style="font-size: 14px">{{scope.row.contractNature6}}</span>
-          </template>
+        <el-table-column v-for="(column, index) in columns" :key="index" :property="column.key" :label="column.title" :width="column.width" :formatter="formatter">
         </el-table-column>
-        <el-table-column property="contractNature4" label="用户ID"></el-table-column>
-        <el-table-column property="contractNature5" label="用户名称"></el-table-column>
-        <el-table-column property="contractNature6" label="网关数"></el-table-column>
-        <el-table-column property="contractNature7" label="监测点数"></el-table-column>
-        <el-table-column property="contractNature8" label="CJJ-XL（400A）"></el-table-column>
-        <el-table-column property="contractNature9" label="2.5代G01-1型"></el-table-column>
       </el-table>
-      <el-table
+      <Table
+        v-show="false"
         ref="table"
-        :show-header="false"
-        style="position:relative;"
-        :span-method="objectSpanMethod1"
-        :loading="loading"
+        :columns="columns"
         :data="data"
         size="small"
-      >
-        <el-table-column property="index" label="序号" width="35" class-name="result">
-          <template slot-scope="scope">
-            <span style="color: #4A99FF">查询结果</span>
-          </template>
-        </el-table-column>
-        <el-table-column property="contractNature" label="序号" width="50"></el-table-column>
-        <el-table-column property="contractNature" label="业务公司"></el-table-column>
-        <el-table-column property="contractNature1" label="业务类型"></el-table-column>
-        <el-table-column property="contractNature2" label="销售方式"></el-table-column>
-        <el-table-column property="contractNature3" label="区域"></el-table-column>
-        <el-table-column property="contractNature4" label="用户ID"></el-table-column>
-        <el-table-column property="contractNature5" label="用户名称"></el-table-column>
-        <el-table-column property="contractNature6" label="网关数"></el-table-column>
-        <el-table-column property="contractNature7" label="监测点数"></el-table-column>
-        <el-table-column property="contractNature8" label="CJJ-XL（400A）"></el-table-column>
-        <el-table-column property="contractNature9" label="2.5代G01-1型"></el-table-column>
-      </el-table>
-      <!-- <Page
-        :total="sum"
-        :current.sync="pageNum"
-        :page-size="10"
-        show-total
-        size="small"
-        show-elevator
-        style="text-align:center;margin-top:20px;"
-      ></Page>-->
+        :loading="loading"
+      ></Table>
     </Content>
     <el-dialog
       class="dialog"
@@ -336,228 +311,53 @@ export default {
       loading: false,
       companys: [],
       devices: [],
-      columns: [
-        {
-          title: "序号",
-          width: 20,
-          key: "setting",
-          align: "center",
-          renderHeader: (h, { column, $index }) => {
-            return h("i", {
-              class: "el-icon-setting",
-              style: {
-                cursor: "pointer"
-              },
-              on: {
-                click: () => {
-                  this.getTransferColumns();
-                  this.dialogVisible = true;
-                }
-              }
-            });
-          }
-        },
-        {
-          title: "序号",
-          width: 50,
-          align: "center",
-          key: "index"
-        },
+      baseTypeColumns: [
         {
           title: "业务公司",
-          key: "contractNature",
-          align: "center"
+          key: "company",
+          width: 200
         },
         {
           title: "业务类型",
-          key: "contractNature1",
-          align: "center"
+          key: "business_type",
+          width: 100
         },
+      ],
+      baseColumns: [
         {
           title: "销售方式",
-          key: "contractNature2",
-          align: "center"
+          key: "sale_type_name",
+          align:"center"
         },
         {
           title: "区域",
-          key: "contractNature3",
-          align: "center"
+          key: "area",
+          align:"center"
         },
         {
           title: "用户ID",
-          key: "contractNature4",
-          align: "center"
+          key: "unit_id",
+          align:"center"
         },
         {
           title: "用户名称",
-          key: "contractNature5",
-          align: "center"
+          key: "unit_name",
+          align:"center"
         },
         {
           title: "网关数",
-          key: "contractNature6",
-          align: "center"
+          key: "gateway_count",
+          align:"center"
         },
         {
           title: "监测点数",
-          key: "contractNature7",
-          align: "center"
-        },
-        {
-          title: "CJJ-XL（400A）",
-          key: "contractNature8",
-          align: "center"
-        },
-        {
-          title: "2.5代G01-1型",
-          key: "contractNature9",
-          align: "center"
+          key: "monitor_count",
+          align:"center"
         }
       ],
-      data: [
-        {
-          index: 1,
-          contractNature: "1",
-          contractNature1: "1",
-          contractNature2: "1",
-          contractNature3: "1",
-          contractNature4: "1",
-          contractNature5: "1",
-          contractNature6: "1",
-          contractNature7: "1",
-          contractNature8: "1",
-          contractNature9: "1"
-        },
-        {
-          index: 1,
-          contractNature: "1",
-          contractNature1: "1",
-          contractNature2: "1",
-          contractNature3: "1",
-          contractNature4: "1",
-          contractNature5: "1",
-          contractNature6: "1",
-          contractNature7: "1",
-          contractNature8: "1",
-          contractNature9: "1"
-        },
-        {
-          index: 1,
-          contractNature: "1",
-          contractNature1: "1",
-          contractNature2: "1",
-          contractNature3: "1",
-          contractNature4: "1",
-          contractNature5: "1",
-          contractNature6: "1",
-          contractNature7: "1",
-          contractNature8: "1",
-          contractNature9: "1"
-        },
-        {
-          index: 1,
-          contractNature: "1",
-          contractNature1: "1",
-          contractNature2: "1",
-          contractNature3: "1",
-          contractNature4: "1",
-          contractNature5: "1",
-          contractNature6: "1",
-          contractNature7: "1",
-          contractNature8: "1",
-          contractNature9: "1"
-        },
-        {
-          index: 1,
-          contractNature: "1",
-          contractNature1: "1",
-          contractNature2: "1",
-          contractNature3: "1",
-          contractNature4: "1",
-          contractNature5: "1",
-          contractNature6: "1",
-          contractNature7: "1",
-          contractNature8: "1",
-          contractNature9: "1"
-        },
-        {
-          index: 1,
-          contractNature: "1",
-          contractNature1: "1",
-          contractNature2: "1",
-          contractNature3: "1",
-          contractNature4: "1",
-          contractNature5: "1",
-          contractNature6: "1",
-          contractNature7: "1",
-          contractNature8: "1",
-          contractNature9: "1"
-        },
-        {
-          index: 1,
-          contractNature: "1",
-          contractNature1: "1",
-          contractNature2: "1",
-          contractNature3: "1",
-          contractNature4: "1",
-          contractNature5: "1",
-          contractNature6: "1",
-          contractNature7: "1",
-          contractNature8: "1",
-          contractNature9: "1"
-        },
-        {
-          index: 1,
-          contractNature: "1",
-          contractNature1: "1",
-          contractNature2: "1",
-          contractNature3: "1",
-          contractNature4: "1",
-          contractNature5: "1",
-          contractNature6: "1",
-          contractNature7: "1",
-          contractNature8: "1",
-          contractNature9: "1"
-        },
-        {
-          index: 2,
-          contractNature: "1",
-          contractNature1: "1",
-          contractNature2: "1",
-          contractNature3: "1",
-          contractNature4: "1",
-          contractNature5: "1",
-          contractNature6: "1",
-          contractNature7: "1",
-          contractNature8: "1",
-          contractNature9: "1"
-        },
-        {
-          index: 3,
-          contractNature: "1",
-          contractNature1: "1",
-          contractNature2: "1",
-          contractNature3: "1",
-          contractNature4: "1",
-          contractNature5: "1",
-          contractNature6: "1",
-          contractNature7: "1",
-          contractNature8: "1",
-          contractNature9: "1"
-        }
-      ],
-      data1: [
-        {
-          index: "0",
-          contractNature: "本次查询结果：用户数 3436, 设备数 136922。",
-          contractNature1: "户均",
-          contractNature2: "预测",
-          contractNature3: "0.26",
-          contractNature4: "2000",
-          contractNature5: "0.21",
-          contractNature6: "200"
-        }
-      ],
+      columns: [],
+      data: [],
+      total: 0,
       dialogVisible: false,
       columnsData: [],
       value: [],
@@ -567,15 +367,16 @@ export default {
       filterItem: {
         kssj: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
         jssj: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
-        ywgs: "",
-        qy: "",
+        ywgs: 0,
+        qy: [],
         xsms: 0,
         jcds: 0,
         jcdsks: null,
         jcdsjs: null,
-        sbzt: [1, 2, 3, 4, 5, 6],
+        sbzt: 2,
         sbfl: 1,
-        sbxh: ""
+        sbxh: [],
+        sort_order: 1
       },
       startOption: {
         disabledDate: time => {
@@ -646,6 +447,13 @@ export default {
     }
   },
   methods: {
+    changeStatus() {
+      if(this.filterItem.sort_order === 1) {
+        this.filterItem.sort_order = 2
+      }else {
+        this.filterItem.sort_order = 1
+      }
+    },
     getManagecompanys() {
       let request = {
         typeid: 27001
@@ -656,7 +464,7 @@ export default {
     },
     getDevices() {
       let request = {
-        typeid: 22001,
+        typeid: 29004,
         data: []
       };
       this.$http.XLREPORT(request).then(response => {
@@ -676,7 +484,6 @@ export default {
     },
     morehtztClick() {
       this.showExport = !this.showExport;
-      //   this.glShow = false;
       if (this.showExport) {
         $(".cor1").css({ color: "#4a9af5" });
       } else {
@@ -710,17 +517,23 @@ export default {
       );
     },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 1) {
-        return [0, 0];
-      } else if (columnIndex === 2) {
-        return [1, 8];
+      if(rowIndex === 0) {
+        if (columnIndex === 1 || columnIndex === 4 ||columnIndex === 5  ) {
+          return [0, 0];
+        } else if (columnIndex === 2) {
+          return [1, 4];
+        }
       }
-    },
-    objectSpanMethod1({ row, column, rowIndex, columnIndex }) {
+      
       if (columnIndex === 0) {
-        if (rowIndex % 100 === 0) {
+        if (rowIndex === 0) {
           return {
-            rowspan: 100,
+            rowspan: 1,
+            colspan: 1
+          };
+        } else if (rowIndex % this.total === 1) {
+          return {
+            rowspan: this.total,
             colspan: 1
           };
         } else {
@@ -732,103 +545,189 @@ export default {
       }
     },
     handleReset() {
-      for (let key in this.filterItem) {
-        if (key === "kssj") {
-          this.filterItem[key] = new Date(
-            new Date().getFullYear(),
-            new Date().getMonth(),
-            1
-          );
-        } else if (key === "jssj") {
-          this.filterItem[key] = new Date(
-            new Date().getFullYear(),
-            new Date().getMonth() + 1,
-            0
-          );
-        } else {
-          this.filterItem[key] = "";
-        }
+      this.filterItem = {
+        kssj: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+        jssj: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+        ywgs: 0,
+        qy: [],
+        xsms: 0,
+        jcds: 0,
+        jcdsks: null,
+        jcdsjs: null,
+        sbzt: 2,
+        sbfl: 1,
+        sbxh: [],
+        sort_order: 1
       }
     },
+    changeMonitor() {
+      this.filterItem.jcdsks = null
+      this.filterItem.jcdsjs = null
+    },
+    emptyRadioMonitor() {
+      this.filterItem.jcds = null
+    },
+    tableRowClassName({row, rowIndex}) {
+      if (rowIndex === 0) {
+        return 'warning-row';
+      }
+      return '';
+    },
+    formatter(row, column) {
+      return row[column.property] ? row[column.property] : '-'
+    },
     handleSubmit(name) {
-      console.log("reser", name);
       this.$refs[name].validate(valid => {
         if (valid) {
           this.getList();
-          //   if (this.jbxx_data == "") {
-          //     this.sum = 0;
-          //   }
-          this.$Message.success("查询成功！");
         } else {
           this.$Message.error("查询失败，请重试!");
         }
       });
     },
     getList() {
-      console.log("this get list", this.filterItem);
       let startTime = "",
         endTime = "";
       if (this.filterItem.kssj && this.filterItem.kssj !== "") {
         startTime =
           this.filterItem.kssj.getFullYear() +
           "-" +
-          (this.filterItem.kssj.getMonth() + 1) +
+          ((this.filterItem.kssj.getMonth() + 1) < 10 ? ('0'+(this.filterItem.kssj.getMonth() + 1)) : (this.filterItem.kssj.getMonth() + 1) )+
           "-" +
-          this.filterItem.kssj.getDate() +
-          " 00:00:00";
+          (this.filterItem.kssj.getDate() < 10 ? ('0' + this.filterItem.kssj.getDate()): this.filterItem.kssj.getDate())
       }
       if (this.filterItem.jssj && this.filterItem.jssj !== "") {
         endTime =
           this.filterItem.jssj.getFullYear() +
           "-" +
-          (this.filterItem.jssj.getMonth() + 1) +
+          ((this.filterItem.jssj.getMonth() + 1) < 10 ? ('0'+(this.filterItem.jssj.getMonth() + 1)) : (this.filterItem.jssj.getMonth() + 1) )+
           "-" +
-          this.filterItem.jssj.getDate() +
-          " 23:59:59";
+          (this.filterItem.jssj.getDate() < 10 ? ('0' + this.filterItem.jssj.getDate()): this.filterItem.jssj.getDate())
       }
+      const data = {
+        area_id: this.filterItem.qy,
+        sale_type: this.filterItem.xsms,
+        device_state: this.filterItem.sbzt,
+        device_type: this.filterItem.sbfl,
+        device_model: this.filterItem.sbxh,
+        start_time: startTime,
+        end_time: endTime,
+        sort_order: this.filterItem.sort_order
+      }
+
+
+      if(this.filterItem.ywgs) {
+        data['company_id'] = this.filterItem.ywgs
+      }
+      if(this.filterItem.jcds) {
+        if(this.filterItem.jcds === 1) {
+          data['limit_up'] = 10
+        }else if(this.filterItem.jcds === 2) {
+          data['limit_up'] = 20
+          data['limit_down'] = 10
+        } else if(this.filterItem.jcds === 3) {
+          data['limit_down'] = 20
+        }
+      }else {
+        if(this.filterItem.jcdsjs) {
+          data['limit_up'] = this.filterItem.jcdsjs
+        }
+        if(this.filterItem.jcdsks) {
+          data['limit_down'] = this.filterItem.jcdsks
+        }  
+      }
+      
       let request = {
-        typeid: 25001,
+        typeid: 29003,
         data: [
           {
-            // account_id: this.$store.state.user.accountId,
-
-            // customer_name: "",
-            // create_starttime: startTime,
-            // create_endtime: endTime
-            company_id: [324090802, 324090803],
-            area_id: [320121, 320115],
-            sale_type: 0,
-            limit_up: 100,
-            limit_down: 20,
-            device_state: [1, 2, 3, 4],
-            device_type: 1,
-            device_model: ["S400", "S40"],
-            start_time: "2019-10-11 13:40:45",
-            end_time: "2020-10-11 13:40:45"
+            ...data
           }
         ]
       };
-      //   this.loading = true;
-      //   this.$http.XLCUSTOMER(request).then(
-      //     response => {
-      //       let res = response.data.result.data;
-      //       this.data = [];
-      //       this.sum = res.sum;
-      //       res.customerList.forEach(data => {
-      //         let item = {};
-      //         item.name = data.customer_name;
-      //         item.time = data.create_date;
-      //         item.salesman = data.sale_no;
-      //         item.company = data.manage_company_cn;
-      //         item.data = data;
-      //         this.customList_data.push(item);
-      //       });
-      //       this.loading = false;
-      //     },
-      //     error => {
-      //       this.loading = false;
-      //     }
-      //   );
+     
+      this.loading = true;
+      this.$http.XLREPORT(request).then(
+        response => {
+          if(this.filterItem.sort_order === 1) {
+            this.baseTypeColumns = [ {
+                title: "业务公司",
+                key: "company",
+                width: 200
+              },
+              {
+                title: "业务类型",
+                key: "business_type",
+                width: 100
+              }]
+          }else {
+            this.baseTypeColumns = [ {
+                title: "业务类型",
+                key: "business_type",
+                width: 100
+              },
+              {
+                title: "业务公司",
+                key: "company",
+                width: 200
+              }]
+          }
+          let res = response.data.result.data;
+          const total = response.data.result.total;
+          this.data = [];
+          this.columns = [];
+          res.forEach((data, index) => {
+            let item = {};
+            if(index === 0) {
+              const dict = total.product_dict
+              const totalItem = {
+                unit_num: total.unit_num,
+                device_num: total.device_num
+              }
+              Object.keys(dict).forEach(it => {
+                totalItem[it] = (dict[it] / total.unit_num).toFixed(2)
+              })
+              this.data.push(totalItem)
+              this.total = total.unit_num
+            }
+            item['gateway_count'] = data['gateway_count']
+            item['sale_type_name'] = data['sale_type_name']
+            item['company'] = data['company']
+            item['monitor_count'] = data['monitor_count']
+            item['business_type'] = data['business_type']
+            item['unit_id'] = data['unit_id']
+            item['unit_name'] = data['unit_name']
+            item['area'] = data['area']
+            data['device_list'].forEach(it => {
+              item[it['device_model_name']] = it['device_count']
+              if(!this.existInColumns(this.columns, it['device_model_name'])) {
+                this.columns.push({
+                  title: it['device_model_name'],
+                  key: it['device_model_name'],
+                  width: 150
+                })
+              }
+            })
+            this.data.push(item)
+            
+          });
+          this.loading = false;
+          this.$Message.success("查询成功！");
+        },
+        error => {
+          this.loading = false;
+          this.$Message.error("查询失败，请重试!");
+        }
+      );
+    },
+    existInColumns(coloumns, str) {
+      for(let i = 0; i< coloumns.length; i++) {
+        const item = coloumns[i]
+        if(item.title === str) {
+          return true
+        }
+      }
+      return false
     },
     exportAll() {
       if (this.isFinance || this.isCooperative || this.isSaleMan) {
@@ -841,30 +740,14 @@ export default {
       if (this.isFinance || this.isCooperative || this.isSaleMan) {
         return;
       }
-      //   let request = {
-      //     data: [
-      //       {
-      //         account_id: this.$store.state.user.accountId,
-      //         contractList: list
-      //       }
-      //     ]
-      //   };
-      this.$Message.info("导出中...");
-      this.$http.CONTRACTEXPORT(request).then(
-        res => {},
-        error => {
-          if (error.data.code === 0) {
-            this.exportUrl = error.data.exportUrl;
-            this.$nextTick(() => {
-              this.$refs.downloadLink.click();
-              this.exportUrl = "";
-            });
-            this.morehtztClick();
-          } else {
-            this.$Message.error("导出失败，请稍后重试！");
-          }
-        }
-      );
+      this.data[0]['company'] = `本次查询结果：用户数 ${this.data[0]['unit_num'] }, 设备数 ${this.data[0]['device_num'] }`
+      this.data[0]['monitor_count'] = '户均'
+      this.$refs['table'].exportCsv({
+        filename: '设备统计列表',
+        columns: [...this.baseTypeColumns, ...this.baseColumns, ...this.columns],
+        data: this.data
+      })
+      this.morehtztClick();
     }
   }
 };
@@ -894,9 +777,22 @@ export default {
   text-align: center;
   margin-top: 10px;
 }
+
 </style>
 <style>
 .statistics td:first-child {
+  border-left: 2px solid #67c23a;
+}
+
+.warning-row {
+  font-size: 14px;
+  height: 150px;
+  color: #000;
+  background-color: #F0F9EB !important;
+}
+
+.warning-row .result {
+  background-color: #F0F9EB !important;
   border-left: 2px solid #67c23a;
 }
 
@@ -904,4 +800,6 @@ export default {
   background: #e6f5ff;
   padding-right: 5px;
 }
+
+
 </style>
