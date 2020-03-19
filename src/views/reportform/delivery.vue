@@ -31,7 +31,7 @@
         <FormItem label="业务公司" prop="ywgs">
           <Row>
             <Col :span="8">
-              <Select v-model="filterItem.ywgs" clearable filterable>
+              <Select v-model="filterItem.ywgs" clearable filterable placeholder="所有业务公司">
                 <Option :value="item.company_id" v-for="(item,index) in companys" :key="index">{{item.company}}</Option>
               </Select>
             </Col>
