@@ -163,19 +163,18 @@
       </Form>
     </div>
     <Content
-      :style="{background: '#fff', minHeight: '760px',marginTop: '10px'}"
-      style="padding:20px 20px 0"
+      :style="{background: '#fff', minHeight: '610px',marginTop: '10px'}"
     >
       <el-table
-        :show-header="true"
-        style="position:relative;"
+        style="width: 100%"
         :span-method="objectSpanMethod"
         :row-class-name="tableRowClassName"
         v-loading="loading"
         :data="data"
         size="small"
+        max-height="610"
       >
-        <el-table-column property="index" label="序号" width="38" class-name="result">
+        <el-table-column property="index" label="序号" width="38" class-name="result" fixed="left">
           <template slot="header" slot-scope="scope">
             <span>
               <i class="el-icon-setting" style="cursor:pointer"></i>
@@ -188,14 +187,14 @@
             <span v-if="scope.$index === 1" style="color: #4A99FF">查询结果</span>
           </template>
         </el-table-column>
-        <el-table-column type="index" label="序号" width="50">
+        <el-table-column type="index" label="序号" width="50" fixed="left">
           <template slot-scope="scope">
             <span v-if="scope.$index === 0" style="color: #67c23a">
             </span>
             <span v-else>{{scope.$index}}</span>
           </template>
         </el-table-column>
-        <el-table-column :property="baseTypeColumns[0].key" :label="baseTypeColumns[0].title" :width="baseTypeColumns[0].width">
+        <el-table-column :property="baseTypeColumns[0].key" :label="baseTypeColumns[0].title" :width="baseTypeColumns[0].width" fixed="left">
           <template slot-scope="scope">
             <span v-if="scope.$index === 0" style="color: #67c23a !important; text-align: right">
               本次查询结果：用户数 {{scope.row.unit_num}}, 设备数 {{scope.row.device_num}}。
@@ -203,19 +202,19 @@
             <span v-else>{{scope.row[baseTypeColumns[0].key]}}</span>
           </template>
         </el-table-column>
-        <el-table-column :property="baseTypeColumns[1].key" :label="baseTypeColumns[1].title" :width="baseTypeColumns[1].width">
+        <el-table-column :property="baseTypeColumns[1].key" :label="baseTypeColumns[1].title" :width="baseTypeColumns[1].width" fixed="left">
         </el-table-column>   
-        <el-table-column property="sale_type_name" label="销售方式" width="80">
+        <el-table-column property="sale_type_name" label="销售方式" width="80" fixed="left">
         </el-table-column>
-        <el-table-column property="area" label="区域" width="150">
+        <el-table-column property="area" label="区域" width="150" fixed="left">
         </el-table-column>
-        <el-table-column property="unit_id" label="用户ID" width="80">
+        <el-table-column property="unit_id" label="用户ID" width="80" fixed="left">
         </el-table-column>
-        <el-table-column property="unit_name" label="用户名称" width="200">
+        <el-table-column property="unit_name" label="用户名称" width="200" fixed="left">
         </el-table-column>
-        <el-table-column property="gateway_count" label="网关数" width="80">
+        <el-table-column property="gateway_count" label="网关数" width="80" fixed="left">
         </el-table-column>
-        <el-table-column property="monitor_count" label="监测点数" width="80">
+        <el-table-column property="monitor_count" label="监测点数" width="80" fixed="left">
           <template slot-scope="scope">
             <div v-if="scope.$index === 0" style="color: #000 !important; text-align: right">
               户均
@@ -778,7 +777,7 @@ export default {
 
 .warning-row {
   font-size: 14px;
-  height: 150px;
+  height: 100px;
   color: #000;
   background-color: #F0F9EB !important;
 }
