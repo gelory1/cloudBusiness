@@ -14,6 +14,9 @@
             style="position: relative;top: -15px;left: -2px;display: inline-block;border: 1px solid #54A3F6;font-size: 12px;
             padding: 0 5px;color: #54A3F6;border-radius: 4px;font-weight:100"
           >{{data.contractNature}}</span>
+          <span>
+            <img v-if="data.data.contractMark=== 1" style="width: 250px; transform:rotate(-15deg);" src="../../images/htgl/unBasic.png" alt />
+          </span>
         </h2>
         <p>{{data.contractNo}}</p>
         <div class="ht_img">
