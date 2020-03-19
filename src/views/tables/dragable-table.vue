@@ -66,7 +66,7 @@
             <FormItem label="业务公司" prop="ywgs">
               <Row>
                 <Col :span="12">
-                  <Select v-model="filterItem.ywgs" clearable filterable>
+                  <Select v-model="filterItem.ywgs" clearable filterable placeholder="所有业务公司">
                     <Option
                       :value="item.id"
                       v-for="(item,index) in companys"
