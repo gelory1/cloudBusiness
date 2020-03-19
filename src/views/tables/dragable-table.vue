@@ -557,6 +557,11 @@ export default {
       return row[column.property] ? row[column.property] : '-'
     },
     handleSubmit(name) {
+      // 添加校验 用户选择的时间范围不超过3个月
+      if(parseInt(((this.filterItem.jssj.getTime() - this.filterItem.kssj.getTime())/(1000 * 60 * 60 * 24))) > 90) {
+        this.$Message.error("操作时间段选择不超过3个月，请重新选择！");
+        return
+      }
       // 校验监测点数
       if(this.filterItem.jcds === null) {
         if(this.filterItem.jcdsks && this.filterItem.jcdsjs && this.filterItem.jcdsks > this.filterItem.jcdsjs){
