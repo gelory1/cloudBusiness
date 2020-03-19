@@ -83,7 +83,7 @@
             <span>{{scope.$index}}</span>
           </template>
         </el-table-column>
-        <el-table-column property="product_model" label="产品型号"></el-table-column>
+        <el-table-column property="product_model" label="产品型号" width="250"></el-table-column>
         <el-table-column property="product_code" label="存货编码">
           <template slot-scope="scope">
             <div v-if="scope.$index === 0" style="color: #0099FF !important; text-align: right; font-weight: bold">
