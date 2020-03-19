@@ -300,10 +300,10 @@ export default {
     },
     handleSubmit(name) {
       // 添加校验 用户选择的时间范围不超过3个月
-      if(parseInt(((this.filterItem.jssj.getTime() - this.filterItem.kssj.getTime())/(1000 * 60 * 60 * 24))) > 90) {
-        this.$Message.error("操作时间段选择不超过3个月，请重新选择！");
-        return
-      }
+      // if(parseInt(((this.filterItem.jssj.getTime() - this.filterItem.kssj.getTime())/(1000 * 60 * 60 * 24))) > 90) {
+      //   this.$Message.error("操作时间段选择不超过3个月，请重新选择！");
+      //   return
+      // }
       this.$refs[name].validate(valid => {
         if (valid) {
           this.getList();
