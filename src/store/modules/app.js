@@ -73,7 +73,6 @@ const app = {
         },
         updateMenulist(state) {
             let menuList = [];
-            console.log('appRouter', appRouter)
             appRouter.forEach((item) => {
                 if (item.children.length === 1) {
                     menuList.push(item);
