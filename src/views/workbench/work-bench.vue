@@ -1473,6 +1473,7 @@ export default {
         "typeid": 28002,
         "data": [
             {
+              "manageCompany": this.newgzForm.company,
               "workBenchType": this.newgzForm.rwlx,
               "accountId": this.$store.state.user.accountId,
               "chargePerson": this.newgzForm.fzr === ''?-1:this.newgzForm.fzr,
