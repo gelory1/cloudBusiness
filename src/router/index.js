@@ -3,7 +3,7 @@ import iView from 'iview';
 import Util from '../libs/util';
 import VueRouter from 'vue-router';
 import Cookies from 'js-cookie';
-import {routers, otherRouter, appRouter, otherRouter1, otherRouterOrder, assetRouter} from './router';
+import {routers, otherRouter, appRouter, otherRouter1, otherRouterOrder, assetRouter, otherRouterReport} from './router';
 
 Vue.use(VueRouter);
 
@@ -36,14 +36,14 @@ router.beforeEach((to, from, next) => {
                 name: 'home_index'
             });
         } else {
-            const curRouterObj = Util.getRouterObjByName([otherRouter, otherRouter1, otherRouterOrder, assetRouter, ...appRouter], to.name);
+            const curRouterObj = Util.getRouterObjByName([otherRouter, otherRouter1, otherRouterOrder, assetRouter, otherRouterReport, ...appRouter], to.name);
             if (curRouterObj && curRouterObj.title) {
                 Util.title(curRouterObj.title, router.app);
             }
             if (curRouterObj && curRouterObj.access) { // 需要判断权限的路由
                 let authority = JSON.parse(localStorage.getItem('authority'));
                 if (authority.find(a => a.path === curRouterObj.path || a.path === ('/' + (curRouterObj.path).toLowerCase()) || a.path.indexOf(('/' + curRouterObj.path)) > 0)) {
-                    Util.toDefaultPage([otherRouter, otherRouter1, otherRouterOrder, assetRouter, ...appRouter], to.name, router, next); // 如果在地址栏输入的是一级菜单则默认打开其第一个二级菜单的页面
+                    Util.toDefaultPage([otherRouter, otherRouter1, otherRouterOrder, assetRouter, otherRouterReport, ...appRouter], to.name, router, next); // 如果在地址栏输入的是一级菜单则默认打开其第一个二级菜单的页面
                 } else {
                     next({
                         replace: true,

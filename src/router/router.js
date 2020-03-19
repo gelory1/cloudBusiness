@@ -311,7 +311,7 @@ export const appRouter = [
         title: '报表',
         component: resolve => require(['@/views/Main.vue'], resolve),
         children: [{
-            path: '/reportform/reportform',
+            path: 'reportform',
             title: '报表',
             name: 'reportForm',
             component: resolve => require(['@/views/reportform/report-form.vue'], resolve)

@@ -101,7 +101,7 @@ module.exports = {
                 secure: false
             },
             '/api/': {
-                target: 'http:// 47.110.198.188:31380',
+                target: 'http://47.110.198.188:31380',
                 changeOrigin: true,
                 secure: false
             }

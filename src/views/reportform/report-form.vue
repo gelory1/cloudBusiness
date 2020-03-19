@@ -116,7 +116,7 @@
           </div>
         </Col>
         <Col :span="6">
-          <div class="box" @click="openForm(1201, '/reportform/delivery')">
+          <div class="box" @click="openForm(1203, '/reportform/delivery')">
             <Col :span="8">
               <div class="box-img">
                 <img src />
@@ -167,7 +167,7 @@
           </div>
         </Col>
         <Col :span="6">
-          <div class="box" @click="openForm(1205, '/reportform/indicator')">
+          <div class="box" @click="openForm(1204, '/reportform/indicator')">
             <Col :span="8">
               <div class="box-img">
                 <img src />
@@ -235,6 +235,7 @@ export default {
   name: "reportForm",
   methods: {
     openForm(id, url) {
+      console.log(this.$store.state.app)
       if (!this.$store.state.app.authority.find(a => a.id === id)) {
         this.$Message.error("权限不足！");
         return;

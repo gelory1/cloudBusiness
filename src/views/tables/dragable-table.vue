@@ -110,7 +110,7 @@
                   </el-radio-group>
                 </Col>
                 <Col :span="18">
-                  <Input-number v-model="filterItem.jcdsks" @input="emptyRadioMonitor"></Input-number>-
+                  <Input-number v-model="filterItem.jcdsks" @input="emptyRadioMonitor"></Input-number> -
                   <Input-number v-model="filterItem.jcdsjs" @input="emptyRadioMonitor"></Input-number>
                 </Col>
               </Row>
@@ -217,9 +217,9 @@
         </el-table-column>
         <el-table-column property="monitor_count" label="监测点数" width="80">
           <template slot-scope="scope">
-            <span v-if="scope.$index === 0" style="color: #000 !important; text-align: right">
+            <div v-if="scope.$index === 0" style="color: #000 !important; text-align: right">
               户均
-            </span>
+            </div>
             <span v-else>{{scope.row.monitor_count}}</span>
           </template>
         </el-table-column>
@@ -307,7 +307,6 @@ export default {
   name: "PreCast",
   data() {
     return {
-      radio: "1",
       loading: false,
       companys: [],
       devices: [],
@@ -524,25 +523,6 @@ export default {
           return [1, 4];
         }
       }
-      
-      if (columnIndex === 0) {
-        if (rowIndex === 0) {
-          return {
-            rowspan: 1,
-            colspan: 1
-          };
-        } else if (rowIndex % this.total === 1) {
-          return {
-            rowspan: this.total,
-            colspan: 1
-          };
-        } else {
-          return {
-            rowspan: 0,
-            colspan: 0
-          };
-        }
-      }
     },
     handleReset() {
       this.filterItem = {
@@ -577,6 +557,13 @@ export default {
       return row[column.property] ? row[column.property] : '-'
     },
     handleSubmit(name) {
+      // 校验监测点数
+      if(this.filterItem.jcds === null) {
+        if(this.filterItem.jcdsks && this.filterItem.jcdsjs && this.filterItem.jcdsks > this.filterItem.jcdsjs){
+          this.$Message.error("监测点数开始值需小于结束值!");
+          return
+        }
+      }
       this.$refs[name].validate(valid => {
         if (valid) {
           this.getList();
