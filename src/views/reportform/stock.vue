@@ -42,7 +42,7 @@
         <FormItem label="业务公司" prop="ywgs">
           <Row>
             <Col :span="12">
-              <Select v-model="filterItem.ywgs" clearable filterable @on-change="getPartners">
+              <Select v-model="filterItem.ywgs" clearable filterable @on-change="getPartners" placeholder="所有业务公司">
                 <Option :value="item.company_id" v-for="(item,index) in companys" :key="index">{{item.company}}</Option>
               </Select>
             </Col>
@@ -52,7 +52,7 @@
         <FormItem label="合作伙伴" prop="hzhb">
           <Row>
             <Col :span="12">
-              <Select v-model="filterItem.hzhb" clearable filterable>
+              <Select v-model="filterItem.hzhb" clearable filterable placeholder="所有合作伙伴服务商">
                 <Option :value="item.agent_id" v-for="(item,index) in partners" :key="index">{{item.agent_name}}</Option>
               </Select>
             </Col>
