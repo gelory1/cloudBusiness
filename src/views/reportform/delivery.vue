@@ -23,6 +23,7 @@
                 type="date"
                 placeholder="日期"
                 v-model="filterItem.sj"
+                :options="options"
               ></DatePicker>
             </Col>
           </Row>
@@ -141,7 +142,12 @@ export default {
         sj: new Date(),
         ywgs: 0,
       },
-      companys: []
+      companys: [],
+      options: {
+        disabledDate: time => {
+          return time.getTime() > new Date().getTime();
+        }
+      },
     };
   },
   mounted() {
