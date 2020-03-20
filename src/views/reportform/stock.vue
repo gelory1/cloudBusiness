@@ -171,7 +171,7 @@ export default {
         hzhb: ""
       },
       startOption: {
-        disabledDate: time => {
+        disabledDate: time => {    
           if (this.filterItem.jssj) {
             return time.getTime() > new Date(this.filterItem.jssj).getTime();
           }
@@ -390,6 +390,10 @@ export default {
     },
     export(list) {
       if (this.isFinance || this.isCooperative || this.isSaleMan) {
+        return;
+      }
+      if(this.data && this.data.length === 0) {
+        this.$Message.error("当前无查询结果!");
         return;
       }
       this.$refs['table'].exportCsv({
