@@ -310,6 +310,10 @@ export default {
       if (this.isFinance || this.isCooperative || this.isSaleMan) {
         return;
       }
+      if(this.data && this.data.length === 0) {
+        this.$Message.error("当前无查询结果!");
+        return;
+      }
       this.$refs['table'].exportCsv({
         filename: '发货台账统计',
         columns: this.columns,
