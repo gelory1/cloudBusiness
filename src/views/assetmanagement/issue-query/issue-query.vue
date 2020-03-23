@@ -262,7 +262,7 @@
           </div>
         </div>
       </div>
-      <div style="clear:both;overflow: hidden;margin-top:20px;">
+      <div style="clear:both;overflow: hidden;margin-top:20px;" class="in-stock">
         <Tabs v-model="tabDeviceName1">
           <TabPane label="入库设备" name="name1">
             <div style="width:17%;float:left;">
@@ -1428,5 +1428,11 @@ export default {
 }
 .vertical-center-modal .ivu-modal {
   top: 0;
+}
+.in-stock .ivu-table-wrapper {
+  overflow: visible !important;
+}
+.in-stock .ivu-tooltip-popper {
+  position: absolute !important;
 }
 </style>
