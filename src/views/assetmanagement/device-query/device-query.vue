@@ -459,6 +459,7 @@ export default {
                       this.selectedProcode = this.jbxx_data[params.index].chbm;
                       this.selectedWhid = this.jbxx_data[params.index].wh_id;
                       this.inputVal = params.row.chbm;
+                      this.pageName2 = 1;
                       this.getCrkList(1);
                       this.tabName = "name2";
                     }
@@ -868,11 +869,13 @@ export default {
     },
     changeTab(p) {
       if (p === "name2") {
+        this.pageName2 = 1;
         this.getCrkList(1);
       }
     },
     selecttwoClick(index) {
       this.ck_current_index = index;
+      this.pageName1 = 1;
       this.getProductList(1);
       if (this.tabName !== "name1") this.tabName = "name1";
       if (this.jbxx_data == "") {
@@ -967,8 +970,10 @@ export default {
         $(".cor").css({ color: "#000000" });
         this.glShow = false;
         if (this.tabName === "name1") {
+          this.pageName1 = 1;
           this.getProductList(1);
         } else {
+          this.pageName2 = 1;
           this.getCrkList(1);
         }
         return;
@@ -978,8 +983,10 @@ export default {
           this.filterStatus = true;
           this.glShow = false;
           if (this.tabName === "name1") {
+            this.pageName1 = 1;
             this.getProductList(1);
           } else {
+            this.pageName2 = 1;
             this.getCrkList(1);
           }
           if (this.jbxx_data == "") {
@@ -1019,6 +1026,7 @@ export default {
         this.$refs["menu"].updateActiveName();
         this.$refs["menuContainer"].scrollTo(0, scroll);
         this.tabName = "name1";
+        this.pageName1 = 1;
         this.getProductList(1);
       });
     },
@@ -1058,6 +1066,7 @@ export default {
         this.selectedProcode = "";
         if (this.inputVal !== "") {
           this.inputVal = "";
+          this.pageName1 = 1;
           this.getProductList(1);
         }
         this.pageName2 = 1;
