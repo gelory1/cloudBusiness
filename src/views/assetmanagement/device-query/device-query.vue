@@ -804,12 +804,9 @@ export default {
                 ? this.menudata[this.ck_current_index].wh_id
                 : undefined) || this.selectedWhid,
             wh_type: this.cpxhpz[this.cktype_current_index].id,
-            product_code:
-              this.selectedProcode === ""
-                ? this.filterItem.chbm === ""
-                  ? undefined
-                  : this.filterItem.chbm
-                : this.selectedProcode,
+            product_code: this.filterItem.chbm === ""
+                ? undefined
+                : this.filterItem.chbm,
             product_name:
               this.filterItem.chmc === "" ? undefined : this.filterItem.chmc, //存货名称
             device_address:
@@ -836,10 +833,7 @@ export default {
                   " 23:59:59", //结束名称
             device_status:
               this.filterItem.zt === "" ? undefined : this.filterItem.zt, //状态
-            keyword:
-              this.inputVal === "" || this.inputVal === this.selectedProcode
-                ? undefined
-                : this.inputVal,
+            keyword: this.inputVal === "" ? undefined : this.inputVal,
             page_num: p,
             page_size: 10
           }
