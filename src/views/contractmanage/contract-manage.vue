@@ -572,10 +572,10 @@ export default {
           }
         ]
       };
-      this.contract_data = [];
       this.loading = true;
       this.$http.XLCONTRACT(request).then(
         response => {
+          this.contract_data = [];
           let { data } = response.data.result;
           this.sum = data.sum;
           data.contractList.forEach(con => {
