@@ -373,7 +373,7 @@ export default {
               total['no_pay_amount'] += element['no_pay_amount']
             });
             total['stock_amount'] = total['stock_amount'].toFixed(2)
-            total['install_amount'] += total['install_amount'].toFixed(2)
+            total['install_amount'] = total['install_amount'].toFixed(2)
             total['pay_amount'] = total['pay_amount'].toFixed(2)
             total['no_pay_amount'] = total['no_pay_amount'].toFixed(2)
             this.data = res.length > 0 ? [total, ...res] : []
