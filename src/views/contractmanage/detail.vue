@@ -747,12 +747,13 @@ export default {
               payEndIndex = this.data.data.paybackList.length - 1;
           }
           if (allAmount - backAmount > 0) {
-            item.currentAmount =
-              allAmount - backAmount - item.paymentAmount > 0
-                ? item.paymentAmount
-                : allAmount - backAmount > 0
-                ? allAmount - backAmount
-                : 0;
+            item.currentAmount = allAmount
+            // item.currentAmount =
+            //   allAmount - backAmount - item.paymentAmount > 0
+            //     ? item.paymentAmount
+            //     : allAmount - backAmount > 0
+            //     ? allAmount - backAmount
+            //     : 0;
           }
           if (payIndex === "") {
             item.paybackList = [];
@@ -765,11 +766,11 @@ export default {
               )
             );
           }
-          (item.paybackList[0] || {}).paybackAmount = computeAmountStart;
-          if (item.paybackList.length > 1 && computeAmountEnd !== "")
-            (
-              item.paybackList[item.paybackList.length - 1] || {}
-            ).paybackAmount = computeAmountEnd;
+          // (item.paybackList[0] || {}).paybackAmount = computeAmountStart;
+          // if (item.paybackList.length > 1 && computeAmountEnd !== "")
+          //   (
+          //     item.paybackList[item.paybackList.length - 1] || {}
+          //   ).paybackAmount = computeAmountEnd;
           //计算发票信息
           let allTicketAmount = 0;
           if (
