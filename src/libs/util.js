@@ -1,5 +1,6 @@
 import axios from 'axios';
 import env from '../../build/env';
+import BigNumber from 'bignumber.js';
 
 let util = {
 
@@ -375,7 +376,7 @@ util.NumberToChinese = function (n) {
     n = Math.abs(n);
     var s = '';
     for (let i = 0; i < fraction.length; i++) {
-        s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+        s += (digit[Math.floor(new BigNumber(n).multipliedBy(10).multipliedBy(Math.pow(10, i))) % 10] + fraction[i]).replace(/零./, '');
     }
     s = s || '整';
     n = Math.floor(n);
