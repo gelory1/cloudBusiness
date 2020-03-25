@@ -130,7 +130,7 @@
             <TabPane label="全部" name="name1">
                 <Table :columns="device_columns" :data="device_data" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
-            <TabPane :label="`已到货（${selectedOrder.issued_count||0}）`" name="name2">
+            <TabPane :label="`已交货（${selectedOrder.issued_count||0}）`" name="name2">
                 <Table :columns="device_columns" :data="device_data1" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
             <TabPane :label="`待发货（${selectedOrder.count - selectedOrder.issued_count||0}）`" name='name3'>
