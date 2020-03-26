@@ -85,7 +85,7 @@
               <section>
                 <p>签约点数：</p>
                 <p>
-                  <span>{{data.data.signPoint||0}}</span>(
+                  <span>{{jcds||0}}</span>(
                   <span class="cor_span" @click="kcmxmodal = true">查看勘查明细</span>)
                 </p>
               </section>
@@ -279,7 +279,7 @@
       <p style="font-size:16px;margin:20px 5px;">采集点位数量</p>
       <p class="kc_p">
         采集点位数量（含基站）
-        <span style>{{data.data.signPoint||0}}</span>
+        <span style>{{jcds||0}}</span>
       </p>
     </Modal>
     <!-- 发票 -->
@@ -451,13 +451,13 @@ export default {
           align: "center"
         },
         {
-          title: "规格型号",
-          key: "ggxh",
+          title: "产品型号",
+          key: "cpxh",
           align: "center"
         },
         {
-          title: "主计量",
-          key: "zjl",
+          title: "规格型号",
+          key: "ggxh",
           align: "center"
         },
         {
@@ -466,6 +466,7 @@ export default {
           align: "center"
         }
       ],
+      jcds: 0,
       kcmx_data: [
       ],
       kpxx: [],
@@ -533,24 +534,37 @@ export default {
       this.selectedOrder = this.data.data.orderNo;
       this.orderDetailOpen = true;
     },
-    getkcmx() {
+    getSignPoint() {
       let request = {
-        typeid: 26008,
+        typeid: 10200,
         data: [
           {
-            contractNo: this.data.data.contractNo
+            unit_id: Number(this.data.data.customerNo || null)
+          }
+        ]
+      };
+      this.$http.XLCONTRACTHELP(request).then(response => {
+        this.jcds = response.data.result.data[0] && response.data.result.data[0].monitor_points
+      });
+    },
+    getkcmx() {
+      let request = {
+        typeid: 10201,
+        data: [
+          {
+            unit_id: Number(this.data.data.customerNo || null)
           }
         ]
       };
       this.kcmx_data = [];
-      this.$http.XLCONTRACT(request).then(response => {
-        response.data.result.data.productList.forEach((data, index) => {
+      this.$http.XLCONTRACTHELP(request).then(response => {
+        response.data.result.data.forEach((data, index) => {
           let item = {};
           item.chbm = data.productCode;
           item.chmc = data.productName;
           item.ggxh = data.productModel;
-          item.zjl = data.unit;
-          item.num = data.count;
+          item.cpxh = data.deviceName;
+          item.num = data.productCount;
           item.index = index + 1;
           this.kcmx_data.push(item);
         });
@@ -655,6 +669,7 @@ export default {
       this.$router.push({ path: "/contractmanage/contractmanage" });
   },
   mounted() {
+    this.getSignPoint();
     this.getkcmx();
     this.getTicket();
     this.getfiles();
@@ -664,6 +679,7 @@ export default {
       if (nv) this.getTicket();
     },
     $route(){
+      this.getSignPoint();
       this.getkcmx();
       this.getTicket();
       this.getfiles();
