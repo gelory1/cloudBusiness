@@ -656,7 +656,9 @@ export default {
             productModels: data.spec,
             quantity: data.num,
             price: data.price + "",
-            unit: data.unit
+            unit: data.unit,
+            set_num: data.set_num,
+            product_price: data.set_price
           });
       });
       if(productList.length === 0){

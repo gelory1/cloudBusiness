@@ -152,6 +152,8 @@
 </template>
 <script>
 let $ = require("jquery");
+import BigNumber from 'bignumber.js';
+
 export default {
     name:'orderDetail',
     props:['orderNO'],
@@ -380,7 +382,7 @@ export default {
                     item.data = p;
                     if(this.selectedOrder.type === '备货订单'){
                         item.price = p.product_price||0;
-                        item.totalPrice = item.price*item.count;
+                        item.totalPrice = new BigNumber(p.product_quantity).dividedBy(p.set_num).multipliedBy(p.product_price_total).toFixed(2);
                         item.tax = '6%';
                     }
                     this.device_data.push(item);
@@ -422,9 +424,10 @@ export default {
             if(this.device_data&&this.device_data.length>0){
                 data = JSON.parse(JSON.stringify(this.device_data.filter(d => d.issued_count !== 0)));
                 data.forEach(d => {
+                    console.log(d)
                     d.count = d.issued_count;
                     if(this.selectedOrder.type === '备货订单'){
-                        d.totalPrice = d.price*d.count;
+                        d.totalPrice = new BigNumber(d.count).dividedBy(d.data.set_num).multipliedBy(d.data.product_price_total).toFixed(2);
                     }
                 })
             }
@@ -435,9 +438,10 @@ export default {
             if(this.device_data&&this.device_data.length>0){
                 data = JSON.parse(JSON.stringify(this.device_data.filter(d => d.count - d.issued_count !== 0)));
                 data.forEach(d => {
+                     console.log(d)
                     d.count = d.count - d.issued_count;
                     if(this.selectedOrder.type === '备货订单'){
-                        d.totalPrice = d.price*d.count;
+                        d.totalPrice = new BigNumber(d.count).dividedBy(d.data.set_num).multipliedBy(d.data.product_price_total).toFixed(2);
                     }
                 })
             }
