@@ -278,7 +278,7 @@
       <Table :columns="kcmx_columns" :data="kcmx_data"></Table>
       <p style="font-size:16px;margin:20px 5px;">采集点位数量</p>
       <p class="kc_p">
-        采集点位数量（含基站）
+        采集点位数量（不含V型网关设备）
         <span style>{{jcds||0}}</span>
       </p>
     </Modal>
