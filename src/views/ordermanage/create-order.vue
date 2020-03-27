@@ -144,6 +144,8 @@
 
 <script>
 import silderInput from "../public-components/silder-input.vue";
+import BigNumber from 'bignumber.js';
+
 export default {
   name: "create",
   components: {
@@ -302,7 +304,7 @@ export default {
               on: {
                 "on-change": a => {
                   params.row.num = a;
-                  params.row.totalPrice = a * params.row.price;
+                  params.row.totalPrice = new BigNumber(params.row.num).dividedBy(params.row.set_num).multipliedBy(params.row.set_price).toFixed(2);
                   this.$set(this.formValidate.devices_list, params.index, params.row);
                 }
               }
@@ -532,7 +534,7 @@ export default {
       }
       this.addStore = {};
       let request = {
-        typeid: 23012,
+        typeid: 10202,
         data: [
           {
             keyword: this.inputVal === "" ? undefined : this.inputVal,
@@ -542,7 +544,7 @@ export default {
         ]
       };
       this.addsb_data = [];
-      this.$http.PostXLASSETS(request).then(response => {
+      this.$http.XLCONTRACTHELP(request).then(response => {
         let { data } = response.data.result;
         this.sum = data[0].sum;
         data[0].product_list.forEach(data => {
@@ -573,6 +575,7 @@ export default {
             product_models: data.product_models,
             product_name: data.product_name,
             product_price: data.product_price,
+            set_num: data.set_num,
             product_unit: data.product_unit,
             num,
             _checked
@@ -618,16 +621,18 @@ export default {
             spec: d.product_models,
             unit: d.product_unit,
             num: d.num,
-            price: d.product_price,
+            set_num: d.set_num,
+            set_price: d.product_price,
+            price: new BigNumber(d.product_price).dividedBy(d.set_num).toFixed(2),
             tax: "6%",
-            totalPrice: d.product_price * d.num
+            totalPrice: new BigNumber(d.num).dividedBy(d.set_num).multipliedBy(d.product_price).toFixed(2)
           });
         } else {
           let obj = this.formValidate.devices_list.find(
             item => item.productCode === d.product_code
           );
           obj.num = d.num;
-          obj.totalPrice = d.product_price * obj.num;
+          obj.totalPrice = new BigNumber(d.num).dividedBy(d.set_num).multipliedBy(d.product_price).toFixed(2)
         }
       });
     },
@@ -848,7 +853,7 @@ export default {
         this.formValidate.devices_list.length > 0
       ) {
         this.formValidate.devices_list.forEach(data => {
-          price += data.totalPrice;
+          price += new BigNumber(data.totalPrice).toNumber();
         });
       }
       return price;
