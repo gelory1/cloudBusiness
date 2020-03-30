@@ -896,8 +896,8 @@ export default {
               "empowerCity":c[1]||'',
               "empowerArea":c[2]||'',
               "protocolNumber":e.contact_no,
-              "empowerEndTime":e.startTime,
-              "empowerStartTime":e.endTime,
+              "empowerEndTime":e.endTime,
+              "empowerStartTime":e.startTime,
               "fileName":e.name,
               "fileAddress":e.url
           })
