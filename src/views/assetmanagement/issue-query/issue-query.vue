@@ -1243,7 +1243,7 @@ export default {
         typeid: 23011,
         data: [
           {
-            allocation_id: this.djxx.allocation_id,
+            allocation_no: this.djbh,
             page_num: p,
             page_size: 10
           }
