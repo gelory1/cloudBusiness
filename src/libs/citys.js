@@ -4681,6 +4681,9 @@ var provinceList = [
                     },
                     {
                         'name': '高陵县'
+                    },
+                    {
+                        'name': '经济开发区'
                     }
                 ]
             },
