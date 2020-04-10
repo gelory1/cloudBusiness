@@ -137,7 +137,10 @@ const workflow = {
     // 导出清单
     CONTRACTEXPORT (params) {
         return axios.post('/public/api/xlcustomer/exportContract', params);
+    },
+    // xl erp
+    XLERP (params) {
+        return axios.post('public/api/xlerp/query', params);
     }
-
 };
 export default workflow;
