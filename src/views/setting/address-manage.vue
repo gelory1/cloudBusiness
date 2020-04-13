@@ -90,267 +90,267 @@
 
 <script>
 export default {
-  name: "addressmanage",
-  data() {
-    const validatePhone = (rule, value, callback) => {
-      if (this.addadressform.tel !== "") {
-        var expression = /^1(3|4|5|7|8)\d{9}$/;
-        if (expression.test(value) == false) {
-          callback(new Error("请输入正确的电话号码"));
-        }
-      }else{
-        callback(new Error("请输入电话号码"));
-      }
-      callback();
-    };
-    return {
-      addadressmodal: false,
-      addadressform: {
-        company: "",
-        name: "",
-        tel: "",
-        address: ""
-      },
-      shdzData: [],
-      addadressrule: {
-        company: [
-          {
-            required: true,
-            message: "请输入仓库名称",
-            trigger: "blur"
-          }
-        ],
-        name: [
-          {
-            required: true,
-            message: "请输入联系人姓名",
-            trigger: "blur"
-          }
-        ],
-        tel: [
-          {
-            required: true,
-            trigger: "blur",
-            validator: validatePhone,
-          }
-        ],
-        address: [
-          {
-            required: true,
-            message: "请输入详细地址",
-            trigger: "blur"
-          }
-        ]
-      },
-      selectItem:{},
-      status:'new',
-      whData: [],
-      loading: false
-    };
-  },
-  methods: {
-    getAddresses(){
-      let request = {
-        typeid: 23013,
-        data: [
-          {
-            account_id: this.$store.state.user.accountId,
-            customer_no: (this.$route.query||{}).no||''
-          }
-        ]
-      };
-      this.shdzData = [];
-      this.loading = true;
-      this.$http.PostXLASSETS(request).then(response => {
-        let { data } = response.data.result;
-        data.forEach(d => {
-          this.shdzData.push({
-            company: d.wh_name,
-            name: d.manager_name,
-            tel: d.manager_phone,
-            address: d.address_detail,
-            isDefault:d.address_status === 1?true:false,
-            wh_id:d.wh_id,
-            address_id:d.address_id,
-            creador:d.user_name
-          })
-        });
-        this.loading = false;
-      },error => {
-        this.loading = false;
-        if((error.data||{}).message){
-          this.$Message.error(error.data.message);
-        }
-      })
+    name: 'addressmanage',
+    data () {
+        const validatePhone = (rule, value, callback) => {
+            if (this.addadressform.tel !== '') {
+                var expression = /^1\d{10}$/;
+                if (expression.test(value) == false) {
+                    callback(new Error('请输入正确的电话号码'));
+                }
+            } else {
+                callback(new Error('请输入电话号码'));
+            }
+            callback();
+        };
+        return {
+            addadressmodal: false,
+            addadressform: {
+                company: '',
+                name: '',
+                tel: '',
+                address: ''
+            },
+            shdzData: [],
+            addadressrule: {
+                company: [
+                    {
+                        required: true,
+                        message: '请输入仓库名称',
+                        trigger: 'blur'
+                    }
+                ],
+                name: [
+                    {
+                        required: true,
+                        message: '请输入联系人姓名',
+                        trigger: 'blur'
+                    }
+                ],
+                tel: [
+                    {
+                        required: true,
+                        trigger: 'blur',
+                        validator: validatePhone
+                    }
+                ],
+                address: [
+                    {
+                        required: true,
+                        message: '请输入详细地址',
+                        trigger: 'blur'
+                    }
+                ]
+            },
+            selectItem: {},
+            status: 'new',
+            whData: [],
+            loading: false
+        };
     },
-    getWhs(){
-      let request = {
-        typeid: 23001,
-        data: [
-          {
-            account_id: this.$store.state.user.accountId,
-          }
-        ]
-      };
-      this.whData = [];
-      this.$http.PostXLASSETS(request).then(response => {
-        let { data } = response.data.result;
-        this.whData = data;
-      })
-    },
-    czClick() {},
-    saveSubmit(name) {
-      this.$refs[name].validate(valid => {
-        let request = {
-          "typeid": 23014,
-          "data": [
-              {
-                "account_id": this.$store.state.user.accountId,
-                "wh_id": this.addadressform.company,
-                "address_title": (this.whData.find(w =>w.wh_id === this.addadressform.company)||{}).wh_name||'',
-                "manager_name": this.addadressform.name,
-                "manager_phone": this.addadressform.tel,
-                "address_detail": this.addadressform.address
-              }
-          ]
-        }
-        if (valid) {
-          if(this.status === 'edit'){
-            request.typeid = 23023;
-            request.data[0].address_id = this.selectItem.address_id;
+    methods: {
+        getAddresses () {
+            let request = {
+                typeid: 23013,
+                data: [
+                    {
+                        account_id: this.$store.state.user.accountId,
+                        customer_no: (this.$route.query || {}).no || ''
+                    }
+                ]
+            };
+            this.shdzData = [];
+            this.loading = true;
+            this.$http.PostXLASSETS(request).then(response => {
+                let { data } = response.data.result;
+                data.forEach(d => {
+                    this.shdzData.push({
+                        company: d.wh_name,
+                        name: d.manager_name,
+                        tel: d.manager_phone,
+                        address: d.address_detail,
+                        isDefault: d.address_status === 1,
+                        wh_id: d.wh_id,
+                        address_id: d.address_id,
+                        creador: d.user_name
+                    });
+                });
+                this.loading = false;
+            }, error => {
+                this.loading = false;
+                if ((error.data || {}).message) {
+                    this.$Message.error(error.data.message);
+                }
+            });
+        },
+        getWhs () {
+            let request = {
+                typeid: 23001,
+                data: [
+                    {
+                        account_id: this.$store.state.user.accountId
+                    }
+                ]
+            };
+            this.whData = [];
+            this.$http.PostXLASSETS(request).then(response => {
+                let { data } = response.data.result;
+                this.whData = data;
+            });
+        },
+        czClick () {},
+        saveSubmit (name) {
+            this.$refs[name].validate(valid => {
+                let request = {
+                    'typeid': 23014,
+                    'data': [
+                        {
+                            'account_id': this.$store.state.user.accountId,
+                            'wh_id': this.addadressform.company,
+                            'address_title': (this.whData.find(w => w.wh_id === this.addadressform.company) || {}).wh_name || '',
+                            'manager_name': this.addadressform.name,
+                            'manager_phone': this.addadressform.tel,
+                            'address_detail': this.addadressform.address
+                        }
+                    ]
+                };
+                if (valid) {
+                    if (this.status === 'edit') {
+                        request.typeid = 23023;
+                        request.data[0].address_id = this.selectItem.address_id;
+                        this.$http.UPDATEXLASSETS(request).then(response => {
+                            this.$Message.success('Success!');
+                            this.getAddresses();
+                            this.addadressmodal = false;
+                        }, error => {
+                            if (error.data.code === 0) {
+                                this.$Message.success('Success!');
+                                this.getAddresses();
+                                this.addadressmodal = false;
+                            }
+                        });
+                    } else if (this.status === 'new') {
+                        this.$http.SETXLASSETS(request).then(response => {
+                            this.$Message.success('Success!');
+                            this.getAddresses();
+                            this.addadressmodal = false;
+                        }, error => {
+                            if (error.data.code === 0) {
+                                this.$Message.success('Success!');
+                                this.getAddresses();
+                                this.addadressmodal = false;
+                            }
+                        });
+                    }
+                } else {
+                    this.$Message.error('请按规定填写内容!');
+                }
+            });
+        },
+        dropDownClick (name) {
+            if (name === 'edit') {
+                this.edit();
+            } else if (name === 'default') {
+                this.setDefault();
+            } else if (name === 'delete') {
+                let _this = this;
+                this.$confirm('此操作将永久删除该地址, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    _this.delete();
+                }).catch(() => {
+                    _this.$Message.error('已取消删除！');
+                });
+            }
+        },
+        edit () {
+            this.status = 'edit';
+            this.addadressform = {...this.selectItem};
+            this.addadressform.company = (this.whData.find(w => w.wh_id === this.selectItem.wh_id) || {}).wh_id;
+            this.addadressmodal = true;
+        },
+        setDefault () {
+            let request = {
+                'typeid': 23024,
+                'data': [
+                    {
+                        'account_id': this.$store.state.user.accountId,
+                        'address_id': this.selectItem.address_id,
+                        'wh_id': this.selectItem.wh_id
+                    }
+                ]
+            };
             this.$http.UPDATEXLASSETS(request).then(response => {
-              this.$Message.success("Success!");
-              this.getAddresses();
-              this.addadressmodal = false;
-            },error => {
-              if(error.data.code === 0){
-                this.$Message.success("Success!");
+                this.$Message.success('设置成功!');
                 this.getAddresses();
-                this.addadressmodal = false;
-              }
-            })
-          }else if(this.status === 'new'){
-            this.$http.SETXLASSETS(request).then(response => {
-              this.$Message.success("Success!");
-              this.getAddresses();
-              this.addadressmodal = false;
-            },error => {
-              if(error.data.code === 0){
-                this.$Message.success("Success!");
+            }, error => {
+                if (error.data.code === 0) {
+                    this.$Message.success('设置成功!');
+                    this.getAddresses();
+                }
+            });
+        },
+        delete () {
+            let request = {
+                'typeid': 23022,
+                'data': [
+                    {
+                        'account_id': this.$store.state.user.accountId,
+                        'address_id': this.selectItem.address_id
+                    }
+                ]
+            };
+            this.$http.DELXLASSETS(request).then(response => {
+                this.$Message.success('删除成功!');
                 this.getAddresses();
-                this.addadressmodal = false;
-              }
-            })
-          }
-        } else {
-          this.$Message.error("请按规定填写内容!");
+            }, error => {
+                if (error.data.code === 0) {
+                    this.$Message.success('删除成功!');
+                    this.getAddresses();
+                } else {
+                    if (error.data.message) this.$Message.error(error.data.message);
+                }
+            });
+        },
+        changeSelectItem (item) {
+            this.selectItem = item;
+        },
+        createNewAddr () {
+            this.status = 'new';
+            this.addadressmodal = true;
+        },
+        seeAll () {
+            this.$router.push({path: '/setting/addressManage'});
+            this.getAddresses();
         }
-      });
     },
-    dropDownClick(name){
-      if(name === 'edit'){
-        this.edit();
-      }else if(name === 'default'){
-        this.setDefault();
-      }else if(name === 'delete'){
-        let _this = this;
-        this.$confirm('此操作将永久删除该地址, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          _this.delete();
-        }).catch(()=>{
-          _this.$Message.error('已取消删除！');
-        });
-      }
-    },
-    edit(){
-      this.status = 'edit';
-      this.addadressform = {...this.selectItem};
-      this.addadressform.company = (this.whData.find(w => w.wh_id === this.selectItem.wh_id)||{}).wh_id;
-      this.addadressmodal = true;
-    },
-    setDefault(){
-      let request = {
-        "typeid": 23024,
-        "data": [
-          {
-            "account_id": this.$store.state.user.accountId,
-            "address_id": this.selectItem.address_id,
-            "wh_id": this.selectItem.wh_id
-          }
-        ]
-      };
-      this.$http.UPDATEXLASSETS(request).then(response =>{
-        this.$Message.success("设置成功!");
+    mounted () {
         this.getAddresses();
-      },error => {
-        if(error.data.code === 0){
-          this.$Message.success("设置成功!");
-          this.getAddresses();
+        this.getWhs();
+    },
+    computed: {
+        isFinance () {
+            if (this.$store.state.app.authority && this.$store.state.app.authority.length > 0 && this.$store.state.app.authority[0].role) {
+                return this.$store.state.app.authority[0].role.find(r => r === '财务');
+            }
         }
-      })
     },
-    delete(){
-      let request = {
-        "typeid": 23022,
-        "data": [
-          {
-            "account_id": this.$store.state.user.accountId,
-            "address_id": this.selectItem.address_id
-          }
-        ]
-      };
-      this.$http.DELXLASSETS(request).then(response =>{
-          this.$Message.success("删除成功!");
-          this.getAddresses();
-      },error => {
-        if(error.data.code === 0){
-          this.$Message.success("删除成功!");
-          this.getAddresses();
-        }else{
-          if(error.data.message) this.$Message.error(error.data.message);
+    watch: {
+        addadressmodal (nv) {
+            if (!nv) {
+                this.$refs.addadressform.resetFields();
+                this.form = {};
+                // this.addadressform = {
+                //   company: "",
+                //   name: "",
+                //   tel: "",
+                //   address: ""
+                // }
+            }
         }
-      })
-    },
-    changeSelectItem(item){
-      this.selectItem = item;
-    },       
-    createNewAddr(){
-      this.status = 'new';
-      this.addadressmodal = true;
-    },
-    seeAll(){
-      this.$router.push({path:'/setting/addressManage'});
-      this.getAddresses();
     }
-  },
-  mounted() {
-    this.getAddresses();
-    this.getWhs();
-  },
-  computed:{
-    isFinance(){
-      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
-        return this.$store.state.app.authority[0].role.find(r => r === '财务');
-      }
-    },
-  },
-  watch:{
-    addadressmodal(nv){
-      if(!nv){
-        this.$refs.addadressform.resetFields();
-        this.form = {}
-        // this.addadressform = {
-        //   company: "",
-        //   name: "",
-        //   tel: "",
-        //   address: ""
-        // }
-      }
-    },
-  }
 };
 </script>
 
