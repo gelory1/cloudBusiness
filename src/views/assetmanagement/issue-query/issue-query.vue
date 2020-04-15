@@ -413,22 +413,22 @@
 </template>
 
 <script>
-import sblbTale from "../../public-components/sblb_table.vue";
+import sblbTale from '../../public-components/sblb_table.vue';
 export default {
-  name: "deviceQuery",
+  name: 'deviceQuery',
   components: {
     sblbTale
   },
-  data() {
+  data () {
     return {
       status: [
         {
           index: 0,
-          val: "待审批"
+          val: '待审批'
         },
         {
           index: 1,
-          val: "已审批"
+          val: '已审批'
         }
       ],
       zkSum: 0,
@@ -437,49 +437,49 @@ export default {
       menudata: [],
       rkdj_columns: [
         {
-          title: "单据编号",
-          key: "djbh",
-          align: "center"
+          title: '单据编号',
+          key: 'djbh',
+          align: 'center'
         },
         {
-          title: "入库类别",
-          key: "rklb",
-          align: "center"
+          title: '入库类别',
+          key: 'rklb',
+          align: 'center'
         },
         {
-          title: "入库日期",
-          key: "rkrq",
-          align: "center"
+          title: '入库日期',
+          key: 'rkrq',
+          align: 'center'
         },
         {
-          title: "订单编号",
-          key: "ddbh",
-          align: "center",
+          title: '订单编号',
+          key: 'ddbh',
+          align: 'center',
           render: (h, params) => {
-            let texts = "";
+            let texts = '';
             if (params.row.ddbh !== null && params.row.ddbh !== undefined) {
               if (params.row.ddbh.length > 25) {
-                texts = params.row.ddbh.substring(0, 25) + "...";
+                texts = params.row.ddbh.substring(0, 25) + '...';
               } else {
                 texts = params.row.ddbh;
               }
             }
             return h(
-              "Tooltip",
+              'Tooltip',
               {
                 props: {
-                  placement: "top"
+                  placement: 'top'
                 }
               },
               [
                 texts,
                 h(
-                  "span",
+                  'span',
                   {
-                    slot: "content",
+                    slot: 'content',
                     style: {
-                      whiteSpace: "normal",
-                      wordBreak: "break-all"
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-all'
                     }
                   },
                   params.row.ddbh
@@ -489,41 +489,41 @@ export default {
           }
         },
         {
-          title: "客户名称",
-          key: "khmc",
-          align: "center"
+          title: '客户名称',
+          key: 'khmc',
+          align: 'center'
         },
         {
-          title: "设备数量",
-          key: "sbsl",
-          align: "center"
+          title: '设备数量',
+          key: 'sbsl',
+          align: 'center'
         },
         {
-          title: "状态",
-          key: "zt",
-          align: "center",
+          title: '状态',
+          key: 'zt',
+          align: 'center',
           render: (h, params) => {
-            return h("div", [
+            return h('div', [
               h(
-                "Button",
+                'Button',
                 {
                   props: {
                     // type: "",
-                    size: "small"
+                    size: 'small'
                   },
                   style: {
                     backgroundColor:
-                      params.row.zt === "待审批"
-                        ? "#FDF6EC"
-                        : params.row.zt === "已审批"
-                        ? "#F0F9EC"
-                        : "#F4F4F5",
+                      params.row.zt === '待审批'
+                        ? '#FDF6EC'
+                        : params.row.zt === '已审批'
+                          ? '#F0F9EC'
+                          : '#F4F4F5',
                     color:
-                      params.row.zt === "待审批"
-                        ? "#E7A440"
-                        : params.row.zt === "已审批"
-                        ? "#78C950"
-                        : "#7D7F82"
+                      params.row.zt === '待审批'
+                        ? '#E7A440'
+                        : params.row.zt === '已审批'
+                          ? '#78C950'
+                          : '#7D7F82'
                   }
                 },
                 params.row.zt
@@ -532,23 +532,23 @@ export default {
           }
         },
         {
-          title: "操作",
-          key: "action",
+          title: '操作',
+          key: 'action',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (h, params) => {
-            return h("div", [
+            return h('div', [
               h(
-                "span",
+                'span',
                 {
                   props: {
-                    type: "primary",
-                    size: "small"
+                    type: 'primary',
+                    size: 'small'
                   },
                   style: {
-                    marginLeft: "3px",
-                    color: "#3896f5 ",
-                    cursor: "pointer"
+                    marginLeft: '3px',
+                    color: '#3896f5 ',
+                    cursor: 'pointer'
                   },
                   on: {
                     click: () => {
@@ -577,16 +577,16 @@ export default {
                       });
                       this.getDevices(params.row.data.order_no[0]);
                       this.rkxqmodal = true;
-                      this.tabDeviceName1 = "name1";
+                      this.tabDeviceName1 = 'name1';
                       this.devicePageNum = 1;
                       this.getDevicesList(1);
                       this.$nextTick(() => {
-                        this.$refs["rktable"].objData[0]._isHighlight = true;
+                        this.$refs['rktable'].objData[0]._isHighlight = true;
                       });
                     }
                   }
                 },
-                "查看明细"
+                '查看明细'
               )
             ]);
           }
@@ -594,54 +594,54 @@ export default {
       ],
       rkdj_data: [
         {
-          zt: "待审批"
+          zt: '待审批'
         }
       ],
       ckdj_columns: [
         {
-          title: "单据编号",
-          key: "djbh",
-          align: "center"
+          title: '单据编号',
+          key: 'djbh',
+          align: 'center'
         },
         {
-          title: "出库类别",
-          key: "cklb",
-          align: "center"
+          title: '出库类别',
+          key: 'cklb',
+          align: 'center'
         },
         {
-          title: "出库日期",
-          key: "ckrq",
-          align: "center"
+          title: '出库日期',
+          key: 'ckrq',
+          align: 'center'
         },
         {
-          title: "订单编号",
-          key: "ddbh",
-          align: "center",
+          title: '订单编号',
+          key: 'ddbh',
+          align: 'center',
           render: (h, params) => {
-            let texts = "";
+            let texts = '';
             if (params.row.ddbh !== null && params.row.ddbh !== undefined) {
               if (params.row.ddbh.length > 25) {
-                texts = params.row.ddbh.substring(0, 25) + "...";
+                texts = params.row.ddbh.substring(0, 25) + '...';
               } else {
                 texts = params.row.ddbh;
               }
             }
             return h(
-              "Tooltip",
+              'Tooltip',
               {
                 props: {
-                  placement: "top"
+                  placement: 'top'
                 }
               },
               [
                 texts,
                 h(
-                  "span",
+                  'span',
                   {
-                    slot: "content",
+                    slot: 'content',
                     style: {
-                      whiteSpace: "normal",
-                      wordBreak: "break-all"
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-all'
                     }
                   },
                   params.row.ddbh
@@ -651,41 +651,41 @@ export default {
           }
         },
         {
-          title: "客户名称",
-          key: "khmc",
-          align: "center"
+          title: '客户名称',
+          key: 'khmc',
+          align: 'center'
         },
         {
-          title: "设备数量",
-          key: "sbsl",
-          align: "center"
+          title: '设备数量',
+          key: 'sbsl',
+          align: 'center'
         },
         {
-          title: "状态",
-          key: "zt",
-          align: "center",
+          title: '状态',
+          key: 'zt',
+          align: 'center',
           render: (h, params) => {
-            return h("div", [
+            return h('div', [
               h(
-                "Button",
+                'Button',
                 {
                   props: {
                     // type: "",
-                    size: "small"
+                    size: 'small'
                   },
                   style: {
                     backgroundColor:
-                      params.row.zt === "待审批"
-                        ? "#FDF6EC"
-                        : params.row.zt === "已审批"
-                        ? "#F0F9EC"
-                        : "#F4F4F5",
+                      params.row.zt === '待审批'
+                        ? '#FDF6EC'
+                        : params.row.zt === '已审批'
+                          ? '#F0F9EC'
+                          : '#F4F4F5',
                     color:
-                      params.row.zt === "待审批"
-                        ? "#E7A440"
-                        : params.row.zt === "已审批"
-                        ? "#78C950"
-                        : "#7D7F82"
+                      params.row.zt === '待审批'
+                        ? '#E7A440'
+                        : params.row.zt === '已审批'
+                          ? '#78C950'
+                          : '#7D7F82'
                   }
                 },
                 params.row.zt
@@ -694,23 +694,23 @@ export default {
           }
         },
         {
-          title: "操作",
-          key: "action",
+          title: '操作',
+          key: 'action',
           width: 150,
-          align: "center",
+          align: 'center',
           render: (h, params) => {
-            return h("div", [
+            return h('div', [
               h(
-                "span",
+                'span',
                 {
                   props: {
-                    type: "primary",
-                    size: "small"
+                    type: 'primary',
+                    size: 'small'
                   },
                   style: {
-                    marginLeft: "3px",
-                    color: "#3896f5 ",
-                    cursor: "pointer"
+                    marginLeft: '3px',
+                    color: '#3896f5 ',
+                    cursor: 'pointer'
                   },
                   on: {
                     click: () => {
@@ -739,16 +739,16 @@ export default {
                       });
                       this.getDevices(params.row.data.order_no[0]);
                       this.ckxqmodal = true;
-                      this.tabDeviceName2 = "name1";
+                      this.tabDeviceName2 = 'name1';
                       this.devicePageNum = 1;
                       this.getDevicesList(1);
                       this.$nextTick(() => {
-                        this.$refs["cktable"].objData[0]._isHighlight = true;
+                        this.$refs['cktable'].objData[0]._isHighlight = true;
                       });
                     }
                   }
                 },
-                "查看明细"
+                '查看明细'
               )
             ]);
           }
@@ -756,50 +756,50 @@ export default {
       ],
       ckdj_data: [
         {
-          zt: "入库"
+          zt: '入库'
         }
       ],
       device_columns1: [
         {
-          title: "订单编号",
-          key: "ddbh"
+          title: '订单编号',
+          key: 'ddbh'
         }
       ],
       device_columns: [
         {
-          title: "存货编码",
-          key: "chbm",
-          align: "center"
+          title: '存货编码',
+          key: 'chbm',
+          align: 'center'
         },
         {
-          title: "存货名称",
-          key: "chmc",
-          align: "center",
+          title: '存货名称',
+          key: 'chmc',
+          align: 'center',
           render: (h, params) => {
-            let texts = "";
+            let texts = '';
             if (params.row.chmc !== null && params.row.chmc !== undefined) {
               if (params.row.chmc.length > 20) {
-                texts = params.row.chmc.substring(0, 20) + "...";
+                texts = params.row.chmc.substring(0, 20) + '...';
               } else {
                 texts = params.row.chmc;
               }
             }
             return h(
-              "Tooltip",
+              'Tooltip',
               {
                 props: {
-                  placement: "top"
+                  placement: 'top'
                 }
               },
               [
                 texts,
                 h(
-                  "span",
+                  'span',
                   {
-                    slot: "content",
+                    slot: 'content',
                     style: {
-                      whiteSpace: "normal",
-                      wordBreak: "break-all"
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-all'
                     }
                   },
                   params.row.chmc
@@ -809,34 +809,34 @@ export default {
           }
         },
         {
-          title: "规格型号",
-          key: "ggxh",
-          align: "center",
+          title: '规格型号',
+          key: 'ggxh',
+          align: 'center',
           render: (h, params) => {
-            let texts = "";
+            let texts = '';
             if (params.row.ggxh !== null && params.row.ggxh !== undefined) {
               if (params.row.ggxh.length > 25) {
-                texts = params.row.ggxh.substring(0, 25) + "...";
+                texts = params.row.ggxh.substring(0, 25) + '...';
               } else {
                 texts = params.row.ggxh;
               }
             }
             return h(
-              "Tooltip",
+              'Tooltip',
               {
                 props: {
-                  placement: "top"
+                  placement: 'top'
                 }
               },
               [
                 texts,
                 h(
-                  "span",
+                  'span',
                   {
-                    slot: "content",
+                    slot: 'content',
                     style: {
-                      whiteSpace: "normal",
-                      wordBreak: "break-all"
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-all'
                     }
                   },
                   params.row.ggxh
@@ -846,9 +846,9 @@ export default {
           }
         },
         {
-          title: "计量单位",
-          key: "jldw",
-          align: "center"
+          title: '计量单位',
+          key: 'jldw',
+          align: 'center'
         },
         // {
         //   title:"发货批次",
@@ -872,67 +872,67 @@ export default {
         //     }
         // },
         {
-          title: "数量",
-          key: "sl",
-          align: "center"
+          title: '数量',
+          key: 'sl',
+          align: 'center'
         }
       ],
       indevice_data1: [
         {
-          ddbh: ""
+          ddbh: ''
         }
       ],
       indevice_data: [
         {
-          chbm: "8888888"
+          chbm: '8888888'
         }
       ],
       outdevice_data1: [],
       outdevice_data: [
         {
-          chbm: "56"
+          chbm: '56'
         }
       ],
       djxx: {
-        cklb: "121",
-        ckrq: "",
-        ck: "",
-        khmc: "",
-        ddbh: "",
-        sbsl: "",
-        shr: "",
-        shsj: "2019-9-00",
-        adress: "",
-        ioBillId: ""
+        cklb: '121',
+        ckrq: '',
+        ck: '',
+        khmc: '',
+        ddbh: '',
+        sbsl: '',
+        shr: '',
+        shsj: '2019-9-00',
+        adress: '',
+        ioBillId: ''
       },
       cpxhpz: this.$option.asset.query,
       rksbxq: [
         {
-          val: "12"
+          val: '12'
         },
         {
-          val: "123224"
+          val: '123224'
         }
       ],
       cksbxq: [
         {
-          val: "12"
+          val: '12'
         },
         {
-          val: "123224"
+          val: '123224'
         }
       ],
       tooptipShow: false,
       ckxqmodal: false,
       rkxqmodal: false,
-      menuitem: "所有仓库",
+      menuitem: '所有仓库',
       sblb_data: [],
-      djbh: "00000000000",
-      count: "8",
-      ck_current_index: "",
+      djbh: '00000000000',
+      count: '8',
+      ck_current_index: '',
       cktype_current_index: 0,
-      tabName: "name1",
-      inputVal: "",
+      tabName: 'name1',
+      inputVal: '',
       inLoading: false,
       outLoading: false,
       hasloadout: false,
@@ -940,70 +940,70 @@ export default {
       moreShow: false,
       filterStatus: false,
       stausMap: {
-        0: "待审批",
-        1: "已审批",
-        2: "已执行"
+        0: '待审批',
+        1: '已审批',
+        2: '已执行'
       },
-      selectedprocode: "",
-      selectedWhid: "",
+      selectedprocode: '',
+      selectedWhid: '',
       deliveryBatch: [
         {
-          name: "仓库1",
-          value: "1"
+          name: '仓库1',
+          value: '1'
         },
         {
-          name: "仓库2",
-          value: "2"
+          name: '仓库2',
+          value: '2'
         }
       ],
       sblb_columns: [
         {
-          title: "条码",
-          key: "tm"
+          title: '条码',
+          key: 'tm'
         },
         {
-          title: "存货编码",
-          key: "chbm"
+          title: '存货编码',
+          key: 'chbm'
         },
         {
-          title: "存货名称",
-          key: "chmc"
+          title: '存货名称',
+          key: 'chmc'
         },
         {
-          title: "规格型号",
-          key: "ggxh"
+          title: '规格型号',
+          key: 'ggxh'
         },
         {
-          title: "计量单位",
-          key: "jldw"
+          title: '计量单位',
+          key: 'jldw'
         },
         {
-          title: "箱码",
-          key: "xm"
+          title: '箱码',
+          key: 'xm'
         },
         {
-          title: "状态",
-          key: "zt"
+          title: '状态',
+          key: 'zt'
         },
         {
-          title: "最新操作时间",
-          key: "newtime",
+          title: '最新操作时间',
+          key: 'newtime',
           width: 150
         }
       ],
       sblb_data: [],
       mapStatus: this.$option.asset.deviceStatusMap,
       cusfilterItem: {
-        djbh: "",
+        djbh: '',
         // ddbh: "",
-        khmc: "",
-        cklb: "",
-        rklb: "",
-        ggxh: "",
-        htbh: "",
-        zt: "",
-        startTime: "",
-        endTime: ""
+        khmc: '',
+        cklb: '',
+        rklb: '',
+        ggxh: '',
+        htbh: '',
+        zt: '',
+        startTime: '',
+        endTime: ''
       },
       startOption: {
         disabledDate: time => {
@@ -1026,44 +1026,44 @@ export default {
       inPageNum: 1,
       outPageNum: 1,
       devicePageNum: 1,
-      tableHeight: "",
-      tabDeviceName2: "name1",
-      tabDeviceName1: "name1",
+      tableHeight: '',
+      tabDeviceName2: 'name1',
+      tabDeviceName1: 'name1',
       filterStatus: false,
-      completeValue: ""
+      completeValue: ''
     };
   },
   methods: {
-    tooltipClick(side) {
-      if (side === "inside") {
+    tooltipClick (side) {
+      if (side === 'inside') {
         this.tooptipShow = !this.tooptipShow;
-      } else if (side === "outside") {
+      } else if (side === 'outside') {
         if (this.tooptipShow) this.tooptipShow = false;
       }
     },
-    rkdjrowClick() {
+    rkdjrowClick () {
       var _self = this;
     },
-    ckdjrowClick() {
-      alert("出库");
+    ckdjrowClick () {
+      alert('出库');
     },
-    selectClick(index) {
+    selectClick (index) {
       var _self = this;
       _self.tooptipShow = false;
       this.cktype_current_index = index;
       this.getMenuList(index);
-      this.ck_current_index = "";
+      this.ck_current_index = '';
       this.getProductList(1);
     },
-    getMenuList(index) {
-      if (index == "0") {
-        this.menuitem = "所有仓库";
-      } else if (index == "1") {
-        this.menuitem = "成品库";
-      } else if (index == "2") {
-        this.menuitem = "工程程物资库";
-      } else if (index == "3") {
-        this.menuitem = "固定资产库";
+    getMenuList (index) {
+      if (index == '0') {
+        this.menuitem = '所有仓库';
+      } else if (index == '1') {
+        this.menuitem = '成品库';
+      } else if (index == '2') {
+        this.menuitem = '工程程物资库';
+      } else if (index == '3') {
+        this.menuitem = '固定资产库';
       }
       let request = {
         typeid: 23001,
@@ -1089,44 +1089,41 @@ export default {
         // this.selecttwoClick(this.ck_current_index||0);
       });
     },
-    selecttwoClick(index) {
+    selecttwoClick (index) {
       this.ck_current_index = index;
       this.getProductList(1);
       // if (this.tabName !== "name1") this.tabName = "name1";
     },
-    rkbhClick(p) {
-      if (p.ddbh !== "") this.getDevices(p.ddbh);
+    rkbhClick (p) {
+      if (p.ddbh !== '') this.getDevices(p.ddbh);
     },
-    ckbhClick(p) {
-      if (p.ddbh !== "") this.getDevices(p.ddbh);
+    ckbhClick (p) {
+      if (p.ddbh !== '') this.getDevices(p.ddbh);
     },
-    getProductList(p) {
+    getProductList (p) {
       let request = {
         typeid: 23004,
         data: [
           {
             account_id: this.$store.state.user.accountId,
             wh_type: this.cpxhpz[this.cktype_current_index].id,
-            wh_id:
-              this.menudata &&
-              this.menudata.length > 0 &&
-              this.ck_current_index !== ""
-                ? this.menudata[this.ck_current_index].wh_id
-                : undefined,
-            keyword: this.inputVal === "" ? undefined : this.inputVal,
+            wh_id: this.menudata && this.menudata.length > 0 && this.ck_current_index !== ''
+              ? this.menudata[this.ck_current_index].logic_wh_id
+              : undefined,
+            keyword: this.inputVal === '' ? undefined : this.inputVal,
             page_num: p,
             page_size: 10,
-            allocation_type: this.tabName === "name1" ? 1 : 0,
+            allocation_type: this.tabName === 'name1' ? 1 : 0,
             allocation_no:
-              this.cusfilterItem.djbh === ""
+              this.cusfilterItem.djbh === ''
                 ? undefined
                 : this.cusfilterItem.djbh,
             order_no:
-              this.cusfilterItem.ddbh === ""
+              this.cusfilterItem.ddbh === ''
                 ? undefined
                 : this.cusfilterItem.ddbh,
             agent_name:
-              this.cusfilterItem.khmc === ""
+              this.cusfilterItem.khmc === ''
                 ? undefined
                 : this.cusfilterItem.khmc,
             // product_models:
@@ -1138,7 +1135,7 @@ export default {
             //     ? undefined
             //     : this.cusfilterItem.htbh,
             approval_status:
-              this.cusfilterItem.zt === "" ? undefined : this.cusfilterItem.zt
+              this.cusfilterItem.zt === '' ? undefined : this.cusfilterItem.zt
             // start_time:
             //   this.cusfilterItem.startTime === ''
             //     ? undefined
@@ -1150,7 +1147,7 @@ export default {
           }
         ]
       };
-      if (this.tabName === "name1") {
+      if (this.tabName === 'name1') {
         this.inLoading = true;
         this.rkdj_data = [];
       } else {
@@ -1160,7 +1157,7 @@ export default {
       this.$http.PostXLASSETS(request).then(
         response => {
           let res = response.data.result.data;
-          if (this.tabName === "name1") {
+          if (this.tabName === 'name1') {
             this.inLoading = true;
             this.rkdj_data = [];
             this.zkSum = res[0].sum;
@@ -1178,13 +1175,13 @@ export default {
             item.sbsl = data.product_count;
             item.zt = this.stausMap[data.allocation_status];
             item.data = data;
-            if (this.tabName === "name1") {
-              item.rklb = "成品入库";
+            if (this.tabName === 'name1') {
+              item.rklb = '成品入库';
               item.rkrq = data.allocation_ts;
               this.rkdj_data.push(item);
               this.inLoading = false;
             } else {
-              item.cklb = "出库发货";
+              item.cklb = '出库发货';
               item.ckrq = data.allocation_ts;
               this.ckdj_data.push(item);
               this.outLoading = false;
@@ -1192,7 +1189,7 @@ export default {
           });
         },
         error => {
-          if (this.tabName === "name1") {
+          if (this.tabName === 'name1') {
             this.inLoading = false;
             this.zkSum = 0;
           } else {
@@ -1202,7 +1199,7 @@ export default {
         }
       );
     },
-    getDevices(order_id) {
+    getDevices (order_id) {
       let param = {
         typeid: 23018,
         data: [
@@ -1212,13 +1209,13 @@ export default {
           }
         ]
       };
-      if (this.tabName === "name1") {
+      if (this.tabName === 'name1') {
         this.indevice_data = [];
       } else {
         this.outdevice_data = [];
       }
       this.$http.PostXLASSETS(param).then(res => {
-        if (this.tabName === "name1") {
+        if (this.tabName === 'name1') {
           this.indevice_data = [];
         } else {
           this.outdevice_data = [];
@@ -1230,7 +1227,7 @@ export default {
           item.ggxh = data.product_models;
           item.jldw = data.product_unit;
           item.sl = data.quantity_shipped;
-          if (this.tabName === "name1") {
+          if (this.tabName === 'name1') {
             this.indevice_data.push(item);
           } else {
             this.outdevice_data.push(item);
@@ -1238,7 +1235,7 @@ export default {
         });
       });
     },
-    getDevicesList(p) {
+    getDevicesList (p) {
       let request = {
         typeid: 23011,
         data: [
@@ -1269,35 +1266,34 @@ export default {
         });
       });
     },
-    search(val) {
+    search (val) {
       let index =
         this.cpxhpz[this.cktype_current_index].id === undefined
           ? 0
           : this.cpxhpz[this.cktype_current_index].id + 1;
       this.getMenuList(index);
-      if (this.$refs["menu"].currentActiveName !== -1)
-        this.$refs["menu"].currentActiveName = -1;
-      this.ck_current_index = "";
+      if (this.$refs['menu'].currentActiveName !== -1) { this.$refs['menu'].currentActiveName = -1; }
+      this.ck_current_index = '';
       this.getProductList(1);
     },
-    changeTab(p) {
-      if (p === "name2" && !this.hasloadout) {
+    changeTab (p) {
+      if (p === 'name2' && !this.hasloadout) {
         this.getProductList(1);
       }
       this.hasloadout = true;
     },
-    handleSubmitgl(name) {
+    handleSubmitgl (name) {
       let status = true;
       for (let key in this.cusfilterItem) {
-        if (this.cusfilterItem[key] !== "" && this.cusfilterItem[key] !== 0) {
+        if (this.cusfilterItem[key] !== '' && this.cusfilterItem[key] !== 0) {
           status = false;
         }
       }
       if (status) {
         this.filterStatus = false;
-        $(".cor").css({ color: "#000000" });
+        $('.cor').css({ color: '#000000' });
         this.glShow = false;
-        if (this.tabName === "name1") {
+        if (this.tabName === 'name1') {
           this.getProductList(1);
         } else {
           this.getProductList(1);
@@ -1308,85 +1304,84 @@ export default {
         if (valid) {
           this.filterStatus = true;
           this.glShow = false;
-          if (this.tabName === "name1") {
+          if (this.tabName === 'name1') {
             this.getProductList(1);
           } else {
             this.getProductList(1);
           }
-          this.$Message.success("查询成功！");
+          this.$Message.success('查询成功！');
         } else {
-          this.$Message.error("查询失败，请重试!");
+          this.$Message.error('查询失败，请重试!');
         }
       });
     },
-    handleReset(name) {
+    handleReset (name) {
       this.filterStatus = false;
       for (let key in this.cusfilterItem) {
-        this.cusfilterItem[key] = "";
+        this.cusfilterItem[key] = '';
       }
     },
-    glkhClick() {
+    glkhClick () {
       this.glShow = !this.glShow;
       this.moreShow = false;
       if (this.glShow || this.filterStatus) {
-        $(".cor").css({ color: "#4a9af5" });
-        $(".cor1").css({ color: "#000000" });
+        $('.cor').css({ color: '#4a9af5' });
+        $('.cor1').css({ color: '#000000' });
       } else {
-        $(".cor").css({ color: "#000000" });
+        $('.cor').css({ color: '#000000' });
       }
     },
-    moreClick() {
+    moreClick () {
       this.moreShow = !this.moreShow;
       this.glShow = false;
       if (this.moreShow) {
-        $(".cor1").css({ color: "#4a9af5" });
-        $(".cor").css({ color: "#000000" });
+        $('.cor1').css({ color: '#4a9af5' });
+        $('.cor').css({ color: '#000000' });
       }
     },
-    closeglClick() {
+    closeglClick () {
       this.glShow = false;
-      if (!this.filterStatus) $(".cor").css({ color: "#000000" });
+      if (!this.filterStatus) $('.cor').css({ color: '#000000' });
     },
-    goMenu(menu) {
+    goMenu (menu) {
       let whId =
-        (this.menudata.find(m => m.wh_name === menu) || {}).wh_id || "";
-      this.$refs["menu"].currentActiveName =
+        (this.menudata.find(m => m.wh_name === menu) || {}).wh_id || '';
+      this.$refs['menu'].currentActiveName =
         this.menudata.findIndex(m => m.wh_id === whId) || 0;
-      this.completeValue = "";
+      this.completeValue = '';
       this.$nextTick(() => {
         this.ck_current_index =
           this.menudata.findIndex(m => m.wh_id === whId) || 0;
         let scroll =
-          this.$refs["menu"].$children[0].$children[this.ck_current_index + 2]
+          this.$refs['menu'].$children[0].$children[this.ck_current_index + 2]
             .$el.offsetTop - 200;
-        this.$refs["menu"].updateActiveName();
-        this.$refs["menu"].updateActiveName();
-        this.$refs["menuContainer"].scrollTo(0, scroll);
+        this.$refs['menu'].updateActiveName();
+        this.$refs['menu'].updateActiveName();
+        this.$refs['menuContainer'].scrollTo(0, scroll);
         this.getProductList(1);
       });
     },
-    searchMenu() {
-      if (this.completeData.length > 0)
-        this.goMenu(this.completeData[0].wh_name);
+    searchMenu () {
+      if (this.completeData.length > 0) { this.goMenu(this.completeData[0].wh_name); }
     }
   },
-  mounted() {
+  mounted () {
     this.selectClick(0);
     this.tableHeight = document.body.scrollHeight - 300;
   },
   computed: {
-    scrollHeight() {
+    scrollHeight () {
       let h = 0;
       // h = (window.screen.height-330)+'px'
-      h = document.body.scrollHeight - 185 + "px";
+      h = document.body.scrollHeight - 185 + 'px';
       return h;
     },
-    completeData() {
+    completeData () {
       let data = [];
       if (
         this.menudata &&
         this.menudata.length > 0 &&
-        this.completeValue !== ""
+        this.completeValue !== ''
       ) {
         data = JSON.parse(JSON.stringify(this.menudata)).filter(
           i => i.wh_name.indexOf(this.completeValue) !== -1
@@ -1396,9 +1391,9 @@ export default {
     }
   },
   watch: {
-    tabName(nv) {
+    tabName (nv) {
       this.getProductList(1);
-      if (nv === "name1") {
+      if (nv === 'name1') {
         this.inPageNum = 1;
       } else {
         this.outPageNum = 1;

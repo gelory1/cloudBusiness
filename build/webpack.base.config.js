@@ -93,35 +93,35 @@ module.exports = {
         }
     },
 
-    devServer: {
-        proxy: {
-            '/public/api/': {
-                target: 'http://47.110.198.188:31380',
-                changeOrigin: true,
-                secure: false
-            },
-            '/api/': {
-                target: 'http://47.110.198.188:31380',
-                changeOrigin: true,
-                secure: false
-            }
-        }
-    },
-    // 测试服
     // devServer: {
     //     proxy: {
     //         '/public/api/': {
-    //             target: 'http://10.0.17.213:31380',
+    //             target: 'http://47.110.198.188:31380',
     //             changeOrigin: true,
     //             secure: false
     //         },
     //         '/api/': {
-    //             target: 'http://10.0.17.213:31380',
+    //             target: 'http://47.110.198.188:31380',
     //             changeOrigin: true,
     //             secure: false
     //         }
     //     }
     // },
+    // 测试服
+    devServer: {
+        proxy: {
+            '/public/api/': {
+                target: 'http://221.181.214.168:10028',
+                changeOrigin: true,
+                secure: false
+            },
+            '/api/': {
+                target: 'http://221.181.214.168:10028',
+                changeOrigin: true,
+                secure: false
+            }
+        }
+    },
     // devServer: {
     //     proxy: {
     //         '/public/api/': {
