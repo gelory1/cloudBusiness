@@ -162,12 +162,12 @@
 
 <script>
 export default {
-  name: "deliveryManage",
-  data() {
+  name: 'deliveryManage',
+  data () {
     return {
       fhStatus: this.$option.asset.deliveryStatus,
       statusColorMap: this.$option.asset.deliveryStatusColorMap,
-      inputVal: "",
+      inputVal: '',
       sum: 0,
       pageNum: 1,
       loading: false,
@@ -175,17 +175,17 @@ export default {
       moreShow: false,
       filterStatus: false,
       filterItem: {
-        customerName: "",
-        startTime: "",
-        endTime: "",
+        customerName: '',
+        startTime: '',
+        endTime: '',
         orderstart: 0,
         orderend: 0,
         setstart: 0,
         setend: 0,
         moneystart: 0,
         moneyend: 0,
-        prostart: "",
-        proend: ""
+        prostart: '',
+        proend: ''
       },
       startOption: {
         disabledDate: time => {
@@ -205,30 +205,30 @@ export default {
       },
       fh_columns: [
         {
-          type: "selection",
-          align: "center",
+          type: 'selection',
+          align: 'center',
           width: 80
         },
         {
-          key: "fabh",
-          title: "方案编号",
-          align: "center",
+          key: 'fabh',
+          title: '方案编号',
+          align: 'center',
           render: (h, params) => {
-            return h("div", [
+            return h('div', [
               h(
-                "a",
+                'a',
                 {
                   props: {},
                   on: {
                     click: () => {
                       let data = { ...params.row };
                       data.shipments_id = data.data.shipments_id;
-                      if(this.authority.find(a => a.id === 1004)){
+                      if (this.authority.find(a => a.id === 1004)) {
                         this.$router.push({
-                          name: "delivery_detail",
+                          name: 'delivery_detail',
                           query: data
                         });
-                      }else{
+                      } else {
                         this.$Message.error('权限不足！');
                       }
                     }
@@ -240,80 +240,80 @@ export default {
           }
         },
         {
-          key: "fqr",
-          title: "发起人",
-          align: "center"
+          key: 'fqr',
+          title: '发起人',
+          align: 'center'
         },
         {
-          key: "fqsj",
-          title: "发起时间",
-          align: "center"
+          key: 'fqsj',
+          title: '发起时间',
+          align: 'center'
         },
         {
-          key: "fqms",
-          title: "方案描述",
-          align: "center",
+          key: 'fqms',
+          title: '方案描述',
+          align: 'center',
           render: (h, params) => {
-              let texts = ''
-              if (params.row.fqms !== null) {
-                if ((params.row.fqms||'').length > 20) {
-                  texts = params.row.fqms.substring(0, 20) + '...'
-                } else {
-                  texts = params.row.fqms
-                }
+            let texts = '';
+            if (params.row.fqms !== null) {
+              if ((params.row.fqms || '').length > 20) {
+                texts = params.row.fqms.substring(0, 20) + '...';
+              } else {
+                texts = params.row.fqms;
               }
-              return h('Tooltip', {
-                props: {
-                  transfer: true
-                }
-              }, [
-                texts,
-                h('span', {
-                  slot: 'content',
-                  style: {
-                    whiteSpace: 'normal',
-                    wordBreak: 'break-all'
-                  }
-                }, params.row.fqms)
-              ])
             }
+            return h('Tooltip', {
+              props: {
+                transfer: true
+              }
+            }, [
+              texts,
+              h('span', {
+                slot: 'content',
+                style: {
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-all'
+                }
+              }, params.row.fqms)
+            ]);
+          }
         },
         {
-          key: "ddsl",
-          title: "订单数量",
-          align: "center"
+          key: 'ddsl',
+          title: '订单数量',
+          align: 'center'
         },
         {
-          key: "sbsl",
-          title: "设备数量",
-          align: "center"
+          key: 'sbsl',
+          title: '设备数量',
+          align: 'center'
         },
         {
-          key: "jexj",
-          title: "金额小计（元）",
-          align: "center"
+          key: 'jexj',
+          title: '金额小计（元）',
+          align: 'center'
         },
         {
-          key: "zt",
-          title: "状态",
-          align: "center",
-           render: (h, params) => {
-            return h("div", [
+          key: 'zt',
+          title: '状态',
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
               h(
-                "Button",
+                'Button',
                 {
                   props: {
-                    type: "ghost",
-                    size: "small"
+                    type: 'ghost',
+                    size: 'small'
                   },
                   style: {
                     backgroundColor: params.row.zt
                       ? this.statusColorMap[params.row.zt]
-                          .backgroundColor
-                      : "white",
+                        .backgroundColor
+                      : 'white',
                     color: params.row.zt
                       ? this.statusColorMap[params.row.zt].color
-                      : "#7D7F82"
+                      : '#7D7F82'
                   }
                 },
                 params.row.zt
@@ -323,22 +323,22 @@ export default {
         }
       ],
       fh_data: [],
-      tabName: "name1",
+      tabName: 'name1',
       filterStatus: false,
-      tableHeight: "",
+      tableHeight: ''
     };
   },
   methods: {
-    handleSubmitht(name){
+    handleSubmitht (name) {
       let status = true;
-      for(let key in this.filterItem){
-        if(this.filterItem[key] !== ''&&this.filterItem[key] !== 0){
+      for (let key in this.filterItem) {
+        if (this.filterItem[key] !== '' && this.filterItem[key] !== 0) {
           status = false;
         }
       }
-      if(status){
+      if (status) {
         this.filterStatus = false;
-        $(".cor").css({ color: "#000000" });
+        $('.cor').css({ color: '#000000' });
         this.glShow = false;
         this.getDeliveryList(1);
         return;
@@ -349,55 +349,55 @@ export default {
           this.glShow = false;
           this.getDeliveryList(1);
         } else {
-          this.$Message.error("Fail!");
+          this.$Message.error('Fail!');
         }
       });
     },
-    handleResetht(){
+    handleResetht () {
       this.filterStatus = false;
       for (let key in this.filterItem) {
-        if(key === 'orderstart'||key === 'orderend'||key === 'setstart'||key === 'setend'||key === 'moneystart'||key === 'moneyend'){
+        if (key === 'orderstart' || key === 'orderend' || key === 'setstart' || key === 'setend' || key === 'moneystart' || key === 'moneyend') {
           this.filterItem[key] = 0;
-        }else{
-          this.filterItem[key] = "";
+        } else {
+          this.filterItem[key] = '';
         }
       }
     },
-    tooltipClick(side) {
-      if (side === "inside") {
+    tooltipClick (side) {
+      if (side === 'inside') {
         this.tooptipShow = !this.tooptipShow;
-      } else if (side === "outside") {
+      } else if (side === 'outside') {
         if (this.tooptipShow) this.tooptipShow = false;
       }
     },
-    editClick(item) {
+    editClick (item) {
       if (
         item.data.shipments_status === 0 ||
         item.data.shipments_status === 3
       ) {
         item.shipments_id = item.data.shipments_id;
-        if(this.authority.find(a => a.id === 1006)){
+        if (this.authority.find(a => a.id === 1006)) {
           this.$router.push({
-            name: "delivery_detail2",
+            name: 'delivery_detail2',
             query: item
           });
-        }else{
+        } else {
           this.$Message.error('权限不足！');
         }
       } else {
-        this.$Message.error("当前状态不支持编辑！");
+        this.$Message.error('当前状态不支持编辑！');
       }
     },
-    addClick() {
-      if(this.authority.find(a => a.id === 1005)){
+    addClick () {
+      if (this.authority.find(a => a.id === 1005)) {
         this.$router.push({
-          path: "/assetmanage/delivery-manage/newbuild"
+          path: '/assetmanage/delivery-manage/newbuild'
         });
-      }else{
+      } else {
         this.$Message.error('权限不足！');
       }
     },
-    getDeliveryList(p) {
+    getDeliveryList (p) {
       let index = this.fhStatus.find(f => f.name === this.tabName).index - 1;
       let request = {
         typeid: 23019,
@@ -408,17 +408,17 @@ export default {
             page_size: 10,
             keyword: this.inputVal,
             shipments_status: index === -1 ? undefined : index,
-            agent_name:this.filterItem.customerName === "" ? undefined : ('%' + this.filterItem.customerName),
-            shipments_start_time:this.filterItem.startTime === "" ? undefined : this.filterItem.startTime.getFullYear() +"-" 
-              +(this.filterItem.startTime.getMonth() + 1) +"-" +this.filterItem.startTime.getDate() +" 00:00:00",
-            shipments_end_time:this.filterItem.endTime === "" ? undefined : this.filterItem.endTime.getFullYear() +"-"
-              +(this.filterItem.endTime.getMonth() + 1) +"-" +this.filterItem.endTime.getDate() +" 23:59:59",
-            order_count_start:this.filterItem.orderend === 0 ? undefined : this.filterItem.orderstart,
-            order_count_end:this.filterItem.orderend === 0 ? undefined : this.filterItem.orderend,
-            product_count_start:this.filterItem.setend === 0 ? undefined : this.filterItem.setstart,
-            product_count_end:this.filterItem.setend === 0 ? undefined : this.filterItem.setend,
-            money_start:this.filterItem.moneyend === 0 ? undefined : String(this.filterItem.moneystart),
-            money_end:this.filterItem.moneyend === 0 ? undefined : String(this.filterItem.moneyend),
+            agent_name: this.filterItem.customerName === '' ? undefined : ('%' + this.filterItem.customerName),
+            shipments_start_time: this.filterItem.startTime === '' ? undefined : this.filterItem.startTime.getFullYear() + '-' +
+              (this.filterItem.startTime.getMonth() + 1) + '-' + this.filterItem.startTime.getDate() + ' 00:00:00',
+            shipments_end_time: this.filterItem.endTime === '' ? undefined : this.filterItem.endTime.getFullYear() + '-' +
+              (this.filterItem.endTime.getMonth() + 1) + '-' + this.filterItem.endTime.getDate() + ' 23:59:59',
+            order_count_start: this.filterItem.orderend === 0 ? undefined : this.filterItem.orderstart,
+            order_count_end: this.filterItem.orderend === 0 ? undefined : this.filterItem.orderend,
+            product_count_start: this.filterItem.setend === 0 ? undefined : this.filterItem.setstart,
+            product_count_end: this.filterItem.setend === 0 ? undefined : this.filterItem.setend,
+            money_start: this.filterItem.moneyend === 0 ? undefined : String(this.filterItem.moneystart),
+            money_end: this.filterItem.moneyend === 0 ? undefined : String(this.filterItem.moneyend)
           }
         ]
       };
@@ -454,65 +454,65 @@ export default {
         }
       );
     },
-    changeTab() {
+    changeTab () {
       this.pageNum = 1;
       this.getDeliveryList(1);
     },
-    glkhClick() {
+    glkhClick () {
       this.glShow = !this.glShow;
       this.moreShow = false;
       if (this.glShow || this.filterStatus) {
-        $(".cor").css({ color: "#4a9af5" });
-        $(".cor1").css({ color: "#000000" });
+        $('.cor').css({ color: '#4a9af5' });
+        $('.cor1').css({ color: '#000000' });
       } else {
-        $(".cor").css({ color: "#000000" });
+        $('.cor').css({ color: '#000000' });
       }
     },
-    moreClick() {
+    moreClick () {
       this.moreShow = !this.moreShow;
       this.glShow = false;
       if (this.moreShow) {
-        $(".cor1").css({ color: "#4a9af5" });
-        $(".cor").css({ color: "#000000" });
+        $('.cor1').css({ color: '#4a9af5' });
+        $('.cor').css({ color: '#000000' });
       }
     },
-    closeglClick() {
+    closeglClick () {
       this.glShow = false;
-      if (!this.filterStatus) $(".cor").css({ color: "#000000" });
+      if (!this.filterStatus) $('.cor').css({ color: '#000000' });
     }
   },
-  mounted() {
+  mounted () {
     this.getDeliveryList(1);
   },
   computed: {
-    scrollHeight() {
+    scrollHeight () {
       let h = 0;
-      h = document.body.scrollHeight - 185 + "px";
+      h = document.body.scrollHeight - 185 + 'px';
       return h;
     },
-    authority(){
+    authority () {
       return this.$store.state.app.authority;
     }
   },
   watch: {
-    tabName() {
+    tabName () {
       this.changeTab();
     },
-    'filterItem.orderstart'(nv){
-      if(this.filterItem.orderend < nv){
-        this.filterItem.orderend = nv
+    'filterItem.orderstart' (nv) {
+      if (this.filterItem.orderend < nv) {
+        this.filterItem.orderend = nv;
       }
     },
-    'filterItem.setstart'(nv){
-      if(this.filterItem.setend < nv){
-        this.filterItem.setend = nv
+    'filterItem.setstart' (nv) {
+      if (this.filterItem.setend < nv) {
+        this.filterItem.setend = nv;
       }
     },
-    'filterItem.moneystart'(nv){
-      if(this.filterItem.moneyend < nv){
-        this.filterItem.moneyend = nv
+    'filterItem.moneystart' (nv) {
+      if (this.filterItem.moneyend < nv) {
+        this.filterItem.moneyend = nv;
       }
-    },
+    }
   }
 };
 </script>
