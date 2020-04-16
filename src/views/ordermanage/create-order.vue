@@ -822,7 +822,7 @@ export default {
         ) || {};
         let store =
         cusomer.warehouseList.find(
-          w => w.wh_id === this.formValidate.store.index
+          w => w.erp_wh_id === this.formValidate.store.index
         ) || {};
         if (store.addressList && store.addressList.length > 0) {
           store.addressList.forEach(a => {

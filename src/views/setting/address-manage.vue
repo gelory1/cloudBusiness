@@ -206,7 +206,7 @@ export default {
           'data': [
             {
               'account_id': this.$store.state.user.accountId,
-              'wh_id': this.addadressform.company,
+              'wh_id': (this.whData.find(w => w.wh_id === this.addadressform.company) || {}).logic_wh_id || '',
               'address_title': (this.whData.find(w => w.wh_id === this.addadressform.company) || {}).wh_name || '',
               'manager_name': this.addadressform.name,
               'manager_phone': this.addadressform.tel,
@@ -268,7 +268,7 @@ export default {
     edit () {
       this.status = 'edit';
       this.addadressform = {...this.selectItem};
-      this.addadressform.company = (this.whData.find(w => w.wh_id === this.selectItem.wh_id) || {}).wh_id;
+      this.addadressform.company = (this.whData.find(w => w.logic_wh_id === this.selectItem.wh_id) || {}).wh_id;
       this.addadressmodal = true;
     },
     setDefault () {
