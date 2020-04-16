@@ -754,6 +754,11 @@ export default {
               this.ck_current_index !== ''
                 ? this.menudata[this.ck_current_index].logic_wh_id
                 : undefined,
+            logic_wh_id: this.menudata &&
+              this.menudata.length > 0 &&
+              this.ck_current_index !== ''
+              ? this.menudata[this.ck_current_index].wh_id
+              : undefined,
             keyword: this.inputVal === '' ? undefined : this.inputVal,
             product_code:
               this.filterItem.chbm === '' ? undefined : this.filterItem.chbm, // 存货编码
@@ -804,7 +809,7 @@ export default {
               (this.menudata &&
               this.menudata.length > 0 &&
               this.ck_current_index !== ''
-                ? this.menudata[this.ck_current_index].wh_id
+                ? this.menudata[this.ck_current_index].logic_wh_id
                 : undefined) || this.selectedWhid,
             wh_type: this.cpxhpz[this.cktype_current_index].id,
             product_code: this.filterItem.chbm === ''
