@@ -22,7 +22,6 @@
           </Row>
           <Row>
             <Col span="6" style="position:relative">
-              <span style="color:red;position:absolute;left:20px;top:8px;">*</span>
               <FormItem label="客户性质" prop="nature" :label-width="90">
                 <Select v-model="formValidate.nature" placeholder clearable filterable>
                   <Option
@@ -46,7 +45,7 @@
             </Col>
             <Col span="12">
               <FormItem label="省份/城市" prop="city" class="con-right">
-                <el-cascader clearable v-model="formValidate.city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;" ></el-cascader>
+                <el-cascader clearable v-model="formValidate.city" :options="regions" filterable show-all-levels :props="{ value: 'name', label: 'name',checkStrictly: true}" size="small" style="width:350px;" ></el-cascader>
               </FormItem>
             </Col>
           </Row>
@@ -65,7 +64,7 @@
             </Col>
             <Col span="12" v-if="isFriend">
               <FormItem label="注册资金" prop="registered_capital" class="con-right">
-                <Input style="width:313px" v-model="formValidate.registered_capital" placeholder />人民币
+                <Input style="width:313px" v-model="formValidate.registered_capital" placeholder /> 人民币
               </FormItem>
             </Col>
           </Row>
@@ -78,7 +77,7 @@
 
             <Col span="12" v-if="isFriend">
               <FormItem label="保证金" prop="bond_amount" class="con-right">
-                <Input style="width:313px" v-model="formValidate.bond_amount" placeholder />人民币
+                <Input style="width:313px" v-model="formValidate.bond_amount" placeholder /> 人民币
               </FormItem>
             </Col>
           </Row>
@@ -95,103 +94,91 @@
             </Col>
           </Row>
           <Row>
-            <Col span="12" v-if="isFriend">
-              <FormItem label="协议编号" prop="protocolNumber" :label-width="90">
-                <Input v-model="formValidate.protocolNumber" placeholde />
+            <Col span="6" style="position:relative">
+              <FormItem label="运营公司" prop="manageCompany" :label-width="90">
+                <Select v-model="formValidate.manageCompany" @on-change="changeCompony" clearable filterable placeholder>
+                  <Option
+                    v-for="(item) in companys"
+                    :value="item.id"
+                    :key="item.id"
+                  >{{item.name}}</Option>
+                </Select>
               </FormItem>
             </Col>
-            <Col span="12" v-if="isFriend">
-              <FormItem label="授权资质" prop="empower_city" class="con-right">
-                <el-cascader clearable v-model="formValidate.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name',multiple: true}" size="small" style="width:350px;"></el-cascader>
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span="12">
-              <FormItem label="销售负责人" prop="salesman" :label-width="90">
-                 <Cascader ref="cascader" v-model="formValidate.salesman" :data="salesList" @on-change="changeCompony" filterable :load-data="getSales" style="width:350px;"></Cascader>
-                <!-- <el-cascader clearable v-model="formValidate.salesman" :options="salesList" filterable @expand-change="changeCompony" :props="{ value: 'id', label: 'name'}" size="small" style="width:350px;"></el-cascader> -->
-              </FormItem>
-            </Col>
-            <Col span="12" v-if="isFriend">
-            <FormItem label="授权期限" class="con-right"  style="position:relative;">
-              <span style="color:red;position:absolute;left:-70px;top:2px;">*</span>
-                <Row>
-                  <Col span="11">
-                  
-                  <FormItem prop="sqstartTime">
-                    <DatePicker
-                      placement="bottom"
-                      type="date"
-                      :options="startOption1"
-                      v-model="formValidate.sqstartTime"
-                      format="yyyy-MM-dd"
-                    ></DatePicker>
-                  </FormItem>  
-                  </Col>
-                  <Col span="2" style="text-align: center">-</Col>
-                  <Col span="11">
-                  <FormItem prop="sqendTime" class="con-right">
-                    <DatePicker
-                      placement="bottom"
-                      type="date"
-                      :options="endOption1"
-                      v-model="formValidate.sqendTime"
-                      style="width:155px"
-                      format="yyyy-MM-dd"
-                    ></DatePicker>
-                    </FormItem>
-                  </Col>
-                </Row>
+            <Col span="6">
+              <FormItem label="销售负责人" prop="salesman" class="con-right">
+                <Select v-model="formValidate.salesman" ref="selectSales" clearable filterable placeholder>
+                  <Option
+                    v-for="(item) in salesList"
+                    :value="item.id"
+                    :key="item.id"
+                    :style="{color:item.id === -1?'#aaa':'#495060'}"
+                  >{{item.name}}</Option>
+                </Select>
               </FormItem>
             </Col>
           </Row>
-          <Row>
-            <Col>
-              <div class="select2" v-if="file.name !== ''">
-                <section style="width:90%;float:left;margin-bottom:10px">
-                  <p class="sele2">合作协议（附件）</p>
-                  <div>
-                    <div class="fj1">
-                      <section class="fj_img">
-                        <img :src="file.img" alt style="width:20px;height:20px;margin:20px 40px" />
-                      </section>
-                      <section class="fj_sec1" style="margin:10px 0">
-                        <p>{{file.name}}</p>
-                        <p class="fj_p1">
-                          <span>{{file.size}}</span> 来自
-                          <span>{{file.uploadMan}}</span> |
-                          <span>{{file.date}}</span>
-                        </p>
-                      </section>
-                        <Button style="margin-left:10px" @click="deleteFile">删除</Button>
-                    </div>
+          <div style="border:1px solid #ccc;padding:10px;border-radius:5px;margin-bottom:10px" v-if="isFriend">
+            <div style="margin-bottom:10px">
+              <span style="font-weight:200;color:black;margin-right:10px">相关授权协议</span>
+              <span style="color:#528DFF;cursor:pointer" @click="serviceConModal = true">+添加服务授权</span>
+            </div>
+            <ul>
+              <li v-for="item in contracts" :key="item.id">
+                <div style="display:flex;justify-content: space-between;align-items:baseline;padding:10px;background-color: #F7F7F7;margin-top:5px">
+                  <div style="margin-right:20px">
+                    <Icon type="ios-list-outline" size="18"></Icon>
                   </div>
-                </section>
-              </div>
-              <p style="font-size:12px;color:#495060;margin-left:-10px;float:left;" v-if="!uploadLoading&&file.name === ''&&isFriend">合作协议（附件）</p>
-              <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :on-success="uploadSuccess" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
-                <Button type="text" icon="plus" style="color:#4a9af5;margin:-7px 0 0 -10px;;" v-show="!uploadLoading&&file.name === ''&&isFriend">添加附件</Button>
-              </Upload>
-              <!-- <p v-if="uploadLoading">上传中...</p> -->
-            </Col>
-          </Row>
+                  <div style="width:180px;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                    <el-tooltip placement="top">
+                     <span style="vertical-align: text-bottom">{{item.contact_no}}</span>
+                      <div slot="content">
+                        <p>{{item.contact_no}}</p>
+                      </div>
+                    </el-tooltip>
+                  </div>
+                  <div style="width:170px;text-align:center">
+                    <span style="vertical-align: text-bottom;">{{item.startTime.split(' ')[0]}} 至 {{item.endTime.split(' ')[0]}}</span>
+                  </div>
+                  <div style="width:140px;text-align:center;">
+                    <el-tooltip placement="top">
+                     <p style="overflow:hidden;white-space: nowrap;text-overflow: ellipsis;"><span v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</span></p>
+                      <div slot="content">
+                        <p v-for="(i,index) in item.city" :key="index">{{i[0] + ' ' + (i[1]||'') + ' ' + (i[2]||'')}}</p>
+                      </div>
+                    </el-tooltip>
+                  </div>
+                  <div style="width:180px;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                    <a :href="item.url" v-if="item.url">
+                      <Icon type="ios-list-outline" size="18"></Icon>
+                      <el-tooltip placement="top">
+                        <span style="vertical-align: text-bottom;">{{item.name}}</span>
+                        <div slot="content">
+                          <p>{{item.name}}</p>
+                        </div>
+                      </el-tooltip>
+                      
+                    </a>
+                    <span v-else>无协议</span>
+                  </div>
+                  <div>
+                    <span style="vertical-align: text-bottom;color:#F56C6C;cursor:pointer" @click="deleteCon(item)">删除</span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-        <Row v-if="isCustom">
+        <Row v-if="isCustom||formValidate.nature === 3">
           <Col class="changeinput">
             <FormItem label="关联平台账户" prop="glzh" :label-width="90" style="color: #409eff;">
               <Tag
                 closable
                 color="blue"
-                v-show="formValidate.platformuser_list.length>0"
                 v-for="(item,index) in formValidate.platformuser_list"
                 :key="index"
                 @on-close="deletePlatForm(index)"
               >({{item.platform_id}}){{item.platform_name}}</Tag>
-              <P
-                v-show="formValidate.platformuser_list.length===0"
-                style="color:#495060;display:inline"
-              >暂未关联账户平台</P>
               <Button type="ghost" class="butt" @click="platFormShow()">+</Button>
             </FormItem>
           </Col>
@@ -205,7 +192,7 @@
           <Table ref="selection" :columns="addlxr_columns" :data="formValidate.contacts_list"></Table>
         </div>
         <!-- footer-->
-        <footer>
+        <div style="margin-top:10px">
           <p class="div_p">开票信息</p>
           <Button type="primary" @click="newTicket()">+ 添加开票信息</Button>
           <div class="kpxx" v-for="(item,index) in formValidate.ticket_list" :key="index">
@@ -259,13 +246,64 @@
               <div style="clear:both"></div>
             </div>
           </div>
-        </footer>
+        </div>
         <FormItem class="form_but">
-          <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+          <Button type="primary" @click="handleSubmit('formValidate')" :loading="submitLoading">提交</Button>
           <Button type="ghost" @click="gohandleCancel('formValidate')" style="margin-left: 20px">取消</Button>
         </FormItem>
       </Form>
     </Layout>
+    <!-- 添加服务授权 -->
+    <Modal v-model="serviceConModal" class="aa" :mask-closable="false">
+      <p style="margin:10px 0 20px 0;font-size:16px">添加服务授权</p>
+      <Form ref="formAddservice" :model="formAddservice" :rules="ruleAddservice" :label-width="80">
+        <FormItem label="协议编号" prop="contact_no">
+          <Input class="col-n" v-model="formAddservice.contact_no" placeholder @on-change="filter" />
+          <p style="margin-bottom: -20px;color:'#C0C4CC">（暂不支持!@#$%^&*()_...等持特殊字符）</p>
+        </FormItem>
+        <FormItem label="授权区域" prop="empower_city">
+          <el-cascader clearable v-model="formAddservice.empower_city" :options="regions" collapse-tags filterable show-all-levels :props="{ value: 'name', label: 'name',multiple: true,checkStrictly: true}" size="small" style="width:350px;"></el-cascader>
+        </FormItem>
+        <FormItem label="授权期限" style="position:relative;" prop="time">
+          <Row>
+            <Col span="10">
+              <el-date-picker
+                v-model="formAddservice.time"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+              </el-date-picker>
+            </Col>
+          </Row>
+        </FormItem>
+        <div class="select2" v-if="formAddservice.url" style="display:flex;justify-content:flex-start">
+            <div>
+              <img :src="formAddservice.img" alt style="width:20px;height:20px;margin:10px 20px" />
+            </div>
+          <div class="fj_sec1" style="margin:10px 0">
+            <p><a :href="formAddservice.url?formAddservice.url:'#'">{{formAddservice.name}}</a></p>
+            <p>
+              <span>{{formAddservice.size}}</span> 来自
+              <span>{{formAddservice.uploadMan}}</span> |
+              <span>{{formAddservice.date}}</span>
+            </p>
+          </div>
+          <div>
+            <Button style="margin:10px;float:right" @click="deleteFile">删除</Button>
+          </div>
+        </div>
+        <p style="font-size:12px;color:#495060;margin-left:10px;float:left;" v-if="!formAddservice.url&&!uploadStatus" >合作协议（附件）</p>
+        <Upload ref="upload" action="/public/api/xlcontract/uploadFile" v-if="!formAddservice.url&&!uploadStatus" :on-success="uploadSuccess" :on-error="uploadError" :show-upload-list="false" :before-upload="beforeUpload" :data="postData" :headers="{user:'x',key:'x'}">
+          <Button type="text" icon="plus" style="color:#4a9af5;margin:-7px 0 0 -10px;">添加附件</Button>
+        </Upload>
+        <p v-if="uploadStatus" style="font-size:12px;color:#495060;margin-left:10px;">附件上传中...</p>
+        <FormItem class="for">
+          <Button type="primary" @click="saveService">确认</Button>
+          <Button type="ghost" style="margin-left:15px" @click="serviceConModal = false">取消</Button>
+        </FormItem>
+      </Form>
+    </Modal>
     <!-- 添加联系人 -->
     <Modal v-model="addlxrmodal" class="aa">
       <p style="margin:10px  0 20px 0;font-size:16px">添加联系人</p>
@@ -383,14 +421,14 @@
         <Row>
           <Col span="20">
             <FormItem label="账户：">
-              <Input v-model="plat.platform_id" placeholder />
+              <Input v-model="plat.platform_id" placeholder disabled/>
             </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="20">
             <FormItem label="名称：">
-              <Input v-model="plat.platform_name" placeholder />
+              <Input v-model="plat.platform_name" placeholder disabled/>
             </FormItem>
           </Col>
         </Row>
@@ -460,6 +498,7 @@ export default {
         mail_address: "",
         post_code: "",
         salesman: '',
+        manageCompany: '',
         platformuser_list: [],
         contacts_list: [],
         ticket_list: [],
@@ -526,11 +565,11 @@ export default {
             trigger: "change"
           }
         ],
-        salesman: [
+        manageCompany: [
           {
             required: true,
-            message: "请选择销售负责人",
-            type: "array",
+            message: "请选择运营公司",
+            type: "number",
             trigger: "change"
           }
         ],
@@ -553,6 +592,7 @@ export default {
           {
             required: true,
             message: "请输入注册资金",
+            type:'number',
             trigger: "blur"
           }
         ],
@@ -560,6 +600,7 @@ export default {
           {
             required: true,
             message: "请输入保证金",
+            type:'number',
             trigger: "blur"
           }
         ],
@@ -667,6 +708,44 @@ export default {
       ticketIndex: 0,
       kpxx: {
       },
+      contracts: [],
+      serviceConModal: false,
+      formAddservice: {
+        contact_no:'',
+        empower_city: [],
+        time: [],
+        url: '',
+        name:'',
+        size:'',
+        date:'',
+        uploadMan:'',
+        img:''
+      },
+      ruleAddservice: {
+        contact_no:[
+          {
+            required: true,
+            message: "请输入编号",
+            trigger: "blur"
+          }
+        ],
+        empower_city: [
+          {
+            required: true,
+            message: "请选择城市",
+            type: "array",
+            trigger: "change"
+          }
+        ],
+        time: [
+          {
+            required: true,
+            message: "请选择授权期限",
+            type: "array",
+            trigger: "change"
+          }
+        ],
+      },
       formAddlxr: {
         contact_name: "",
         contact_id: "",
@@ -768,28 +847,19 @@ export default {
       newLocalData: {},
       provinces_county: [],
       salesList: [],
-      manageCompany:'',
       uploadLoading:false,
-      file:{
-        name:'',
-        size:'',
-        date:'',
-        uploadMan:'',
-        address:'',
-        id:'',
-        img:''
-      },
       postData:{
-        accountId:'',
-        customerNo:''
+        customerNo:-1
       },
       deleteStatus: false,
-      uploadStatus: false
+      uploadStatus: false,
+      submitLoading: false
     };
   },
   methods: {
     changeCompony(value){
-      // this.formValidate.salesman = [];
+      this.formValidate.salesman === '';
+      this.getSales();
     },
     inputChange() {
       this.formAddkpxx.bank_account = this.formAddkpxx.bank_account.replace(
@@ -803,8 +873,6 @@ export default {
         if (valid) {
           if (
             this.formValidate.level == "" ||
-            this.formValidate.city.length < 1 ||
-            (this.formValidate.nature === 2&&(this.formValidate.empower_city||[]).length < 1) ||
             this.formValidate.nature == ""
           ) {
             this.$Message.error("请将信息补充完整后再提交");
@@ -820,37 +888,20 @@ export default {
       this.$router.go(-1);
     },
     editCustomer() {
-      let startTime = '',endTime = '';
-      if(this.formValidate.sqstartTime){
-        startTime = this.formValidate.sqstartTime.getFullYear()+'-' + (this.formValidate.sqstartTime.getMonth() + 1) +'-' + this.formValidate.sqstartTime.getDate();
-      }
-      if(this.formValidate.sqendTime){
-        endTime = this.formValidate.sqendTime.getFullYear()+'-' + (this.formValidate.sqendTime.getMonth() + 1) +'-' + this.formValidate.sqendTime.getDate();
-      }
       let empowerList = [];
-      this.formValidate.empower_city.forEach((e,index) => {
-        if(typeof(e) === 'object'){
+      this.contracts.forEach((e,index) => {
+        e.city.forEach(c => {
           empowerList.push({
-            empowerProvince:e[0],
-            empowerCity:e[1],
-            empowerArea:e[2]
+            "empowerProvince":c[0],
+              "empowerCity":c[1]||'',
+              "empowerArea":c[2]||'',
+              "protocolNumber":e.contact_no,
+              "empowerEndTime":e.endTime,
+              "empowerStartTime":e.startTime,
+              "fileName":e.name,
+              "fileAddress":e.url
           })
-        }else{
-          if(empowerList.length === 0){
-            empowerList.push({
-              empowerProvince:-1,
-              empowerCity:-1,
-              empowerArea:-1
-            })
-          }
-          if(index === 1){
-            empowerList[0].empowerPrivince = e;
-          }else if(index === 2){
-            empowerList[0].empowerCity = e;
-          }else if(index === 3){
-            empowerList[0].empowerArea = e;
-          }
-        }
+        })
       })
       let request = {
         typeid: this.isNewCreate ? 25002 : 25006,
@@ -863,12 +914,13 @@ export default {
             customerName: this.formValidate.name,
             customerLevel: this.formValidate.level,
             customerNature: this.formValidate.nature,
+            protocolNumber: '1',
             province: this.formValidate.city[0],
-            city: this.formValidate.city[1]?this.formValidate.city[1]:0,
-            area: this.formValidate.city[2]?this.formValidate.city[2]:0,
+            city: this.formValidate.city[1]?this.formValidate.city[1]:'',
+            area: this.formValidate.city[2]?this.formValidate.city[2]:'',
             empowerList:empowerList.length === 0?undefined:empowerList,
-            manageCompany: Number(this.formValidate.salesman[0]),
-            saleNo: Number(this.formValidate.salesman[1]?this.formValidate.salesman[1]:-1),
+            manageCompany: Number(this.formValidate.manageCompany),
+            saleNo: Number(this.formValidate.salesman?this.formValidate.salesman:-1),
             industry: this.formValidate.industry === ''?0:this.formValidate.industry,
             mailAddress: this.formValidate.mail_address,
             bondAmount: Number(this.formValidate.bond_amount),
@@ -876,14 +928,12 @@ export default {
             customerAbbreviation: this.formValidate.customer_abbreviation,
             chargePerson: this.formValidate.charge_person,
             postCode: this.formValidate.post_code,
-            protocolNumber: this.formValidate.protocolNumber,
             empowerProvince:0,
-            empowerCity:0,
-            empowerStartTime: startTime===''?undefined:startTime,
-            empowerEndTime: endTime===''?undefined:endTime,
+            empowerCity:0
           }
         ]
       };
+      this.submitLoading = true;
       if (this.isNewCreate) {
         api.SETCUSTOMER(request).then(response => {
             this.customer_id = response.data.result.data.customerNo;
@@ -913,38 +963,83 @@ export default {
               this.newLocalData.plat.data.platFormList.length > 0
             )
               api.SETCUSTOMER(this.newLocalData.plat);
-            if(this.file.name !== ''){
-              this.postData.accountId = this.$store.state.user.accountId;
-              this.postData.customerNo = this.customer_id;
-              this.$refs.upload.post(this.file.file);
-            }else{
+              this.submitLoading = false;
               this.$Message.success("客户信息更新成功！");
               this.$router.push("/customermanage/customermanage");  
-            }
-        });
+              
+        },error => {
+          if(error.data.code !== 0 && error.data.message){
+            this.$Message.error(error.data.message);
+            this.submitLoading = false;
+          }
+          this.submitLoading = false;
+        }).catch(e => {this.submitLoading = false;});
       } else {
         api
           .UPDATECUSTOMER(request)
           .then(response => {
-            if(this.deleteStatus){
-              this.delete();
-            }else{
-              if(this.file.name !== ''&&this.uploadStatus){
-                this.postData.accountId = this.$store.state.user.accountId;
-                this.postData.customerNo = ((this.data||{}).data||{}).customer_no;
-                this.$refs.upload.post(this.file.file);
-              }else{
-                this.$Message.success("客户信息更新成功！");
-                this.$router.push("/customermanage/customermanage");  
-              }
-            }
-          })
-          .catch(e => {});
+              this.submitLoading = false;
+              this.$Message.success("客户信息更新成功！");
+              this.$router.push("/customermanage/customermanage");
+          },error => {
+          if(error.data.code !== 0 && error.data.message){
+            this.$Message.error(error.data.message);
+          }
+          this.submitLoading = false;
+        }).catch(e => {this.submitLoading = false;});
       }
     },
-    uploadSuccess(){
-      this.$Message.success("客户信息更新成功！");
-      this.$router.push("/customermanage/customermanage");
+    uploadSuccess(res){
+      this.uploadStatus = false;
+      this.formAddservice.url = (res.result||{}).address||'';
+    },
+    uploadError(){
+      this.uploadStatus = false;
+      this.$Message.error("上传附件异常，请重试！");
+    },
+    saveService(){
+      let status = false;
+      this.$refs['formAddservice'].validate((valid) => {
+          if (!valid) {
+              this.$Message.error('请按照规定填写！');
+              status = true;
+          }
+      });
+      if(status) return;
+      if(this.formAddservice.url === ''){
+        this.$Message.error('请先上传附件！');
+        return;
+      }
+      if(this.contracts.find(c => c.contact_no === this.formAddservice.contact_no)){
+        this.$Message.error('当前客户存在该协议编号，请修改编号！');
+        return;
+      }
+      let item = {};
+      item.name = this.formAddservice.name;
+      item.contact_no = this.formAddservice.contact_no;
+      item.url = this.formAddservice.url;
+      item.city = this.formAddservice.empower_city;
+      item.startTime = this.$util.Date(this.formAddservice.time[0]);
+      item.endTime = this.$util.Date(this.formAddservice.time[1]);
+      this.contracts.push(item);
+      this.serviceConModal = false;
+    },
+    deleteCon(item){
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(()=>{
+        this.contracts = this.contracts.filter(c => {
+          return c.contact_no !== item.contact_no
+        });
+        this.$Message.success('删除成功！');
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
     },
     saveTicket(name) {
       let status = false;
@@ -1057,55 +1152,33 @@ export default {
     cancel() {
       this.addlxrmodal = false;
     },
-    getSales(item,callback) {
+    getSales() {
+      if(!this.formValidate.manageCompany) return;
       let request = {
         typeid: 27008,
         data: [
           {
-            companyID: parseInt(item.value)
+            companyID: parseInt(this.formValidate.manageCompany)
           }
         ]
       };
-      if(this.salesList.length === 0){
-          this.companys.forEach(p => {
-            let item = {
-              value:p.id + '',
-              label:p.name,
-              children:[],
-              loading:false
-            }
-            this.salesList.push(item);
-          })
-        }
-      // this.salesList = [];
-      item.loading = true;
+      this.salesList = [];
       api.XLSELECT(request).then(response => {
         let res = response.data.result.data;
-        let children = [];
-        res.forEach(r => {
-          children.push({
-            value:r.id+'',
-            label:r.name
-          })
+        this.salesList = res;
+        this.salesList.unshift({
+          id:-1,
+          name:'（清除选择）'
         })
-        item.children = children;
-        this.$nextTick(()=>{
-          let salesman = ((this.data || {}).data || {}).saleId;
-          let arr = [item.value + '',salesman + ''];
-          this.formValidate.salesman = arr;
-        })
-        item.loading = false;
-         callback();
+        // this.$nextTick(()=>{
+          if(this.formValidate.salesman === ''){
+            this.formValidate.salesman = (this.salesList.find(s => s.id === ((this.data||{}).data||{}).saleId)||{}).id||this.salesList[0].id;
+          }
+        // })
       },error => {
-        if(this.salesList.find(p => p.value === this.manageCompany)){
-          item.children = [];
-          this.formValidate.salesman = [];
+        if(this.companys.find(p => p.id === this.formValidate.manageCompany)){
+          this.formValidate.salesman = '';
         }
-        if(item.label&&item.children.length === 0){
-          this.$Message.error('该运营下没有销售人员可选，请重新选择！');
-        }
-        item.loading = false;
-         callback();
       });
     },
     init() {
@@ -1145,49 +1218,36 @@ export default {
         JSON.stringify(((data || {}).data || {}).ticket_list || [])
       );
       let city = [];
-      if(((data || {}).data || {}).province) city.push(((data || {}).data || {}).province);
-      if(((data || {}).data || {}).city) city.push(((data || {}).data || {}).city);
-      if(((data || {}).data || {}).area) city.push(((data || {}).data || {}).area);
+      let proObj = this.regions.find(c => (((data || {}).data || {}).province||'').indexOf(c.name)!==-1)||{};
+      if(proObj.name) city.push(proObj.name);
+      let cityObj = (proObj.children||[]).find(c => c.name === ((data || {}).data || {}).city)||{};
+      if(cityObj.name) city.push(cityObj.name);
+      let areaObj = (((cityObj.children||[]).find(c => c.name === ((data || {}).data || {}).area)||{}).name||"");
+      if(areaObj.name) city.push(areaObj.name);
       if(city.length > 0)this.formValidate.city = city;
-      let empowerCity = [];
-      if(((data || {}).data || {}).areaList&&((data || {}).data || {}).areaList.length>0){
-        if(((data || {}).data || {}).areaList.length === 1){
-          empowerCity.push(((data || {}).data || {}).areaList[0].empowerProvince);
-          empowerCity.push(((data || {}).data || {}).areaList[0].empowerCity);
-          if(((data || {}).data || {}).areaList[0].empowerArea) empowerCity.push(((data || {}).data || {}).areaList[0].empowerArea);
+      (((data || {}).data || {}).areaList||[]).forEach(a => {
+        let item = {};
+        item.name = a.fileName;
+        item.contact_no = a.protocolNumber;
+        item.url = a.fileAddress;
+        if(!this.contracts.find(c => c.contact_no === item.contact_no )){
+          item.city = [];
+          item.city.push([
+            a.empowerProvince,a.empowerCity,a.empowerArea
+          ])
         }else{
-          ((data || {}).data || {}).areaList.forEach(a => {
-              let arr = [];
-              arr.push(a.empowerProvince);
-              arr.push(a.empowerCity);
-              if(a.empowerArea) arr.push(a.empowerArea);
-              empowerCity.push(arr);
-          })
+          let obj = this.contracts.find(c => c.contact_no === item.contact_no );
+          obj.city.push([
+            a.empowerProvince,a.empowerCity,a.empowerArea
+          ])
         }
-      }
-      this.formValidate.empower_city = empowerCity;
-      this.manageCompany = ((data || {}).data || {}).manage_company;
-      this.getSales({value:this.manageCompany},()=>{});
+        item.startTime = a.empowerStartTime;
+        item.endTime = a.empowerEndTime;
+        if(!this.contracts.find(c => c.contact_no === item.contact_no )) this.contracts.push(item);
+      })
+      this.formValidate.manageCompany = ((data || {}).data || {}).manage_company;
+      this.formValidate.salesman = ((this.data || {}).data || {}).saleId;
       if(((data || {}).data || {}).enclosure){
-        this.file.name = ((data || {}).data || {}).enclosure.fileName;
-        this.file.size = ((data || {}).data || {}).enclosure.fileSize;
-        this.file.size = this.file.size >= 1024?((this.file.size/1024).toFixed(2) + ' KB'): this.file.size >= 1024*1024?((this.file.size/(1024*1024)).toFixed(2) + ' MB'):(this.file.size + ' B');
-        this.file.uploadMan = ((data || {}).data || {}).enclosure.accountName;
-        this.file.date = ((data || {}).data || {}).enclosure.uploadTime;
-        this.file.address = ((data || {}).data || {}).enclosure.enclosureAddress;
-        this.file.id = (((data || {}).data || {}).enclosure||{}).enclosureId;
-        let fileArr = this.file.name.split('.');
-        let fileType = fileArr[fileArr.length-1];
-        this.file.img = require('../../images/upload/wenjian.png');
-        if(/^pdf$/.test(fileType)){
-          this.file.img = require('../../images/upload/pdf.png');
-        }else if(/^(txt|doc(x)?)$/.test(fileType)){
-          this.file.img = require('../../images/upload/docx.png');
-        }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
-          this.file.img = require('../../images/upload/jpg.png');
-        }else if(/^xl(s|t|am)$/.test(fileType)){
-          this.file.img = require('../../images/upload/excel.png');
-        };
       }
       this.formValidate.sqstartTime = ((data || {}).data || {}).empowerStartTime;
       this.formValidate.sqendTime = ((data || {}).data || {}).empowerEndTime;
@@ -1495,46 +1555,23 @@ export default {
       });
     },
     beforeUpload(file){
-      this.$Message.success('上传成功！');
-      this.file.name = file.name;
-      this.file.size = file.size >= 1024?((file.size/1024).toFixed(2) + ' KB'): file.size >= 1024*1024?((file.size/(1024*1024)).toFixed(2) + ' MB'):(file.size + ' B');
-      this.file.date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
-      this.file.uploadMan = this.$store.state.user.accountName;
-      this.file.file = file;
+      this.formAddservice.name = file.name;
+      this.formAddservice.size = file.size >= 1024?((file.size/1024).toFixed(2) + ' KB'): file.size >= 1024*1024?((file.size/(1024*1024)).toFixed(2) + ' MB'):(file.size + ' B');
+      this.formAddservice.date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
+      this.formAddservice.uploadMan = this.$store.state.user.accountName;
       let fileArr = file.name.split('.');
       let fileType = fileArr[fileArr.length-1];
-      this.file.img = require('../../images/upload/wenjian.png');
+      this.formAddservice.img = require('../../images/upload/wenjian.png');
       if(/^pdf$/.test(fileType)){
-        this.file.img = require('../../images/upload/pdf.png');
+        this.formAddservice.img = require('../../images/upload/pdf.png');
       }else if(/^(txt|doc(x)?)$/.test(fileType)){
-        this.file.img = require('../../images/upload/docx.png');
+        this.formAddservice.img = require('../../images/upload/docx.png');
       }else if(/^(jpg|bmp|gif|ico|pcx|jpeg|tif|png|raw|tga)$/.test(fileType)){
-        this.file.img = require('../../images/upload/jpg.png');
+        this.formAddservice.img = require('../../images/upload/jpg.png');
       }else if(/^xl(s|t|am)$/.test(fileType)){
-        this.file.img = require('../../images/upload/excel.png');
+        this.formAddservice.img = require('../../images/upload/excel.png');
       };
       this.uploadStatus = true;
-      return false;
-    },
-    delete(){
-      let request = {
-        "typeid": 26016,
-        "data": [
-          {
-            "enclosureId": (((this.data || {}).data || {}).enclosure||{}).enclosureId + ','
-          }
-        ]
-      };
-      this.$http.DELETECONTRACT(request).then(res => {
-        if(this.file.name !== ''){
-          this.postData.accountId = this.$store.state.user.accountId;
-          this.postData.customerNo = ((this.data||{}).data||{}).customer_no;
-          this.$refs.upload.post(this.file.file);
-        }else{
-          this.$Message.success("客户信息更新成功！");
-          this.$router.push("/customermanage/customermanage");  
-        }
-      })
     },
     deleteFile(){
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -1542,21 +1579,21 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(()=>{
-        if(this.isNewCreate){
-          
-        }else{
-          this.deleteStatus = true;
-        }
+        this.formAddservice.url = '';
         this.$Message.success('删除成功！');
-        for(let key in this.file){
-          this.file[key] = '';
-        }
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
         });          
       });
+    },
+    filter(){
+      let pattern=/[`~!@#$^&%*()=|{}':;',\\\[\]\.<>\/?~！@#￥……&*（）——|{}【】'；：""'。，、？]/g;
+      let contact_no = (this.formAddservice.contact_no||'').replace(pattern,"");
+      this.$nextTick(() => {
+        this.formAddservice.contact_no = contact_no;
+      })
     }
   },
   mounted() {
@@ -1571,7 +1608,8 @@ export default {
       bond_amount: "",
       mail_address: "",
       post_code: "",
-      salesman: [],
+      salesman: '',
+      manageCompany: '',
       platformuser_list: [],
       contacts_list: [],
       ticket_list: [],
@@ -1646,14 +1684,37 @@ export default {
       this.plat.platform_name = selectedplatObj.platform_name;
       this.plat.platform_user_type = selectedplatObj.platform_user_type;
     },
-    'formValidate.salesman'(nv){
-      if(nv.length === 1){
-        this.$refs['cascader'].visible = true;
-        let index = this.$refs['cascader'].data.findIndex(d => d.value === nv[0]);
-        let top = index * 30;
+    'formValidate.manageCompany': function(nv) {
+      if(!nv){
+        this.salesList = [];
+      }
+    },
+    'formValidate.salesman': function(nv){
+      if(nv === -1){
         this.$nextTick(() => {
-          $('.ivu-cascader-menu')[0].scrollTo(0,top);
+          this.formValidate.salesman = '';
         })
+      }
+    },
+    'formValidate.registered_capital': function(nv){
+      this.formValidate.registered_capital = parseFloat(nv);
+    },
+    'formValidate.bond_amount': function(nv){
+      this.formValidate.bond_amount = parseFloat(nv);
+    },
+    serviceConModal(nv){
+      if(!nv){
+        this.formAddservice = {
+          contact_no:'',
+          empower_city: [],
+          time: [],
+          url: '',
+          name:'',
+          size:'',
+          date:'',
+          uploadMan:'',
+          img:''
+        }
       }
     }
   }

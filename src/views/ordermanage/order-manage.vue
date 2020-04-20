@@ -112,8 +112,8 @@
         >申请备货</Button>
       </Menu>
       <Content
-        :style="{background: '#fff', minHeight: '800px'}"
-        style="padding-left:20px;margin-top:0px;"
+        :style="{background: '#fff', minHeight: '750px'}"
+        style="padding:0 20px;margin-top:0px;"
       >
         <Tabs ref="tab" v-model="tabName">
           <TabPane
@@ -149,76 +149,76 @@
   </div>
 </template>
 <script>
-let $ = require("jquery");
-import api from "@/api/axios";
-import orderDetail from "./order-detail";
+let $ = require('jquery');
+import api from '@/api/axios';
+import orderDetail from './order-detail';
 const deviceList_columns = [
   {
-    title: "条码",
-    key: "tm",
-    align: "center"
+    title: '条码',
+    key: 'tm',
+    align: 'center'
   },
   {
-    title: "存货编码",
-    key: "chbm",
-    align: "center"
+    title: '存货编码',
+    key: 'chbm',
+    align: 'center'
   },
   {
-    title: "存货名称",
-    key: "chmc",
-    align: "center"
+    title: '存货名称',
+    key: 'chmc',
+    align: 'center'
   },
   {
-    title: "规格型号",
-    key: "ggxh",
-    align: "center"
+    title: '规格型号',
+    key: 'ggxh',
+    align: 'center'
   },
   {
-    title: "计量单位",
-    key: "jldw",
-    align: "center"
+    title: '计量单位',
+    key: 'jldw',
+    align: 'center'
   },
   {
-    title: "箱码",
-    key: "xm",
-    align: "center"
+    title: '箱码',
+    key: 'xm',
+    align: 'center'
   },
   {
-    title: "状态",
-    key: "zt",
-    align: "center"
+    title: '状态',
+    key: 'zt',
+    align: 'center'
   },
   {
-    title: "最新操作时间",
-    key: "newtime",
+    title: '最新操作时间',
+    key: 'newtime',
     width: 150,
-    align: "center"
+    align: 'center'
   }
 ];
 export default {
-  name: "orderManage",
+  name: 'orderManage',
   components: { orderDetail },
-  data() {
+  data () {
     return {
-      orderStatus1:this.$option.order.status,
-      orderStatus2:this.$option.order.status2,
-      tabName: "name1",
-      order_columns:[
+      orderStatus1: this.$option.order.status,
+      orderStatus2: this.$option.order.status2,
+      tabName: 'name1',
+      order_columns: [
         {
-          type: "selection",
-          align: "center",
+          type: 'selection',
+          align: 'center',
           width: 80
         },
         {
-          key: "orderNO",
-          title: "单据编号",
-          align: "center",
+          key: 'orderNO',
+          title: '单据编号',
+          align: 'center',
           render: (h, params) => {
-            return h("div", [
+            return h('div', [
               h(
-                "a",
+                'a',
                 {
-                  class: "iconShow",
+                  class: 'iconShow',
                   style: {},
                   on: {
                     click: () => {
@@ -232,62 +232,62 @@ export default {
           }
         },
         {
-          key: "type",
-          title: "业务类型",
+          key: 'type',
+          title: '业务类型',
           width: 100,
-          align: "center"
+          align: 'center'
         },
         {
-          key: "time",
-          title: "下单时间",
-          align: "center"
+          key: 'time',
+          title: '下单时间',
+          align: 'center'
         },
         {
-          key: "salesType",
-          title: "销售类型",
+          key: 'salesType',
+          title: '销售类型',
           width: 100,
-          align: "center"
+          align: 'center'
         },
         {
-          key: "customName",
-          title: "客户名称",
-          align: "center",
+          key: 'customName',
+          title: '客户名称',
+          align: 'center',
           width: 250
         },
         {
-          key: "contractNO",
-          title: "合同编号",
-          align: "center"
+          key: 'contractNO',
+          title: '合同编号',
+          align: 'center'
         },
         {
-          key: "count",
-          title: "设备数量",
+          key: 'count',
+          title: '设备数量',
           width: 100,
-          align: "center"
+          align: 'center'
         },
         {
-          key: "status",
-          title: "状态",
-          align: "center",
+          key: 'status',
+          title: '状态',
+          align: 'center',
           render: (h, params) => {
-            return h("div", [
+            return h('div', [
               h(
-                "Button",
+                'Button',
                 {
                   props: {
                     // type: "",
-                    size: "small"
+                    size: 'small'
                   },
                   style: {
                     backgroundColor: params.row.status
                       ? this.$option.order.statusColorMap[params.row.status].backgroundColor
-                      : "white",
+                      : 'white',
                     color: params.row.status
                       ? this.$option.order.statusColorMap[params.row.status].color
-                      : "#7D7F82"
+                      : '#7D7F82'
                   }
                 },
-                params.row.status || "无状态"
+                params.row.status || '无状态'
               )
             ]);
           }
@@ -303,20 +303,20 @@ export default {
         6: []
       },
       tooptipShow: false,
-      businessMap:this.$option.order.typeMap,
-      saleMap:this.$option.contract.salesTypeMap,
-      statusMap:this.$option.order.statusMap,
+      businessMap: this.$option.order.typeMap,
+      saleMap: this.$option.contract.salesTypeMap,
+      statusMap: this.$option.order.statusMap,
       loading: false,
       orderDetailOpen: false,
-      selectedOrder: "",
-      bcjh: "700",
-      sydf: "9090",
+      selectedOrder: '',
+      bcjh: '700',
+      sydf: '9090',
       filterItem: {
-        manageCompany: "",
-        salesType: "",
-        saleName: "",
-        startTime: "",
-        endTime: ""
+        manageCompany: '',
+        salesType: '',
+        saleName: '',
+        startTime: '',
+        endTime: ''
       },
       startOption: {
         disabledDate: time => {
@@ -338,33 +338,33 @@ export default {
       deviceList_columns,
       deviceList_data: [],
       deviceSum: 0,
-      statusMap2:this.$option.order.statusMap2,
+      statusMap2: this.$option.order.statusMap2,
       glShow: false,
       moreShow: false,
       sum: 0,
-      inputVal: "",
+      inputVal: '',
       pageNum: 1,
-      orderTypes:this.$option.order.types,
+      orderTypes: this.$option.order.types,
       selectedType: this.$option.order.types[0],
-      statusColorMap:this.$option.order.statusColorMap,
-      salesTypes:this.$option.contract.salesTypes,
+      statusColorMap: this.$option.order.statusColorMap,
+      salesTypes: this.$option.contract.salesTypes,
       companys: [],
       filterStatus: false,
-      deviceTabName: "name1",
+      deviceTabName: 'name1',
       selectOrderList: {}
     };
   },
   methods: {
-    plfhClick() {
+    plfhClick () {
       let list = [];
       let status = false;
       if (!this.$store.state.app.authority.find(a => a.id === 1005)) {
-        this.$Message.error("权限不足！");
+        this.$Message.error('权限不足！');
         return;
       }
       for (let key in this.selectOrderList) {
         this.selectOrderList[key].forEach(s => {
-          if (s.status !== "已下单") {
+          if (s.status !== '已下单') {
             status = true;
           } else {
             list.push(s.data.order_id);
@@ -373,38 +373,38 @@ export default {
       }
       if (list.length === 0) {
         if (status) {
-          this.$Message.error("只能选择订单状态为已下单的订单，请重新选择！");
+          this.$Message.error('只能选择订单状态为已下单的订单，请重新选择！');
           return;
         }
-        this.$Message.error("请先选择需要发货的订单！");
+        this.$Message.error('请先选择需要发货的订单！');
         return;
       }
       if (status) {
-        this.$Message.info("只能添加订单状态为已下单的订单，已为您自动过滤掉其他状态的订单！");
+        this.$Message.info('只能添加订单状态为已下单的订单，已为您自动过滤掉其他状态的订单！');
       }
       this.$router.push({
-        path: "/assetmanage/delivery-manage/newbuild",
+        path: '/assetmanage/delivery-manage/newbuild',
         query: { order: JSON.stringify(list) }
       });
     },
-    selectedDown(side) {
-      if (side === "inside") {
+    selectedDown (side) {
+      if (side === 'inside') {
         this.tooptipShow = !this.tooptipShow;
-      } else if (side === "outside") {
+      } else if (side === 'outside') {
         if (this.tooptipShow) this.tooptipShow = false;
       }
     },
-    selectOrderType(index) {
-      this.tabName = "name1";
+    selectOrderType (index) {
+      this.tabName = 'name1';
       this.selectedType = this.orderTypes[index];
       this.pageNum = 1;
       this.getOrderList(1);
     },
-    openOrder(o) {
+    openOrder (o) {
       this.orderDetailOpen = true;
       this.selectedOrder = o.orderNO;
     },
-    getOrderList(p) {
+    getOrderList (p) {
       this.order_data[this.selectedTab.index] = [];
       this.loading = true;
       this.sum = 0;
@@ -419,38 +419,38 @@ export default {
                 : this.selectedTab.index - 1,
             // customer_name:'',
             order_starttime:
-              this.filterItem.startTime === ""
+              this.filterItem.startTime === ''
                 ? undefined
                 : this.filterItem.startTime.getFullYear() +
-                  "-" +
+                  '-' +
                   (this.filterItem.startTime.getMonth() + 1) +
-                  "-" +
+                  '-' +
                   this.filterItem.startTime.getDate() +
-                  " 00:00:00",
+                  ' 00:00:00',
             order_endtime:
-              this.filterItem.endTime === ""
+              this.filterItem.endTime === ''
                 ? undefined
                 : this.filterItem.endTime.getFullYear() +
-                  "-" +
+                  '-' +
                   (this.filterItem.endTime.getMonth() + 1) +
-                  "-" +
+                  '-' +
                   this.filterItem.endTime.getDate() +
-                  " 23:59:59",
+                  ' 23:59:59',
             order_type: this.selectedType.ids,
             sale_type:
-              this.filterItem.salesType === ""
+              this.filterItem.salesType === ''
                 ? undefined
                 : this.filterItem.salesType,
             // contract_subject:0,
             sell_name:
-              this.filterItem.saleName === ""
+              this.filterItem.saleName === ''
                 ? undefined
                 : this.filterItem.saleName,
             company_id:
-              this.filterItem.manageCompany === ""
+              this.filterItem.manageCompany === ''
                 ? undefined
                 : this.filterItem.manageCompany,
-            keyword: this.inputVal === "" ? undefined : this.inputVal,
+            keyword: this.inputVal === '' ? undefined : this.inputVal,
             page_num: p,
             page_size: 10
           }
@@ -493,35 +493,35 @@ export default {
         }
       );
     },
-    closeglClick() {
+    closeglClick () {
       this.glShow = false;
-      if (!this.filterStatus) $(".cor").css({ color: "#000000" });
+      if (!this.filterStatus) $('.cor').css({ color: '#000000' });
     },
-    search() {
+    search () {
       this.pageNum = 1;
       this.getOrderList(1);
     },
-    glkhClick() {
+    glkhClick () {
       this.glShow = !this.glShow;
       this.moreShow = false;
       if (this.glShow || this.filterStatus) {
-        $(".cor").css({ color: "#4a9af5" });
-        $(".cor1").css({ color: "#000000" });
+        $('.cor').css({ color: '#4a9af5' });
+        $('.cor1').css({ color: '#000000' });
       } else {
-        $(".cor").css({ color: "#000000" });
+        $('.cor').css({ color: '#000000' });
       }
     },
-    moreClick() {
+    moreClick () {
       this.moreShow = !this.moreShow;
       this.glShow = false;
       if (this.moreShow) {
-        $(".cor1").css({ color: "#4a9af5" });
+        $('.cor1').css({ color: '#4a9af5' });
         // $(".cor").css({ color: "#000000" });
       } else {
-        $(".cor1").css({ color: "#000000" });
+        $('.cor1').css({ color: '#000000' });
       }
     },
-    getManagecompanys() {
+    getManagecompanys () {
       let request = {
         typeid: 27001
       };
@@ -529,16 +529,16 @@ export default {
         this.companys = response.data.result.data;
       });
     },
-    handleSubmitgl(name) {
+    handleSubmitgl (name) {
       let status = true;
       for (let key in this.filterItem) {
-        if (this.filterItem[key] !== "" && this.filterItem[key] !== 0) {
+        if (this.filterItem[key] !== '' && this.filterItem[key] !== 0) {
           status = false;
         }
       }
       if (status) {
         this.filterStatus = false;
-        $(".cor").css({ color: "#000000" });
+        $('.cor').css({ color: '#000000' });
         this.glShow = false;
         this.getOrderList(1);
         return;
@@ -548,55 +548,55 @@ export default {
           this.filterStatus = true;
           this.glShow = false;
           this.getOrderList(1);
-          this.$Message.success("Success!");
+          this.$Message.success('Success!');
         } else {
-          this.$Message.error("Fail!");
+          this.$Message.error('Fail!');
         }
       });
     },
-    handleReset() {
+    handleReset () {
       this.filterStatus = false;
       for (let key in this.filterItem) {
-        this.filterItem[key] = "";
+        this.filterItem[key] = '';
       }
     },
-    addOrder(){
-      if(!this.$store.state.app.authority.find(a => a.id === 901)||!(this.isCooperative||this.isSuper)){
+    addOrder () {
+      if (!this.$store.state.app.authority.find(a => a.id === 901) || !(this.isCooperative || this.isSuper || this.isSale)) {
         this.$Message.error('权限不足！');
         return;
       }
-      this.$router.push("/ordermanage/create");
+      this.$router.push('/ordermanage/create');
     },
-    toPay() {
+    toPay () {
       // console.log(111);
     },
-    changeSelection(selection) {
+    changeSelection (selection) {
       if (!this.selectOrderList[this.pageNum]) {
         this.selectOrderList[this.pageNum] = [];
       }
       this.selectOrderList[this.pageNum] = selection;
     }
   },
-  mounted() {
+  mounted () {
     this.getOrderList(1);
     this.getManagecompanys();
-    $(".ivu-poptip-body-content-inner").css("color", "#2d8cf0");
-    $(".ivu-poptip-body-content-inner").css("cursor", "pointer");
-    $(".ivu-poptip-body").on("click", () => {
+    $('.ivu-poptip-body-content-inner').css('color', '#2d8cf0');
+    $('.ivu-poptip-body-content-inner').css('cursor', 'pointer');
+    $('.ivu-poptip-body').on('click', () => {
       this.toPay();
     });
   },
-  computed:{
-    selectedTab(){
+  computed: {
+    selectedTab () {
       let select = {};
       if (this.orderStatus.length > 0) {
         select = this.orderStatus.find(t => t.name === this.tabName);
       }
       return select;
     },
-    orderStatus() {
+    orderStatus () {
       let orderStatus = [];
-      if (this.selectedType && this.selectedType.type === "合同订单") {
+      if (this.selectedType && this.selectedType.type === '合同订单') {
         this.orderStatus1.forEach(item => {
           orderStatus.push(item);
         });
@@ -607,24 +607,24 @@ export default {
       }
       return orderStatus;
     },
-    isSuper(){
-      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+    isSuper () {
+      if (this.$store.state.app.authority && this.$store.state.app.authority.length > 0 && this.$store.state.app.authority[0].role) {
         return this.$store.state.app.authority[0].role.find(r => r === '超级管理员');
       }
     },
-    isSale(){
-      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+    isSale () {
+      if (this.$store.state.app.authority && this.$store.state.app.authority.length > 0 && this.$store.state.app.authority[0].role) {
         return this.$store.state.app.authority[0].role.find(r => r === '销售人员');
       }
     },
-    isCooperative(){
-      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+    isCooperative () {
+      if (this.$store.state.app.authority && this.$store.state.app.authority.length > 0 && this.$store.state.app.authority[0].role) {
         return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
       }
     }
   },
   watch: {
-    tabName(nv) {
+    tabName (nv) {
       this.pageNum = 1;
       this.getOrderList(1);
     }

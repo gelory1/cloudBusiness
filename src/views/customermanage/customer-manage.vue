@@ -30,11 +30,11 @@
                       <Option :value="item.index" v-for="(item,index) in natures" :key="item.index">{{item.val}}</Option>
                     </Select>
                   </FormItem>
-                  <FormItem label="授权资质" prop="sqzz">
-                    <el-cascader clearable v-model="filterItem.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name'}" size="small"></el-cascader>
+                  <FormItem label="授权区域" prop="sqzz">
+                    <el-cascader clearable v-model="filterItem.empower_city" :options="regions" filterable show-all-levels :props="{ value: 'name', label: 'name',checkStrictly: true}" size="small"></el-cascader>
                   </FormItem>
                   <FormItem label="省份/城市" prop="city">
-                    <el-cascader clearable v-model="filterItem.city" :options="regions" filterable show-all-levels :props="{ value: 'id', label: 'name'}" size="small"></el-cascader>
+                    <el-cascader clearable v-model="filterItem.city" :options="regions" filterable show-all-levels :props="{ value: 'name', label: 'name',checkStrictly: true}" size="small"></el-cascader>
                   </FormItem>
                   <FormItem label="运营公司" prop="yygs">
                     <Select v-model="filterItem.manageCompany" clearable filterable>
@@ -88,9 +88,9 @@
             </span>
           </div>
         </Header>
-        <Button type="primary" icon="ios-plus-empty" class="addBut1" @click="addClick" style="margin-bottom:5px;">添加客户</Button>
+        <Button type="primary" icon="ios-plus-empty" class="addBut1" @click="addClick" style="margin-bottom:10px;">添加客户</Button>
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
+      <Content :style="{background: '#fff', minHeight: '720px'}" style="padding:0 20px">
         <Table
           ref="table"
           @on-selection-change="selectChange"
@@ -345,7 +345,6 @@ export default {
       pageNum:1,
       companys:[],
       provinces:[],
-      citys:[],
       natures:this.$option.customer.levels,
       empowerCitys:[],
       filterStatus:false,
@@ -387,12 +386,13 @@ export default {
             create_endtime:endTime,
             customer_level:this.filterItem.nature === ''?0:this.filterItem.nature,
             customer_nature:this.selectedCustomType.no,
-            province:this.filterItem.city[0]||0,
-            city:this.filterItem.city[1]||0,
-            area:this.filterItem.city[2]||0,
+            province:this.filterItem.city[0]||'',
+            city:this.filterItem.city[1]||'',
+            area:this.filterItem.city[2]||'',
             manage_company:this.filterItem.manageCompany === ''?0:this.filterItem.manageCompany,
-            empowerProvince:this.filterItem.empower_city[0]||0,
-            empowerCity:this.filterItem.empower_city[1]||0,
+            empowerProvince:this.filterItem.empower_city[0]||'',
+            empowerCity:this.filterItem.empower_city[1]||'',
+            empowerArea:this.filterItem.empower_city[2]||'',
             saleName:this.filterItem.salesman,
             keyword:this.inputVal
           }
@@ -408,13 +408,13 @@ export default {
             item.name = data.customer_name;
             item.nature = data.customer_nature === 0?'':this.customerTypes.find(t => t.no === data.customer_nature).type;
             item.level = this.$option.customer.levelMap[data.customer_level];
-            let cityObj = this.regions.find(c => c.id === data.province)||{};
-            let areaObj = (cityObj.children||[]).find(c => c.id === data.city)||{};
+            let cityObj = this.regions.find(c => (data.province||'').indexOf(c.name)!==-1)||{};
+            let areaObj = (cityObj.children||[]).find(c => c.name === data.city)||{};
             if (cityObj){
               item.city =
                 (cityObj.name||"") +
                 " " +
-                (areaObj.name||"") + ' ' + (((areaObj.children||[]).find(c => c.id === data.area)||{}).name||"");
+                (areaObj.name||"") + ' ' + (((areaObj.children||[]).find(c => c.name === data.area)||{}).name||"");
             }
             item.time = data.create_date;
             item.salesman = data.sale_no;

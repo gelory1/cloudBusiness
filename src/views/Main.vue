@@ -5,7 +5,7 @@
   <div class="main" :class="{'main-hide-text': shrink}">
     <div
       class="sidebar-menu-con"
-      :style="{width: shrink?'60px':'250px', overflow: shrink ? 'visible' : 'auto'}"
+      :style="{width: shrink?'60px':'14%', overflow: shrink ? 'visible' : 'auto'}"
     >
       <scroll-bar ref="scrollBar">
         <shrinkable-menu
@@ -17,9 +17,9 @@
           :menu-list="menuList"
         >
           <div slot="top" class="logo-style" style="background:#528DFF;height:70px;">
-            <img src="../images/xllogo.png" alt style="text-align:left;width:50px;margin-top:10px;" />
+            <img src="../images/xllogo.png" alt class="logoImg" />
             <p
-              style="color:#ffffff;padding:8px 0 0 0;font-size:20px;display:inline-block;vertical-align:top;margin-top:14px"
+              class="logoP"
             >新联云商务中心</p>
           </div>
         </shrinkable-menu>
@@ -35,7 +35,7 @@
                 </div>
             </div>
     </div> -->
-    <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'250px'}">
+    <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'14%'}">
       <div style="height:70px;background:#528DFF;">
         <div class="header-avator-con">
           <div class="user-dropdown-menu-con">
@@ -60,11 +60,11 @@
       </div>
     </div>
     <!-- 右侧内容页 -->
-    <div class="single-page-con" :style="{left: shrink?'60px':'250px'}" ref="content">
+    <div class="single-page-con" :style="{left: shrink?'60px':'14%'}" ref="content">
       <div class="single-page">
-        <keep-alive :include="cachePage">
+        <!-- <keep-alive :include="cachePage"> -->
           <router-view></router-view>
-        </keep-alive>
+        <!-- </keep-alive> -->
       </div>
     </div>
   </div>
@@ -80,7 +80,8 @@ import themeSwitch from "./main-components/theme-switch/theme-switch.vue";
 import Cookies from "js-cookie";
 import util from "@/libs/util.js";
 import scrollBar from "@/views/my-components/scroll-bar/vue-scroller-bars";
-import axios from "../api/axios"
+import axios from "../api/axios";
+import regions from '../libs/citys';
 
 export default {
   components: {
@@ -106,8 +107,8 @@ export default {
       let menuList = [];
       if(this.authority&&this.authority.length>0){
         this.$store.state.app.menuList.forEach(menu => {
-          let whiteList = ['/'];
-          if(this.authority.find(a => a.path === menu.path||a.path === 'addressManage')||whiteList.indexOf(menu.path)!==-1){
+          let whiteList = ['/','/setting'];
+          if(this.authority.find(a => (a.path).toUpperCase() === (menu.path).toUpperCase())||whiteList.indexOf(menu.path)!==-1){
             let children = [];
             children = menu.children.filter((m,i) => {
               let path = menu.path + '/' + m.name;
@@ -115,7 +116,14 @@ export default {
                 return true
               }
             });
-            menuList.push({
+            let address = 'f';
+            if(menu.path === '/setting'){
+              address = 'fs';
+              if(this.authority.find(a => a.path === 'addressManage')){
+                address = 't';
+              }
+            }
+            if(address === 'f' || address === 't') menuList.push({
               component:menu.component,
               icon:menu.icon,
               name:menu.name,
@@ -176,7 +184,7 @@ export default {
       if(this.$store.state.app.authority.length === 0){
         this.$store.commit('setAutority',this.authority);
       }
-      this.getRegions();
+      localStorage.setItem('regions',JSON.stringify(regions));
       // var websocaket =null;
 		 	// if('WebSocket' in window){
 			// 	 websocaket = new WebSocket("ws://localhost:8080/WebSockt/WebSocketTest");//用于创建 WebSocket 对象。WebSocketTest对应的是java类的注解值
@@ -257,38 +265,6 @@ export default {
     },
     scrollBarResize() {
       if(this.$refs.scrollBar) this.$refs.scrollBar.resize();
-    },
-    getRegions(){
-      let request = {
-        typeid: 27012,
-        data:[{}]
-      }
-      this.$http.XLSELECT(request).then(res => {
-        let regions = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 1);
-        let arr2 = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 2);
-        let arr3 = (((res.data||{}).result||{}).dataAll||[]).filter(d => d.level === 3);
-        regions.forEach(a1 => {
-          a1.children = arr2.filter(a2 => a2.id - a1.id>0&&a2.id-a1.id<10000);
-          (a1.children||[]).forEach(a2 => {
-            a2.children = arr3.filter(a3 => a3.id - a2.id>0&&a3.id-a2.id<100);
-            a2.name = a2.name.replace(/\s+/g,'|');
-            let arr = a2.name.split('|');
-            a2.name = arr[arr.length - 1];
-            (a2.children||[]).forEach(a3 => {
-              a3.name = a3.name.replace(/\s+/g,'|');
-              let arr2 = a3.name.split('|');
-              a3.name = arr2[arr2.length -1];
-            })
-            if(a2.children.length === 0){
-              a2.children = undefined;
-            }
-          })
-          if(a1.children.length === 0){
-              a1.children = undefined;
-            }
-        })
-        localStorage.setItem('regions',JSON.stringify(regions));
-      });
     }
   },
   watch: {
@@ -339,5 +315,25 @@ export default {
 }
 .main .layout-text{
   font-size:16px;
+}
+.ivu-table-cell{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.logoImg{
+  text-align:left;width:50px;margin-top:10px;
+}
+.logoP{
+  color:#ffffff;padding:8px 0 0 0;font-size:20px;display:inline-block;vertical-align:top;margin-top:14px
+}
+@media screen and (max-width: 1300px){
+  .logoImg{
+    width:40px;
+    margin-top:18px;
+  }
+  .logoP{
+    font-size:18px;
+    margin-top:18px;
+  }
 }
 </style>

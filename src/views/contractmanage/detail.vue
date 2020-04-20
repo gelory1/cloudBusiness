@@ -1,12 +1,11 @@
 <template>
   <div class="detail">
     <Layout class="layout" style="min-height:800px;">
-      <div class="header_top">
-        <div class="con-left" @click="goback">
-          <Icon type="ios-arrow-left"></Icon>
-          <span>返回</span>
-        </div>
-        <Button type="ghost" size="small" style="float:right;width:80px;" @click="bjbuttClick">编辑</Button>
+      <div style="margin:10px 0 30px 0;display:flex;justify-content:space-between;align-items:center">
+        <span @click="goback" style="cursor:pointer;"><Icon type="ios-arrow-left"></Icon> 返回</span>
+        <span @click="bjbuttClick" style="cursor:pointer;background-color: #EBF5FE;padding:2px 6px;border-radius:5px" >
+          <Icon  type="compose" size="22" style="color: #54A3F6"></Icon>
+        </span>
       </div>
       <header class="header_mid" style="border:none">
         <h2 style="position:relative">
@@ -15,6 +14,9 @@
             style="position: relative;top: -15px;left: -2px;display: inline-block;border: 1px solid #54A3F6;font-size: 12px;
             padding: 0 5px;color: #54A3F6;border-radius: 4px;font-weight:100"
           >{{data.contractNature}}</span>
+          <span>
+            <img v-if="data.data.contractMark=== 1" style="width: 250px; transform:rotate(-15deg);" src="../../images/htgl/unBasic.png" alt />
+          </span>
         </h2>
         <p>{{data.contractNo}}</p>
         <div class="ht_img">
@@ -45,7 +47,7 @@
           <section>
             <img src="../../images/htgl/暂无.png" alt />
             <div>
-              <span>{{data.data.upTime||'暂无'}}</span>
+              <span>{{!data.data.upTime||data.data.upTime === '1900-01-01'?'暂无':data.data.upTime}}</span>
               <br />
               <span class="cor_s">上线时间</span>
             </div>
@@ -83,7 +85,7 @@
               <section>
                 <p>签约点数：</p>
                 <p>
-                  <span>{{kcmxSum}}</span>(
+                  <span>{{jcds||0}}</span>(
                   <span class="cor_span" @click="kcmxmodal = true">查看勘查明细</span>)
                 </p>
               </section>
@@ -276,8 +278,8 @@
       <Table :columns="kcmx_columns" :data="kcmx_data"></Table>
       <p style="font-size:16px;margin:20px 5px;">采集点位数量</p>
       <p class="kc_p">
-        采集点位数量（含基站）
-        <span style>{{kcmxSum}}</span>
+        采集点位数量（不含V型网关设备）
+        <span style>{{jcds||0}}</span>
       </p>
     </Modal>
     <!-- 发票 -->
@@ -449,13 +451,13 @@ export default {
           align: "center"
         },
         {
-          title: "规格型号",
-          key: "ggxh",
+          title: "产品型号",
+          key: "cpxh",
           align: "center"
         },
         {
-          title: "主计量",
-          key: "zjl",
+          title: "规格型号",
+          key: "ggxh",
           align: "center"
         },
         {
@@ -464,6 +466,7 @@ export default {
           align: "center"
         }
       ],
+      jcds: 0,
       kcmx_data: [
       ],
       kpxx: [],
@@ -519,9 +522,8 @@ export default {
       this.$router.push({
         path: "/contractmanage/edit",
         query: {
-          paymentList: this.paymentList,
-          remainingMoney: this.remainingMoney,
-          fj:this.fj
+          paymentList: JSON.stringify(this.paymentList),
+          remainingMoney: this.remainingMoney
         }
       });
     },
@@ -532,24 +534,37 @@ export default {
       this.selectedOrder = this.data.data.orderNo;
       this.orderDetailOpen = true;
     },
-    getkcmx() {
+    getSignPoint() {
       let request = {
-        typeid: 26008,
+        typeid: 10200,
         data: [
           {
-            contractNo: this.data.data.contractNo
+            unit_id: Number(this.data.data.customerNo || null)
+          }
+        ]
+      };
+      this.$http.XLCONTRACTHELP(request).then(response => {
+        this.jcds = response.data.result.data[0] && response.data.result.data[0].monitor_points
+      });
+    },
+    getkcmx() {
+      let request = {
+        typeid: 10201,
+        data: [
+          {
+            unit_id: Number(this.data.data.customerNo || null)
           }
         ]
       };
       this.kcmx_data = [];
-      this.$http.XLCONTRACT(request).then(response => {
-        response.data.result.data.productList.forEach((data, index) => {
+      this.$http.XLCONTRACTHELP(request).then(response => {
+        response.data.result.data.forEach((data, index) => {
           let item = {};
           item.chbm = data.productCode;
           item.chmc = data.productName;
           item.ggxh = data.productModel;
-          item.zjl = data.unit;
-          item.num = data.count;
+          item.cpxh = data.deviceName;
+          item.num = data.productCount;
           item.index = index + 1;
           this.kcmx_data.push(item);
         });
@@ -654,6 +669,7 @@ export default {
       this.$router.push({ path: "/contractmanage/contractmanage" });
   },
   mounted() {
+    this.getSignPoint();
     this.getkcmx();
     this.getTicket();
     this.getfiles();
@@ -663,6 +679,7 @@ export default {
       if (nv) this.getTicket();
     },
     $route(){
+      this.getSignPoint();
       this.getkcmx();
       this.getTicket();
       this.getfiles();
@@ -746,12 +763,13 @@ export default {
               payEndIndex = this.data.data.paybackList.length - 1;
           }
           if (allAmount - backAmount > 0) {
-            item.currentAmount =
-              allAmount - backAmount - item.paymentAmount > 0
-                ? item.paymentAmount
-                : allAmount - backAmount > 0
-                ? allAmount - backAmount
-                : 0;
+            item.currentAmount = allAmount
+            // item.currentAmount =
+            //   allAmount - backAmount - item.paymentAmount > 0
+            //     ? item.paymentAmount
+            //     : allAmount - backAmount > 0
+            //     ? allAmount - backAmount
+            //     : 0;
           }
           if (payIndex === "") {
             item.paybackList = [];
@@ -764,11 +782,11 @@ export default {
               )
             );
           }
-          (item.paybackList[0] || {}).paybackAmount = computeAmountStart;
-          if (item.paybackList.length > 1 && computeAmountEnd !== "")
-            (
-              item.paybackList[item.paybackList.length - 1] || {}
-            ).paybackAmount = computeAmountEnd;
+          // (item.paybackList[0] || {}).paybackAmount = computeAmountStart;
+          // if (item.paybackList.length > 1 && computeAmountEnd !== "")
+          //   (
+          //     item.paybackList[item.paybackList.length - 1] || {}
+          //   ).paybackAmount = computeAmountEnd;
           //计算发票信息
           let allTicketAmount = 0;
           if (

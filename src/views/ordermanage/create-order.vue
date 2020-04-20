@@ -1,7 +1,7 @@
 <template>
   <div class="edit layout">
-    <Layout class style="width:95%;min-height:800px;padding-left:20px;background:#fff">
-      <p class="div_p">订单信息</p>
+    <Layout class style="width:95%;padding-left:20px;background:#fff">
+      <p class="div_p" style="margin-top:10px">订单信息</p>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
         <Row>
           <Col span="8">
@@ -16,7 +16,7 @@
           </Col>
           <Col span="8">
             <FormItem label="销售类型" prop="saleType" class="con-right">
-              <Select v-model="formValidate.salesType" clearable filterable>
+              <Select v-model="formValidate.salesType" filterable :disabled="isSale || isCooperative">
                 <Option
                   :value="item.index"
                   v-for="(item,index) in salesTypes"
@@ -40,7 +40,7 @@
           </Col>
         </Row>
         <Row>
-          <Col span="8">
+          <Col span="12">
             <FormItem label="仓库" prop="store" :label-width="90">
               <Select v-model="formValidate.store.index" placeholder filterable clearable>
                 <Option
@@ -86,6 +86,7 @@
             :columns="devices_columns"
             :data="formValidate.devices_list"
             style="margin-left:10px;"
+            height="300"
           ></Table>
           <div class="dd_div">
             <section>
@@ -98,14 +99,14 @@
             </section>
           </div>
         </div>
-        <FormItem style="width:300px;margin:200px auto;margin-bottom:20px;">
+        <FormItem style="width:300px;margin:80px auto;margin-bottom:10px;">
           <Button type="primary" @click="onSubmit('formValidate')" :loading="subLoading">提交</Button>
           <Button type="ghost" style="margin-left: 18px" @click="onCancel" :disabled="subLoading">取消</Button>
         </FormItem>
       </Form>
     </Layout>
     <!-- 添加设备 -->
-    <Modal v-model="addsbmodal" width="800" @on-ok="ok">
+    <Modal v-model="addsbmodal" width="800" @on-ok="ok" class-name="vertical-center-modal">
       <p style="font-size:18px;">添加设备</p>
       <Input
         placeholder="请输入内容"
@@ -142,31 +143,33 @@
 </template>
 
 <script>
-import silderInput from "../public-components/silder-input.vue";
+import silderInput from '../public-components/silder-input.vue';
+import BigNumber from 'bignumber.js';
+
 export default {
-  name: "create",
+  name: 'create',
   components: {
     silderInput
   },
-  data() {
+  data () {
     return {
       formValidate: {
-        name: "",
-        orderType: "",
+        name: '',
+        orderType: '',
         customer: {
-          index: "",
-          value: ""
+          index: '',
+          value: ''
         },
         store: {
-          index: "",
-          value: ""
+          index: '',
+          value: ''
         },
         devices_list: [],
         adress: {
-          index: "",
-          value: ""
+          index: '',
+          value: ''
         },
-        salesType:1
+        salesType: ''
       },
       pageNum: 1,
       sum: 0,
@@ -174,94 +177,99 @@ export default {
         name: [
           {
             required: true,
-            message: "请输入申请公司",
-            trigger: "blur"
+            message: '请输入申请公司',
+            trigger: 'blur'
           }
         ],
         level: [
           {
             required: true,
-            message: "请选择客户等级"
+            message: '请选择客户等级'
           }
         ],
         store: [
           {
             required: true,
-            message: "请选择客户行业"
-            // trigger: "blur"
+            message: '请选择客户行业'
+          }
+        ],
+        saleType: [
+          {
+            required: true,
+            message: '请选择客户行业',
+            trigger: 'blur'
           }
         ],
         city: [
           {
             required: true,
-            message: "请选择城市",
-            type: "object"
+            message: '请选择城市',
+            type: 'object'
             // trigger: "blur"
           }
         ],
         orderType: [
           {
             required: true,
-            message: "请输入客户简称",
-            trigger: "blur"
+            message: '请输入客户简称',
+            trigger: 'blur'
           }
         ],
         registered_capital: [
           {
             required: true,
-            message: "请输入注册资金",
-            trigger: "blur"
+            message: '请输入注册资金',
+            trigger: 'blur'
           }
         ],
         bond_amount: [
           {
             required: true,
-            message: "请输入保证金",
-            trigger: "blur"
+            message: '请输入保证金',
+            trigger: 'blur'
           }
         ]
       },
       devices_columns: [
         {
-          type: "selection",
-          width: 60,
-          align: "center",
-          align: "center"
+          type: 'selection',
+          width: 40,
+          align: 'center'
         },
         {
-          title: "存货编码",
-          key: "productCode",
-          align: "center"
+          title: '存货编码',
+          key: 'productCode',
+          align: 'center'
         },
         {
-          title: "存货名称",
-          key: "productName",
-          align: "center",
+          title: '存货名称',
+          key: 'productName',
+          align: 'center',
           render: (h, params) => {
-            let texts = "";
+            let texts = '';
             if (params.row.productName !== null) {
               if (params.row.productName.length > 20) {
-                texts = params.row.productName.substring(0, 20) + "...";
+                texts = params.row.productName.substring(0, 20) + '...';
               } else {
                 texts = params.row.productName;
               }
             }
             return h(
-              "Tooltip",
+              'Tooltip',
               {
                 props: {
-                  placement: "top"
+                  placement: 'top'
                 }
               },
               [
                 texts,
                 h(
-                  "span",
+                  'span',
                   {
-                    slot: "content",
+                    slot: 'content',
                     style: {
-                      whiteSpace: "normal",
-                      wordBreak: "break-all"
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-all'
                     }
                   },
                   params.row.productName
@@ -271,31 +279,32 @@ export default {
           }
         },
         {
-          title: "规格型号",
-          key: "spec",
-          align: "center"
+          title: '规格型号',
+          key: 'spec',
+          align: 'center'
         },
         {
-          title: "主计量",
-          key: "unit",
-          align: "center"
+          title: '主计量',
+          width: '72',
+          key: 'unit',
+          align: 'center'
         },
         {
-          title: "发货数量",
-          key: "num",
-          width: 150,
-          align: "center",
+          title: '发货数量',
+          key: 'num',
+          width: 120,
+          align: 'center',
           render: (h, params) => {
-            return h("InputNumber", {
+            return h('InputNumber', {
               props: {
-                size: "small",
+                size: 'small',
                 value: params.row.num,
                 min: 0
               },
               on: {
-                "on-change": a => {
+                'on-change': a => {
                   params.row.num = a;
-                  params.row.totalPrice = a * params.row.price;
+                  params.row.totalPrice = new BigNumber(params.row.num).dividedBy(params.row.set_num).multipliedBy(params.row.set_price).toFixed(2);
                   this.$set(this.formValidate.devices_list, params.index, params.row);
                 }
               }
@@ -303,85 +312,98 @@ export default {
           }
         },
         {
-          title: "单价",
-          key: "price"
+          title: '单价',
+          width: '70',
+          key: 'price',
+          align: 'center'
         },
         {
-          title: "总价",
-          key: "totalPrice"
+          title: '总价',
+          width: '70',
+          key: 'totalPrice',
+          align: 'center'
         },
         {
-          title: "税率",
-          key: "tax"
+          title: '税率',
+          width: '70',
+          key: 'tax',
+          align: 'center'
         },
         {
-          title:'操作',
-          width: '200',
+          title: '操作',
+          width: '60',
           key: 'action',
-          align: "center",
-          render:(h,params) => {
-            return h('Poptip',{
-                props:{
-                  title:'是否确定删除？',
-                  confirm:true
-                },
-                on:{
-                  'on-ok':() =>{
-                    this.formValidate.devices_list = this.formValidate.devices_list.filter(d =>d.productCode !==params.row.productCode);
-                    this.$Message.info('已删除！');
-                  }
+          align: 'center',
+          render: (h, params) => {
+            return h('Poptip', {
+              props: {
+                title: '是否确定删除？',
+                confirm: true,
+                width: 200
+              },
+              on: {
+                'on-ok': () => {
+                  this.formValidate.devices_list = this.formValidate.devices_list.filter(d => d.productCode !== params.row.productCode);
+                  this.$Message.info('已删除！');
                 }
-              },[
-                h('Button',{
-                  props:{
-                    size: 'small'
-                  }
-                },'删除')
-              ]
-            )
+              }
+            }, [
+              h('Button', {
+                props: {
+                  size: 'small'
+                }
+              }, '删除')
+            ]
+            );
           }
+        },
+        {
+          title: ' ',
+          key: 'aa',
+          width: '1',
+          align: 'center'
         }
       ],
       addsb_columns: [
         {
-          type: "selection",
+          type: 'selection',
           width: 60,
-          align: "center"
+          align: 'center'
         },
         {
-          title: "存货编码",
-          key: "product_code",
-          align: "center"
+          title: '存货编码',
+          key: 'product_code',
+          align: 'center'
         },
         {
-          title: "存货名称",
-          key: "product_name",
-          align: "center",
+          title: '存货名称',
+          key: 'product_name',
+          align: 'center',
           render: (h, params) => {
-            let texts = "";
+            let texts = '';
             if (params.row.product_name !== null) {
               if (params.row.product_name.length > 20) {
-                texts = params.row.product_name.substring(0, 20) + "...";
+                texts = params.row.product_name.substring(0, 20) + '...';
               } else {
                 texts = params.row.product_name;
               }
             }
             return h(
-              "Tooltip",
+              'Tooltip',
               {
                 props: {
-                  placement: "top"
+                  placement: 'top'
                 }
               },
               [
                 texts,
                 h(
-                  "span",
+                  'span',
                   {
-                    slot: "content",
+                    slot: 'content',
                     style: {
-                      whiteSpace: "normal",
-                      wordBreak: "break-all"
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-all'
                     }
                   },
                   params.row.product_name
@@ -391,34 +413,34 @@ export default {
           }
         },
         {
-          title: "规格型号",
-          key: "product_models",
-          align: "center",
+          title: '规格型号',
+          key: 'product_models',
+          align: 'center',
           render: (h, params) => {
-            let texts = "";
+            let texts = '';
             if (params.row.product_models !== null) {
               if (params.row.product_models.length > 20) {
-                texts = params.row.product_models.substring(0, 20) + "...";
+                texts = params.row.product_models.substring(0, 20) + '...';
               } else {
                 texts = params.row.product_models;
               }
             }
             return h(
-              "Tooltip",
+              'Tooltip',
               {
                 props: {
-                  placement: "top"
+                  placement: 'top'
                 }
               },
               [
                 texts,
                 h(
-                  "span",
+                  'span',
                   {
-                    slot: "content",
+                    slot: 'content',
                     style: {
-                      whiteSpace: "normal",
-                      wordBreak: "break-all"
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-all'
                     }
                   },
                   params.row.product_models
@@ -428,29 +450,29 @@ export default {
           }
         },
         {
-          title: "主计量",
-          key: "product_unit",
-          align: "center"
+          title: '主计量',
+          key: 'product_unit',
+          align: 'center'
         },
         {
-          title: "发货数量",
-          key: "num",
-          align: "center",
+          title: '发货数量',
+          key: 'num',
+          align: 'center',
           render: (h, params) => {
-            return h("div", [
-              h("InputNumber", {
+            return h('div', [
+              h('InputNumber', {
                 props: {
-                  size: "small",
+                  size: 'small',
                   min: 0,
                   value: params.row.num
                 },
                 on: {
-                  "on-change": a => {
+                  'on-change': a => {
                     this.addStore[params.index] = params.row;
                     this.addStore[params.index].num = a;
                     this.addStore.page = this.pageNum;
-                    if(!this.addData[this.pageNum]){
-                       this.addData[this.pageNum] = [];
+                    if (!this.addData[this.pageNum]) {
+                      this.addData[this.pageNum] = [];
                     }
                     this.addData[this.pageNum].push(params.row);
                   }
@@ -466,17 +488,17 @@ export default {
       customs: [],
       cahceData: [],
       addsbmodal: false,
-      inputVal: "",
+      inputVal: '',
       selData: [],
       subLoading: false
     };
   },
   methods: {
-    getCmonpanys() {
+    getCmonpanys () {
       let request = {
-        "typeid": 23015,
-        "data":[{
-            "account_id": this.$store.state.user.accountId
+        'typeid': 23015,
+        'data': [{
+          'account_id': this.$store.state.user.accountId
         }]
       };
       if (this.cahceData.length > 0) return;
@@ -488,18 +510,18 @@ export default {
             value: data.agent_name
           });
         });
-        this.$set(this.formValidate.customer, "index", this.customs[0].index);
-        this.$set(this.formValidate.customer, "value", this.customs[0].value);
+        this.$set(this.formValidate.customer, 'index', this.customs[0].index);
+        this.$set(this.formValidate.customer, 'value', this.customs[0].value);
       });
     },
-    addDeviceClick() {
+    addDeviceClick () {
       this.addsbmodal = true;
       this.addDevices(1);
     },
-    getAddset() {
+    getAddset () {
       this.addDevices(1);
     },
-    addDevices(p) {
+    addDevices (p) {
       if (this.addStore.page && this.addData[this.addStore.page]) {
         for (let key in this.addStore) {
           let index = this.addData[this.addStore.page].findIndex(
@@ -512,17 +534,17 @@ export default {
       }
       this.addStore = {};
       let request = {
-        typeid: 23012,
+        typeid: 10202,
         data: [
           {
-            keyword: this.inputVal === "" ? undefined : this.inputVal,
+            keyword: this.inputVal === '' ? undefined : this.inputVal,
             page_size: 10,
             page_num: p
           }
         ]
       };
       this.addsb_data = [];
-      this.$http.PostXLASSETS(request).then(response => {
+      this.$http.XLCONTRACTHELP(request).then(response => {
         let { data } = response.data.result;
         this.sum = data[0].sum;
         data[0].product_list.forEach(data => {
@@ -534,7 +556,7 @@ export default {
             this.formValidate.devices_list.find(d => d.productCode === data.product_code)
           ) {
             _checked = true;
-            num =this.formValidate.devices_list.find(
+            num = this.formValidate.devices_list.find(
               d => d.productCode === data.product_code
             ).num;
           }
@@ -553,6 +575,7 @@ export default {
             product_models: data.product_models,
             product_name: data.product_name,
             product_price: data.product_price,
+            set_num: data.set_num,
             product_unit: data.product_unit,
             num,
             _checked
@@ -560,7 +583,7 @@ export default {
         });
       });
     },
-    selectDevices(selection) {
+    selectDevices (selection) {
       this.addData[this.pageNum] = selection;
       for (let key in this.addStore) {
         this.addStore[key]._checked = true;
@@ -573,7 +596,7 @@ export default {
         }
       }
     },
-    ok() {
+    ok () {
       for (let key in this.addStore) {
         let index = (this.addData[this.pageNum] || []).findIndex(
           d => d.product_code === this.addStore[key].product_code
@@ -598,73 +621,76 @@ export default {
             spec: d.product_models,
             unit: d.product_unit,
             num: d.num,
-            price: d.product_price,
-            tax: "6%",
-            totalPrice: d.product_price * d.num
+            set_num: d.set_num,
+            set_price: d.product_price,
+            price: new BigNumber(d.product_price).dividedBy(d.set_num).toFixed(2),
+            tax: '6%',
+            totalPrice: new BigNumber(d.num).dividedBy(d.set_num).multipliedBy(d.product_price).toFixed(2)
           });
         } else {
           let obj = this.formValidate.devices_list.find(
             item => item.productCode === d.product_code
           );
           obj.num = d.num;
-          obj.totalPrice = d.product_price * obj.num;
+          obj.totalPrice = new BigNumber(d.num).dividedBy(d.set_num).multipliedBy(d.product_price).toFixed(2);
         }
       });
     },
-    onSubmit(name) {
-      if (this.formValidate.store.index != "") {
+    onSubmit (name) {
+      if (this.formValidate.store.index != '' && this.formValidate.salesType !== '') {
         if (this.formValidate.devices_list && this.formValidate.devices_list.length > 0) {
         } else {
-          this.$Message.error("无添加设备!");
-          return;
+          this.$Message.error('无添加设备!');
         }
       } else {
-        this.$Message.error("请填写完整的信息！");
-        return;
+        this.$Message.error('请填写完整的信息！');
       }
       let productList = [];
       this.formValidate.devices_list.forEach(data => {
-        if (data.num > 0)
+        if (data.num > 0) {
           productList.push({
             productCode: data.productCode,
             productName: data.productName,
             productModels: data.spec,
             quantity: data.num,
-            price: data.price + "",
-            unit: data.unit
+            price: data.price + '',
+            unit: data.unit,
+            set_num: data.set_num,
+            product_price: data.set_price
           });
+        }
       });
-      if(productList.length === 0){
-        this.$Message.error("设备数量不能为0!");
-        return;
+      if (productList.length === 0) {
+        this.$Message.error('设备数量不能为0!');
       }
       let myDate = new Date();
-      let date =
-        myDate.getFullYear() +
-        "-" +
-        (myDate.getMonth() + 1) +
-        "-" +
-        myDate.getDate() +
-        " " +
-        myDate.getHours() +
-        ":" +
-        myDate.getMinutes() +
-        ":" +
-        myDate.getSeconds();
+      let date = myDate.getFullYear() +
+                        '-' +
+                        (myDate.getMonth() + 1) +
+                        '-' +
+                        myDate.getDate() +
+                        ' ' +
+                        myDate.getHours() +
+                        ':' +
+                        myDate.getMinutes() +
+                        ':' +
+                        myDate.getSeconds();
+      const selectedStore = this.stores.filter(item => item.index === this.formValidate.store.index);
       let request = {
         typeid: 24006,
         data: [
           {
             account_id: this.$store.state.user.accountId,
             orderTime: date,
-            orderAmount: this.totalPrice + "",
-            whId: this.formValidate.store.index,
+            orderAmount: this.totalPrice + '',
+            whId: selectedStore && selectedStore.length > 0 ? selectedStore[0].id : '',
+            erp_wh_id: this.formValidate.store.index,
             addressName: this.formValidate.adress.value,
             addressId: this.formValidate.adress.index,
             agentId: this.formValidate.customer.index,
             saleType: this.formValidate.salesType,
             orderType: 1,
-            orderNo: "",
+            orderNo: '',
             productList
           }
         ]
@@ -673,131 +699,131 @@ export default {
       this.$http.SETORDER(request).then(
         response => {
           if (response.data.code !== 0) return;
-          this.$Message.success("添加成功！");
+          this.$Message.success('添加成功！');
           this.formValidate = {
-            name: "",
-            orderType: "",
+            name: '',
+            orderType: '',
             customer: {
-              index: "",
-              value: ""
+              index: '',
+              value: ''
             },
             store: {
-              index: "",
-              value: ""
+              index: '',
+              value: ''
             },
             devices_list: [],
             adress: {
-              index: "",
-              value: ""
+              index: '',
+              value: ''
             }
           };
-          this.$set(this.formValidate.customer, "index", this.customs[0].index);
-          this.$set(this.formValidate.customer, "value", this.customs[0].value);
+          this.$set(this.formValidate.customer, 'index', this.customs[0].index);
+          this.$set(this.formValidate.customer, 'value', this.customs[0].value);
           this.subLoading = false;
-          this.$router.push("/ordermanage/ordermanage");
+          this.$router.push('/ordermanage/ordermanage');
         },
         error => {
           this.subLoading = false;
           if (error.data.code === 0) {
-            this.$Message.success("添加成功！");
+            this.$Message.success('添加成功！');
             this.formValidate = {
-              name: "",
-              orderType: "",
+              name: '',
+              orderType: '',
               customer: {
-                index: "",
-                value: ""
+                index: '',
+                value: ''
               },
               store: {
-                index: "",
-                value: ""
+                index: '',
+                value: ''
               },
               devices_list: [],
               adress: {
-                index: "",
-                value: ""
+                index: '',
+                value: ''
               }
             };
             this.$set(
               this.formValidate.customer,
-              "index",
+              'index',
               this.customs[0].index
             );
             this.$set(
               this.formValidate.customer,
-              "value",
+              'value',
               this.customs[0].value
             );
-            this.$router.push("/ordermanage/ordermanage");
+            this.$router.push('/ordermanage/ordermanage');
           } else if (error.data.message) {
             this.$Message.error(error.data.message);
           }
         }
       );
     },
-    onCancel() {
+    onCancel () {
       this.formValidate = {
-        name: "",
-        orderType: "",
+        name: '',
+        orderType: '',
         customer: {
-          index: "",
-          value: ""
+          index: '',
+          value: ''
         },
         store: {
-          index: "",
-          value: ""
+          index: '',
+          value: ''
         },
         devices_list: [],
         adress: {
-          index: "",
-          value: ""
+          index: '',
+          value: ''
         }
       };
-      this.$set(this.formValidate.customer, "index", this.customs[0].index);
-      this.$set(this.formValidate.customer, "value", this.customs[0].value);
-      this.$router.push("/ordermanage/ordermanage");
-    },
+      this.$set(this.formValidate.customer, 'index', this.customs[0].index);
+      this.$set(this.formValidate.customer, 'value', this.customs[0].value);
+      this.$router.push('/ordermanage/ordermanage');
+    }
   },
   computed: {
-    stores() {
+    stores () {
       let stores = [];
       if (
         this.formValidate.customer.index &&
-        this.formValidate.customer.index !== ""
+      this.formValidate.customer.index !== ''
       ) {
         let customer =
-          this.cahceData.find(
-            d => d.agent_id === this.formValidate.customer.index
-          ) || {};
+        this.cahceData.find(
+          d => d.agent_id === this.formValidate.customer.index
+        ) || {};
         if (customer.warehouseList && customer.warehouseList.length > 0) {
           customer.warehouseList.forEach(w => {
             stores.push({
-              index: w.wh_id,
-              value: w.wh_name
+              index: w.erp_wh_id,
+              value: w.wh_name,
+              id: w.wh_id
             });
           });
         }
-        this.$set(this.formValidate.store, "index", stores[0].index);
-        this.$set(this.formValidate.store, "value", stores[0].value);
+        this.$set(this.formValidate.store, 'index', stores[0].index);
+        this.$set(this.formValidate.store, 'value', stores[0].value);
       }
       return stores;
     },
-    adresses() {
+    adresses () {
       let adresses = [];
-      if (
-        this.formValidate.customer.index &&
-        this.formValidate.customer.index !== "" &&
+      if (this.formValidate.customer.index &&
+        this.formValidate.customer.index !== '' &&
         this.formValidate.store.index &&
-        this.formValidate.store.index !== "" &&
+        this.formValidate.store.index !== '' &&
         this.formValidate.adress
       ) {
         let cusomer =
-          this.cahceData.find(
-            d => d.agent_id === this.formValidate.customer.index
-          ) || {};
+        this.cahceData.find(
+          d => d.agent_id === this.formValidate.customer.index
+        ) || {};
         let store =
-          cusomer.warehouseList.find(
-            w => w.wh_id === this.formValidate.store.index
-          ) || {};
+        cusomer.warehouseList.find(
+          w => w.erp_wh_id === this.formValidate.store.index
+        ) || {};
         if (store.addressList && store.addressList.length > 0) {
           store.addressList.forEach(a => {
             adresses.push({
@@ -810,73 +836,80 @@ export default {
         let selectAddress = adresses.find(a => a.status === 1) || adresses[0];
         this.$set(
           this.formValidate.adress,
-          "index",
-          (selectAddress || {}).index || ""
+          'index',
+          (selectAddress || {}).index || ''
         );
         this.$set(
           this.formValidate.adress,
-          "value",
-          (selectAddress || {}).value || ""
+          'value',
+          (selectAddress || {}).value || ''
         );
       }
       return adresses;
     },
-    totalPrice() {
+    totalPrice () {
       let price = 0;
       if (
         this.formValidate.devices_list &&
         this.formValidate.devices_list.length > 0
       ) {
         this.formValidate.devices_list.forEach(data => {
-          price += data.totalPrice;
+          price += new BigNumber(data.totalPrice).toNumber();
         });
       }
       return price;
     },
-    upperTotalPrice() {
+    upperTotalPrice () {
       return this.$util.NumberToChinese(Number(this.totalPrice));
     },
-    isSale(){
-      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+    isSale () {
+      if (this.$store.state.app.authority && this.$store.state.app.authority.length > 0 && this.$store.state.app.authority[0].role) {
         return this.$store.state.app.authority[0].role.find(r => r === '销售人员');
       }
     },
-    isCooperative(){
-      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+    isCooperative () {
+      if (this.$store.state.app.authority && this.$store.state.app.authority.length > 0 && this.$store.state.app.authority[0].role) {
         return this.$store.state.app.authority[0].role.find(r => r === '合作伙伴');
       }
     },
-    selectSaleType(){
+    selectSaleType () {
       let type = '';
-      if(this.isSale){
+      if (this.isSale) {
         type = '直销';
-      }else{
+      } else {
         type = '渠道';
       }
       return type;
     },
-    salesTypes(){
+    salesTypes () {
       let types = [];
-      if(this.isCooperative){
-        types = this.$option.contract.salesTypes.filter(s => s.index ===1);
-      }else{
-        types = this.$option.contract.salesTypes.filter(s => s.index ===1||s.index === 2);
+      if (this.isCooperative) {
+        types = this.$option.contract.salesTypes.filter(s => s.index === 1);
+        this.formValidate.salesType = 1;
+      } else if (this.isSale) {
+        types = this.$option.contract.salesTypes.filter(s => s.index === 2);
+        this.formValidate.salesType = 2;
+      } else {
+        types = this.$option.contract.salesTypes.filter(s => s.index === 1 || s.index === 2);
+      }
+      if (this.formValidate.salesType === '') {
+        this.formValidate.salesType = types[0].index;
       }
       return types;
     }
   },
-  mounted() {
+  mounted () {
     this.getCmonpanys();
     this.addDevices(1);
   },
   watch: {
-    addsbmodal(nv) {
+    addsbmodal (nv) {
       if (!nv) {
         this.addData = {};
         this.pageNum = 1;
       }
     },
-    $route() {
+    $route () {
       this.addDevices(1);
     }
   }
@@ -887,7 +920,7 @@ export default {
 @import "../customermanage/customer.css";
 .dd_div {
   float: right;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 .dd_div section {
   margin-right: 30px;
@@ -912,5 +945,13 @@ export default {
 }
 .sb_p span {
   color: #3896f5;
+}
+.vertical-center-modal{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vertical-center-modal .ivu-modal{
+  top: 0;
 }
 </style>

@@ -37,90 +37,90 @@
 </template>
 
 <script>
-import Cookies from "js-cookie";
-import api from "@/api/axios";
+import Cookies from 'js-cookie';
+import api from '@/api/axios';
 export default {
-  data() {
-    return {
-      form: {
-        userName: "",
-        password: ""
-      },
-      rules: {
-        userName: [
-          {
-            type: "string",
-            required: true,
-            message: "账号不能为空",
-            trigger: "blur"
-          }
-        ],
-        password: [{ required: true, message: "密码不能为空", trigger: "blur" }]
-      }
-    };
-  },
-  methods: {
-    handleSubmit() {
-      this.$refs.loginForm.validate(valid => {
-        var request = {
-          loginname: this.form.userName,
-          password: this.form.password
-        };               
-        api.GetLOGIN(request).then(response => {
-          // alert(JSON.stringify(response.data.code))
-          if (valid) {
-            if (response.data.code == 0) {
-              Cookies.set("user", this.form.userName);
-              Cookies.set("password", this.form.password);
-              localStorage.setItem('accountId',response.data.accountId);
-              localStorage.setItem('accountName',response.data.accountName);
-              this.$store.commit('setAccountId',response.data.accountId);
-              this.$store.commit('setAccountName',response.data.accountName);
-              this.getAuthority();
-            } else {
-              this.$Message.error("用户名或密码不正确");
+    data () {
+        return {
+            form: {
+                userName: '',
+                password: ''
+            },
+            rules: {
+                userName: [
+                    {
+                        type: 'string',
+                        required: true,
+                        message: '账号不能为空',
+                        trigger: 'blur'
+                    }
+                ],
+                password: [{ required: true, message: '密码不能为空', trigger: 'blur' }]
             }
-          }
-        });
-      });
+        };
     },
-    getAuthority(){
-      let request = {
-        typeid: 22101,
-        accountid: this.$store.state.user.accountId
-      };
-      this.$http.AUTHORITY(request).then(() => {        
-      },res => {
-        let roleMap = this.$option.role.roleMap;
-        if(res.data.code === 0){
-          let role = [];
-          (res.data.role||[]).forEach(r => {
-            if(roleMap[r[0]]){
-              role.push(roleMap[r[0]]);
-            }
-          })
-          if(role.indexOf('超级管理员') !== -1){
-            role = ['超级管理员'];
-          }
-          let authority = [];
-          (res.data.priv||[]).forEach(p => {
-            authority.push({
-              id:p[0],
-              path:p[1],
-              role:role
+    methods: {
+        handleSubmit () {
+            this.$refs.loginForm.validate(valid => {
+                var request = {
+                    loginname: this.form.userName,
+                    password: this.form.password
+                };
+                api.GetLOGIN(request).then(response => {
+                    // alert(JSON.stringify(response.data.code))
+                    if (valid) {
+                        if (response.data.code == 0) {
+                            Cookies.set('user', this.form.userName);
+                            Cookies.set('password', this.form.password);
+                            localStorage.setItem('accountId', response.data.accountId);
+                            localStorage.setItem('accountName', response.data.accountName);
+                            this.$store.commit('setAccountId', response.data.accountId);
+                            this.$store.commit('setAccountName', response.data.accountName);
+                            this.getAuthority();
+                        } else {
+                            this.$Message.error('用户名或密码不正确');
+                        }
+                    }
+                });
             });
-          });
-          localStorage.setItem('authority',JSON.stringify(authority));//本地保存列表
-          this.$store.commit('setAutority',authority);//更新登录列表
-          this.$store.commit('resetWorkBenchData');
-          this.$store.commit('resetShowNotice');
-          this.$router.push({
-            name: "home_index"
-          });
+        },
+        getAuthority () {
+            let request = {
+                typeid: 22101,
+                accountid: this.$store.state.user.accountId
+            };
+            this.$http.AUTHORITY(request).then(() => {
+            }, res => {
+                let roleMap = this.$option.role.roleMap;
+                if (res.data.code === 0) {
+                    let role = [];
+                    (res.data.role || []).forEach(r => {
+                        if (roleMap[r[0]]) {
+                            role.push(roleMap[r[0]]);
+                        }
+                    });
+                    if (role.indexOf('超级管理员') !== -1) {
+                        role = ['超级管理员'];
+                    }
+                    let authority = [];
+                    (res.data.priv || []).forEach(p => {
+                        authority.push({
+                            id: p[0],
+                            path: p[1],
+                            role: role
+                        });
+                    });
+                    localStorage.setItem('authority', JSON.stringify(authority));// 本地保存列表
+                    this.$store.commit('setAutority', authority);// 更新登录列表
+                    this.$store.commit('resetWorkBenchData');
+                    this.$store.commit('resetShowNotice');
+                    this.$router.push({
+                        name: 'home_index'
+                    });
+                }
+            });
         }
-      })
     }
-  }
 };
 </script>
 

@@ -345,7 +345,7 @@ order.status2 = [
     }
 ];
 order.statusMap2 = {
-    0: '申请', 1: '审批', 2: '支付', 3: '下单', 4: '出库', 5: '到货'
+    0: '审批', 1: '支付', 2: '下单', 3: '出库', 4: '到货'
 };
 order.types = [
     {
@@ -370,7 +370,7 @@ contract.status = [
         index: -1
     },
     {
-        status: '审批签约中',
+        status: '签约审批中',
         index: 0
     },
     {
@@ -521,7 +521,7 @@ contract.salesTypes = [
     }
 ];
 contract.statusColorMap = {
-    审批签约中: {
+    签约审批中: {
         backgroundColor: '#FDF6EC',
         color: '#E7A440'
     },
@@ -565,6 +565,16 @@ contract.paybackWayMap = {
     0: '线下支付',
     1: '备货金抵扣'
 };
+contract.paybackWays = [
+    {
+        index:0,
+        val:'线下支付'
+    },
+    {
+        index:1,
+        val:'备货金抵扣'
+    }
+]
 workbench.typeMap = {
     1: ' 审批提醒',
     2: ' 签署提醒',

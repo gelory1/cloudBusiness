@@ -1,5 +1,6 @@
 import axios from 'axios';
 import env from '../../build/env';
+import BigNumber from 'bignumber.js';
 
 let util = {
 
@@ -56,7 +57,7 @@ util.getRouterObjByName = function (routers, name) {
     let routerObj = null;
     for (let item of routers) {
         if (item.name === name) {
-            if (!(name === 'home' || name === 'home_index' || name === 'dragable-table' || name === 'setting' || name === 'address-manage')) {
+            if (!(name === 'home' || name === 'home_index' || name === 'dragable-table' || name === 'inventory' || name === 'stock' || name === 'delivery' || name === 'setting' || name === 'address-manage')) {
                 item.access = true;
             }
             return item;
@@ -85,7 +86,8 @@ util.setCurrentPath = function (vm, name) {
         'otherRouter': '0',
         'otherRouter1': '1',
         'otherRouterOrder': '2',
-        'assetRouter': '3'
+        'assetRouter': '3',
+        'otherRouterReport': '4'
     };
     vm.$store.state.app.routers.forEach(item => {
         if (item.children.length === 1) {
@@ -150,6 +152,18 @@ util.setCurrentPath = function (vm, name) {
                 title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'delivery-manage_index')),
                 path: '/delivery-manage',
                 name: 'delivery-manage_index'
+            },
+            {
+                title: title,
+                path: '',
+                name: name
+            }
+        ],
+        '4': [
+            {
+                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'reportform_index')),
+                path: '/reportform',
+                name: 'reportform_index'
             },
             {
                 title: title,
@@ -362,7 +376,7 @@ util.NumberToChinese = function (n) {
     n = Math.abs(n);
     var s = '';
     for (let i = 0; i < fraction.length; i++) {
-        s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+        s += (digit[Math.floor(new BigNumber(n).multipliedBy(10).multipliedBy(Math.pow(10, i))) % 10] + fraction[i]).replace(/零./, '');
     }
     s = s || '整';
     n = Math.floor(n);
@@ -377,6 +391,13 @@ util.NumberToChinese = function (n) {
     return head + s.replace(/(零.)*零元/, '元')
         .replace(/(零.)+/g, '零')
         .replace(/^整$/, '零元整');
+};
+util.Date = function (n) {
+    let date = new Date(n);
+    if (!date) return '';
+    let newDate = '';
+    newDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    return newDate;
 };
 
 export default util;

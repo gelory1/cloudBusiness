@@ -65,27 +65,8 @@
                       >{{item.val}}</Option>
                     </Select>
                   </FormItem>
-                  <FormItem label="省份/城市" prop="city">
-                    <Row>
-                      <Col span="12">
-                        <Select v-model="filterItem.province" clearable filterable>
-                          <Option
-                            :value="item.id"
-                            v-for="(item,index) in provinces"
-                            :key="index"
-                          >{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                      <Col span="12">
-                        <Select v-model="filterItem.city" clearable filterable :disabled="disabled">
-                          <Option
-                            :value="item.id"
-                            v-for="(item,index) in citys"
-                            :key="index"
-                          >{{item.name}}</Option>
-                        </Select>
-                      </Col>
-                    </Row>
+                   <FormItem label="省份/城市" prop="city">
+                    <el-cascader clearable v-model="filterItem.city" :options="regions" filterable show-all-levels :props="{ value: 'name', label: 'name',checkStrictly: true}" size="small"></el-cascader>
                   </FormItem>
                   <FormItem label="运营公司" prop="manageCompany">
                     <Select v-model="filterItem.manageCompany" clearable filterable>
@@ -170,13 +151,7 @@
               <!-- 更多 -->
               <div v-show="moreShow" class="more">
                 <p @click="exportSelect">导出所选结果</p>
-                <p>
-                  <a
-                    :href="exportUrl === ''||this.isFinance||this.isCooperative?'#':exportUrl"
-                    @click="exportAll"
-                    style="color:#495060"
-                  >导出全部结果</a>
-                </p>
+                <p @click="exportAll">导出全部结果</p>
                 <!-- <p>
                   <Upload ref="upload" action="/public/api/xlcontract/uploadFile" :show-upload-list="false" :data="postData" :before-upload="beforeUpload" :headers="{user:'x',key:'x'}">
                     上传合同附件
@@ -187,7 +162,7 @@
           </div>
         </Header>
       </Menu>
-      <Content :style="{background: '#fff', minHeight: '800px'}" style="padding-left:20px">
+      <Content :style="{background: '#fff', minHeight: '760px',paddingTop: '20px'}" style="padding:20px 20px 0">
         <Table
           ref="table"
           @on-selection-change="selectChange"
@@ -207,11 +182,11 @@
           show-elevator
           style="text-align:center;margin-top:20px;"
         ></Page>
+        <a ref="downloadLink" :href="exportUrl === ''?'#':exportUrl" download="合同列表"></a>
       </Content>
     </Layout>
   </div>
 </template>
-``
 <script>
 export default {
   name: "contract",
@@ -252,12 +227,12 @@ export default {
         {
           title: "合同性质",
           key: "contractNature",
-          align: "center"
+          align: "center",
         },
         {
           title: "合同类型",
           key: "contractType",
-          align: "center"
+          align: "center",
         },
         {
           title: "合同状态",
@@ -304,7 +279,31 @@ export default {
         {
           title: "合同名称",
           key: "customerName",
-          align: "center"
+          align: "center",
+          render: (h, params) => {
+              let texts = ''
+              if (params.row.customerName !== null) {
+                if ((params.row.customerName||'').length > 20) {
+                  texts = params.row.customerName.substring(0, 20) + '...'
+                } else {
+                  texts = params.row.customerName
+                }
+              }
+              return h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                texts,
+                h('span', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all'
+                  }
+                }, params.row.customerName)
+              ])
+            }
         },
         {
           title: "省份城市",
@@ -411,7 +410,6 @@ export default {
       natures: this.$option.contract.natures,
       salesTypes: this.$option.contract.salesTypes,
       provinces: [],
-      citys: [],
       companys: [],
       contractContentMap: this.$option.contract.contentMap,
       contents: this.$option.contract.contents,
@@ -557,9 +555,9 @@ export default {
                 ? 0
                 : this.filterItem.contractContent,
             customerProvince:
-              this.filterItem.province === "" ? 0 : this.filterItem.province,
+              this.filterItem.city[0]||'',
             customerCity:
-              this.filterItem.city === "" ? 0 : this.filterItem.city,
+              this.filterItem.city[1]||'',
             manageCompany:
               this.filterItem.manageCompany === ""
                 ? 0
@@ -574,10 +572,10 @@ export default {
           }
         ]
       };
-      this.contract_data = [];
       this.loading = true;
       this.$http.XLCONTRACT(request).then(
         response => {
+          this.contract_data = [];
           let { data } = response.data.result;
           this.sum = data.sum;
           data.contractList.forEach(con => {
@@ -596,9 +594,9 @@ export default {
               (con.customerName || "") +
               "-" +
               this.contractContentMap[con.contractContent];
-            let cityObj = this.regions.find(c => c.id === con.customerProvince)||{};
+            let cityObj = this.regions.find(c => (con.customerProvince||"").indexOf(c.name)!==-1)||{};
             let areaObj = (cityObj.children || []).find(
-              c => c.id === con.customerCity
+              c => c.name === con.customerCity
             )||{};
             if (cityObj)
               item.city =
@@ -608,7 +606,7 @@ export default {
                 " " +
                 ((
                   (areaObj.children || []).find(
-                    c => c.id === con.customerArea
+                    c => c.name === con.customerArea
                   ) || {}
                 ).name || "");
             item.saleType = this.salesTypeMap[con.saleType];
@@ -636,22 +634,6 @@ export default {
         let res = response.data.result.data;
         this.provinces = res;
         this.$store.commit("getProvinces", res);
-      });
-    },
-    getCitys() {
-      if (this.filterItem.province === "") this.filterItem.province = 0;
-      let request = {
-        typeid: 27003,
-        data: [
-          {
-            province: this.filterItem.province
-          }
-        ]
-      };
-      this.citys = [];
-      this.$http.XLSELECT(request).then(response => {
-        let res = response.data.result.data;
-        this.citys = res;
       });
     },
     getManagecompanys() {
@@ -683,12 +665,13 @@ export default {
         this.$Message.error("请先选择需要导出的合同！");
         return;
       }
-      this.$refs["table"].exportCsv({
-        filename: "合同信息列表",
-        columns: this.contract_columns.filter((col, index) => index !== 0),
-        data: this.contract_data.filter(data => data._checked === true)
-      });
-      this.morehtztClick();
+      let exportList = '';
+      this.contract_data.forEach(c => {
+        if(c._checked === true){
+          exportList += c.contractNo + ','
+        }
+      })
+      this.export(exportList);
     },
     beforeUpload(file) {
       let data = this.selectedItems;
@@ -715,49 +698,44 @@ export default {
         this.$Message.error("权限不足！");
         return;
       }
-      if (this.exportUrl === "") {
-        this.$Message.error("导出失败，请稍后重试！");
-        return;
-      }
-      this.morehtztClick();
+      this.export();
     },
-    export() {
+    export(list) {
       if (this.isFinance || this.isCooperative || this.isSaleMan) {
         return;
       }
       let request = {
         data: [
           {
-            account_id: this.$store.state.user.accountId
+            account_id: this.$store.state.user.accountId,
+            contractList: list
           }
         ]
       };
+      this.$Message.info('导出中...');
       this.$http.CONTRACTEXPORT(request).then(
         res => {},
         error => {
           if (error.data.code === 0) {
             this.exportUrl = error.data.exportUrl;
+            this.$nextTick(() => {
+              this.$refs.downloadLink.click();
+              this.exportUrl = '';
+            })
+            this.morehtztClick();
+          }else{
+            this.$Message.error("导出失败，请稍后重试！");
           }
         }
-      );
+      )
     }
   },
   mounted() {
     this.getContracts(1);
     this.getProvinces();
     this.getManagecompanys();
-    this.export();
   },
   watch: {
-    "filterItem.province": function(nv) {
-      if (nv !== 0 && nv !== "") this.getCitys();
-      if (this.filterItem.province == "") {
-        this.filterItem.city = "";
-        this.disabled = true;
-      } else {
-        this.disabled = false;
-      }
-    }
   },
   computed: {
     isFinance() {
@@ -813,4 +791,10 @@ export default {
 @import "../assetmanagement/assetmanage.css";
 @import "../customermanage/customer.css";
 @import "./contract.css";
+.ivu-table-cell {
+  text-overflow: unset;
+}
+.ivu-table td, .ivu-table th{
+  text-overflow: unset;
+}
 </style>

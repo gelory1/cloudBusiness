@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div style="postion:relative">
+        <div>
             <div style="margin:30px  20px;">
                 <h3>订单详情</h3>
                 <p style="font-size:11px;">
@@ -19,7 +19,7 @@
                 </Button>
             </Poptip>
           
-            <div style="position:relative;">
+            <div style="position:relative;" v-if="selectedOrder.status !== '被驳回'">
                 <div :style="{
                 height: 28 + 'px',
                 position:'absolute',
@@ -35,14 +35,32 @@
                 <div style="display:flex;padding:5px;background-color:#F2F2F2;border-radius:20px">
                     <div v-for="(item,index) in statuses" :style="{width:`${(100/statuses.length)}%`,textAlign:'center'}" :key="index">{{item.value}}</div>
                 </div>
-                <div style="display:flex;padding:5px;;border-radius:20px;">
+                <div style="display:flex;padding:5px;border-radius:20px;">
                     <div :style="{textAlign:'center',width:`${(100/statuses.length)}%` }" v-for="(item,index) in (selectedOrder.data||{}).order_log" :key="index">{{item.orderlog_time}}</div>
+                </div>
+            </div>
+            <div style="position:relative;" v-else>
+                <div :style="{
+                height: 28 + 'px',
+                position:'absolute',
+                zIndex:0,
+                backgroundColor:'#49D790',
+                color:'white',
+                borderRadius: 20+'px',
+                display:'flex',
+                padding: 5+'px',
+                width: `40%`}">
+                    <div :style="{textAlign:'center',width:'100%' }" >申请</div>
+                    <div :style="{textAlign:'center',width:'100%' }" >驳回</div>
+                </div>
+                <div style="display:flex;padding:5px;border-radius:20px;">
+                    <!-- <div :style="{textAlign:'center',width:`20%` }" v-for="(item,index) in (selectedOrder.data||{}).order_log" :key="index">{{item.orderlog_time}}</div> -->
                 </div>
             </div>
         </div>
         <div style="clear:both;">
             <p class="djtitle">单据信息</p>
-            <div style="line-height:40px;width:40%;float:left">
+            <div style="line-height:30px;width:35%;float:left;">
             <div>
                 <span class="jbleft">业务类型：</span>
                 <span class="jbright">{{selectedOrder.type}}</span>
@@ -60,10 +78,10 @@
                 <span class="jbright">{{selectedOrder.customName}}</span>
             </div>
             </div>
-            <div style="line-height:40px;width:50%;float:right">
+            <div style="line-height:30px;width:60%;float:right;">
             <div v-if="selectedOrder.type !=='合同订单'">
                 <span class="jbleft">客户名称：</span>
-                <span class="jbright">{{selectedOrder.customName}}</span>
+                <span class="jbright" style="width:80%;">{{selectedOrder.customName}}</span>
             </div>
             <div v-if="selectedOrder.type==='合同订单'">
                 <span class="jbleft">合同编号：</span>
@@ -81,7 +99,7 @@
             </div>
             <div>
                 <span class="jbleft">收货地址：</span>
-                <span style="color:#8D8D8D">{{selectedOrder.address_detail}}</span>
+                <span class="jbright" style="color:#8D8D8D;word-wrap: break-word;word-break: break-all;vertical-align: text-top;line-height:18px;width:80%">{{selectedOrder.address_detail}}</span>
             </div>
             </div>
         </div>
@@ -112,7 +130,7 @@
             <TabPane label="全部" name="name1">
                 <Table :columns="device_columns" :data="device_data" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
-            <TabPane :label="`已到货（${selectedOrder.issued_count||0}）`" name="name2">
+            <TabPane :label="`已交货（${selectedOrder.issued_count||0}）`" name="name2">
                 <Table :columns="device_columns" :data="device_data1" size="small" style="margin:10px 0 0 0;overflow:auto"></Table>
             </TabPane>
             <TabPane :label="`待发货（${selectedOrder.count - selectedOrder.issued_count||0}）`" name='name3'>
@@ -134,6 +152,8 @@
 </template>
 <script>
 let $ = require("jquery");
+import BigNumber from 'bignumber.js';
+
 export default {
     name:'orderDetail',
     props:['orderNO'],
@@ -179,7 +199,8 @@ export default {
                     }
                     return h('Tooltip', {
                         props: {
-                            placement: 'top'
+                            placement: 'top',
+                            transfer: true
                         }
                     }, [
                             texts,
@@ -209,7 +230,8 @@ export default {
                     }
                     return h('Tooltip', {
                         props: {
-                            placement: 'top'
+                            placement: 'top',
+                            transfer: true
                         }
                     }, [
                         texts,
@@ -261,7 +283,7 @@ export default {
                 "data": [
                     {
                         "orderNo": this.orderNO,
-                        "orderAmount": this.selectedOrder.data.order_little_amount,
+                        "orderAmount": this.selectedOrder.data.order_little_amount + '',
                         "accountId": this.$store.state.user.accountId
                     }	
                 ]
@@ -360,7 +382,7 @@ export default {
                     item.data = p;
                     if(this.selectedOrder.type === '备货订单'){
                         item.price = p.product_price||0;
-                        item.totalPrice = item.price*item.count;
+                        item.totalPrice = new BigNumber(p.product_quantity).dividedBy(p.set_num).multipliedBy(p.product_price_total).toFixed(2);
                         item.tax = '6%';
                     }
                     this.device_data.push(item);
@@ -400,11 +422,12 @@ export default {
         device_data1(){
             let data = [];
             if(this.device_data&&this.device_data.length>0){
-                data = this.device_data.filter(d => d.issued_count !== 0);
+                data = JSON.parse(JSON.stringify(this.device_data.filter(d => d.issued_count !== 0)));
                 data.forEach(d => {
+                    console.log(d)
                     d.count = d.issued_count;
                     if(this.selectedOrder.type === '备货订单'){
-                        d.totalPrice = d.price*d.count;
+                        d.totalPrice = new BigNumber(d.count).dividedBy(d.data.set_num).multipliedBy(d.data.product_price_total).toFixed(2);
                     }
                 })
             }
@@ -413,11 +436,12 @@ export default {
         device_data2(){
             let data = [];
             if(this.device_data&&this.device_data.length>0){
-                data = this.device_data.filter(d => d.count - d.issued_count !== 0);
+                data = JSON.parse(JSON.stringify(this.device_data.filter(d => d.count - d.issued_count !== 0)));
                 data.forEach(d => {
+                     console.log(d)
                     d.count = d.count - d.issued_count;
                     if(this.selectedOrder.type === '备货订单'){
-                        d.totalPrice = d.price*d.count;
+                        d.totalPrice = new BigNumber(d.count).dividedBy(d.data.set_num).multipliedBy(d.data.product_price_total).toFixed(2);
                     }
                 })
             }

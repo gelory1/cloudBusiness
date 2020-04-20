@@ -106,6 +106,10 @@ const workflow = {
     SETCONTRACT (params) {
         return axios.post('/public/api/xlcontract/set', params);
     },
+    // 合同相关信息
+    XLCONTRACTHELP (params) {
+        return axios.post('/public/api/xlcontracthelper/query', params);
+    },
     // 城市查询 客户查询
     XLSELECT (params) {
         return axios.post('/public/api/xlselect/query', params);
@@ -133,7 +137,10 @@ const workflow = {
     // 导出清单
     CONTRACTEXPORT (params) {
         return axios.post('/public/api/xlcustomer/exportContract', params);
+    },
+    // xl erp
+    XLERP (params) {
+        return axios.post('public/api/xlerp/query', params);
     }
-
 };
 export default workflow;

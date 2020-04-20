@@ -1,4 +1,11 @@
-import {otherRouter, otherRouter1, otherRouterOrder, assetRouter, appRouter} from '@/router/router';
+import {
+    otherRouter,
+    otherRouter1,
+    otherRouterOrder,
+    assetRouter,
+    otherRouterReport,
+    appRouter
+} from '@/router/router';
 import Util from '@/libs/util';
 import Cookies from 'js-cookie';
 import Vue from 'vue';
@@ -31,22 +38,21 @@ const app = {
             name: 'home_index'
         }],
         currentPageName: '',
-        currentPath: [
-            {
-                title: '首页',
-                path: '',
-                name: 'home_index'
-            }
-        ], // 面包屑数组
+        currentPath: [{
+            title: '首页',
+            path: '',
+            name: 'home_index'
+        }], // 面包屑数组
         menuList: [],
         routers: [
             otherRouter,
             otherRouter1,
             otherRouterOrder,
             assetRouter,
+            otherRouterReport,
             ...appRouter
         ],
-        tagsList: [...otherRouter.children, ...otherRouter1.children, ...assetRouter.children, ...otherRouterOrder.children],
+        tagsList: [...otherRouter.children, ...otherRouter1.children, ...assetRouter.children, ...otherRouterReport.children, ...otherRouterOrder.children],
         messageCount: 0,
         dontCache: ['text-editor', 'artical-publish'], // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
         provinces: [],
@@ -59,69 +65,41 @@ const app = {
         authority: []
     },
     mutations: {
-        setTagsList (state, list) {
+        setTagsList(state, list) {
             state.tagsList.push(...list);
         },
-        setAutority (state, list) {
+        setAutority(state, list) {
             state.authority = list;
         },
-        updateMenulist (state) {
-            let accessCode = parseInt(Cookies.get('access'));
+        updateMenulist(state) {
             let menuList = [];
-            appRouter.forEach((item, index) => {
-                if (item.access !== undefined) {
-                    if (Util.showThisRoute(item.access, accessCode)) {
-                        if (item.children.length === 1) {
-                            menuList.push(item);
-                        } else {
-                            let len = menuList.push(item);
-                            let childrenArr = [];
-                            childrenArr = item.children.filter(child => {
-                                if (child.access !== undefined) {
-                                    if (child.access === accessCode) {
-                                        return child;
-                                    }
-                                } else {
-                                    return child;
-                                }
-                            });
-                            menuList[len - 1].children = childrenArr;
-                        }
-                    }
+            appRouter.forEach((item) => {
+                if (item.children.length === 1) {
+                    menuList.push(item);
                 } else {
-                    if (item.children.length === 1) {
-                        menuList.push(item);
+                    let len = menuList.push(item);
+                    let childrenArr = [];
+                    childrenArr = item.children.filter(child => {
+                        return child;
+                    });
+                    if (childrenArr === undefined || childrenArr.length === 0) {
+                        menuList.splice(len - 1, 1);
                     } else {
-                        let len = menuList.push(item);
-                        let childrenArr = [];
-                        childrenArr = item.children.filter(child => {
-                            if (child.access !== undefined) {
-                                if (Util.showThisRoute(child.access, accessCode)) {
-                                    return child;
-                                }
-                            } else {
-                                return child;
-                            }
-                        });
-                        if (childrenArr === undefined || childrenArr.length === 0) {
-                            menuList.splice(len - 1, 1);
-                        } else {
-                            let handledItem = JSON.parse(JSON.stringify(menuList[len - 1]));
-                            handledItem.children = childrenArr;
-                            menuList.splice(len - 1, 1, handledItem);
-                        }
+                        let handledItem = JSON.parse(JSON.stringify(menuList[len - 1]));
+                        handledItem.children = childrenArr;
+                        menuList.splice(len - 1, 1, handledItem);
                     }
                 }
             });
             state.menuList = menuList;
         },
-        changeMenuTheme (state, theme) {
+        changeMenuTheme(state, theme) {
             state.menuTheme = theme;
         },
-        changeMainTheme (state, mainTheme) {
+        changeMainTheme(state, mainTheme) {
             state.themeColor = mainTheme;
         },
-        addOpenSubmenu (state, name) {
+        addOpenSubmenu(state, name) {
             let hasThisName = false;
             let isEmpty = false;
             if (name.length === 0) {
@@ -134,26 +112,26 @@ const app = {
                 state.openedSubmenuArr.push(name);
             }
         },
-        closePage (state, name) {
+        closePage(state, name) {
             state.cachePage.forEach((item, index) => {
                 if (item === name) {
                     state.cachePage.splice(index, 1);
                 }
             });
         },
-        initCachepage (state) {
+        initCachepage(state) {
             if (localStorage.cachePage) {
                 state.cachePage = JSON.parse(localStorage.cachePage);
             }
         },
-        removeTag (state, name) {
+        removeTag(state, name) {
             state.pageOpenedList.map((item, index) => {
                 if (item.name === name) {
                     state.pageOpenedList.splice(index, 1);
                 }
             });
         },
-        pageOpenedList (state, get) {
+        pageOpenedList(state, get) {
             let openedPage = state.pageOpenedList[get.index];
             if (get.argu) {
                 openedPage.argu = get.argu;
@@ -164,12 +142,12 @@ const app = {
             state.pageOpenedList.splice(get.index, 1, openedPage);
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         },
-        clearAllTags (state) {
+        clearAllTags(state) {
             state.pageOpenedList.splice(1);
             state.cachePage.length = 0;
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         },
-        clearOtherTags (state, vm) {
+        clearOtherTags(state, vm) {
             let currentName = vm.$route.name;
             let currentIndex = 0;
             state.pageOpenedList.forEach((item, index) => {
@@ -189,29 +167,29 @@ const app = {
             state.cachePage = newCachepage;
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         },
-        setOpenedList (state) {
+        setOpenedList(state) {
             state.pageOpenedList = localStorage.pageOpenedList ? JSON.parse(localStorage.pageOpenedList) : [otherRouter.children[0]];
         },
-        setCurrentPath (state, pathArr) {
+        setCurrentPath(state, pathArr) {
             state.currentPath = pathArr;
         },
-        setCurrentPageName (state, name) {
+        setCurrentPageName(state, name) {
             state.currentPageName = name;
         },
-        setAvator (state, path) {
+        setAvator(state, path) {
             localStorage.avatorImgPath = path;
         },
-        switchLang (state, lang) {
+        switchLang(state, lang) {
             state.lang = lang;
             Vue.config.lang = lang;
         },
-        clearOpenedSubmenu (state) {
+        clearOpenedSubmenu(state) {
             state.openedSubmenuArr.length = 0;
         },
-        setMessageCount (state, count) {
+        setMessageCount(state, count) {
             state.messageCount = count;
         },
-        increateTag (state, tagObj) {
+        increateTag(state, tagObj) {
             if (!Util.oneOf(tagObj.name, state.dontCache)) {
                 state.cachePage.push(tagObj.name);
                 localStorage.cachePage = JSON.stringify(state.cachePage);
@@ -219,40 +197,43 @@ const app = {
             state.pageOpenedList.push(tagObj);
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         },
-        getProvinces (state, data) {
+        getProvinces(state, data) {
             state.provinces = data;
         },
-        setWorkBenchData (state, data) {
+        setWorkBenchData(state, data) {
             state.showNotice = true;
             state.workBenchData = data;
         },
-        resetWorkBenchData (state) {
+        resetWorkBenchData(state) {
             state.workBenchData = [];
         },
-        setNotifyData (state, data) {
+        setNotifyData(state, data) {
             state.notifyData = data;
         },
-        resetShowNotice (state) {
+        resetShowNotice(state) {
             state.showNotice = false;
         }
     },
     actions: {
-        getworkBench (context, payload) {
+        getworkBench(context, payload) {
             let request = {
                 'typeid': 28001,
-                'data': [
-                    {
-                        'workBenchStatus': 1,
-                        'accountId': payload.accountId,
-                        'keyword': ''
-                    }
-                ]
+                'data': [{
+                    'workBenchStatus': 1,
+                    'accountId': payload.accountId,
+                    'keyword': ''
+                }]
             };
             let _this = payload.this;
-            context.commit('setNotifyData', {status: false, data: []});
+            context.commit('setNotifyData', {
+                status: false,
+                data: []
+            });
             axios.XLWORKBENCH(request).then(response => {
                 if (!Cookies.get('user')) return;
-                let { data } = response.data.result;
+                let {
+                    data
+                } = response.data.result;
                 let updateStatus = false;
                 data.forEach(d => {
                     if (!context.state.workBenchData.find(w => d.workbenchId === w.workbenchId) && context.state.showNotice) {
@@ -293,10 +274,22 @@ const app = {
                                     return;
                                 }
                                 if (_this.$route.path !== '/home') {
-                                    _this.$router.push({path: '/home', query: {notice: item}});
+                                    _this.$router.push({
+                                        path: '/home',
+                                        query: {
+                                            notice: item
+                                        }
+                                    });
                                 } else {
-                                    _this.$router.push({query: {}});
-                                    context.commit('setNotifyData', {status: true, data: {row: item}});
+                                    _this.$router.push({
+                                        query: {}
+                                    });
+                                    context.commit('setNotifyData', {
+                                        status: true,
+                                        data: {
+                                            row: item
+                                        }
+                                    });
                                 }
                             },
                             onClick: function () {

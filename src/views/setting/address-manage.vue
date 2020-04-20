@@ -1,9 +1,9 @@
 <template>
-  <div class="address layout">
+  <div class="address layout" v-loading="loading">
     <Layout style="background:#fff;min-height:900px">
-      <p class="ad_p">收货地址列表</p>
-      <div>
-        <el-card v-for="(item,index) in shdzData" :key="index" shadow='hover' class="ad_div" style="overflow:inherit;">
+      <p class="ad_p">收货地址列表<span>{{($route.query||{}).name?`（客户：${($route.query||{}).name}）`:''}}</span><a style="font-size:12px" v-if="($route.query||{}).no" @click="seeAll">查看所有地址</a></p>
+      <div style="display: flex;flex-wrap: wrap;">
+        <el-card v-for="(item,index) in shdzData" :key="index" shadow='hover' class="ad_div" style="overflow:inherit;width:460px">
           <p class="p_span">
             <b>{{item.company}}</b>
             <!--  -->
@@ -29,7 +29,7 @@
           <p style="padding-top:20px;color:#3896f5">创建人：<span>{{item.creador}}</span></p>
         </el-card>
       </div>
-      <div class="add_adress">
+      <div class="add_adress" v-if="!($route.query||{}).no">
         <p @click="createNewAddr" style="cursor:pointer">+&#x3000;添加新地址</p>
       </div>
     </Layout>
@@ -90,74 +90,77 @@
 
 <script>
 export default {
-  name: "addressmanage",
-  data() {
+  name: 'addressmanage',
+  data () {
     const validatePhone = (rule, value, callback) => {
-      if (this.addadressform.tel !== "") {
-        var expression = /^1(3|4|5|7|8)\d{9}$/;
+      if (this.addadressform.tel !== '') {
+        var expression = /^1\d{10}$/;
         if (expression.test(value) == false) {
-          callback(new Error("请输入正确的电话号码"));
+          callback(new Error('请输入正确的电话号码'));
         }
-      }else{
-        callback(new Error("请输入电话号码"));
+      } else {
+        callback(new Error('请输入电话号码'));
       }
       callback();
     };
     return {
       addadressmodal: false,
       addadressform: {
-        company: "",
-        name: "",
-        tel: "",
-        address: ""
+        company: '',
+        name: '',
+        tel: '',
+        address: ''
       },
       shdzData: [],
       addadressrule: {
         company: [
           {
             required: true,
-            message: "请输入仓库名称",
-            trigger: "blur"
+            message: '请输入仓库名称',
+            trigger: 'blur'
           }
         ],
         name: [
           {
             required: true,
-            message: "请输入联系人姓名",
-            trigger: "blur"
+            message: '请输入联系人姓名',
+            trigger: 'blur'
           }
         ],
         tel: [
           {
             required: true,
-            trigger: "blur",
-            validator: validatePhone,
+            trigger: 'blur',
+            validator: validatePhone
           }
         ],
         address: [
           {
             required: true,
-            message: "请输入详细地址",
-            trigger: "blur"
+            message: '请输入详细地址',
+            trigger: 'blur'
           }
         ]
       },
-      selectItem:{},
-      status:'new',
-      whData: []
+      selectItem: {},
+      status: 'new',
+      whData: [],
+      loading: false
     };
   },
   methods: {
-    getAddresses(){
+    getAddresses () {
       let request = {
         typeid: 23013,
         data: [
           {
             account_id: this.$store.state.user.accountId,
+            customer_no: (this.$route.query || {}).no || ''
           }
         ]
       };
       this.shdzData = [];
+      this.loading = true;
       this.$http.PostXLASSETS(request).then(response => {
         let { data } = response.data.result;
         data.forEach(d => {
@@ -166,21 +169,26 @@ export default {
             name: d.manager_name,
             tel: d.manager_phone,
             address: d.address_detail,
-            isDefault:d.address_status === 1?true:false,
-            wh_id:d.wh_id,
-            address_id:d.address_id,
-            creador:d.user_name
-          })
+            isDefault: d.address_status === 1,
+            wh_id: d.wh_id,
+            address_id: d.address_id,
+            creador: d.user_name
+          });
         });
-        
-      })
+        this.loading = false;
+      }, error => {
+        this.loading = false;
+        if ((error.data || {}).message) {
+          this.$Message.error(error.data.message);
+        }
+      });
     },
-    getWhs(){
+    getWhs () {
       let request = {
         typeid: 23001,
         data: [
           {
-            account_id: this.$store.state.user.accountId,
+            account_id: this.$store.state.user.accountId
           }
         ]
       };
@@ -188,63 +196,63 @@ export default {
       this.$http.PostXLASSETS(request).then(response => {
         let { data } = response.data.result;
         this.whData = data;
-      })
+      });
     },
-    czClick() {},
-    saveSubmit(name) {
+    czClick () {},
+    saveSubmit (name) {
       this.$refs[name].validate(valid => {
         let request = {
-          "typeid": 23014,
-          "data": [
-              {
-                "account_id": this.$store.state.user.accountId,
-                "wh_id": this.addadressform.company,
-                "address_title": (this.whData.find(w =>w.wh_id === this.addadressform.company)||{}).wh_name||'',
-                "manager_name": this.addadressform.name,
-                "manager_phone": this.addadressform.tel,
-                "address_detail": this.addadressform.address
-              }
+          'typeid': 23014,
+          'data': [
+            {
+              'account_id': this.$store.state.user.accountId,
+              'wh_id': (this.whData.find(w => w.wh_id === this.addadressform.company) || {}).logic_wh_id || '',
+              'address_title': (this.whData.find(w => w.wh_id === this.addadressform.company) || {}).wh_name || '',
+              'manager_name': this.addadressform.name,
+              'manager_phone': this.addadressform.tel,
+              'address_detail': this.addadressform.address
+            }
           ]
-        }
+        };
         if (valid) {
-          if(this.status === 'edit'){
+          if (this.status === 'edit') {
             request.typeid = 23023;
             request.data[0].address_id = this.selectItem.address_id;
             this.$http.UPDATEXLASSETS(request).then(response => {
-              this.$Message.success("Success!");
+              this.$Message.success('Success!');
               this.getAddresses();
               this.addadressmodal = false;
-            },error => {
-              if(error.data.code === 0){
-                this.$Message.success("Success!");
+            }, error => {
+              if (error.data.code === 0) {
+                this.$Message.success('Success!');
                 this.getAddresses();
                 this.addadressmodal = false;
               }
-            })
-          }else if(this.status === 'new'){
+            });
+          } else if (this.status === 'new') {
             this.$http.SETXLASSETS(request).then(response => {
-              this.$Message.success("Success!");
+              this.$Message.success('Success!');
               this.getAddresses();
               this.addadressmodal = false;
-            },error => {
-              if(error.data.code === 0){
-                this.$Message.success("Success!");
+            }, error => {
+              if (error.data.code === 0) {
+                this.$Message.success('Success!');
                 this.getAddresses();
                 this.addadressmodal = false;
               }
-            })
+            });
           }
         } else {
-          this.$Message.error("请按规定填写内容!");
+          this.$Message.error('请按规定填写内容!');
         }
       });
     },
-    dropDownClick(name){
-      if(name === 'edit'){
+    dropDownClick (name) {
+      if (name === 'edit') {
         this.edit();
-      }else if(name === 'default'){
+      } else if (name === 'default') {
         this.setDefault();
-      }else if(name === 'delete'){
+      } else if (name === 'delete') {
         let _this = this;
         this.$confirm('此操作将永久删除该地址, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -252,84 +260,88 @@ export default {
           type: 'warning'
         }).then(() => {
           _this.delete();
-        }).catch(()=>{
+        }).catch(() => {
           _this.$Message.error('已取消删除！');
         });
       }
     },
-    edit(){
+    edit () {
       this.status = 'edit';
       this.addadressform = {...this.selectItem};
-      this.addadressform.company = (this.whData.find(w => w.wh_id === this.selectItem.wh_id)||{}).wh_id;
+      this.addadressform.company = (this.whData.find(w => w.logic_wh_id === this.selectItem.wh_id) || {}).wh_id;
       this.addadressmodal = true;
     },
-    setDefault(){
+    setDefault () {
       let request = {
-        "typeid": 23024,
-        "data": [
+        'typeid': 23024,
+        'data': [
           {
-            "account_id": this.$store.state.user.accountId,
-            "address_id": this.selectItem.address_id,
-            "wh_id": this.selectItem.wh_id
+            'account_id': this.$store.state.user.accountId,
+            'address_id': this.selectItem.address_id,
+            'wh_id': this.selectItem.wh_id
           }
         ]
       };
-      this.$http.UPDATEXLASSETS(request).then(response =>{
-        this.$Message.success("设置成功!");
+      this.$http.UPDATEXLASSETS(request).then(response => {
+        this.$Message.success('设置成功!');
         this.getAddresses();
-      },error => {
-        if(error.data.code === 0){
-          this.$Message.success("设置成功!");
+      }, error => {
+        if (error.data.code === 0) {
+          this.$Message.success('设置成功!');
           this.getAddresses();
         }
-      })
+      });
     },
-    delete(){
+    delete () {
       let request = {
-        "typeid": 23022,
-        "data": [
+        'typeid': 23022,
+        'data': [
           {
-            "account_id": this.$store.state.user.accountId,
-            "address_id": this.selectItem.address_id
+            'account_id': this.$store.state.user.accountId,
+            'address_id': this.selectItem.address_id
           }
         ]
       };
-      this.$http.DELXLASSETS(request).then(response =>{
-          this.$Message.success("删除成功!");
+      this.$http.DELXLASSETS(request).then(response => {
+        this.$Message.success('删除成功!');
+        this.getAddresses();
+      }, error => {
+        if (error.data.code === 0) {
+          this.$Message.success('删除成功!');
           this.getAddresses();
-      },error => {
-        if(error.data.code === 0){
-          this.$Message.success("删除成功!");
-          this.getAddresses();
-        }else{
-          if(error.data.message) this.$Message.error(error.data.message);
+        } else {
+          if (error.data.message) this.$Message.error(error.data.message);
         }
-      })
+      });
     },
-    changeSelectItem(item){
+    changeSelectItem (item) {
       this.selectItem = item;
-    },       
-    createNewAddr(){
+    },
+    createNewAddr () {
       this.status = 'new';
       this.addadressmodal = true;
+    },
+    seeAll () {
+      this.$router.push({path: '/setting/addressManage'});
+      this.getAddresses();
     }
   },
-  mounted() {
+  mounted () {
     this.getAddresses();
     this.getWhs();
   },
-  computed:{
-    isFinance(){
-      if(this.$store.state.app.authority&&this.$store.state.app.authority.length>0&&this.$store.state.app.authority[0].role){
+  computed: {
+    isFinance () {
+      if (this.$store.state.app.authority && this.$store.state.app.authority.length > 0 && this.$store.state.app.authority[0].role) {
         return this.$store.state.app.authority[0].role.find(r => r === '财务');
       }
-    },
+    }
   },
-  watch:{
-    addadressmodal(nv){
-      if(!nv){
+  watch: {
+    addadressmodal (nv) {
+      if (!nv) {
         this.$refs.addadressform.resetFields();
-        this.form = {}
+        this.form = {};
         // this.addadressform = {
         //   company: "",
         //   name: "",
@@ -337,7 +349,7 @@ export default {
         //   address: ""
         // }
       }
-    },
+    }
   }
 };
 </script>

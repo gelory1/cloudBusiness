@@ -3,8 +3,11 @@ const os = require('os');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HappyPack = require('happypack');
-var happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
-function resolve (dir) {
+var happyThreadPool = HappyPack.ThreadPool({
+    size: os.cpus().length
+});
+
+function resolve(dir) {
     return path.join(__dirname, dir);
 }
 module.exports = {
@@ -17,8 +20,7 @@ module.exports = {
         path: path.resolve(__dirname, '../dist/dist')
     },
     module: {
-        rules: [
-            {
+        rules: [{
                 test: /\.vue$/,
                 loader: 'vue-loader',
                 options: {
@@ -57,7 +59,7 @@ module.exports = {
             {
                 test: /\.less$/,
                 use: ExtractTextPlugin.extract({
-                    use: ['css-loader?minimize','autoprefixer-loader', 'less-loader'],
+                    use: ['css-loader?minimize', 'autoprefixer-loader', 'less-loader'],
                     fallback: 'style-loader'
                 }),
             },
@@ -90,18 +92,48 @@ module.exports = {
             '@': resolve('../src'),
         }
     },
+
+    // devServer: {
+    //     proxy: {
+    //         '/public/api/': {
+    //             target: 'http://47.110.198.188:31380',
+    //             changeOrigin: true,
+    //             secure: false
+    //         },
+    //         '/api/': {
+    //             target: 'http://47.110.198.188:31380',
+    //             changeOrigin: true,
+    //             secure: false
+    //         }
+    //     }
+    // },
+    // 测试服
     devServer: {
         proxy: {
-          '/public/api/': {
-            target: 'http://10.0.17.213:31380',
-            changeOrigin: true,
-            secure: false
-          },
-          '/api/': {
-            target: 'http://10.0.17.213:31380',
-            changeOrigin: true,
-            secure: false
-          }
+            '/public/api/': {
+                target: 'http://221.181.214.168:10028',
+                changeOrigin: true,
+                secure: false
+            },
+            '/api/': {
+                target: 'http://221.181.214.168:10028',
+                changeOrigin: true,
+                secure: false
+            }
         }
     },
+    // devServer: {
+    //     proxy: {
+    //         '/public/api/': {
+    //             target: 'http://8068.chinadny.com',
+    //             changeOrigin: true,
+    //             secure: false
+    //         },
+    //         '/api/': {
+    //             target: 'http://8068.chinadny.com',
+    //             changeOrigin: true,
+    //             secure: false
+    //         },
+    //     }
+    // },
 };

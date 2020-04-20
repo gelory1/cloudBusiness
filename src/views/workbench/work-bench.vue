@@ -178,9 +178,9 @@
             <el-upload action="/" :on-change="importExcel" :auto-upload="false" :show-file-list="false">
               <Button class="but_change" type="ghost" icon="ios-cloud-upload-outline">批量导入</Button>
             </el-upload>
-            <span style="white-space: normal;color:#bbbec4">请上传excel文件,表格中三列名称分别为:到款时间,金额,付款方</span>(<a href="http://www.chinadny.com:9010/front/userfiles/xlcloud/paybackAmount.xls">点击下载模板</a>)
+            <span style="white-space: normal;color:#bbbec4">请上传excel文件,表格中三列名称分别为:到款时间,金额,付款方</span>(<a href="http://9010.chinadny.com/front/userfiles/xlcloud/paybackAmount.xls">点击下载模板</a>)
           </div>
-          <Table :columns="add_columns" :data="newgzForm.add_data" class="gztable"></Table>
+          <Table :columns="add_columns" :height="300" :width="667" :data="newgzForm.add_data" class="gztable"></Table>
         </FormItem>
         <FormItem label="负责人" prop="fzr">
           <Select v-model="newgzForm.company" clearable filterable style="width:250px;">
@@ -248,7 +248,7 @@
           <div class="hz2"><Table :row-class-name="rowClassName1" :columns="hz2_columns" :data="hz2_data" @on-row-click="hz2Click"></Table></div>
         </section>
       </div>
-      <Button class="zf_butt" type="primary" style="margin-left:450px;" @click="surehrClick" :disabled="buttonDisabled||hkhzDisabled">{{hkhz.status !== 2?"确认核入":"已核入"}}</Button>
+      <Button class="zf_butt" type="primary" style="margin-left:450px;" @click="surehrClick" :disabled="buttonDisabled||hkhzDisabled||tabName === 'name3'">{{hkhz.status !== 2?"确认核入":"已核入"}}</Button>
     </Modal>
     <!-- 财务-到款确认 -->
     <Modal v-model="dkqrmodal" class="aa">
@@ -366,7 +366,7 @@
             <span style="font-size:16px">出库设备</span>
             <p class="right">
               <span>整体完成度</span>
-              <Progress class="pro" :percent="25"></Progress>
+              <Progress class="pro" :percent="deliveryData.degreeOfCompletion||0"></Progress>
             </p>
           </div>
           <div style="clear:both;overflow: hidden;">
@@ -404,8 +404,8 @@
           </div>
         </div>
         <div class="agree_but">
-        <Button type="primary" :disabled="buttonDisabled" @click="agreeDelivery">{{deliveryData.workStatus === 2?"已同意":"同意"}}</Button>
-        <Button type="ghost" @click="refuseShow = true" :disabled="buttonDisabled" v-if="deliveryData.workStatus !== 2">拒绝</Button>
+        <Button type="primary" :disabled="buttonDisabled" :loading="refuseLoading" @click="agreeDelivery">{{deliveryData.workStatus === 2?(deliveryData.reject?"已驳回":'已同意'):"同意"}}</Button>
+        <Button type="ghost" @click="refuseShow = true" :disabled="buttonDisabled||refuseLoading" v-if="deliveryData.workStatus !== 2">拒绝</Button>
         <div v-show="refuseShow" class="refuse">
           <p>拒绝理由<span style="float:right;cursor:pointer;color:#8d8d8d" @click="refuseShow = false">x</span></p>
           <Input v-model="textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请填写审批拒绝理由"></Input>
@@ -446,6 +446,7 @@ export default {
       loading: false,
       hz1Loading: false,
       isActive: false,
+      refuseLoading: false,
       newgzForm: {
         rwlx: 10,
         fzr: "",
@@ -458,7 +459,7 @@ export default {
       gz_columns: [
         {
           type: "selection",
-          width: 60,
+          width: 40,
           align: "center"
         },
         {
@@ -495,17 +496,17 @@ export default {
         {
           title: "类型",
           key: "type",
-          width: '150',
+          width: '90',
           align: 'center'
         },
         {
           title: "负责人",
           key: "fzr",
-          width: '100',
+          width: '80',
           align: 'center'
         },
         {
-          title: "截至日期",
+          title: "截止日期",
           key: "jztime",
           width: '100',
           align: 'center'
@@ -572,6 +573,9 @@ export default {
           key: "gznr",
           align: "center",
           render: (h, params) => {
+            if(params.row.type === '回款核准') {
+              return h('span', params.row.gznr)
+            }
             return h('div', [
                 h('a', {
                     props: {
@@ -703,7 +707,7 @@ export default {
         },
         {
           title:'操作',
-          width: '100',
+          width: '15%',
           key: 'action',
           align: "center",
           render:(h,params) => {
@@ -890,7 +894,9 @@ export default {
         des:'',
         shipments_end_batch:'',
         shipments_start_batch:'',
-        orderList: []
+        orderList: [],
+        degreeOfCompletion:0,
+        reject:''
       },
       selectedCustom: '全部',
       orderDataCache: [],
@@ -938,6 +944,7 @@ export default {
       this.currentRow = JSON.parse(JSON.stringify(data));
     },
     updateDelivery(no){
+      if(no === 2) this.refuseLoading = true;
       let request = {
         "typeid": 28007,
         "data": [
@@ -950,10 +957,8 @@ export default {
           }
         ]
       };
-      this.$http.UPDATEWORKBENCH(request).then(response => {
-        this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
         this.textarea = '';
-        this.refusemodal = false;
+        
         if(no === 2){
           let request = {
             "typeid": 23006,
@@ -966,8 +971,22 @@ export default {
             ]
           };
           this.$http.SETXLASSETS(request).then(response => {
+            this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
+            this.refusemodal = false;
+            this.refuseLoading = false;
+            this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+            if(this.tabName === 'name3'){
+              this.getWorkbench();
+            }
           },error => {
               if(error.data.code === 0){
+                this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
+                this.refusemodal = false;
+                this.refuseLoading = false;
+                this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+                if(this.tabName === 'name3'){
+                  this.getWorkbench();
+                }
                 let {allocationList,billTime} = error.data;
                 let request = {
                 "typeid": 23007,
@@ -982,14 +1001,33 @@ export default {
                 this.$http.SETXLASSETS(request).then(res => {
 
                 })
+              }else if(error.data.code === -1){
+                this.$alert(error.data.message||'审批失败，请重新发起改该方案！', '审批失败提醒', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                    if(action === 'confirm'){
+                      this.refuseLoading = false;
+                      this.refusemodal = false;
+                      this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+                      if(this.tabName === 'name3'){
+                        this.getWorkbench();
+                      }
+                    }
+                  }
+                });
               }
             });
+        }else{
+          this.$http.UPDATEWORKBENCH(request).then(response => {
+            this.$Message.success(`已${no === 2?'同意':'驳回'}该申请！`);
+            this.refusemodal = false;
+            this.refuseLoading = false;
+            this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
+            if(this.tabName === 'name3'){
+              this.getWorkbench();
+            }
+          })
         }
-        this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
-        if(this.tabName === 'name3'){
-          this.getWorkbench();
-        }
-      })
     },
     refuseSure(){
       this.refuseShow = false;
@@ -1044,24 +1082,23 @@ export default {
           let item = {};
           switch (d.workBenchType) {
             case 1:
-              item.gznr = status === 1?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，审批已完成`;
+              item.gznr = d.workBenchStatus === 1?`审批提醒，您有一个待审批的工作，请戳这里查看详情`:`审批提醒，审批已完成`;
               break;
             case 10:
-              item.gznr = status === 1?`回款待核准，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
+              item.gznr = d.workBenchStatus === 1?`回款待核准，金额：${parseFloat(d.workBenchContentObj.payAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName})，请戳这里`:`回款核准，金额：${d.workBenchContentObj.payAmount}(付款方：${d.workBenchContentObj.payUnitName})`;
               break;
             case 4:
-              item.gznr = status === 1?`到账待确认，金额：${parseFloat(d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName||''})，请戳这里`:`到账已确认，金额：${d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount}(付款方：${d.workBenchContentObj.payUnitName||''})`;
+              item.gznr = d.workBenchStatus === 1?`到账待确认，金额：${parseFloat(d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount).toFixed(2)}(付款方：${d.workBenchContentObj.payUnitName||''})，请戳这里`:`到账已确认，金额：${d.workBenchContentObj.payAmount||d.workBenchContentObj.orderAmount}(付款方：${d.workBenchContentObj.payUnitName||''})`;
               break;
             case 3:
               if (d.workBenchContentObj.contractNo) {
-                item.gznr = status === 1?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
+                item.gznr = d.workBenchStatus === 1?`${d.workBenchContentObj.contractNo}合同已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.contractNo}合同已签署完毕。`;
               } else if (d.workBenchContentObj.orderNo) {
-                  item.gznr = `${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。点击直接处理`;
-                  item.gznr = status === 1?`${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.orderNo}备货订单已签署完毕。`;
+                  item.gznr = d.workBenchStatus === 1?`${d.workBenchContentObj.orderNo}备货订单已签署完毕，请尽快支付。线上支付请戳这里`:`${d.workBenchContentObj.orderNo}备货订单已签署完毕。`;
               }
               break;
             case 12:
-              item.gznr = status === 1?`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`:`发货方案审批提醒，审批完成。`;
+              item.gznr = d.workBenchStatus === 1?`发货方案审批提醒，您有一个待审批的发货方案，请尽快审批。审批请戳这里`:`发货方案审批提醒，审批完成。`;
               break;
           }
           item.type = this.typeMap[d.workBenchType];
@@ -1077,7 +1114,7 @@ export default {
           }else if(status === 3){
             this.fq_data.push(item);
           }else{
-            item.fzr = this.$store.state.user.accountName;
+            // item.fzr = this.$store.state.user.accountName;
             item.duetime = d.handledTime;
             this.yb_data.push(item);
           }
@@ -1107,10 +1144,13 @@ export default {
         if(this.sum === 0){
           this.customName = '';
           this.getRebackAppr(1);
-          return;
+          return
         }
         data.contractList.forEach(d => {
           let paymentList = JSON.parse(JSON.stringify(d.paymentList))||[];
+          paymentList.sort((a,b) => {
+            return a.paymentTimes - b.paymentTimes
+          });
           let allBack = 0;
           let backAmount = 0;
           (d.paybackList||[]).forEach(p => {
@@ -1123,6 +1163,7 @@ export default {
               p.paybackAmount = allBack - backAmount;
             }
             backAmount += p.paybackAmount;
+            p._checked = false
           })
           this.hz1_data.push({
             htbh:d.contractNo,
@@ -1195,27 +1236,11 @@ export default {
             status: params.row.data.workBenchStatus
           }
         }else if(params.row.data.workBenchType === 1){
-          this.$alert(`您有一个${(params.row.data.workBenchContentObj||{}).orderNo?'备货流程':'合同'}待审批，${(params.row.data.workBenchContentObj||{}).orderNo?'订单':'合同'}号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||(params.row.data.workBenchContentObj||{}).orderNo }`, '审批提醒', {
+          this.$alert(`您有一个${(params.row.data.workBenchContentObj||{}).orderNo?'备货流程':'合同'}${params.row.data.workBenchStatus === 1?'待审批':'审批完成'}，${(params.row.data.workBenchContentObj||{}).orderNo?'订单':'合同'}号为 ${ (params.row.data.workBenchContentObj||{}).contractNo||(params.row.data.workBenchContentObj||{}).orderNo }`, '审批提醒', {
             confirmButtonText: '确定',
             callback: action => {
               if(action === 'confirm'){
-                if(this.tabName !== 'name1'){
-                  return;
-                }
-                let request = {
-                  typeid: 28008,
-                  data: [
-                    {
-                      workBenchId: params.row.data.workbenchId
-                    }
-                  ]
-                };
-                this.$http.UPDATEWORKBENCH(request).then(res =>{
-                  this.$store.dispatch('getworkBench',{accountId:this.$store.state.user.accountId,this:this});
-                  if(this.tabName === 'name3'){
-                    this.getWorkbench();
-                  }
-                })
+                
               }
             }
           });
@@ -1242,7 +1267,7 @@ export default {
         }
       }
       let newDate = new Date(this.workBenchData.workBenchContentObj.payTime);
-      let date = newDate.getFullYear() + '-' + (Number(newDate.getMonth())+1) + '-' + newDate.getDay();
+      let date = newDate.getFullYear() + '-' + (Number(newDate.getMonth())+1) + '-' + newDate.getDate();
       let request = {
         "typeid": 26004,
         "data": [
@@ -1325,7 +1350,7 @@ export default {
       this.checkIndex = data.length;
     },
     sureClick() {
-      if(this.imgUrl === ''){
+      if(this.imgUrl === ''&&this.checkedData[0].data.workBenchContentObj.saleType !== 2){
         this.$Message.error('请先上传付款截图！');
         return;
       }
@@ -1350,7 +1375,7 @@ export default {
               "accountId": this.$store.state.user.accountId,
               "workBenchId": this.checkedData[0].data.workbenchId,//只对一条记录进行支付
               "contractNo": this.checkedData[0].data.workBenchContentObj.contractNo,
-              "photoUrl": this.imgUrl
+              "photoUrl": this.imgUrl === ''?undefined:this.imgUrl
             }
           ]
         }
@@ -1376,11 +1401,16 @@ export default {
     },
     hz1Click(val,index){
       this.indexStyle = index;
+      this.indexStyle1 = '';
       // this.hz1_data[index]._checked = true
       this.hz2_data = val.paymentList||[];
     },
     hz2Click(val,index){
-      this.indexStyle1 = index
+      if(this.indexStyle1 === index){
+        this.indexStyle1 = '';
+      }else{
+        this.indexStyle1 = index;
+      }
     },
     radioClick(val) {
       if (val == "ydz") {
@@ -1415,17 +1445,23 @@ export default {
         return;
       }
       let workBenchContentList = [];
+      let status = true;
       this.newgzForm.add_data.forEach(d => {
+        if(!status) return;
         if(d.dksj === ''){
+          status = false;
           this.$Message.error('请选择到款时间！');
           return;
         }else if(d.fkf === ''){
+          status = false;
           this.$Message.error('请输入付款方！');
           return;
         }else if(d.je === ''||isNaN(Number(d.je))){
+          status = false;
           this.$Message.error('请输入正确金额！');
           return;
         }
+        if(!status) return;
         workBenchContentList.push({
           payTime: d.dksj,
           payUnitName: d.fkf,
@@ -1437,6 +1473,7 @@ export default {
         "typeid": 28002,
         "data": [
             {
+              "manageCompany": this.newgzForm.company,
               "workBenchType": this.newgzForm.rwlx,
               "accountId": this.$store.state.user.accountId,
               "chargePerson": this.newgzForm.fzr === ''?-1:this.newgzForm.fzr,
@@ -1517,10 +1554,20 @@ export default {
         this.$Message.error('格式错误，请重新导入！');
         return;
       }
-      this.$Message.info('导入成功，处理中...');
       this.file2Xce(file).then(tabJson => {
         if (tabJson && tabJson.length > 0) {
-          tabJson[0].sheet.forEach((d) => {
+          if(tabJson[0].sheet.length === 0) {
+            this.$Message.error('请填写模板后，重新导入!');
+            return false
+          }else {
+            const row = tabJson[0].sheet[0]
+            const keys = Object.keys(row)
+            if(!keys.includes('到款时间') || !keys.includes('金额') || !keys.includes('付款方')) {
+              this.$Message.error('格式错误，请下载模板重新导入！');
+              return false
+            }
+            this.$Message.info('导入成功，处理中...');
+            tabJson[0].sheet.forEach((d) => {
             let newDate = new Date(d.到款时间);
             let date = newDate.getFullYear() + '-' + (Number(newDate.getMonth())+1) + '-' + newDate.getDay();
             this.addStore.push({
@@ -1530,6 +1577,7 @@ export default {
             })
             this.newgzForm.add_data = JSON.parse(JSON.stringify(this.addStore));
           })
+          }
         }
       })
     },
@@ -1596,7 +1644,9 @@ export default {
         shipments_end_batch:'',
         shipments_start_batch:'',
         orderList: [],
-        workStatus:(workData||{}).workBenchStatus
+        degreeOfCompletion:0,
+        workStatus:(workData||{}).workBenchStatus,
+        reject:''
       };
       this.$http.PostXLASSETS(request).then(response => {
         this.orderData = [{
@@ -1611,7 +1661,9 @@ export default {
           shipments_end_batch:'',
           shipments_start_batch:'',
           orderList: [],
-          workStatus:(workData||{}).workBenchStatus
+          degreeOfCompletion:0,
+          workStatus:(workData||{}).workBenchStatus,
+          reject: ''
         };
         let { data } = response.data.result;
         this.deliveryData.schemeNo = data[0].shipments_no;
@@ -1622,9 +1674,11 @@ export default {
         this.deliveryData.shipments_start_batch = data[0].shipments_start_batch;
         this.deliveryData.shipments_end_batch = data[0].shipments_end_batch;
         this.deliveryData.status = data[0].shipments_status;
-        this.deliveryData.amount = (workData||{}).workBenchContentObj.shipmentsAmount;
+        this.deliveryData.degreeOfCompletion = data[0].degreeOfCompletion||0;
+        this.deliveryData.amount = parseFloat((workData||{}).workBenchContentObj.shipmentsAmount);
         this.deliveryData.workBenchId = workData.workbenchId;
         this.deliveryData.shipmentsId = (workData||{}).workBenchContentObj.shipmentsId;
+        this.deliveryData.reject = (workData||{}).workBenchContentObj.isReject;
         data[0].product_list.forEach(p => {
           if(!this.deliveryData.orderList.find(o => o.order_id === p.order_id)){
             this.deliveryData.orderList.push({

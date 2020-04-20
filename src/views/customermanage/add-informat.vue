@@ -129,7 +129,7 @@ export default {
         // kpdz: [
         //   {
         //     required: true,
-        //     message: "请填写开票地址",
+        //     message: "请填写开票地址1",
         //     trigger: "blur"
         //   }
         // ],
